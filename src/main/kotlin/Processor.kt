@@ -1,7 +1,7 @@
 import entity.Camera
 import entity.Entity
 import gui.Gui
-import input.MouseHandler
+import input.Mouse
 import model.DatLoader
 import net.openrs.cache.Cache
 import net.openrs.cache.FileStore
@@ -78,13 +78,18 @@ class Processor {
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
 
-        val glfwMouseCallbackI = {_: Long, x: Double, y: Double -> MouseHandler().invoke(x, y) }
+        val mouse = Mouse()
+        val glfwMouseCallbackI = {_: Long, button: Int, action: Int, _: Int -> mouse.handleClick(button, action) }
+        val glfwScrollCallbackI = {_: Long, dx: Double, dy: Double -> mouse.handleScroll(dx, dy) }
+        val glfwCursorCallbackI = {_: Long, x: Double, y: Double -> mouse.handlePosition(x, y) }
         val glfwKeyCallbackI = { _: Long, key: Int, _: Int, action: Int, _: Int ->
             running = !(key == GLFW.GLFW_KEY_ESCAPE && action != GLFW.GLFW_RELEASE)
         }
         val glfwWindowCloseCallbackI = { _: Long -> running = false }
 
-        keeper.chainCursorPosCallback.add(glfwMouseCallbackI)
+        keeper.chainMouseButtonCallback.add(glfwMouseCallbackI)
+        keeper.chainScrollCallback.add(glfwScrollCallbackI)
+        keeper.chainCursorPosCallback.add(glfwCursorCallbackI)
         keeper.chainKeyCallback.add(glfwKeyCallbackI)
         keeper.chainWindowCloseCallback.add(glfwWindowCloseCallbackI)
 
@@ -95,10 +100,9 @@ class Processor {
         renderer.initialize()
 
         val shader = StaticShader()
+        val camera = Camera(mouse)
         val glRenderer = Renderer(shader)
         GL11.glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-
-        val camera = Camera()
 
         // Render loop
         while (running) {
@@ -129,6 +133,7 @@ class Processor {
 
             // Render gl
             if (entity != null) {
+                camera.move(entity!!)
                 shader.start()
                 shader.loadViewMatrix(camera)
                 glRenderer.render(entity!!, shader)
@@ -171,6 +176,6 @@ class Processor {
     fun setModel(id: Int) {
         loader.cleanUp()
         val model = datLoader.load(id, loader)
-        entity = Entity(model, Vector3f(0f, -20f, -50f), 180.0, 0.0, 0.0, 0.05f)
+        entity = Entity(model, Vector3f(0f, -20f, -50f), 0.0, 0.0, 180.0, 0.05f)
     }
 }
