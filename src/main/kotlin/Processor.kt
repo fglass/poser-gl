@@ -1,8 +1,10 @@
-import entity.Entity
 import entity.Camera
+import entity.Entity
 import gui.Gui
 import input.MouseHandler
 import model.DatLoader
+import net.openrs.cache.Cache
+import net.openrs.cache.FileStore
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -13,6 +15,7 @@ import org.liquidengine.legui.system.context.DefaultCallbackKeeper
 import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
+import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
@@ -21,10 +24,12 @@ import org.lwjgl.system.MemoryUtil
 import render.Loader
 import render.Renderer
 import shader.StaticShader
+import java.io.File
 
 const val TITLE = "PoserGL"
 const val WIDTH = 762
 const val HEIGHT = 503
+const val CACHE_PATH = "./repository/cache/"
 
 fun main() {
     Processor().run()
@@ -33,8 +38,12 @@ fun main() {
 class Processor {
 
     private var running = true
-    var wireframe = false
     var vertices = false
+    var wireframe = false
+
+    private val datLoader = DatLoader()
+    private val loader = Loader()
+    private var entity: Entity? = null
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -57,8 +66,13 @@ class Processor {
         GLFW.glfwSwapInterval(1) // Enable vsync
 
         val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
-        val gui = Gui(this)
-        gui.createElements(frame)
+        Themes.setDefaultTheme(Themes.FLAT_DARK)
+        Themes.getDefaultTheme().applyAll(frame)
+
+        val gui = Gui(0f, 0f, WIDTH.toFloat(), HEIGHT.toFloat(), this)
+        gui.createElements()
+        frame.container.add(gui)
+
 
         val context = Context(window)
         val keeper = DefaultCallbackKeeper()
@@ -80,13 +94,10 @@ class Processor {
         val renderer = NvgRenderer()
         renderer.initialize()
 
-        val loader = Loader()
         val shader = StaticShader()
         val glRenderer = Renderer(shader)
         GL11.glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
-        val model = DatLoader().load(23889, loader)
-        val entity = Entity(model, Vector3f(0f, -20f, -50f), 180.0, 0.0, 0.0, 0.05f)
         val camera = Camera()
 
         // Render loop
@@ -101,22 +112,28 @@ class Processor {
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL)
 
             // Render frame
-            renderer.render(frame, context)
+            try {
+                renderer.render(frame, context)
+            } catch (ignore: NullPointerException) {
+                println("Error: ${ignore.message}")
+            }
 
             GL11.glEnable(GL11.GL_CULL_FACE)
             GL11.glCullFace(GL11.GL_BACK)
 
-            if (wireframe) {
-                GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
-            } else if (vertices) {
+            if (vertices) {
                 GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_POINT)
+            } else if (wireframe) {
+                GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
             }
 
             // Render gl
-            shader.start()
-            shader.loadViewMatrix(camera)
-            glRenderer.render(entity, shader)
-            shader.stop()
+            if (entity != null) {
+                shader.start()
+                shader.loadViewMatrix(camera)
+                glRenderer.render(entity!!, shader)
+                shader.stop()
+            }
 
             // Poll events to callbacks
             GLFW.glfwPollEvents()
@@ -127,7 +144,11 @@ class Processor {
             EventProcessor.getInstance().processEvents()
 
             // Relayout components
-            LayoutManager.getInstance().layout(frame)
+            try {
+                LayoutManager.getInstance().layout(frame)
+            } catch (ignore: NullPointerException) {
+                println("Error: ${ignore.message}")
+            }
 
             // Run animations
             AnimatorProvider.getAnimator().runAnimations()
@@ -138,5 +159,18 @@ class Processor {
         renderer.destroy()
         GLFW.glfwDestroyWindow(window)
         GLFW.glfwTerminate()
+    }
+
+    fun getMaxModels(): Int {
+        Cache(FileStore.open(File(CACHE_PATH))).use {
+            val table = it.getReferenceTable(7)
+            return table.capacity()
+        }
+    }
+
+    fun setModel(id: Int) {
+        loader.cleanUp()
+        val model = datLoader.load(id, loader)
+        entity = Entity(model, Vector3f(0f, -20f, -50f), 180.0, 0.0, 0.0, 0.05f)
     }
 }

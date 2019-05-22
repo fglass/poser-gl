@@ -1,9 +1,9 @@
 package entity
 
-import model.Model
+import model.RawModel
 import org.joml.Vector3f
 
-class Entity(val model: Model, val position: Vector3f, var rx: Double, var ry: Double, var rz: Double,
+class Entity(val rawModel: RawModel, val position: Vector3f, var rx: Double, var ry: Double, var rz: Double,
              val scale: Float) {
 
     fun increasePosition(dx: Float, dy: Float, dz: Float) {

@@ -24,7 +24,7 @@ class Renderer(shader: StaticShader) {
     }
 
     fun render(entity: Entity, shader: StaticShader) {
-        val model = entity.model
+        val model = entity.rawModel
         GL30.glBindVertexArray(model.vaoId)
         GL20.glEnableVertexAttribArray(0)
 
