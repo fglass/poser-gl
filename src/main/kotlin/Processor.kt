@@ -82,7 +82,8 @@ class Processor {
         val shader = StaticShader()
         val glRenderer = Renderer(shader)
 
-        val model = DatLoader().load("kraken", loader)
+        //val model = DatLoader().load("test", loader)
+        val model = DatLoader().load(9319, loader)
         val entity = Entity(model, Vector3f(0f, -20f, -50f), 180.0, 0.0, 0.0, 0.05f)
         val camera = Camera()
 

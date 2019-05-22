@@ -1,6 +1,12 @@
 package model
 
+import javassist.NotFoundException
+import net.openrs.cache.Cache
+import net.openrs.cache.FileStore
 import render.Loader
+import java.io.File
+
+const val CACHE_PATH = "/repository/cache/"
 
 class DatLoader {
 
@@ -27,9 +33,23 @@ class DatLoader {
     private lateinit var texFaceB: ShortArray
     private lateinit var texFaceC: ShortArray
 
-    fun load(filename: String, loader: Loader): Model {
-        val data = this::class.java.getResource("/$filename.dat").readBytes()
+    fun load(id: Int, loader: Loader): Model {
+        Cache(FileStore.open(File(this::class.java.getResource(CACHE_PATH).toURI()))).use { cache ->
+            val table = cache.getReferenceTable(7)
 
+            if (table.getEntry(id) == null) {
+                throw NotFoundException("Invalid entry")
+            }
+
+            val container = cache.read(7, id)
+            val bytes = ByteArray(container.data.limit())
+            container.data.get(bytes)
+            return parse(bytes, loader)
+        }
+    }
+
+    private fun parse(data: ByteArray, loader: Loader): Model {
+        //val data = this::class.java.getResource("/$filename.dat").readBytes()
         if (data[data.size - 1].toInt() == -1 && data[data.size - 2].toInt() == -1) {
             println("New model – can't load")
         } else {
