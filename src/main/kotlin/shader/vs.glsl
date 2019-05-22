@@ -10,6 +10,7 @@ uniform mat4 viewMatrix;
 
 void main(void) {
     gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(position.xyz, 1.0);
+    gl_PointSize = 5.0;
 
     int ahsl = position.w;
     int hsl = ahsl & 0xffff;

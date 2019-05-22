@@ -14,6 +14,7 @@ import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.lwjgl.glfw.GLFW
+import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.system.MemoryUtil
@@ -33,6 +34,7 @@ class Processor {
 
     private var running = true
     var wireframe = false
+    var vertices = false
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -81,9 +83,9 @@ class Processor {
         val loader = Loader()
         val shader = StaticShader()
         val glRenderer = Renderer(shader)
+        GL11.glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
-        //val model = DatLoader().load("test", loader)
-        val model = DatLoader().load(9319, loader)
+        val model = DatLoader().load(23889, loader)
         val entity = Entity(model, Vector3f(0f, -20f, -50f), 180.0, 0.0, 0.0, 0.05f)
         val camera = Camera()
 
@@ -103,8 +105,11 @@ class Processor {
 
             GL11.glEnable(GL11.GL_CULL_FACE)
             GL11.glCullFace(GL11.GL_BACK)
+
             if (wireframe) {
                 GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
+            } else if (vertices) {
+                GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_POINT)
             }
 
             // Render gl

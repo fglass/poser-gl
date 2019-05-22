@@ -6,7 +6,7 @@ import net.openrs.cache.FileStore
 import render.Loader
 import java.io.File
 
-const val CACHE_PATH = "/repository/cache/"
+const val CACHE_PATH = "./repository/cache/"
 
 class DatLoader {
 
@@ -34,7 +34,7 @@ class DatLoader {
     private lateinit var texFaceC: ShortArray
 
     fun load(id: Int, loader: Loader): Model {
-        Cache(FileStore.open(File(this::class.java.getResource(CACHE_PATH).toURI()))).use { cache ->
+        Cache(FileStore.open(File(CACHE_PATH))).use { cache ->
             val table = cache.getReferenceTable(7)
 
             if (table.getEntry(id) == null) {
