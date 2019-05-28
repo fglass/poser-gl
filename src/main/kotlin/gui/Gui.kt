@@ -9,23 +9,24 @@ import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.lwjgl.glfw.GLFW
+import org.liquidengine.legui.component.SelectBox
+
+
 
 class Gui(x: Float, y: Float, width: Float, height: Float, private val context: Processor): Panel(x, y, width, height) {
 
     private var loaded = 0
-    private var max = 0
-    private var list = ScrollablePanel(5f, 27f, 150f, size.y - 38)
+    private var list = ScrollablePanel(5f, 49f, getListSize().x, getListSize().y)
+    private val listY = 2f
+    private val listYOffset = 17
     private val buttons = mutableListOf<Button>()
-
-    fun resize(size: Vector2f) {
-        setSize(size)
-        list.setSize(150f, size.y - 38)
-    }
+    private val npcList = context.npcLoader.list
 
     fun createElements() {
         addToggles()
         addSearch()
-        addModelList()
+        addSelectBox()
+        addList()
     }
 
     private fun addToggles() {
@@ -62,20 +63,24 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         }
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                list.verticalScrollBar.curValue = 0f // Reset scroll
-                val range = (0..loaded).toList()
-                val filtered = range.filter { it.toString().startsWith(search.textState.text) }
+                val filtered = (0..loaded).toList().filter {
+                    val npc = npcList.list(it)
+                    npc.name.toLowerCase().contains(search.textState.text)
+                }
+
+                list.verticalScrollBar.curValue = 0f // Reset scroll position
+                list.container.setSize(142f, listY + filtered.size * listYOffset) // Adjust scroll size
 
                 for (i in 0 until loaded) {
                     val button = buttons[i]
                     when {
                         filtered.size >= loaded -> { // Reset as no matches
                             button.style.display = Style.DisplayType.FLEX
-                            button.textState.text = i.toString()
+                            button.textState.text = npcList.list(i).name
                         }
                         i < filtered.size -> { // Shift matches up
                             button.style.display = Style.DisplayType.FLEX
-                            button.textState.text = filtered[i].toString()
+                            button.textState.text =  npcList.list(filtered[i]).name
                         }
                         else -> button.style.display = Style.DisplayType.NONE // Hide filtered
                     }
@@ -85,25 +90,31 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         add(search)
     }
 
-    private fun addModelList() {
-        max = context.getMaxModels()
-        println("Loading models...")
+    private fun addSelectBox() {
+        val selectBox = SelectBox<String>(5f, 27f, 150f, 15f)
+        selectBox.addElement("NPCs")
+        selectBox.addElement("Animations")
+        add(selectBox)
+    }
+
+    private fun addList() {
+        val max = npcList.size()
+        println("Loading npcs...")
 
         val x = 2f
-        val y = 2f
-        val yOffset = 13
-        list.container.setSize(142f, y + max * yOffset)
+        list.container.setSize(142f, listY + max * listYOffset)
         list.remove(list.horizontalScrollBar)
 
         // Asynchronously add labels
         GlobalScope.launch {
             for (i in 0 until max) {
-                val button = Button(i.toString(), x, y + i * yOffset, 137f, 10f)
+                val npc = npcList.list(i)
+                val button = Button(npc.name, x, listY + i * listYOffset, 137f, 14f)
 
                 buttons.add(button)
                 button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                     if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
-                        context.setModel(button.textState.text.toInt()) // Use text state to aid with searching
+                        context.selectNpc(button.textState.text)
                     }
                 }
 
@@ -112,7 +123,16 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                 add(list)
                 loaded = i
             }
-            println("Loaded $max models")
+            println("Loaded $max npcs")
         }
+    }
+
+    private fun getListSize(): Vector2f {
+        return Vector2f(150f, size.y - 52)
+    }
+
+    fun resize(size: Vector2f) {
+        setSize(size)
+        list.size = getListSize()
     }
 }

@@ -30,7 +30,7 @@ class Renderer(shader: StaticShader) {
         GL20.glEnableVertexAttribArray(1)
 
         val transformationMatrix = Maths.createTransformationMatrix(
-            entity.position, entity.rx, entity.ry, entity.rz, entity.scale
+            entity.position, entity.rotation, entity.scale
         )
         shader.loadTransformationMatrix(transformationMatrix)
 

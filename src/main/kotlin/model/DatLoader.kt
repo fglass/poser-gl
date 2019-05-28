@@ -32,11 +32,11 @@ class DatLoader {
     private fun parse(model: Model, loader: Loader): RawModel {
         val positions = IntArray(model.faceCount * 12)
         val normals = FloatArray(model.faceCount * 9)
-        var index = 0
-        var nIndex = 0
         val vertexX = model.vertexX
         val vertexY = model.vertexY
         val vertexZ = model.vertexZ
+        var index = 0
+        var nIndex = 0
 
         for (i in 0 until model.faceCount) {
             // 16-bit value in HSB format. First 6 bits hue, next 3 bits saturation, last 7 bits brightness

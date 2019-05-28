@@ -3,7 +3,7 @@ package entity
 import model.RawModel
 import org.joml.Vector3f
 
-class Entity(val rawModel: RawModel, val position: Vector3f, var rx: Double, var ry: Double, var rz: Double,
+class Entity(val rawModel: RawModel, val position: Vector3f, val rotation: Vector3f,
              val scale: Float) {
 
     fun increasePosition(dx: Float, dy: Float, dz: Float) {
@@ -13,8 +13,8 @@ class Entity(val rawModel: RawModel, val position: Vector3f, var rx: Double, var
     }
 
     fun increaseRotation(dx: Float, dy: Float, dz: Float) {
-        rx += dx
-        ry += dy
-        rz += dz
+        rotation.x += dx
+        rotation.y += dy
+        rotation.z += dz
     }
 }

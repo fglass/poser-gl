@@ -1,5 +1,7 @@
 package entity
 
+import ENTITY_POS
+import ENTITY_ROT
 import input.Mouse
 import org.joml.Vector3f
 
@@ -13,16 +15,16 @@ class Camera(private val mouse: Mouse) {
     private var distance = 50F
     private var angle = 0F
 
-    fun move(entity:Entity) {
+    fun move() {
         calculateZoom()
         calculatePitch()
         calculateRoll()
 
         val h = calculateHorizontalDistance()
         val v = calculateVerticalDistance()
-        calculatePosition(entity, h, v)
+        calculatePosition(h, v)
 
-        yaw = 180 - (entity.ry.toFloat() + angle)
+        yaw = 180 - (ENTITY_ROT.y + angle)
     }
 
     private fun calculateZoom() {
@@ -51,14 +53,14 @@ class Camera(private val mouse: Mouse) {
         return (distance * Math.sin(Math.toRadians(pitch.toDouble()))).toFloat()
     }
 
-    private fun calculatePosition(entity: Entity, h: Float, v: Float) {
-        val theta = entity.ry + angle
+    private fun calculatePosition(h: Float, v: Float) {
+        val theta = (ENTITY_ROT.y + angle).toDouble()
         val xOffset = (h * Math.sin(Math.toRadians(theta))).toFloat()
         val zOffset = (h * Math.cos(Math.toRadians(theta))).toFloat()
 
-        position.x = entity.position.x - xOffset
-        position.z = entity.position.z - zOffset
+        position.x = ENTITY_POS.x - xOffset
+        position.z = ENTITY_POS.z - zOffset
 
-        position.y = entity.position.y + v
+        position.y = ENTITY_POS.y + v
     }
 }

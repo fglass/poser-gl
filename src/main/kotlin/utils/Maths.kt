@@ -8,13 +8,13 @@ class Maths {
 
     companion object {
 
-        fun createTransformationMatrix(translation: Vector3f, rx: Double, ry: Double, rz: Double, scale: Float): Matrix4f {
+        fun createTransformationMatrix(translation: Vector3f, rotation: Vector3f, scale: Float): Matrix4f {
             val matrix = Matrix4f()
             matrix.identity()
             matrix.translate(translation)
-            matrix.rotate(Math.toRadians(rx).toFloat(), 1.0f, 0.0f, 0.0f)
-            matrix.rotate(Math.toRadians(ry).toFloat(), 0.0f, 1.0f, 0.0f)
-            matrix.rotate(Math.toRadians(rz).toFloat(), 0.0f, 0.0f, 1.0f)
+            matrix.rotate(Math.toRadians(rotation.x.toDouble()).toFloat(), 1.0f, 0.0f, 0.0f)
+            matrix.rotate(Math.toRadians(rotation.y.toDouble()).toFloat(), 0.0f, 1.0f, 0.0f)
+            matrix.rotate(Math.toRadians(rotation.z.toDouble()).toFloat(), 0.0f, 0.0f, 1.0f)
             matrix.scale(scale)
             return matrix
         }

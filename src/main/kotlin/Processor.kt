@@ -3,7 +3,8 @@ import entity.Entity
 import entity.Light
 import gui.Gui
 import input.Mouse
-import model.DatLoader
+import model.NpcLoader
+import model.RawModel
 import net.openrs.cache.Cache
 import net.openrs.cache.FileStore
 import org.joml.Vector3f
@@ -35,6 +36,8 @@ const val HEIGHT = 503
 const val BG_COLOUR = 33/255f
 const val CACHE_PATH = "./repository/cache/"
 val CLIP_REGION = Rectangle(312, 0, 100, 52)
+val ENTITY_POS = Vector3f(0f, -20f, -50f)
+val ENTITY_ROT = Vector3f(0f, 0f, 180f)
 
 fun main() {
     Processor().run()
@@ -47,9 +50,9 @@ class Processor {
     var vertices = false
     var wireframe = false
 
-    private val datLoader = DatLoader()
+    val npcLoader = NpcLoader()
     private val loader = Loader()
-    private var entity: Entity? = null
+    private val entities = ArrayList<Entity>()
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -139,13 +142,15 @@ class Processor {
             }
 
             // Render gl
-            if (entity != null) {
-                camera.move(entity!!)
+            if (entities.isNotEmpty()) {
+                camera.move()
                 shader.start()
                 shader.loadLight(light)
                 shader.loadShadingToggle(shading)
                 shader.loadViewMatrix(camera)
-                glRenderer.render(entity!!, shader)
+                for (entity in entities) {
+                    glRenderer.render(entity, shader)
+                }
                 shader.stop()
             }
 
@@ -175,16 +180,20 @@ class Processor {
         GLFW.glfwTerminate()
     }
 
+    fun addModel(model: RawModel) {
+        entities.add(Entity(model, ENTITY_POS, ENTITY_ROT, 0.05f))
+    }
+
+    fun selectNpc(name: String) {
+        entities.clear()
+        loader.cleanUp()
+        npcLoader.load(name, loader, this)
+    }
+
     fun getMaxModels(): Int {
         Cache(FileStore.open(File(CACHE_PATH))).use {
             val table = it.getReferenceTable(7)
             return table.capacity()
         }
-    }
-
-    fun setModel(id: Int) {
-        loader.cleanUp()
-        val model = datLoader.load(id, loader)
-        entity = Entity(model, Vector3f(0f, -20f, -50f), 0.0, 0.0, 180.0, 0.05f)
     }
 }
