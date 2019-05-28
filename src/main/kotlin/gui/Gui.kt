@@ -3,6 +3,7 @@ package gui
 import Processor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
@@ -13,7 +14,13 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
 
     private var loaded = 0
     private var max = 0
+    private var list = ScrollablePanel(5f, 27f, 150f, size.y - 38)
     private val buttons = mutableListOf<Button>()
+
+    fun resize(size: Vector2f) {
+        setSize(size)
+        list.setSize(150f, size.y - 38)
+    }
 
     fun createElements() {
         addToggles()
@@ -55,6 +62,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         }
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
+                list.verticalScrollBar.curValue = 0f // Reset scroll
                 val range = (0..loaded).toList()
                 val filtered = range.filter { it.toString().startsWith(search.textState.text) }
 
@@ -78,8 +86,6 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     }
 
     private fun addModelList() {
-        val list = ScrollablePanel(5f, 27f, 150f, 465f)
-
         max = context.getMaxModels()
         println("Loading models...")
 
@@ -87,6 +93,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         val y = 2f
         val yOffset = 13
         list.container.setSize(142f, y + max * yOffset)
+        list.remove(list.horizontalScrollBar)
 
         // Asynchronously add labels
         GlobalScope.launch {

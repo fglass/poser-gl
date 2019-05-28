@@ -88,10 +88,10 @@ void main(void) {
 
     // Need?
     if (rgb == vec3(0, 0, 0)) {
-        rgb = vec3(0, 0, 1 / 255.f);
+        rgb = vec3(0, 0, 1 / 255.0f);
     }
 
-    faceColour = vec4(rgb, 1.f - a);
+    faceColour = vec4(rgb, 1.0f - a);
     faceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
     toLightVector = lightPosition - worldPosition.xyz;
 }
