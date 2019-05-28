@@ -7,15 +7,20 @@ import org.joml.Vector3f
 
 class Camera(private val mouse: Mouse) {
 
-    val position = Vector3f(0F, 0F, 0F)
-    var pitch = 20F
-    var yaw = 0F
-    var roll = 0F
+    val position = Vector3f(0f, 0f, 0f)
+    var pitch = 20f
+    var yaw = 0f
+    var roll = 0f
 
-    private var distance = 50F
-    private var angle = 0F
+    private val clipX = 155
+    private var distance = 50f
+    private var angle = 0f
 
     fun move() {
+        if (mouse.position.x <= clipX) {
+            return
+        }
+
         calculateZoom()
         calculatePitch()
         calculateRoll()
@@ -28,20 +33,20 @@ class Camera(private val mouse: Mouse) {
     }
 
     private fun calculateZoom() {
-        val zoomLevel = mouse.dWheel * 0.1F
-        distance = Math.max(distance - zoomLevel, 20F)
-        distance = Math.min(distance, 200F)
+        val zoomLevel = mouse.dWheel * 0.1f
+        distance = Math.max(distance - zoomLevel, 20f)
+        distance = Math.min(distance, 200f)
     }
 
     private fun calculatePitch() {
         if (mouse.pressed) {
-            pitch -= mouse.getDY() * 0.1F
+            pitch -= mouse.getDY() * 0.1f
         }
     }
 
     private fun calculateRoll() {
         if (mouse.pressed) {
-            roll -= mouse.getDX() * 0.1F
+            roll -= mouse.getDX() * 0.1f
         }
     }
 

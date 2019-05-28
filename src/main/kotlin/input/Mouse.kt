@@ -7,7 +7,7 @@ class Mouse {
 
     var pressed = false
     private var previousPosition = Vector2f(0f, 0f)
-    private var newPosition = Vector2f(0f, 0f)
+    var position = Vector2f(0f, 0f)
     private var previousDWheel = 0f
     var dWheel = 0f
 
@@ -22,8 +22,8 @@ class Mouse {
     }
 
     fun handlePosition(x: Double, y: Double) {
-        previousPosition = newPosition
-        newPosition = Vector2f(x.toFloat(), y.toFloat())
+        previousPosition = position
+        position = Vector2f(x.toFloat(), y.toFloat())
         dWheel = 0f // Prevent infinite scrolling
     }
 
@@ -37,10 +37,10 @@ class Mouse {
     }
 
     fun getDX(): Float {
-        return newPosition.x - previousPosition.x
+        return position.x - previousPosition.x
     }
 
     fun getDY(): Float {
-        return newPosition.y - previousPosition.y
+        return position.y - previousPosition.y
     }
 }
