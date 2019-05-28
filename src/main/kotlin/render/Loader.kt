@@ -14,9 +14,10 @@ class Loader {
     private val vaos = ArrayList<Int>()
     private val vbos = ArrayList<Int>()
 
-    fun loadToVao(positions: IntArray): RawModel {
+    fun loadToVao(positions: IntArray, normals: FloatArray): RawModel {
         val vaoId = createVao()
         storeIntData(0, 4, positions)
+        storeFloatData(1, 3, normals)
         unbindVao()
         return RawModel(vaoId, positions.size / 4)
     }

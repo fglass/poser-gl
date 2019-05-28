@@ -1,15 +1,20 @@
 #version 400 core
 
 layout (location = 0) in ivec4 position;
+layout (location = 1) in vec3 normal;
 
-out vec4 colour;
+out vec4 faceColour;
+out vec3 faceNormal;
+out vec3 toLightVector;
 
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
+uniform vec3 lightPosition;
 
 void main(void) {
-    gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(position.xyz, 1.0);
+    vec4 worldPosition = transformationMatrix * vec4(position.xyz, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
     gl_PointSize = 3.0f;
 
     int ahsl = position.w;
@@ -86,5 +91,7 @@ void main(void) {
         rgb = vec3(0, 0, 1 / 255.f);
     }
 
-    colour = vec4(rgb, 1.f - a);
+    faceColour = vec4(rgb, 1.f - a);
+    faceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
+    toLightVector = lightPosition - worldPosition.xyz;
 }

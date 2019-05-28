@@ -9,10 +9,9 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.lwjgl.glfw.GLFW
 
-
 class Gui(x: Float, y: Float, width: Float, height: Float, private val context: Processor): Panel(x, y, width, height) {
 
-    private var loaded = false
+    private var loaded = 0
     private var max = 0
     private val buttons = mutableListOf<Button>()
 
@@ -23,9 +22,14 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     }
 
     private fun addToggles() {
-        val verticesToggle = CheckBox("Vertices", 160f, 0f, 60f, 24f)
-        val wireframeToggle = CheckBox("Wireframe", 220f, 0f, 80f, 24f)
+        val shadingToggle = CheckBox("Shading", 160f, 0f, 60f, 24f)
+        val verticesToggle = CheckBox("Vertices", 220f, 0f, 60f, 24f)
+        val wireframeToggle = CheckBox("Wireframe", 280f, 0f, 80f, 24f)
 
+        shadingToggle.isChecked = true
+        shadingToggle.listenerMap.addListener(MouseClickEvent::class.java) {
+            context.shading = !context.shading
+        }
         verticesToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.vertices = !context.vertices
             wireframeToggle.isChecked = false
@@ -37,21 +41,27 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
             context.vertices = false
         }
 
+        add(shadingToggle)
         add(verticesToggle)
         add(wireframeToggle)
     }
 
     private fun addSearch() {
         val search = TextInput("Search", 5f, 5f, 150f, 15f)
+        search.listenerMap.addListener(MouseClickEvent::class.java) {
+            if (search.textState.text == "Search") {
+                search.textState.text = ""
+            }
+        }
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
-            if (event.action == GLFW.GLFW_RELEASE && loaded) {
-                val range = (0..max).toList()
+            if (event.action == GLFW.GLFW_RELEASE) {
+                val range = (0..loaded).toList()
                 val filtered = range.filter { it.toString().startsWith(search.textState.text) }
 
-                for (i in 0 until max) {
+                for (i in 0 until loaded) {
                     val button = buttons[i]
                     when {
-                        filtered.size == max -> { // Reset as no matches
+                        filtered.size >= loaded -> { // Reset as no matches
                             button.style.display = Style.DisplayType.FLEX
                             button.textState.text = i.toString()
                         }
@@ -93,8 +103,8 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                 list.container.add(button)
                 remove(list)
                 add(list)
+                loaded = i
             }
-            loaded = true
             println("Loaded $max models")
         }
     }

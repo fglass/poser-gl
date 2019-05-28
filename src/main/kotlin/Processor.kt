@@ -1,11 +1,11 @@
 import entity.Camera
 import entity.Entity
+import entity.Light
 import gui.Gui
 import input.Mouse
 import model.DatLoader
 import net.openrs.cache.Cache
 import net.openrs.cache.FileStore
-import org.joml.Rectanglef
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -20,10 +20,7 @@ import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL30.GL_FRAMEBUFFER
-import org.lwjgl.opengl.GL30.glBindFramebuffer
 import org.lwjgl.system.MemoryUtil
 import render.Loader
 import render.Renderer
@@ -44,6 +41,7 @@ fun main() {
 class Processor {
 
     private var running = true
+    var shading = true
     var vertices = false
     var wireframe = false
 
@@ -106,6 +104,7 @@ class Processor {
 
         val shader = StaticShader()
         val camera = Camera(mouse)
+        val light = Light(Vector3f(0f, -20f, -100F), Vector3f(1F, 1F, 1F))
         val glRenderer = Renderer(shader)
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
@@ -117,14 +116,13 @@ class Processor {
             glClearColor(1f, 0f, 0f, 1f)
             glViewport(0, 0, windowSize.x, windowSize.y)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
-
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
             // Render frame
             try {
                 renderer.render(frame, context)
             } catch (ignore: NullPointerException) {
-                println("Error: ${ignore.message}")
+                println("Render error: ${ignore.message}")
             }
 
             glViewport(
@@ -143,6 +141,8 @@ class Processor {
             if (entity != null) {
                 camera.move(entity!!)
                 shader.start()
+                shader.loadLight(light)
+                shader.loadShadingToggle(shading)
                 shader.loadViewMatrix(camera)
                 glRenderer.render(entity!!, shader)
                 shader.stop()
@@ -160,7 +160,7 @@ class Processor {
             try {
                 LayoutManager.getInstance().layout(frame)
             } catch (ignore: NullPointerException) {
-                println("Error: ${ignore.message}")
+                println("Layout error: ${ignore.message}")
             }
 
             // Run animations

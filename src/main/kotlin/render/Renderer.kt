@@ -27,6 +27,7 @@ class Renderer(shader: StaticShader) {
         val model = entity.rawModel
         GL30.glBindVertexArray(model.vaoId)
         GL20.glEnableVertexAttribArray(0)
+        GL20.glEnableVertexAttribArray(1)
 
         val transformationMatrix = Maths.createTransformationMatrix(
             entity.position, entity.rx, entity.ry, entity.rz, entity.scale
@@ -35,6 +36,7 @@ class Renderer(shader: StaticShader) {
 
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.vertexCount)
         GL20.glDisableVertexAttribArray(0)
+        GL20.glDisableVertexAttribArray(1)
         GL30.glBindVertexArray(0)
     }
 
