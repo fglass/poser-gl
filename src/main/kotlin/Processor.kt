@@ -5,8 +5,6 @@ import gui.Gui
 import input.Mouse
 import model.NpcLoader
 import model.RawModel
-import net.openrs.cache.Cache
-import net.openrs.cache.FileStore
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -27,8 +25,8 @@ import org.lwjgl.system.MemoryUtil
 import render.Loader
 import render.Renderer
 import shader.StaticShader
+import shader.ShadingType
 import java.awt.Rectangle
-import java.io.File
 
 const val TITLE = "PoserGL"
 const val WIDTH = 762
@@ -46,13 +44,14 @@ fun main() {
 class Processor {
 
     private var running = true
-    var shading = true
+    var shading = ShadingType.SMOOTH
     var vertices = false
     var wireframe = false
 
     val npcLoader = NpcLoader()
-    private val loader = Loader()
-    private val entities = ArrayList<Entity>()
+    val loader = Loader()
+    val entities = ArrayList<Entity>()
+    var currentNpc = "null"
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -112,6 +111,7 @@ class Processor {
         val glRenderer = Renderer(shader)
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
+
         // Render loop
         while (running) {
             context.updateGlfwWindow()
@@ -141,18 +141,16 @@ class Processor {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             }
 
-            // Render gl
-            if (entities.isNotEmpty()) {
-                camera.move()
-                shader.start()
-                shader.loadLight(light)
-                shader.loadShadingToggle(shading)
-                shader.loadViewMatrix(camera)
-                for (entity in entities) {
-                    glRenderer.render(entity, shader)
-                }
-                shader.stop()
+            // Render entities
+            camera.move()
+            shader.start()
+            shader.loadLight(light)
+            shader.loadShadingToggle(shading != ShadingType.NONE)
+            shader.loadViewMatrix(camera)
+            for (entity in entities) {
+                glRenderer.render(entity, shader)
             }
+            shader.stop()
 
             // Poll events to callbacks
             GLFW.glfwPollEvents()
@@ -188,12 +186,6 @@ class Processor {
         entities.clear()
         loader.cleanUp()
         npcLoader.load(name, loader, this)
-    }
-
-    fun getMaxModels(): Int {
-        Cache(FileStore.open(File(CACHE_PATH))).use {
-            val table = it.getReferenceTable(7)
-            return table.capacity()
-        }
+        currentNpc = name
     }
 }

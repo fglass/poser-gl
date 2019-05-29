@@ -3,15 +3,14 @@ package gui
 import Processor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import model.AnimationLoader
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.lwjgl.glfw.GLFW
-import org.liquidengine.legui.component.SelectBox
-
-
+import shader.ShadingType
 
 class Gui(x: Float, y: Float, width: Float, height: Float, private val context: Processor): Panel(x, y, width, height) {
 
@@ -20,24 +19,24 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     private val listY = 2f
     private val listYOffset = 17
     private val buttons = mutableListOf<Button>()
-    private val npcList = context.npcLoader.list
+    private val npcManager = context.npcLoader.manager
 
     fun createElements() {
         addToggles()
+        addAnimationPane()
         addSearch()
         addSelectBox()
         addList()
     }
 
     private fun addToggles() {
-        val shadingToggle = CheckBox("Shading", 160f, 0f, 60f, 24f)
-        val verticesToggle = CheckBox("Vertices", 220f, 0f, 60f, 24f)
-        val wireframeToggle = CheckBox("Wireframe", 280f, 0f, 80f, 24f)
+        val verticesToggle = CheckBox("Vertices", 160f, 0f, 60f, 24f)
+        val wireframeToggle = CheckBox("Wireframe", 220f, 0f, 75f, 24f)
+        val shadingBox = SelectBox<String>(297f, 5f, 75f, 15f)
+        shadingBox.addElement("Smooth")
+        shadingBox.addElement("Flat")
+        shadingBox.addElement("None")
 
-        shadingToggle.isChecked = true
-        shadingToggle.listenerMap.addListener(MouseClickEvent::class.java) {
-            context.shading = !context.shading
-        }
         verticesToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.vertices = !context.vertices
             wireframeToggle.isChecked = false
@@ -48,10 +47,33 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
             verticesToggle.isChecked = false
             context.vertices = false
         }
+        shadingBox.addSelectBoxChangeSelectionEventListener { event ->
+            when (event.newValue.toString()) {
+                "Smooth" -> {
+                    context.shading = ShadingType.SMOOTH
+                    context.selectNpc(context.currentNpc) // Reload npc
+                }
+                "Flat" -> {
+                    context.shading = ShadingType.FLAT
+                    context.selectNpc(context.currentNpc)
+                }
+                "None" -> context.shading = ShadingType.NONE
+            }
+        }
 
-        add(shadingToggle)
         add(verticesToggle)
         add(wireframeToggle)
+        add(shadingBox)
+    }
+
+    private fun addAnimationPane() {
+        val play = Button("Play", 710f, 5f, 40f, 24f)
+        play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
+                AnimationLoader().loadAnimation(1528, context.entities[0].rawModel.definition, context.loader)
+            }
+        }
+        add(play)
     }
 
     private fun addSearch() {
@@ -64,7 +86,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
                 val filtered = (0..loaded).toList().filter {
-                    val npc = npcList.list(it)
+                    val npc = npcManager.get(it)
                     npc.name.toLowerCase().contains(search.textState.text)
                 }
 
@@ -76,11 +98,11 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                     when {
                         filtered.size >= loaded -> { // Reset as no matches
                             button.style.display = Style.DisplayType.FLEX
-                            button.textState.text = npcList.list(i).name
+                            button.textState.text = npcManager.get(i).name
                         }
                         i < filtered.size -> { // Shift matches up
                             button.style.display = Style.DisplayType.FLEX
-                            button.textState.text =  npcList.list(filtered[i]).name
+                            button.textState.text =  npcManager.get(filtered[i]).name
                         }
                         else -> button.style.display = Style.DisplayType.NONE // Hide filtered
                     }
@@ -98,7 +120,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     }
 
     private fun addList() {
-        val max = npcList.size()
+        val max = npcManager.npcs.size
         println("Loading npcs...")
 
         val x = 2f
@@ -108,7 +130,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         // Asynchronously add labels
         GlobalScope.launch {
             for (i in 0 until max) {
-                val npc = npcList.list(i)
+                val npc = npcManager.get(i)
                 val button = Button(npc.name, x, listY + i * listYOffset, 137f, 14f)
 
                 buttons.add(button)

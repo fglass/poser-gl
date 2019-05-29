@@ -6,8 +6,8 @@ import org.lwjgl.glfw.GLFW.*
 class Mouse {
 
     var pressed = false
-    private var previousPosition = Vector2f(0f, 0f)
     var position = Vector2f(0f, 0f)
+    private var previousPosition = Vector2f(0f, 0f)
     private var previousDWheel = 0f
     var dWheel = 0f
 

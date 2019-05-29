@@ -1,7 +1,7 @@
 #version 400 core
 
 in vec4 faceColour;
-in vec3 faceNormal;
+in vec3 vertexNormal;
 in vec3 toLightVector;
 
 out vec4 outColour;
@@ -11,7 +11,7 @@ uniform float useShading;
 
 void main() {
     if (useShading == 1.0) {
-        vec3 unitNormal = normalize(faceNormal);
+        vec3 unitNormal = normalize(vertexNormal);
         vec3 unitLightVector = normalize(toLightVector);
 
         float product = dot(unitNormal, unitLightVector);

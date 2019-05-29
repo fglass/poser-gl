@@ -2,27 +2,28 @@ package model
 
 import CACHE_PATH
 import Processor
-import net.openrs.cache.Cache
-import net.openrs.cache.FileStore
-import net.openrs.cache.type.npcs.NpcType
-import net.openrs.cache.type.npcs.NpcTypeList
+import net.runelite.cache.NpcManager
+import net.runelite.cache.definitions.NpcDefinition
+import net.runelite.cache.fs.Store
 import render.Loader
+import shader.ShadingType
 import java.io.File
 import java.util.*
 
 class NpcLoader {
 
-    lateinit var list: NpcTypeList
-    private val dictionary = HashMap<String, NpcType>()
+    lateinit var manager: NpcManager
+    private val dictionary = HashMap<String, NpcDefinition>()
     private val datLoader = DatLoader()
 
     init {
-        Cache(FileStore.open(File(CACHE_PATH))).use { cache ->
-            list = NpcTypeList()
-            list.initialize(cache)
+        Store(File(CACHE_PATH)).use { store ->
+            store.load()
+            manager = NpcManager(store)
+            manager.load()
 
-            for (id in 0 until list.size()) {
-                dictionary[list.list(id).name] = list.list(id)
+            for (id in 0 until manager.npcs.size) {
+                dictionary[manager.get(id).name] = manager.get(id)
             }
         }
     }
@@ -31,7 +32,7 @@ class NpcLoader {
         val npc = dictionary[name]
         if (npc != null) {
             npc.models?.forEach {
-                val model = datLoader.load(it, loader)
+                val model = datLoader.load(it, context.shading == ShadingType.FLAT, loader)
                 context.addModel(model)
             }
         }

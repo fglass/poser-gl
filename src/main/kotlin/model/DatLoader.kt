@@ -1,64 +1,65 @@
 package model
 
 import CACHE_PATH
-import javassist.NotFoundException
-import net.openrs.cache.Cache
-import net.openrs.cache.FileStore
 import render.Loader
 import java.io.File
-import net.openrs.model.Model
+import net.runelite.cache.IndexType
+import net.runelite.cache.definitions.ModelDefinition
+import net.runelite.cache.definitions.loaders.ModelLoader
+import net.runelite.cache.fs.Store
 import org.joml.Vector3f
 
 class DatLoader {
 
-    fun load(id: Int, loader: Loader): RawModel {
-        Cache(FileStore.open(File(CACHE_PATH))).use {
-            val table = it.getReferenceTable(7)
+    fun load(id: Int, flatShading: Boolean, loader: Loader): RawModel {
+        Store(File(CACHE_PATH)).use { store ->
+            store.load()
+            val storage = store.storage
+            val index = store.getIndex(IndexType.MODELS)
 
-            if (table.getEntry(id) == null) {
-                throw NotFoundException("Invalid entry")
-            }
+            val archive = index.getArchive(id)
+            val contents = archive.decompress(storage.loadArchive(archive))
 
-            val container = it.read(7, id)
-            val buffer = container.data
+            val modelLoader = ModelLoader()
+            val def = modelLoader.load(archive.archiveId, contents)
 
-            val model = Model(id)
-            model.decode(buffer)
-
-            return parse(model, loader)
+            return parse(def, flatShading, loader)
         }
     }
 
-    private fun parse(model: Model, loader: Loader): RawModel {
-        val positions = IntArray(model.faceCount * 12)
-        val normals = FloatArray(model.faceCount * 9)
-        val vertexX = model.vertexX
-        val vertexY = model.vertexY
-        val vertexZ = model.vertexZ
+    fun parse(def: ModelDefinition, flatShading: Boolean, loader: Loader): RawModel {
+        val positions = IntArray(def.faceCount * 12)
+        val normals = IntArray(def.faceCount * 9)
+        val vertexX = def.vertexPositionsX
+        val vertexY = def.vertexPositionsY
+        val vertexZ = def.vertexPositionsZ
         var index = 0
         var nIndex = 0
 
-        for (i in 0 until model.faceCount) {
+        for (i in 0 until def.faceCount) {
             // 16-bit value in HSB format. First 6 bits hue, next 3 bits saturation, last 7 bits brightness
-            val faceColour = model.faceColor[i].toInt()
-            val points = intArrayOf(model.triangleX[i], model.triangleY[i], model.triangleZ[i])
+            val faceColour = def.faceColors[i].toInt()
+            val points = intArrayOf(def.faceVertexIndices1[i], def.faceVertexIndices2[i], def.faceVertexIndices3[i])
 
             for (point in points) {
-                positions[index++] = vertexX[point]
-                positions[index++] = vertexY[point]
-                positions[index++] = vertexZ[point]
-                positions[index++] = faceColour
+                setVertex(positions, index, vertexX[point], vertexY[point], vertexZ[point], faceColour)
 
-                val normal = calculateNormal(points, vertexX, vertexY, vertexZ)
-                normals[nIndex++] = normal.x
-                normals[nIndex++] = normal.y
-                normals[nIndex++] = normal.z
+                if (flatShading) {
+                    val normal = getFaceNormal(points, vertexX, vertexY, vertexZ)
+                    setNormal(normals, nIndex, normal.x.toInt(), normal.y.toInt(), normal.z.toInt())
+                } else {
+                    val normal = def.vertexNormals[point]
+                    setNormal(normals, nIndex, normal.x, normal.y, normal.z)
+                }
+
+                index += 4
+                nIndex += 3
             }
         }
-        return loader.loadToVao(positions, normals)
+        return loader.loadToVao(positions, normals, def)
     }
 
-    private fun calculateNormal(points: IntArray, vertexX: IntArray, vertexY: IntArray, vertexZ: IntArray): Vector3f {
+    private fun getFaceNormal(points: IntArray, vertexX: IntArray, vertexY: IntArray, vertexZ: IntArray): Vector3f {
         val p1 = Vector3f(vertexX[points[0]].toFloat(), vertexY[points[0]].toFloat(), vertexZ[points[0]].toFloat())
         val p2 = Vector3f(vertexX[points[1]].toFloat(), vertexY[points[1]].toFloat(), vertexZ[points[1]].toFloat())
         val p3 = Vector3f(vertexX[points[2]].toFloat(), vertexY[points[2]].toFloat(), vertexZ[points[2]].toFloat())
@@ -66,7 +67,19 @@ class DatLoader {
         val u = p2.sub(p1)
         val v = p3.sub(p1)
 
-        val normal = u.cross(v)
-        return normal.normalize()
+        return u.cross(v) // Normalize in fragment shader
+    }
+
+    private fun setVertex(positions: IntArray, index: Int, x: Int, y: Int, z: Int, colour: Int) {
+        positions[index] = x
+        positions[index + 1] = y
+        positions[index + 2] = z
+        positions[index + 3] = colour
+    }
+
+    private fun setNormal(normals: IntArray, index: Int, x: Int, y: Int, z: Int) {
+        normals[index] = x
+        normals[index + 1] = y
+        normals[index + 2] = z
     }
 }

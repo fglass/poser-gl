@@ -1,10 +1,10 @@
 #version 400 core
 
 layout (location = 0) in ivec4 position;
-layout (location = 1) in vec3 normal;
+layout (location = 1) in ivec3 normal;
 
 out vec4 faceColour;
-out vec3 faceNormal;
+out vec3 vertexNormal;
 out vec3 toLightVector;
 
 uniform mat4 transformationMatrix;
@@ -92,6 +92,6 @@ void main(void) {
     }
 
     faceColour = vec4(rgb, 1.0f - a);
-    faceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
+    vertexNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
     toLightVector = lightPosition - worldPosition.xyz;
 }
