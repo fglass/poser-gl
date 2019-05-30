@@ -60,7 +60,6 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                 "None" -> context.shading = ShadingType.NONE
             }
         }
-
         add(verticesToggle)
         add(wireframeToggle)
         add(shadingBox)
@@ -87,13 +86,13 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
             if (event.action == GLFW.GLFW_RELEASE) {
                 val filtered = (0..loaded).toList().filter {
                     val npc = npcManager.get(it)
-                    npc.name.toLowerCase().contains(search.textState.text)
+                    npc.name != "null" && npc.name.toLowerCase().contains(search.textState.text)
                 }
 
                 list.verticalScrollBar.curValue = 0f // Reset scroll position
                 list.container.setSize(142f, listY + filtered.size * listYOffset) // Adjust scroll size
 
-                for (i in 0 until loaded) {
+                for (i in 0 until buttons.size) {
                     val button = buttons[i]
                     when {
                         filtered.size >= loaded -> { // Reset as no matches
@@ -120,19 +119,19 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     }
 
     private fun addList() {
-        val max = npcManager.npcs.size
-        println("Loading npcs...")
-
-        val x = 2f
-        list.container.setSize(142f, listY + max * listYOffset)
         list.remove(list.horizontalScrollBar)
+        val x = 2f
+        var npcIndex = 0
 
-        // Asynchronously add labels
+        // Asynchronously add buttons
         GlobalScope.launch {
-            for (i in 0 until max) {
+            for (i in 0 until npcManager.npcs.size) {
                 val npc = npcManager.get(i)
-                val button = Button(npc.name, x, listY + i * listYOffset, 137f, 14f)
+                if (npc == null || npc.name == "null") {
+                    continue
+                }
 
+                val button = Button(npc.name, x, listY + npcIndex++ * listYOffset, 137f, 14f)
                 buttons.add(button)
                 button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                     if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
@@ -141,11 +140,12 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                 }
 
                 list.container.add(button)
+                list.container.setSize(142f, listY + npcIndex * listYOffset)
                 remove(list)
                 add(list)
                 loaded = i
             }
-            println("Loaded $max npcs")
+            println("Loaded $npcIndex npcs")
         }
     }
 

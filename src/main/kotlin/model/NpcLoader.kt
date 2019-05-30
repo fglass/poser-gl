@@ -23,7 +23,10 @@ class NpcLoader {
             manager.load()
 
             for (id in 0 until manager.npcs.size) {
-                dictionary[manager.get(id).name] = manager.get(id)
+                val npc = manager.get(id)
+                if (npc != null) {
+                    dictionary[npc.name] = npc
+                }
             }
         }
     }

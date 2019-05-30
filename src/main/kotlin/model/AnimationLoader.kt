@@ -52,7 +52,7 @@ class AnimationLoader {
         }
     }
 
-    fun loadAnimation(id: Int, model: ModelDefinition, loader: Loader) {
+    fun loadAnimation(id: Int, def: ModelDefinition, loader: Loader) {
         Store(File(CACHE_PATH)).use { store ->
             store.load()
 
@@ -84,18 +84,18 @@ class AnimationLoader {
 
                         for (j in 0 until skins.size) {
                             val skin = skins[j]
-                            /*val vertexGroup = model.anIntArrayArray1759[skin]
+                            val vertexGroup = def.vertexGroups[skin]
 
                             for (z in 0 until vertexGroup.size) {
                                 val vIndex = vertexGroup[z]
-                                model.vertexX[vIndex] += tX
-                                model.vertexY[vIndex] += tY
-                                model.vertexZ[vIndex] += tZ
-                            }*/
+                                def.vertexPositionsX[vIndex] += tX
+                                def.vertexPositionsY[vIndex] += tY
+                                def.vertexPositionsZ[vIndex] += tZ
+                            }
                         }
                     }
                 }
-                DatLoader().parse(model, false, loader)
+                DatLoader().parse(def, false, loader)
             }
         }
     }
