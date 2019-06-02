@@ -33,7 +33,7 @@ class DatLoader {
         val vertexX = def.vertexPositionsX
         val vertexY = def.vertexPositionsY
         val vertexZ = def.vertexPositionsZ
-        var index = 0
+        var vIndex = 0
         var nIndex = 0
 
         for (i in 0 until def.faceCount) {
@@ -42,7 +42,7 @@ class DatLoader {
             val points = intArrayOf(def.faceVertexIndices1[i], def.faceVertexIndices2[i], def.faceVertexIndices3[i])
 
             for (point in points) {
-                setVertex(positions, index, vertexX[point], vertexY[point], vertexZ[point], faceColour)
+                setVertex(positions, vIndex, vertexX[point], vertexY[point], vertexZ[point], faceColour)
 
                 if (flatShading) {
                     val normal = getFaceNormal(points, vertexX, vertexY, vertexZ)
@@ -52,7 +52,7 @@ class DatLoader {
                     setNormal(normals, nIndex, normal.x, normal.y, normal.z)
                 }
 
-                index += 4
+                vIndex += 4
                 nIndex += 3
             }
         }

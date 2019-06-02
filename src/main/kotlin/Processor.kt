@@ -1,6 +1,5 @@
 import entity.Camera
 import entity.Entity
-import entity.Light
 import gui.Gui
 import input.Mouse
 import model.NpcLoader
@@ -26,6 +25,7 @@ import render.Loader
 import render.Renderer
 import shader.StaticShader
 import shader.ShadingType
+import utils.VSyncTimer
 import java.awt.Rectangle
 
 const val TITLE = "PoserGL"
@@ -44,14 +44,13 @@ fun main() {
 class Processor {
 
     private var running = true
-    var shading = ShadingType.SMOOTH
     var vertices = false
     var wireframe = false
+    var shading = ShadingType.SMOOTH
 
     val npcLoader = NpcLoader()
     val loader = Loader()
     val entities = ArrayList<Entity>()
-    var currentNpc = "null"
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -71,7 +70,6 @@ class Processor {
 
         GLFW.glfwMakeContextCurrent(window)
         GL.createCapabilities()
-        GLFW.glfwSwapInterval(1) // Enable vsync
 
         val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
         Themes.setDefaultTheme(Themes.FLAT_DARK)
@@ -102,12 +100,12 @@ class Processor {
         val systemEventProcessor = SystemEventProcessor()
         systemEventProcessor.addDefaultCallbacks(keeper)
 
-        val renderer = NvgRenderer()
-        renderer.initialize()
+        val guiRenderer = NvgRenderer()
+        guiRenderer.initialize()
 
+        val vsync = VSyncTimer()
         val shader = StaticShader()
         val camera = Camera(mouse)
-        val light = Light(Vector3f(0f, -20f, -100F), Vector3f(1F, 1F, 1F))
         val glRenderer = Renderer(shader)
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
@@ -122,9 +120,9 @@ class Processor {
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-            // Render frame
+            // Render gui
             try {
-                renderer.render(frame, context)
+                guiRenderer.render(frame, context)
             } catch (ignore: NullPointerException) {
                 println("Render error: ${ignore.message}")
             }
@@ -144,9 +142,8 @@ class Processor {
             // Render entities
             camera.move()
             shader.start()
-            shader.loadLight(light)
-            shader.loadShadingToggle(shading != ShadingType.NONE)
             shader.loadViewMatrix(camera)
+            shader.loadShadingToggle(shading != ShadingType.NONE)
             for (entity in entities) {
                 glRenderer.render(entity, shader)
             }
@@ -169,11 +166,14 @@ class Processor {
 
             // Run animations
             AnimatorProvider.getAnimator().runAnimations()
+
+            // Control fps
+            vsync.waitIfNecessary()
         }
 
         shader.cleanUp()
         loader.cleanUp()
-        renderer.destroy()
+        guiRenderer.destroy()
         GLFW.glfwDestroyWindow(window)
         GLFW.glfwTerminate()
     }
@@ -186,6 +186,9 @@ class Processor {
         entities.clear()
         loader.cleanUp()
         npcLoader.load(name, loader, this)
-        currentNpc = name
+    }
+
+    fun reloadNpc() {
+        selectNpc(npcLoader.current)
     }
 }

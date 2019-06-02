@@ -12,6 +12,7 @@ import java.util.*
 
 class NpcLoader {
 
+    var current = ""
     lateinit var manager: NpcManager
     private val dictionary = HashMap<String, NpcDefinition>()
     private val datLoader = DatLoader()
@@ -32,6 +33,7 @@ class NpcLoader {
     }
 
     fun load(name: String, loader: Loader, context: Processor) {
+        current = name
         val npc = dictionary[name]
         if (npc != null) {
             npc.models?.forEach {

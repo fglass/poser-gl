@@ -1,7 +1,11 @@
 package render
 
+import HEIGHT
+import WIDTH
 import entity.Entity
+import entity.Light
 import org.joml.Matrix4f
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
@@ -14,13 +18,27 @@ const val FAR_PLANE = 1000F
 
 class Renderer(shader: StaticShader) {
 
-    private lateinit var projectionMatrix: Matrix4f
-
     init {
-        createProjectionMatrix()
         shader.start()
-        shader.loadProjectionMatrix(projectionMatrix)
+        shader.loadLight(Light(Vector3f(0f, -20f, -100F), Vector3f(1F, 1F, 1F)))
+        shader.loadProjectionMatrix(createProjectionMatrix())
         shader.stop()
+    }
+
+    private fun createProjectionMatrix(): Matrix4f {
+        val aspectRatio = WIDTH / HEIGHT.toFloat()
+        val yScale = ((1f / Math.tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
+        val xScale = yScale / aspectRatio
+        val frustumLength = FAR_PLANE - NEAR_PLANE
+
+        val projectionMatrix = Matrix4f()
+        projectionMatrix.m00(xScale)
+        projectionMatrix.m11(yScale)
+        projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustumLength))
+        projectionMatrix.m23(-1f)
+        projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustumLength))
+        projectionMatrix.m33(0f)
+        return projectionMatrix
     }
 
     fun render(entity: Entity, shader: StaticShader) {
@@ -38,20 +56,5 @@ class Renderer(shader: StaticShader) {
         GL20.glDisableVertexAttribArray(0)
         GL20.glDisableVertexAttribArray(1)
         GL30.glBindVertexArray(0)
-    }
-
-    private fun createProjectionMatrix() {
-        val aspectRatio = 762f / 503f // TODO
-        val yScale = ((1f / Math.tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
-        val xScale = yScale / aspectRatio
-        val frustumLength = FAR_PLANE - NEAR_PLANE
-
-        projectionMatrix = Matrix4f()
-        projectionMatrix.m00(xScale)
-        projectionMatrix.m11(yScale)
-        projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustumLength))
-        projectionMatrix.m23(-1f)
-        projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustumLength))
-        projectionMatrix.m33(0f)
     }
 }

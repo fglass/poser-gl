@@ -51,11 +51,11 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
             when (event.newValue.toString()) {
                 "Smooth" -> {
                     context.shading = ShadingType.SMOOTH
-                    context.selectNpc(context.currentNpc) // Reload npc
+                    context.reloadNpc()
                 }
                 "Flat" -> {
                     context.shading = ShadingType.FLAT
-                    context.selectNpc(context.currentNpc)
+                    context.reloadNpc()
                 }
                 "None" -> context.shading = ShadingType.NONE
             }

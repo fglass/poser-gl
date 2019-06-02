@@ -12,9 +12,9 @@ class Maths {
             val matrix = Matrix4f()
             matrix.identity()
             matrix.translate(translation)
-            matrix.rotate(Math.toRadians(rotation.x.toDouble()).toFloat(), 1.0f, 0.0f, 0.0f)
-            matrix.rotate(Math.toRadians(rotation.y.toDouble()).toFloat(), 0.0f, 1.0f, 0.0f)
-            matrix.rotate(Math.toRadians(rotation.z.toDouble()).toFloat(), 0.0f, 0.0f, 1.0f)
+            matrix.rotate(Math.toRadians(rotation.x.toDouble()).toFloat(), 1f, 0f, 0f)
+            matrix.rotate(Math.toRadians(rotation.y.toDouble()).toFloat(), 0f, 1f, 0f)
+            matrix.rotate(Math.toRadians(rotation.z.toDouble()).toFloat(), 0f, 0f, 1f)
             matrix.scale(scale)
             return matrix
         }
@@ -23,9 +23,9 @@ class Maths {
             val matrix = Matrix4f()
             matrix.identity()
 
-            matrix.rotate(Math.toRadians(camera.pitch.toDouble()).toFloat(), Vector3f(1F, 0F, 0F))
-            matrix.rotate(Math.toRadians(camera.yaw.toDouble()).toFloat(), Vector3f(0F, 1F, 0F))
-            matrix.rotate(Math.toRadians(camera.roll.toDouble()).toFloat(), Vector3f(0F, 0F, 1F))
+            matrix.rotate(Math.toRadians(camera.pitch.toDouble()).toFloat(), Vector3f(1f, 0f, 0f))
+            matrix.rotate(Math.toRadians(camera.yaw.toDouble()).toFloat(), Vector3f(0f, 1f, 0f))
+            matrix.rotate(Math.toRadians(camera.roll.toDouble()).toFloat(), Vector3f(0f, 0f, 1f))
 
             val pos = camera.position
             val negativeCameraPos = Vector3f(-pos.x, -pos.y, -pos.z)
