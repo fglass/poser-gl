@@ -3,7 +3,6 @@ package gui
 import Processor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import model.AnimationLoader
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.KeyEvent
@@ -69,7 +68,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         val play = Button("Play", 710f, 5f, 40f, 24f)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
-                AnimationLoader().loadAnimation(1528, context.entities[0].rawModel.definition, context.loader)
+                context.animationHandler.loadAnimation(1528)
             }
         }
         add(play)

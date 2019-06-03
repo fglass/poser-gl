@@ -2,8 +2,7 @@ import entity.Camera
 import entity.Entity
 import gui.Gui
 import input.Mouse
-import model.NpcLoader
-import model.RawModel
+import model.*
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -27,12 +26,13 @@ import shader.StaticShader
 import shader.ShadingType
 import utils.VSyncTimer
 import java.awt.Rectangle
+import kotlin.collections.ArrayList
 
 const val TITLE = "PoserGL"
 const val WIDTH = 762
 const val HEIGHT = 503
 const val BG_COLOUR = 33/255f
-const val CACHE_PATH = "./repository/cache/"
+const val CACHE_PATH = "./repository/old/"
 val CLIP_REGION = Rectangle(312, 0, 100, 52)
 val ENTITY_POS = Vector3f(0f, -20f, -50f)
 val ENTITY_ROT = Vector3f(0f, 0f, 180f)
@@ -48,7 +48,9 @@ class Processor {
     var wireframe = false
     var shading = ShadingType.SMOOTH
 
+    val datLoader = DatLoader()
     val npcLoader = NpcLoader()
+    val animationHandler = AnimationHandler()
     val loader = Loader()
     val entities = ArrayList<Entity>()
 
@@ -140,13 +142,12 @@ class Processor {
             }
 
             // Render entities
+            animationHandler.tickAnimation(this)
             camera.move()
             shader.start()
             shader.loadViewMatrix(camera)
             shader.loadShadingToggle(shading != ShadingType.NONE)
-            for (entity in entities) {
-                glRenderer.render(entity, shader)
-            }
+            glRenderer.render(entities, shader)
             shader.stop()
 
             // Poll events to callbacks

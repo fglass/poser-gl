@@ -15,7 +15,6 @@ class NpcLoader {
     var current = ""
     lateinit var manager: NpcManager
     private val dictionary = HashMap<String, NpcDefinition>()
-    private val datLoader = DatLoader()
 
     init {
         Store(File(CACHE_PATH)).use { store ->
@@ -37,7 +36,7 @@ class NpcLoader {
         val npc = dictionary[name]
         if (npc != null) {
             npc.models?.forEach {
-                val model = datLoader.load(it, context.shading == ShadingType.FLAT, loader)
+                val model = context.datLoader.load(it, context.shading == ShadingType.FLAT, loader)
                 context.addModel(model)
             }
         }
