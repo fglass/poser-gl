@@ -5,12 +5,11 @@ import Processor
 import net.runelite.cache.NpcManager
 import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.fs.Store
-import render.Loader
 import shader.ShadingType
 import java.io.File
 import java.util.*
 
-class NpcLoader {
+class NpcLoader(private val context: Processor) {
 
     var current = ""
     lateinit var manager: NpcManager
@@ -31,12 +30,12 @@ class NpcLoader {
         }
     }
 
-    fun load(name: String, loader: Loader, context: Processor) {
+    fun load(name: String) {
         current = name
         val npc = dictionary[name]
         if (npc != null) {
             npc.models?.forEach {
-                val model = context.datLoader.load(it, context.shading == ShadingType.FLAT, loader)
+                val model = context.datLoader.load(it, context.shading == ShadingType.FLAT)
                 context.addModel(model)
             }
         }

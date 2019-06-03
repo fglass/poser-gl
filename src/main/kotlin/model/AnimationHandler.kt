@@ -15,12 +15,12 @@ import net.runelite.cache.fs.Store
 import shader.ShadingType
 import java.io.File
 
-class AnimationHandler {
+class AnimationHandler(private val context: Processor) {
 
     private val sequences = java.util.HashMap<Int, SequenceDefinition>()
     private val frames = HashMultimap.create<Int, FrameDefinition>()
 
-    private var sequenceDefinition: SequenceDefinition = SequenceDefinition(-1)
+    private var sequenceDef: SequenceDefinition = SequenceDefinition(-1)
     private var frameCount = 0
     private var frameLength = 0
 
@@ -29,6 +29,7 @@ class AnimationHandler {
         store.load()
         loadSequences(store)
         loadFrames(store)
+        store.close()
     }
 
     private fun loadSequences(store: Store) {
@@ -74,31 +75,31 @@ class AnimationHandler {
     }
 
     fun loadAnimation(id: Int) {
-        sequenceDefinition = sequences[id] ?: return
+        sequenceDef = sequences[id] ?: return
         frameCount = 0
-        frameLength = sequenceDefinition.frameLenghts[0]
+        frameLength = sequenceDef.frameLenghts[0]
     }
 
-    fun tickAnimation(context: Processor) {
-        if (context.entities.isEmpty() || sequenceDefinition.id == -1) {
+    fun tickAnimation() {
+        if (context.entities.isEmpty() || sequenceDef.id == -1) {
             return
         }
 
         if (frameLength-- <= 0) {
             frameCount++
-            frameLength = sequenceDefinition.frameLenghts[frameCount % sequenceDefinition.frameIDs.size]
+            frameLength = sequenceDef.frameLenghts[frameCount % sequenceDef.frameIDs.size]
         }
 
-        val seqFrameId = sequenceDefinition.frameIDs[frameCount % sequenceDefinition.frameIDs.size]
+        val seqFrameId = sequenceDef.frameIDs[frameCount % sequenceDef.frameIDs.size]
         val frames = frames.get(seqFrameId.ushr(16))
         val frameFileId = seqFrameId and 0xFFFF
 
         val first = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst()
         val frame = first.get()
-        applyAnimation(frame, context)
+        applyFrame(frame, context)
     }
 
-    private fun applyAnimation(frame: FrameDefinition, context: Processor) {
+    private fun applyFrame(frame: FrameDefinition, context: Processor) {
         val frameMap = frame.framemap
         animOffsetX = 0
         animOffsetY = 0
@@ -119,8 +120,14 @@ class AnimationHandler {
             for (entity in context.entities) {
                 val def = entity.rawModel.definition
                 def.animate(fmType, fm, dx, dy, dz)
-                entity.rawModel = context.datLoader.parse(def, context.shading == ShadingType.FLAT, context.loader)
+                entity.rawModel = context.datLoader.parse(def, context.shading == ShadingType.FLAT)
             }
         }
+    }
+
+    fun resetAnimation() {
+        sequenceDef = SequenceDefinition(-1)
+        frameCount = 0
+        frameLength = 0
     }
 }

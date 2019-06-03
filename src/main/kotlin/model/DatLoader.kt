@@ -1,6 +1,7 @@
 package model
 
 import CACHE_PATH
+import net.runelite.cache.ConfigType
 import render.Loader
 import java.io.File
 import net.runelite.cache.IndexType
@@ -9,9 +10,9 @@ import net.runelite.cache.definitions.loaders.ModelLoader
 import net.runelite.cache.fs.Store
 import org.joml.Vector3f
 
-class DatLoader {
+class DatLoader(private val loader: Loader) {
 
-    fun load(id: Int, flatShading: Boolean, loader: Loader): RawModel {
+    fun load(id: Int, flatShading: Boolean): RawModel {
         Store(File(CACHE_PATH)).use { store ->
             store.load()
             val storage = store.storage
@@ -23,11 +24,11 @@ class DatLoader {
             val modelLoader = ModelLoader()
             val def = modelLoader.load(archive.archiveId, contents)
 
-            return parse(def, flatShading, loader)
+            return parse(def, flatShading)
         }
     }
 
-    fun parse(def: ModelDefinition, flatShading: Boolean, loader: Loader): RawModel {
+    fun parse(def: ModelDefinition, flatShading: Boolean): RawModel {
         val positions = IntArray(def.faceCount * 12)
         val normals = IntArray(def.faceCount * 9)
         val vertexX = def.vertexPositionsX

@@ -48,10 +48,10 @@ class Processor {
     var wireframe = false
     var shading = ShadingType.SMOOTH
 
-    val datLoader = DatLoader()
-    val npcLoader = NpcLoader()
-    val animationHandler = AnimationHandler()
-    val loader = Loader()
+    private val loader = Loader()
+    val datLoader = DatLoader(loader)
+    val npcLoader = NpcLoader(this)
+    val animationHandler = AnimationHandler(this)
     val entities = ArrayList<Entity>()
 
     fun run() {
@@ -142,7 +142,7 @@ class Processor {
             }
 
             // Render entities
-            animationHandler.tickAnimation(this)
+            animationHandler.tickAnimation()
             camera.move()
             shader.start()
             shader.loadViewMatrix(camera)
@@ -184,9 +184,10 @@ class Processor {
     }
 
     fun selectNpc(name: String) {
+        animationHandler.resetAnimation()
         entities.clear()
         loader.cleanUp()
-        npcLoader.load(name, loader, this)
+        npcLoader.load(name)
     }
 
     fun reloadNpc() {

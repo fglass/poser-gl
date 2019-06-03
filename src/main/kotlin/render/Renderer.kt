@@ -13,8 +13,8 @@ import shader.StaticShader
 import utils.Maths
 
 const val FOV = 70F
-const val NEAR_PLANE = 0.1F
-const val FAR_PLANE = 1000F
+const val NEAR_PLANE = 1F
+const val FAR_PLANE = 10000F
 
 class Renderer(shader: StaticShader) {
 
