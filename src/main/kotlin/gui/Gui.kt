@@ -5,6 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
+import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
@@ -20,9 +21,16 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     private val buttons = mutableListOf<Button>()
     private val npcManager = context.npcLoader.manager
 
+    private lateinit var infoWidget: Widget
+    private lateinit var npcName: Label
+    private lateinit var npcId: Label
+    private lateinit var animationId: Label
+    private lateinit var npcModels: Label
+
     fun createElements() {
         addToggles()
         addAnimationPane()
+        addInformationBox()
         addSearch()
         addSelectBox()
         addList()
@@ -65,13 +73,47 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     }
 
     private fun addAnimationPane() {
-        val play = Button("Play", 710f, 5f, 40f, 24f)
+        val play = Button("Play", 710f, 470f, 40f, 24f)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
-                context.animationHandler.loadAnimation(1528)
+                val animation = 1528
+                context.animationHandler.loadAnimation(animation)
+                animationId.textState.text = animation.toString()
             }
         }
         add(play)
+    }
+
+    private fun addInformationBox() {
+        infoWidget = Widget("Information", getWidgetPosition(), Vector2f(170f, 100f))
+        infoWidget.isResizable = false
+        infoWidget.isDraggable = false
+        infoWidget.isCloseable = false
+
+        val name = Label("Name:", 5f, 5f, 80f, 15f)
+        npcName = Label("N/A", 60f, 5f, 104f, 15f)
+        npcName.textState.horizontalAlign = HorizontalAlign.RIGHT
+
+        val id = Label("Id:", 5f, 20f, 100f, 15f)
+        npcId = Label("N/A", 60f, 20f, 104f, 15f)
+        npcId.textState.horizontalAlign = HorizontalAlign.RIGHT
+
+        val animation = Label("Animation:", 5f, 35f, 100f, 15f)
+        animationId = Label("N/A", 60f, 35f, 104f, 15f)
+        animationId.textState.horizontalAlign = HorizontalAlign.RIGHT
+
+        val models = Label("Model composition:", 5f, 50f, 100f, 15f)
+        npcModels = Label("N/A", 5f, 65f, 159f, 15f)
+        npcModels.textState.horizontalAlign = HorizontalAlign.RIGHT
+
+        infoWidget.container.add(name)
+        infoWidget.container.add(npcName)
+        infoWidget.container.add(id)
+        infoWidget.container.add(npcId)
+        infoWidget.container.add(animation)
+        infoWidget.container.add(animationId)
+        infoWidget.container.add(models)
+        infoWidget.container.add(npcModels)
     }
 
     private fun addSearch() {
@@ -148,12 +190,28 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         }
     }
 
+    fun resize(size: Vector2f) {
+        setSize(size)
+        infoWidget.position = getWidgetPosition()
+        list.size = getListSize()
+    }
+
     private fun getListSize(): Vector2f {
         return Vector2f(150f, size.y - 52)
     }
 
-    fun resize(size: Vector2f) {
-        setSize(size)
-        list.size = getListSize()
+    private fun getWidgetPosition(): Vector2f {
+        return Vector2f(size.x - 180, 5f)
+    }
+
+    fun updateWidget() {
+        if (!contains(infoWidget)) { // Hidden at start
+             add(infoWidget)
+        }
+        val npc = context.npcLoader.current
+        npcName.textState.text = npc.name
+        npcId.textState.text = npc.id.toString()
+        animationId.textState.text = "N/A"
+        npcModels.textState.text = npc.models?.contentToString()
     }
 }

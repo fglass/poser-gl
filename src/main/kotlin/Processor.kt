@@ -48,6 +48,7 @@ class Processor {
     var wireframe = false
     var shading = ShadingType.SMOOTH
 
+    private lateinit var gui: Gui
     private val loader = Loader()
     val datLoader = DatLoader(loader)
     val npcLoader = NpcLoader(this)
@@ -77,7 +78,7 @@ class Processor {
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
 
-        val gui = Gui(0f, 0f, WIDTH.toFloat(), HEIGHT.toFloat(), this)
+        gui = Gui(0f, 0f, WIDTH.toFloat(), HEIGHT.toFloat(), this)
         gui.createElements()
         frame.container.add(gui)
         frame.container.listenerMap.addListener(WindowSizeEvent::class.java) {
@@ -188,9 +189,10 @@ class Processor {
         entities.clear()
         loader.cleanUp()
         npcLoader.load(name)
+        gui.updateWidget()
     }
 
     fun reloadNpc() {
-        selectNpc(npcLoader.current)
+        selectNpc(npcLoader.current.name)
     }
 }
