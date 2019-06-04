@@ -13,7 +13,10 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     val npcItems = mutableListOf<NpcItem>()
     private val npcManager = context.npcLoader.manager
     private var npcList = NpcList(5f, 49f, this, context, npcManager)
-    private var infoWidget = InformationWidget(170f, 100f, this)
+
+    val animationItems = mutableListOf<AnimationItem>()
+    private var animationList = AnimationList(5f, 49f, this, context)
+    var infoWidget = InformationWidget(170f, 100f, this)
 
     fun createElements() {
         addToggles()
@@ -59,58 +62,48 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         add(shadingBox)
     }
 
-    private fun addAnimationPane() {
+    private fun addAnimationPane() { // TODO
         val play = Button("Play", 710f, 470f, 40f, 24f)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
-                val animation = 1528
-                context.animationHandler.loadAnimation(animation)
-                infoWidget.animationId.textState.text = animation.toString()
+                //val animation = 1528
+                //context.animationHandler.playAnimation(animation)
             }
         }
         add(play)
     }
 
     private fun addSearch() {
-        val search = TextInput("Search", 5f, 5f, 150f, 15f)
-        search.listenerMap.addListener(MouseClickEvent::class.java) {
-            if (search.textState.text == "Search") {
-                search.textState.text = ""
+        val searchField = TextInput("Search", 5f, 5f, 150f, 15f)
+        searchField.listenerMap.addListener(MouseClickEvent::class.java) {
+            if (searchField.textState.text == "Search") { // Placeholder text
+                searchField.textState.text = ""
             }
         }
-        search.listenerMap.addListener(KeyEvent::class.java) { event ->
+        searchField.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                val filtered = (0..npcList.maxIndex).toList().filter {
-                    val npc = npcManager.get(it)
-                    npc.name != "null" && npc.name.toLowerCase().contains(search.textState.text)
-                }
-                npcList.adjustScroll(filtered.size)
+                if (contains(npcList)) npcList.search(searchField) else animationList.search(searchField)
 
-                for (i in 0 until npcItems.size) {
-                    val npcItem = npcItems[i]
-                    when {
-                        filtered.size >= npcList.maxIndex -> { // Reset as no matches
-                            val npc = npcManager.get(i)
-                            npcItem.npc = npc
-                            npcItem.updateText()
-                        }
-                        i < filtered.size -> { // Shift matches up
-                            val npc = npcManager.get(filtered[i])
-                            npcItem.npc = npc
-                            npcItem.updateText()
-                        }
-                        else -> npcItem.hide() // Hide filtered
-                    }
-                }
             }
         }
-        add(search)
+        add(searchField)
     }
 
     private fun addSelectBox() {
         val selectBox = SelectBox<String>(5f, 27f, 150f, 15f)
         selectBox.addElement("NPCs")
         selectBox.addElement("Animations")
+
+        selectBox.addSelectBoxChangeSelectionEventListener {
+            if (contains(npcList)) {
+                remove(npcList)
+                add(animationList)
+            } else {
+                remove(animationList)
+                add(npcList)
+            }
+        }
+
         add(selectBox)
     }
 

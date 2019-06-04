@@ -4,6 +4,7 @@ import gui.Gui
 import input.Mouse
 import model.*
 import net.runelite.cache.definitions.NpcDefinition
+import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame

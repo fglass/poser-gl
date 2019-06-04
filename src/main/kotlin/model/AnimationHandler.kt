@@ -17,10 +17,9 @@ import java.io.File
 
 class AnimationHandler(private val context: Processor) {
 
-    private val sequences = java.util.HashMap<Int, SequenceDefinition>()
+    var currentSequence: SequenceDefinition = SequenceDefinition(-1)
+    val sequences = java.util.HashMap<Int, SequenceDefinition>()
     private val frames = HashMultimap.create<Int, FrameDefinition>()
-
-    private var sequenceDef: SequenceDefinition = SequenceDefinition(-1)
     private var frameCount = 0
     private var frameLength = 0
 
@@ -74,23 +73,23 @@ class AnimationHandler(private val context: Processor) {
         println("Loaded ${frames.size()} frames")
     }
 
-    fun loadAnimation(id: Int) {
-        sequenceDef = sequences[id] ?: return
+    fun playAnimation(sequence: SequenceDefinition) {
+        currentSequence = sequence
         frameCount = 0
-        frameLength = sequenceDef.frameLenghts[0]
+        frameLength = currentSequence.frameLenghts[0]
     }
 
     fun tickAnimation() {
-        if (context.entities.isEmpty() || sequenceDef.id == -1) {
+        if (context.entities.isEmpty() || currentSequence.id == -1) {
             return
         }
 
         if (frameLength-- <= 0) {
             frameCount++
-            frameLength = sequenceDef.frameLenghts[frameCount % sequenceDef.frameIDs.size]
+            frameLength = currentSequence.frameLenghts[frameCount % currentSequence.frameIDs.size]
         }
 
-        val seqFrameId = sequenceDef.frameIDs[frameCount % sequenceDef.frameIDs.size]
+        val seqFrameId = currentSequence.frameIDs[frameCount % currentSequence.frameIDs.size]
         val frames = frames.get(seqFrameId.ushr(16))
         val frameFileId = seqFrameId and 0xFFFF
 
@@ -126,7 +125,7 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun resetAnimation() {
-        sequenceDef = SequenceDefinition(-1)
+        currentSequence = SequenceDefinition(-1)
         frameCount = 0
         frameLength = 0
     }
