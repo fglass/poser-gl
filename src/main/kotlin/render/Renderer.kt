@@ -1,7 +1,5 @@
 package render
 
-import HEIGHT
-import WIDTH
 import entity.Entity
 import entity.Light
 import org.joml.Matrix4f
@@ -11,22 +9,30 @@ import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import shader.StaticShader
 import utils.Maths
+import Processor
 
 const val FOV = 70F
 const val NEAR_PLANE = 1F
 const val FAR_PLANE = 10000F
 
-class Renderer(shader: StaticShader) {
+class Renderer(private val context: Processor, private val shader: StaticShader) {
 
     init {
+        init(true)
+    }
+
+    private fun init(loadLight: Boolean) {
         shader.start()
-        shader.loadLight(Light(Vector3f(0f, -20f, -100F), Vector3f(1F, 1F, 1F)))
+        if (loadLight) {
+            shader.loadLight(Light(Vector3f(0f, -20f, -100F), Vector3f(1F, 1F, 1F)))
+        }
         shader.loadProjectionMatrix(createProjectionMatrix())
         shader.stop()
     }
 
     private fun createProjectionMatrix(): Matrix4f {
-        val aspectRatio = WIDTH / HEIGHT.toFloat()
+        val screenSize = context.gui.size
+        val aspectRatio = screenSize.x / screenSize.y
         val yScale = ((1f / Math.tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
         val xScale = yScale / aspectRatio
         val frustumLength = FAR_PLANE - NEAR_PLANE
@@ -39,6 +45,10 @@ class Renderer(shader: StaticShader) {
         projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustumLength))
         projectionMatrix.m33(0f)
         return projectionMatrix
+    }
+
+    fun reloadProjectionMatrix() {
+        init(false)
     }
 
     fun render(entities: ArrayList<Entity>, shader: StaticShader) {

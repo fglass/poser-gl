@@ -2,18 +2,13 @@ package gui
 
 import Processor
 import net.runelite.cache.NpcManager
-import org.liquidengine.legui.component.TextInput
 
 class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcManager: NpcManager):
     ItemList(x, y, gui) {
 
-    var maxIndex = 0
-
     init {
         var index = 0
-        for (i in 0 until npcManager.npcs.size) {
-            val npc = npcManager.get(i)
-
+        for ((i, npc) in npcManager.npcs.withIndex()) {
             if (npc == null || npc.name == "null") {
                 continue
             }
@@ -28,28 +23,22 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
         println("Loaded $index npcs")
     }
 
-    override fun search(searchField: TextInput) {
-        val filtered = (0..maxIndex).toList().filter {
+    override fun getFiltered(input: String): List<Int> {
+        return (0 until maxIndex).toList().filter {
             val npc = npcManager.get(it)
-            npc.name != "null" && npc.name.toLowerCase().contains(searchField.textState.text)
+            npc.name != "null" && npc.name.toLowerCase().contains(input)
         }
-        adjustScroll(filtered.size)
+    }
 
-        for (i in 0 until gui.npcItems.size) {
-            val item = gui.npcItems[i]
-            when {
-                filtered.size >= maxIndex -> { // Reset as no matches
-                    val npc = npcManager.get(i)
-                    item.npc = npc
-                    item.updateText()
-                }
-                i < filtered.size -> { // Shift matches up
-                    val npc = npcManager.get(filtered[i])
-                    item.npc = npc
-                    item.updateText()
-                }
-                else -> item.hide() // Hide filtered
-            }
+    override fun getItems(): List<Item> {
+        return gui.npcItems
+    }
+
+    override fun handleItem(index: Int, item: Item) {
+        val npc = npcManager.get(index)
+        if (item is NpcItem) {
+            item.npc = npc
+            item.updateText()
         }
     }
 }

@@ -2,21 +2,23 @@ package gui
 
 import Processor
 import org.joml.Vector2f
-import org.liquidengine.legui.component.*
+import org.liquidengine.legui.component.CheckBox
+import org.liquidengine.legui.component.Panel
+import org.liquidengine.legui.component.SelectBox
+import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.lwjgl.glfw.GLFW
 import shader.ShadingType
 
-class Gui(x: Float, y: Float, width: Float, height: Float, private val context: Processor): Panel(x, y, width, height) {
+class Gui(position: Vector2f, size: Vector2f, private val context: Processor): Panel(position, size) {
 
     val npcItems = mutableListOf<NpcItem>()
-    private val npcManager = context.npcLoader.manager
-    private var npcList = NpcList(5f, 49f, this, context, npcManager)
-
     val animationItems = mutableListOf<AnimationItem>()
-    private var animationList = AnimationList(5f, 49f, this, context)
-    var infoWidget = InformationWidget(170f, 100f, this)
+    private val npcManager = context.npcLoader.manager
+    private val npcList = NpcList(5f, 49f, this, context, npcManager)
+    private val animationList = AnimationList(5f, 49f, this, context)
+    val infoPanel = InformationPanel(170f, 85f, this)
 
     fun createElements() {
         addToggles()
@@ -24,6 +26,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         addSearch()
         addSelectBox()
         add(npcList)
+        add(infoPanel)
     }
 
     private fun addToggles() {
@@ -48,11 +51,11 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
             when (event.newValue.toString()) {
                 "Smooth" -> {
                     context.shading = ShadingType.SMOOTH
-                    context.reloadNpc()
+                    context.npcLoader.reload()
                 }
                 "Flat" -> {
                     context.shading = ShadingType.FLAT
-                    context.reloadNpc()
+                    context.npcLoader.reload()
                 }
                 "None" -> context.shading = ShadingType.NONE
             }
@@ -62,15 +65,15 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         add(shadingBox)
     }
 
-    private fun addAnimationPane() { // TODO
-        val play = Button("Play", 710f, 470f, 40f, 24f)
+    private fun addAnimationPane() {
+        /*val play = Button("Play", 710f, 470f, 40f, 24f)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
-                //val animation = 1528
-                //context.animationHandler.playAnimation(animation)
+                val animation = 1528
+                context.animationHandler.playAnimation(animation)
             }
         }
-        add(play)
+        add(play)*/
     }
 
     private fun addSearch() {
@@ -82,8 +85,8 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         }
         searchField.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                if (contains(npcList)) npcList.search(searchField) else animationList.search(searchField)
-
+                val input = searchField.textState.text
+                if (contains(npcList)) npcList.search(input) else animationList.search(input)
             }
         }
         add(searchField)
@@ -97,26 +100,22 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         selectBox.addSelectBoxChangeSelectionEventListener {
             if (contains(npcList)) {
                 remove(npcList)
+                animationList.resetSearch()
                 add(animationList)
             } else {
                 remove(animationList)
+                npcList.resetSearch()
                 add(npcList)
             }
         }
-
         add(selectBox)
     }
 
     fun resize(size: Vector2f) {
         setSize(size)
-        infoWidget.position = infoWidget.getWidgetPosition()
-        npcList.size = npcList.getListSize()
-    }
-
-    fun updateWidget() {
-        if (!contains(infoWidget)) { // Hidden at start
-             add(infoWidget)
-        }
-        infoWidget.update(context.npcLoader.currentNpc)
+        context.glRenderer.reloadProjectionMatrix()
+        infoPanel.resize()
+        npcList.resize()
+        animationList.resize()
     }
 }

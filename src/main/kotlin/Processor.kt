@@ -2,9 +2,12 @@ import entity.Camera
 import entity.Entity
 import gui.Gui
 import input.Mouse
-import model.*
+import model.AnimationHandler
+import model.DatLoader
+import model.NpcLoader
+import model.RawModel
 import net.runelite.cache.definitions.NpcDefinition
-import net.runelite.cache.definitions.SequenceDefinition
+import org.joml.Vector2f
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -17,23 +20,20 @@ import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import render.Loader
 import render.Renderer
-import shader.StaticShader
 import shader.ShadingType
+import shader.StaticShader
 import utils.VSyncTimer
 import java.awt.Rectangle
-import kotlin.collections.ArrayList
 
 const val TITLE = "PoserGL"
-const val WIDTH = 762
-const val HEIGHT = 503
-const val BG_COLOUR = 33/255f
+const val BG_COLOUR = 33 / 255f
 const val CACHE_PATH = "./repository/old/"
 val CLIP_REGION = Rectangle(312, 0, 100, 52)
 val ENTITY_POS = Vector3f(0f, -20f, -50f)
@@ -51,7 +51,8 @@ class Processor {
     var shading = ShadingType.SMOOTH
 
     lateinit var gui: Gui
-    private val loader = Loader()
+    lateinit var glRenderer: Renderer
+    val loader = Loader()
     val datLoader = DatLoader(loader)
     val npcLoader = NpcLoader(this)
     val animationHandler = AnimationHandler(this)
@@ -61,30 +62,34 @@ class Processor {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
         System.setProperty("java.awt.headless", java.lang.Boolean.TRUE.toString())
 
-        if (!GLFW.glfwInit()) {
+        if (!glfwInit()) {
             throw RuntimeException("Unable to initialize GLFW")
         }
 
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3)
-        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2)
-        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE)
-        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
+        val width = 800
+        val height = 600
 
-        val window = GLFW.glfwCreateWindow(WIDTH, HEIGHT, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
-        GLFW.glfwShowWindow(window)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
 
-        GLFW.glfwMakeContextCurrent(window)
+        val window = glfwCreateWindow(width, height, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
+        glfwShowWindow(window)
+
+        glfwMakeContextCurrent(window)
         GL.createCapabilities()
 
-        val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
+        val frame = Frame(width.toFloat(), height.toFloat())
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
 
-        gui = Gui(0f, 0f, WIDTH.toFloat(), HEIGHT.toFloat(), this)
+        val size = frame.container.size
+        gui = Gui(Vector2f(0f, 0f), size, this)
         gui.createElements()
         frame.container.add(gui)
         frame.container.listenerMap.addListener(WindowSizeEvent::class.java) {
-            gui.resize(frame.container.size)
+            gui.resize(size)
         }
 
         val context = Context(window)
@@ -92,15 +97,15 @@ class Processor {
         CallbackKeeper.registerCallbacks(window, keeper)
 
         val mouse = Mouse()
-        val glfwMouseCallbackI = {_: Long, button: Int, action: Int, _: Int -> mouse.handleClick(button, action) }
-        val glfwScrollCallbackI = {_: Long, dx: Double, dy: Double -> mouse.handleScroll(dx, dy) }
-        val glfwCursorCallbackI = {_: Long, x: Double, y: Double -> mouse.handlePosition(x, y) }
-        val glfwWindowCloseCallbackI = { _: Long -> running = false }
+        val mouseCallback = {_: Long, button: Int, action: Int, _: Int -> mouse.handleClick(button, action) }
+        val scrollCallback = {_: Long, dx: Double, dy: Double -> mouse.handleScroll(dx, dy) }
+        val cursorCallback = {_: Long, x: Double, y: Double -> mouse.handlePosition(x, y) }
+        val windowCloseCallback = { _: Long -> running = false }
 
-        keeper.chainMouseButtonCallback.add(glfwMouseCallbackI)
-        keeper.chainScrollCallback.add(glfwScrollCallbackI)
-        keeper.chainCursorPosCallback.add(glfwCursorCallbackI)
-        keeper.chainWindowCloseCallback.add(glfwWindowCloseCallbackI)
+        keeper.chainMouseButtonCallback.add(mouseCallback)
+        keeper.chainScrollCallback.add(scrollCallback)
+        keeper.chainCursorPosCallback.add(cursorCallback)
+        keeper.chainWindowCloseCallback.add(windowCloseCallback)
 
         val systemEventProcessor = SystemEventProcessor()
         systemEventProcessor.addDefaultCallbacks(keeper)
@@ -108,12 +113,12 @@ class Processor {
         val guiRenderer = NvgRenderer()
         guiRenderer.initialize()
 
-        val vsync = VSyncTimer()
+        val vSync = VSyncTimer()
         val shader = StaticShader()
         val camera = Camera(mouse)
-        val glRenderer = Renderer(shader)
+        glRenderer = Renderer(this, shader)
+        npcLoader.load(npcLoader.manager.get(0))
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-
 
         // Render loop
         while (running) {
@@ -154,8 +159,8 @@ class Processor {
             shader.stop()
 
             // Poll events to callbacks
-            GLFW.glfwPollEvents()
-            GLFW.glfwSwapBuffers(window)
+            glfwPollEvents()
+            glfwSwapBuffers(window)
 
             // Process system events
             systemEventProcessor.processEvents(frame, context)
@@ -172,29 +177,17 @@ class Processor {
             AnimatorProvider.getAnimator().runAnimations()
 
             // Control fps
-            vsync.waitIfNecessary()
+            vSync.waitIfNecessary()
         }
 
         shader.cleanUp()
         loader.cleanUp()
         guiRenderer.destroy()
-        GLFW.glfwDestroyWindow(window)
-        GLFW.glfwTerminate()
+        glfwDestroyWindow(window)
+        glfwTerminate()
     }
 
     fun addModel(model: RawModel) {
         entities.add(Entity(model, ENTITY_POS, ENTITY_ROT, 0.05f))
-    }
-
-    fun selectNpc(npc: NpcDefinition) {
-        animationHandler.resetAnimation()
-        entities.clear()
-        loader.cleanUp()
-        npcLoader.load(npc)
-        gui.updateWidget()
-    }
-
-    fun reloadNpc() {
-        selectNpc(npcLoader.currentNpc)
     }
 }
