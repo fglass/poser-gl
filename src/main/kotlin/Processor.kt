@@ -3,6 +3,7 @@ import entity.Entity
 import gui.Gui
 import input.Mouse
 import model.*
+import net.runelite.cache.definitions.NpcDefinition
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -184,15 +185,15 @@ class Processor {
         entities.add(Entity(model, ENTITY_POS, ENTITY_ROT, 0.05f))
     }
 
-    fun selectNpc(name: String) {
+    fun selectNpc(npc: NpcDefinition) {
         animationHandler.resetAnimation()
         entities.clear()
         loader.cleanUp()
-        npcLoader.load(name)
+        npcLoader.load(npc)
         gui.updateWidget()
     }
 
     fun reloadNpc() {
-        selectNpc(npcLoader.current.name)
+        selectNpc(npcLoader.currentNpc)
     }
 }

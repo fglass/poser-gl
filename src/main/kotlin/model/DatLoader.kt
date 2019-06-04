@@ -1,14 +1,13 @@
 package model
 
 import CACHE_PATH
-import net.runelite.cache.ConfigType
-import render.Loader
-import java.io.File
 import net.runelite.cache.IndexType
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.loaders.ModelLoader
 import net.runelite.cache.fs.Store
 import org.joml.Vector3f
+import render.Loader
+import java.io.File
 
 class DatLoader(private val loader: Loader) {
 

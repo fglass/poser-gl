@@ -18,7 +18,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
     private var list = ScrollablePanel(5f, 49f, getListSize().x, getListSize().y)
     private val listY = 2f
     private val listYOffset = 17
-    private val buttons = mutableListOf<Button>()
+    private val npcItems = mutableListOf<NpcItem>()
     private val npcManager = context.npcLoader.manager
 
     private lateinit var infoWidget: Widget
@@ -133,18 +133,20 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                 list.verticalScrollBar.curValue = 0f // Reset scroll position
                 list.container.setSize(142f, listY + filtered.size * listYOffset) // Adjust scroll size
 
-                for (i in 0 until buttons.size) {
-                    val button = buttons[i]
+                for (i in 0 until npcItems.size) {
+                    val npcItem = npcItems[i]
                     when {
                         filtered.size >= loaded -> { // Reset as no matches
-                            button.style.display = Style.DisplayType.FLEX
-                            button.textState.text = npcManager.get(i).name
+                            val npc = npcManager.get(i)
+                            npcItem.npc = npc
+                            npcItem.updateText()
                         }
                         i < filtered.size -> { // Shift matches up
-                            button.style.display = Style.DisplayType.FLEX
-                            button.textState.text =  npcManager.get(filtered[i]).name
+                            val npc = npcManager.get(filtered[i])
+                            npcItem.npc = npc
+                            npcItem.updateText()
                         }
-                        else -> button.style.display = Style.DisplayType.NONE // Hide filtered
+                        else -> npcItem.style.display = Style.DisplayType.NONE // Hide filtered
                     }
                 }
             }
@@ -172,15 +174,15 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
                     continue
                 }
 
-                val button = Button(npc.name, x, listY + npcIndex++ * listYOffset, 137f, 14f)
-                buttons.add(button)
-                button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                val npcItem = NpcItem(npc, x, listY + npcIndex++ * listYOffset, 137f, 14f)
+                npcItems.add(npcItem)
+                npcItem.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                     if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
-                        context.selectNpc(button.textState.text)
+                        context.selectNpc(npcItem.npc)
                     }
                 }
 
-                list.container.add(button)
+                list.container.add(npcItem)
                 list.container.setSize(142f, listY + npcIndex * listYOffset)
                 remove(list)
                 add(list)
@@ -208,7 +210,7 @@ class Gui(x: Float, y: Float, width: Float, height: Float, private val context: 
         if (!contains(infoWidget)) { // Hidden at start
              add(infoWidget)
         }
-        val npc = context.npcLoader.current
+        val npc = context.npcLoader.currentNpc
         npcName.textState.text = npc.name
         npcId.textState.text = npc.id.toString()
         animationId.textState.text = "N/A"
