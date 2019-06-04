@@ -49,7 +49,7 @@ class Processor {
     var wireframe = false
     var shading = ShadingType.SMOOTH
 
-    private lateinit var gui: Gui
+    lateinit var gui: Gui
     private val loader = Loader()
     val datLoader = DatLoader(loader)
     val npcLoader = NpcLoader(this)
