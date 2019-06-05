@@ -97,15 +97,22 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         selectBox.addElement("NPCs")
         selectBox.addElement("Animations")
 
-        selectBox.addSelectBoxChangeSelectionEventListener {
-            if (contains(npcList)) {
-                remove(npcList)
-                animationList.resetSearch()
-                add(animationList)
-            } else {
-                remove(animationList)
-                npcList.resetSearch()
-                add(npcList)
+        selectBox.addSelectBoxChangeSelectionEventListener { event ->
+            when (event.newValue.toString()) {
+                "NPCs" -> {
+                    if (contains(animationList)) {
+                        remove(animationList)
+                        npcList.resetSearch()
+                        add(npcList)
+                    }
+                }
+                "Animations" -> {
+                    if (contains(npcList)) {
+                        remove(npcList)
+                        animationList.resetSearch()
+                        add(animationList)
+                    }
+                }
             }
         }
         add(selectBox)

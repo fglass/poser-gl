@@ -11,7 +11,7 @@ import java.io.File
 
 class DatLoader(private val loader: Loader) {
 
-    val maxPriority = 255
+    private val maxPriority = 255
 
     fun load(id: Int, flatShading: Boolean): RawModel {
         Store(File(CACHE_PATH)).use { store ->
@@ -30,8 +30,10 @@ class DatLoader(private val loader: Loader) {
     }
 
     fun parse(def: ModelDefinition, flatShading: Boolean): RawModel {
-        val positions = IntArray(def.faceCount * 12)
-        val normals = IntArray(def.faceCount * 9)
+        val nPosition = 4
+        val nNormal = 3
+        val positions = IntArray(def.faceCount * nPosition * 3)
+        val normals = IntArray(def.faceCount * nNormal * 3)
         val vertexX = def.vertexPositionsX
         val vertexY = def.vertexPositionsY
         val vertexZ = def.vertexPositionsZ
@@ -40,16 +42,22 @@ class DatLoader(private val loader: Loader) {
 
         for (priority in maxPriority downTo 0) {
             for (i in 0 until def.faceCount) {
-                if (notPrioritised(priority, i, def)) {
+
+                if (!prioritised(priority, i, def)) {
                     continue
                 }
 
+                var alpha = 0
+                if (def.faceAlphas != null) {
+                    alpha = (def.faceAlphas[i].toInt() and 0xFF) shl 16
+                }
+
                 // 16-bit value in HSB format. First 6 bits hue, next 3 bits saturation, last 7 bits brightness
-                val faceColour = def.faceColors[i].toInt()
+                val faceColour = def.faceColors[i].toInt() and 0xFFFF
                 val points = intArrayOf(def.faceVertexIndices1[i], def.faceVertexIndices2[i], def.faceVertexIndices3[i])
 
                 for (point in points) {
-                    setVertex(positions, vIndex, vertexX[point], vertexY[point], vertexZ[point], faceColour)
+                    setVertex(positions, vIndex, vertexX[point], vertexY[point], vertexZ[point], alpha or faceColour)
 
                     if (flatShading) {
                         val normal = getFaceNormal(points, vertexX, vertexY, vertexZ)
@@ -59,24 +67,21 @@ class DatLoader(private val loader: Loader) {
                         setNormal(normals, nIndex, normal.x, normal.y, normal.z)
                     }
 
-                    vIndex += 4
-                    nIndex += 3
+                    vIndex += nPosition
+                    nIndex += nNormal
                 }
             }
         }
         return loader.loadToVao(positions, normals, def)
     }
 
-    private fun notPrioritised(priority: Int, index: Int, def: ModelDefinition): Boolean {
-        if (def.faceRenderPriorities != null) {
+    private fun prioritised(priority: Int, index: Int, def: ModelDefinition): Boolean {
+        return if (def.faceRenderPriorities != null) {
             val renderPriority = def.faceRenderPriorities[index].toInt() and 0xFF
-            if (renderPriority != priority) {
-                return true
-            }
+            renderPriority == priority
         } else {
-            return priority != maxPriority
+            priority == maxPriority
         }
-        return false
     }
 
     private fun getFaceNormal(points: IntArray, vertexX: IntArray, vertexY: IntArray, vertexZ: IntArray): Vector3f {

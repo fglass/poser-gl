@@ -13,13 +13,13 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPosition;
 
 void main(void) {
-    vec4 worldPosition = transformationMatrix * vec4(position.xyz, 1.0);
+    vec4 worldPosition = transformationMatrix * vec4(position.xyz, 1.0f);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
     gl_PointSize = 3.0f;
 
     int ahsl = position.w;
-    int hsl = ahsl & 0xffff;
-    float a = float(ahsl >> 24 & 0xff) / 255.f;
+    int hsl = ahsl;
+    float a = (ahsl >> 16) / 255.0f;
 
     // HSB to RGB
     int var5 = hsl / 128;
@@ -29,9 +29,9 @@ void main(void) {
     int var10 = hsl % 128;
 
     float var11 = float(var10) / 128.0f;
-    float var13 = var11;
-    float var15 = var11;
-    float var17 = var11;
+    float r = var11;
+    float g = var11;
+    float b = var11;
 
     if (var8 != 0.0f) {
         float var19;
@@ -53,45 +53,37 @@ void main(void) {
         }
 
         if (6.0f * var23 < 1.0f) {
-            var13 = var21 + (var19 - var21) * 6.0f * var23;
+            r = var21 + (var19 - var21) * 6.0f * var23;
         } else if (2.0f * var23 < 1.0f) {
-            var13 = var19;
+            r = var19;
         } else if (3.0f * var23 < 2.0f) {
-            var13 = var21 + (var19 - var21) * (0.6666666666666666f - var23) * 6.0f;
+            r = var21 + (var19 - var21) * (0.6666666666666666f - var23) * 6.0f;
         } else {
-            var13 = var21;
+            r = var21;
         }
 
         if (6.0f * var6 < 1.0f) {
-            var15 = var21 + (var19 - var21) * 6.0f * var6;
+            g = var21 + (var19 - var21) * 6.0f * var6;
         } else if (2.0f * var6 < 1.0f) {
-            var15 = var19;
+            g = var19;
         } else if (3.0f * var6 < 2.0f) {
-            var15 = var21 + (var19 - var21) * (0.6666666666666666f - var6) * 6.0f;
+            g = var21 + (var19 - var21) * (0.6666666666666666f - var6) * 6.0f;
         } else {
-            var15 = var21;
+            g = var21;
         }
 
         if (6.0f * var27 < 1.0f) {
-            var17 = var21 + (var19 - var21) * 6.0f * var27;
+            b = var21 + (var19 - var21) * 6.0f * var27;
         } else if (2.0f * var27 < 1.0f) {
-            var17 = var19;
+            b = var19;
         } else if (3.0f * var27 < 2.0f) {
-            var17 = var21 + (var19 - var21) * (0.6666666666666666f - var27) * 6.0f;
+            b = var21 + (var19 - var21) * (0.6666666666666666f - var27) * 6.0f;
         } else {
-            var17 = var21;
+            b = var21;
         }
     }
 
-    float brightness = 1.0f;
-    vec3 rgb = vec3(pow(var13, brightness), pow(var15, brightness), pow(var17, brightness));
-
-    // Need?
-    if (rgb == vec3(0, 0, 0)) {
-        rgb = vec3(0, 0, 1 / 255.0f);
-    }
-
-    faceColour = vec4(rgb, 1.0f - a);
-    vertexNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
+    faceColour = vec4(r, g, b, 1.0f - a);
+    vertexNormal = (transformationMatrix * vec4(normal, 0.0f)).xyz;
     toLightVector = lightPosition - worldPosition.xyz;
 }

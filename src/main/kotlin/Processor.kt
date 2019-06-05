@@ -140,8 +140,12 @@ class Processor {
             glViewport(
                 CLIP_REGION.x, CLIP_REGION.y, windowSize.x - CLIP_REGION.width, windowSize.y - CLIP_REGION.height
             )
+
+            glEnable(GL_DEPTH_TEST)
             glEnable(GL_CULL_FACE)
             glCullFace(GL_BACK)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             if (vertices) {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_POINT)
