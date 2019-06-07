@@ -20,22 +20,22 @@ class InformationPanel(private val gui: Gui) : Panel() {
         size = getPanelSize()
         style.background.color = ColorConstants.darkGray()
 
-        val title = Label("Information", 0f, 0f, size.x, 15f)
+        val title = Label("Information", 0f, 5f, size.x, 15f)
         title.textState.horizontalAlign = HorizontalAlign.CENTER
-        val name = Label("Name:", 5f, 20f, 80f, 15f)
-        npcName = Label("N/A", 60f, 20f, 104f, 15f)
+        val name = Label("Name:", 5f, 25f, 80f, 15f)
+        npcName = Label("N/A", 60f, 25f, 104f, 15f)
         npcName.textState.horizontalAlign = HorizontalAlign.RIGHT
 
-        val id = Label("Id:", 5f, 35f, 100f, 15f)
-        npcId = Label("N/A", 60f, 35f, 104f, 15f)
+        val id = Label("Id:", 5f, 40f, 100f, 15f)
+        npcId = Label("N/A", 60f, 40f, 104f, 15f)
         npcId.textState.horizontalAlign = HorizontalAlign.RIGHT
 
-        val animation = Label("Animation:", 5f, 50f, 100f, 15f)
-        animationId = Label("N/A", 60f, 50f, 104f, 15f)
+        val animation = Label("Animation:", 5f, 55f, 100f, 15f)
+        animationId = Label("N/A", 60f, 55f, 104f, 15f)
         animationId.textState.horizontalAlign = HorizontalAlign.RIGHT
 
-        val models = Label("Composition:", 5f, 65f, 100f, 15f)
-        modelPanel = Panel(5f, 81f, 159f, 15f)
+        val models = Label("Composition:", 5f, 70f, 100f, 15f)
+        modelPanel = Panel(5f, 87f, 159f, 15f)
         modelPanel.style.border.isEnabled = false
         modelPanel.style.background.color = ColorConstants.darkGray()
 
@@ -60,9 +60,10 @@ class InformationPanel(private val gui: Gui) : Panel() {
         modelPanel.size.y = npc.models.size * offset
 
         for ((i, model) in npc.models.withIndex()) {
-            val label = Label("Model $model", 0f, i * offset, 159f, 15f)
-            label.textState.horizontalAlign = HorizontalAlign.RIGHT
-            label.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+            val label = Label("Model $model", 20f, i * offset, 139f, 15f)
+            val empty = Label("", 0f, i * offset, 159f, 15f )
+            empty.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+            modelPanel.add(empty)
             modelPanel.add(label)
         }
     }

@@ -2,6 +2,7 @@ package gui
 
 import Processor
 import net.runelite.cache.NpcManager
+import net.runelite.cache.definitions.NpcDefinition
 
 class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcManager: NpcManager):
     ItemList(x, y, gui) {
@@ -39,6 +40,23 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
         if (item is NpcItem) {
             item.npc = npc
             item.updateText()
+        }
+    }
+
+    class NpcItem(var npc: NpcDefinition, private val context: Processor, x: Float, y: Float,
+                  width: Float, height: Float): Item(x, y, width, height) {
+
+        init {
+            updateText()
+        }
+
+        override fun updateText() {
+            textState.text = npc.name
+            isEnabled = true
+        }
+
+        override fun onClickEvent() {
+            context.npcLoader.load(npc)
         }
     }
 }

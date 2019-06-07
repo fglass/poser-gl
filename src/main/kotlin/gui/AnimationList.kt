@@ -1,6 +1,7 @@
 package gui
 
 import Processor
+import net.runelite.cache.definitions.SequenceDefinition
 
 class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor): ItemList(x, y, gui) {
 
@@ -31,6 +32,24 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
         if (sequence != null && item is AnimationItem) {
             item.sequence = sequence
             item.updateText()
+        }
+    }
+
+    class AnimationItem(var sequence: SequenceDefinition, private val context: Processor, x: Float, y: Float,
+                        width: Float, height: Float): Item(x, y, width, height) {
+
+        init {
+            updateText()
+        }
+
+        override fun updateText() {
+            textState.text = sequence.id.toString()
+            isEnabled = true
+        }
+
+        override fun onClickEvent() {
+            context.animationHandler.playAnimation(sequence)
+            context.gui.infoPanel.animationId.textState.text = sequence.id.toString()
         }
     }
 }

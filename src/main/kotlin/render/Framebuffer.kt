@@ -1,22 +1,23 @@
 package render
 
 import BG_COLOUR
+import Processor
 import entity.Camera
+import input.Mouse
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.image.FBOImage
-import org.lwjgl.opengl.GL30
-import org.lwjgl.opengl.GL32
-import shader.StaticShader
-import shader.ShadingType
-import Processor
-import input.Mouse
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
+import org.liquidengine.legui.image.FBOImage
+import org.lwjgl.opengl.GL32.*
+import shader.ShadingType
+import shader.StaticShader
 
-class Framebuffer(private val context: Processor, private val shader: StaticShader,
-                  mouse: Mouse, private val scaleFactor: Int): ImageView() {
+class Framebuffer(
+    private val context: Processor, private val shader: StaticShader,
+    mouse: Mouse, private val scaleFactor: Int
+) : ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0
@@ -32,72 +33,78 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     init {
         position = (Vector2f(160f, 49f))
         resize()
+
+        listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            mouse.handleClick(event.button, event.action)
+        }
+        listenerMap.addListener(MouseDragEvent::class.java) { event ->
+            mouse.handleDrag(event.delta)
+        }
+        listenerMap.addListener(ScrollEvent::class.java) { event ->
+            mouse.handleScroll(event.yoffset)
+        }
     }
 
     fun lateInit() {
         glRenderer = Renderer(context, shader)
     }
 
-    private fun getFboSize(): Vector2f {
-        return Vector2f(context.gui.size.x - 340, context.gui.size.y - 159)
-    }
-
     private fun createTexture(): FBOImage {
-        id = GL30.glGenFramebuffers()
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id)
+        id = glGenFramebuffers()
+        glBindFramebuffer(GL_FRAMEBUFFER, id)
 
-        textureId = GL30.glGenTextures()
-        GL30.glBindTexture(GL30.GL_TEXTURE_2D, textureId)
+        textureId = glGenTextures()
+        glBindTexture(GL_TEXTURE_2D, textureId)
 
-        GL30.glTexImage2D(
-            GL30.GL_TEXTURE_2D,
+        glTexImage2D(
+            GL_TEXTURE_2D,
             0,
-            GL30.GL_RGBA,
+            GL_RGBA,
             textureWidth,
             textureHeight,
             0,
-            GL30.GL_RGBA,
-            GL30.GL_UNSIGNED_BYTE,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
             0
         )
 
-        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
-        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 
-        val renderBufferId = GL30.glGenRenderbuffers()
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, renderBufferId)
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT, textureWidth, textureHeight)
-        GL30.glFramebufferRenderbuffer(
-            GL30.GL_FRAMEBUFFER,
-            GL30.GL_DEPTH_ATTACHMENT,
-            GL30.GL_RENDERBUFFER,
+        val renderBufferId = glGenRenderbuffers()
+        glBindRenderbuffer(GL_RENDERBUFFER, renderBufferId)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, textureWidth, textureHeight)
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER,
+            GL_DEPTH_ATTACHMENT,
+            GL_RENDERBUFFER,
             renderBufferId
         )
 
-        GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, textureId, 0)
-        GL30.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0)
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0)
+        glDrawBuffer(GL_COLOR_ATTACHMENT0)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
         return FBOImage(textureId, textureWidth, textureHeight)
     }
 
     fun render() {
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id)
-        GL30.glViewport(0, 0, textureWidth, textureHeight)
+        glBindFramebuffer(GL_FRAMEBUFFER, id)
+        glViewport(0, 0, textureWidth, textureHeight)
 
-        GL30.glClearColor(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
-        GL30.glClear(GL30.GL_COLOR_BUFFER_BIT or GL30.GL_DEPTH_BUFFER_BIT or GL30.GL_STENCIL_BUFFER_BIT)
+        glClearColor(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
 
-        GL30.glEnable(GL30.GL_DEPTH_TEST)
-        GL30.glEnable(GL30.GL_CULL_FACE)
-        GL30.glCullFace(GL30.GL_BACK)
-        GL30.glEnable(GL30.GL_BLEND)
-        GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         if (polygonMode == PolygonMode.POINT) {
-            GL30.glPolygonMode(GL30.GL_FRONT_AND_BACK, GL30.GL_POINT)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_POINT)
         } else if (polygonMode == PolygonMode.LINE) {
-            GL30.glPolygonMode(GL30.GL_FRONT_AND_BACK, GL30.GL_LINE)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         }
 
         // Render entities
@@ -109,7 +116,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         glRenderer.render(context.entities, shader)
         shader.stop()
 
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
 
     fun resize() {
@@ -121,5 +128,9 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         if (::glRenderer.isInitialized) {
             glRenderer.reloadProjectionMatrix()
         }
+    }
+
+    private fun getFboSize(): Vector2f {
+        return Vector2f(context.gui.size.x - 340, context.gui.size.y - 159)
     }
 }

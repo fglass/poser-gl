@@ -89,14 +89,7 @@ class Processor {
         CallbackKeeper.registerCallbacks(window, keeper)
 
         val mouse = Mouse()
-        val mouseCallback = {_: Long, button: Int, action: Int, _: Int -> mouse.handleClick(button, action) }
-        val scrollCallback = {_: Long, dx: Double, dy: Double -> mouse.handleScroll(dx, dy) }
-        val cursorCallback = {_: Long, x: Double, y: Double -> mouse.handlePosition(x, y) }
         val windowCloseCallback = {_: Long -> running = false }
-
-        keeper.chainMouseButtonCallback.add(mouseCallback)
-        keeper.chainScrollCallback.add(scrollCallback)
-        keeper.chainCursorPosCallback.add(cursorCallback)
         keeper.chainWindowCloseCallback.add(windowCloseCallback)
 
         val systemEventProcessor = SystemEventProcessor()
@@ -117,8 +110,8 @@ class Processor {
             framebuffer.resize()
         }
 
-        npcLoader.load(npcLoader.manager.get(0)) // Load first npc
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
+        npcLoader.load(npcLoader.manager.get(0)) // Load first npc
 
         // Render loop
         while (running) {

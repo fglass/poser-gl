@@ -13,14 +13,16 @@ import shader.ShadingType
 
 class Gui(position: Vector2f, size: Vector2f, private val context: Processor): Panel(position, size) {
 
-    val npcItems = mutableListOf<NpcItem>()
-    val animationItems = mutableListOf<AnimationItem>()
+    val npcItems = mutableListOf<NpcList.NpcItem>()
+    val animationItems = mutableListOf<AnimationList.AnimationItem>()
     private val npcManager = context.npcLoader.manager
     private val npcList = NpcList(5f, 49f, this, context, npcManager)
     private val animationList = AnimationList(5f, 49f, this, context)
 
     val infoPanel = InformationPanel(this)
     private val animationPanel = AnimationPanel(this)
+    private val renderBox = SelectBox<String>(size.x - 175, 27f, 82f, 15f)
+    private val shadingBox = SelectBox<String>(size.x - 87, 27f, 82f, 15f)
 
     fun createElements() {
         addToggles()
@@ -32,7 +34,6 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     }
 
     private fun addToggles() {
-        val renderBox = SelectBox<String>(160f, 5f, 75f, 15f)
         renderBox.addElement("Fill")
         renderBox.addElement("Vertices")
         renderBox.addElement("Wireframe")
@@ -45,7 +46,6 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
             }
         }
 
-        val shadingBox = SelectBox<String>(240f, 5f, 75f, 15f)
         shadingBox.addElement("Smooth")
         shadingBox.addElement("Flat")
         shadingBox.addElement("None")
@@ -115,5 +115,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         animationList.resize()
         infoPanel.resize()
         animationPanel.resize()
+        renderBox.position = Vector2f(size.x - 175, 27f) // TODO improved component resizing
+        shadingBox.position = Vector2f(size.x - 87, 27f)
     }
 }

@@ -1,46 +1,33 @@
 package input
 
 import org.joml.Vector2f
-import org.lwjgl.glfw.GLFW.*
+import org.liquidengine.legui.event.MouseClickEvent
+import org.liquidengine.legui.input.Mouse
 
 class Mouse {
 
     var pressed = false
-    var position = Vector2f(0f, 0f)
-    private var previousPosition = Vector2f(0f, 0f)
-    private var previousDWheel = 0f
+    var zooming = false
+    var delta = Vector2f(0f, 0f)
     var dWheel = 0f
 
-    fun handleClick(button: Int, action:Int) {
-        if (button == GLFW_MOUSE_BUTTON_LEFT) {
-            if (action == GLFW_PRESS) {
+    fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
+        if (button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
+            if (action == MouseClickEvent.MouseClickAction.PRESS) {
                 pressed = true
-            } else if (action == GLFW_RELEASE) {
+                delta = Vector2f(0f, 0f)
+            } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
                 pressed = false
             }
         }
     }
 
-    fun handlePosition(x: Double, y: Double) {
-        previousPosition = position
-        position = Vector2f(x.toFloat(), y.toFloat())
-        dWheel = 0f // Prevent infinite scrolling
+    fun handleDrag(delta: Vector2f) {
+        this.delta = delta
     }
 
-    fun handleScroll(dx: Double, dy: Double) {
-        previousDWheel = dWheel
-        dWheel = if (previousDWheel == dy.toFloat()) {
-            0f
-        } else {
-            dy.toFloat()
-        }
-    }
-
-    fun getDX(): Float {
-        return position.x - previousPosition.x
-    }
-
-    fun getDY(): Float {
-        return position.y - previousPosition.y
+    fun handleScroll(dWheel: Double) {
+        zooming = true
+        this.dWheel = dWheel.toFloat()
     }
 }
