@@ -25,7 +25,7 @@ class NpcLoader(private val context: Processor) {
         clear()
         currentNpc = npc
         npc.models.forEach {
-            val model = context.datLoader.load(it, context.shading == ShadingType.FLAT)
+            val model = context.datLoader.load(it, context.framebuffer.shadingType == ShadingType.FLAT)
             context.addModel(model)
         }
         context.gui.infoPanel.update(npc)

@@ -119,7 +119,7 @@ class AnimationHandler(private val context: Processor) {
             for (entity in context.entities) {
                 val def = entity.rawModel.definition
                 def.animate(fmType, fm, dx, dy, dz)
-                entity.rawModel = context.datLoader.parse(def, context.shading == ShadingType.FLAT)
+                entity.rawModel = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
             }
         }
     }

@@ -24,14 +24,14 @@ class Renderer(private val context: Processor, private val shader: StaticShader)
     private fun init(loadLight: Boolean) {
         shader.start()
         if (loadLight) {
-            shader.loadLight(Light(Vector3f(0f, -20f, -100F), Vector3f(1F, 1F, 1F)))
+            shader.loadLight(Light(Vector3f(0f, 0f, -100F), Vector3f(1F, 1F, 1F)))
         }
         shader.loadProjectionMatrix(createProjectionMatrix())
         shader.stop()
     }
 
     private fun createProjectionMatrix(): Matrix4f {
-        val screenSize = context.gui.size
+        val screenSize = context.framebuffer.size
         val aspectRatio = screenSize.x / screenSize.y
         val yScale = ((1f / Math.tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
         val xScale = yScale / aspectRatio

@@ -18,8 +18,8 @@ void main(void) {
     gl_PointSize = 3.0f;
 
     int ahsl = position.w;
-    int hsl = ahsl;
-    float a = (ahsl >> 16) / 255.0f;
+    int hsl = ahsl & 0xFFFF;
+    float a = (ahsl >> 16 & 0xFF) / 255.0f;
 
     // HSB to RGB
     int var5 = hsl / 128;

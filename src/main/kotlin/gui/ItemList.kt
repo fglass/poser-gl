@@ -22,7 +22,7 @@ abstract class ItemList(x: Float, y: Float, val gui: Gui): ScrollablePanel() {
     }
 
     private fun getListSize(): Vector2f {
-        return Vector2f(150f, gui.size.y - 52)
+        return Vector2f(150f, gui.size.y - 159)
     }
 
     fun search(input: String) {

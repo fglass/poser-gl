@@ -1,4 +1,3 @@
-import entity.Camera
 import entity.Entity
 import gui.Gui
 import input.Mouse
@@ -6,8 +5,8 @@ import model.AnimationHandler
 import model.DatLoader
 import model.NpcLoader
 import model.RawModel
-import net.runelite.cache.definitions.NpcDefinition
 import org.joml.Vector2f
+import org.joml.Vector2i
 import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
@@ -23,21 +22,18 @@ import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL30.*
 import org.lwjgl.system.MemoryUtil
+import render.Framebuffer
 import render.Loader
-import render.Renderer
-import shader.ShadingType
 import shader.StaticShader
 import utils.VSyncTimer
-import java.awt.Rectangle
 
 const val TITLE = "PoserGL"
 const val BG_COLOUR = 33 / 255f
 const val CACHE_PATH = "./repository/old/"
-val CLIP_REGION = Rectangle(312, 0, 100, 52)
-val ENTITY_POS = Vector3f(0f, -20f, -50f)
-val ENTITY_ROT = Vector3f(0f, 0f, 180f)
+val ENTITY_POS = Vector3f(0f, 0f, 0f)
+val ENTITY_ROT = Vector3f(0f, 0f, 0f)
 
 fun main() {
     Processor().run()
@@ -46,12 +42,9 @@ fun main() {
 class Processor {
 
     private var running = true
-    var vertices = false
-    var wireframe = false
-    var shading = ShadingType.SMOOTH
-
     lateinit var gui: Gui
-    lateinit var glRenderer: Renderer
+    lateinit var framebuffer: Framebuffer
+
     val loader = Loader()
     val datLoader = DatLoader(loader)
     val npcLoader = NpcLoader(this)
@@ -84,15 +77,14 @@ class Processor {
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
 
-        val size = frame.container.size
-        gui = Gui(Vector2f(0f, 0f), size, this)
+        val context = Context(window)
+        context.updateGlfwWindow()
+
+        val frameSize = frame.container.size
+        gui = Gui(Vector2f(0f, 0f), frameSize, this)
         gui.createElements()
         frame.container.add(gui)
-        frame.container.listenerMap.addListener(WindowSizeEvent::class.java) {
-            gui.resize(size)
-        }
 
-        val context = Context(window)
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
 
@@ -100,7 +92,7 @@ class Processor {
         val mouseCallback = {_: Long, button: Int, action: Int, _: Int -> mouse.handleClick(button, action) }
         val scrollCallback = {_: Long, dx: Double, dy: Double -> mouse.handleScroll(dx, dy) }
         val cursorCallback = {_: Long, x: Double, y: Double -> mouse.handlePosition(x, y) }
-        val windowCloseCallback = { _: Long -> running = false }
+        val windowCloseCallback = {_: Long -> running = false }
 
         keeper.chainMouseButtonCallback.add(mouseCallback)
         keeper.chainScrollCallback.add(scrollCallback)
@@ -115,9 +107,17 @@ class Processor {
 
         val vSync = VSyncTimer()
         val shader = StaticShader()
-        val camera = Camera(mouse)
-        glRenderer = Renderer(this, shader)
-        npcLoader.load(npcLoader.manager.get(0))
+        val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frameSize)) 2 else 1
+
+        framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
+        framebuffer.lateInit()
+        frame.container.add(framebuffer)
+        frame.container.listenerMap.addListener(WindowSizeEvent::class.java) {
+            gui.resize(frameSize)
+            framebuffer.resize()
+        }
+
+        npcLoader.load(npcLoader.manager.get(0)) // Load first npc
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
         // Render loop
@@ -137,30 +137,8 @@ class Processor {
                 println("Render error: ${ignore.message}")
             }
 
-            glViewport(
-                CLIP_REGION.x, CLIP_REGION.y, windowSize.x - CLIP_REGION.width, windowSize.y - CLIP_REGION.height
-            )
-
-            glEnable(GL_DEPTH_TEST)
-            glEnable(GL_CULL_FACE)
-            glCullFace(GL_BACK)
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-            if (vertices) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_POINT)
-            } else if (wireframe) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-            }
-
-            // Render entities
-            animationHandler.tickAnimation()
-            camera.move()
-            shader.start()
-            shader.loadViewMatrix(camera)
-            shader.loadShadingToggle(shading != ShadingType.NONE)
-            glRenderer.render(entities, shader)
-            shader.stop()
+            // Render fbo
+            framebuffer.render()
 
             // Poll events to callbacks
             glfwPollEvents()
@@ -193,5 +171,9 @@ class Processor {
 
     fun addModel(model: RawModel) {
         entities.add(Entity(model, ENTITY_POS, ENTITY_ROT, 0.05f))
+    }
+
+    private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
+        return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
     }
 }
