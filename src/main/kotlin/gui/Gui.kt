@@ -2,11 +2,13 @@ package gui
 
 import Processor
 import org.joml.Vector2f
+import org.liquidengine.legui.component.Component
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
+import org.liquidengine.legui.style.color.ColorConstants
 import org.lwjgl.glfw.GLFW
 import render.PolygonMode
 import shader.ShadingType
@@ -19,7 +21,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     private val npcList = NpcList(5f, 49f, this, context, npcManager)
     private val animationList = AnimationList(5f, 49f, this, context)
 
-    val infoPanel = InformationPanel(this)
+    val infoPanel = InformationPanel(this, context)
     private val animationPanel = AnimationPanel(this)
     private val renderBox = SelectBox<String>(size.x - 175, 27f, 82f, 15f)
     private val shadingBox = SelectBox<String>(size.x - 87, 27f, 82f, 15f)
@@ -69,9 +71,12 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
 
     private fun addSearch() {
         val searchField = TextInput("Search", 5f, 5f, 150f, 15f)
+        searchField.textState.textColor = ColorConstants.lightGray()
+
         searchField.listenerMap.addListener(MouseClickEvent::class.java) {
             if (searchField.textState.text == "Search") { // Placeholder text
                 searchField.textState.text = ""
+                searchField.textState.textColor = ColorConstants.white()
             }
         }
         searchField.listenerMap.addListener(KeyEvent::class.java) { event ->
@@ -115,7 +120,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         animationList.resize()
         infoPanel.resize()
         animationPanel.resize()
-        renderBox.position = Vector2f(size.x - 175, 27f) // TODO improved component resizing
+        renderBox.position = Vector2f(size.x - 175, 27f)
         shadingBox.position = Vector2f(size.x - 87, 27f)
     }
 }

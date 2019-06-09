@@ -69,7 +69,7 @@ abstract class ItemList(x: Float, y: Float, val gui: Gui): ScrollablePanel() {
 
         fun addClickListener() {
             listenerMap.addListener(MouseClickEvent::class.java) { event ->
-                if (MouseClickEvent.MouseClickAction.CLICK == event.action) {
+                if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                     onClickEvent()
                 }
             }

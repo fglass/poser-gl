@@ -4,7 +4,7 @@ import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.style.color.ColorConstants
 
-class AnimationPanel(private val gui: Gui) : Panel() {
+class AnimationPanel(private val gui: Gui): Panel() {
 
     init {
         resize()

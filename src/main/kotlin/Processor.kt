@@ -32,6 +32,7 @@ import utils.VSyncTimer
 const val TITLE = "PoserGL"
 const val BG_COLOUR = 33 / 255f
 const val CACHE_PATH = "./repository/old/"
+const val RESOURCES_PATH = "src/main/resources/"
 val ENTITY_POS = Vector3f(0f, 0f, 0f)
 val ENTITY_ROT = Vector3f(0f, 0f, 0f)
 
@@ -105,8 +106,8 @@ class Processor {
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
         framebuffer.lateInit()
         frame.container.add(framebuffer)
-        frame.container.listenerMap.addListener(WindowSizeEvent::class.java) {
-            gui.resize(frameSize)
+        gui.listenerMap.addListener(WindowSizeEvent::class.java) { event ->
+            gui.resize(Vector2f(event.width.toFloat(), event.height.toFloat()))
             framebuffer.resize()
         }
 
