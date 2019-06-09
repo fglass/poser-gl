@@ -6,6 +6,7 @@ import entity.Camera
 import input.Mouse
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
+import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
@@ -17,8 +18,7 @@ import shader.StaticShader
 
 class Framebuffer(
     private val context: Processor, private val shader: StaticShader,
-    mouse: Mouse, private val scaleFactor: Int
-) : ImageView() {
+    private val mouse: Mouse, private val scaleFactor: Int) : ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0
@@ -43,6 +43,9 @@ class Framebuffer(
         }
         listenerMap.addListener(ScrollEvent::class.java) { event ->
             mouse.handleScroll(event.yoffset)
+        }
+        listenerMap.addListener(CursorEnterEvent::class.java) { event ->
+            mouse.handleBoundary(event.isEntered)
         }
     }
 

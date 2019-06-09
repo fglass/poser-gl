@@ -41,13 +41,13 @@ class Camera(private val mouse: Mouse) {
 
     private fun calculatePitch() {
         if (mouse.pressed) {
-            pitch -= mouse.delta.y * 0.1f
+            pitch -= mouse.delta.y * 0.5f
         }
     }
 
     private fun calculateRoll() {
         if (mouse.pressed) {
-            roll -= mouse.delta.x * 0.1f
+            angle -= mouse.delta.x * 0.5f
         }
     }
 

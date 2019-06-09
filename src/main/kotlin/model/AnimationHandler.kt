@@ -87,8 +87,8 @@ class AnimationHandler(private val context: Processor) {
 
         val frameIndex = frameCount % currentSequence.frameIDs.size
 
-        if (frameIndex == 0) {
-            timer = 0 // Animation restarted
+        if (frameIndex == 0) { // Animation restarted
+            timer = 0
         } else {
             timer++
         }

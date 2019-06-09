@@ -30,4 +30,11 @@ class Mouse {
         zooming = true
         this.dWheel = dWheel.toFloat()
     }
+
+    fun handleBoundary(entered: Boolean) {
+        if (!entered) {
+            pressed = false
+            println("test")
+        }
+    }
 }
