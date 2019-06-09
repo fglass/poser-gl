@@ -3,6 +3,7 @@ package model
 import CACHE_PATH
 import net.runelite.cache.IndexType
 import net.runelite.cache.definitions.ModelDefinition
+import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.loaders.ModelLoader
 import net.runelite.cache.fs.Store
 import org.joml.Vector3f
@@ -13,7 +14,7 @@ class DatLoader(private val loader: Loader) {
 
     private val maxPriority = 255
 
-    fun load(id: Int, flatShading: Boolean): RawModel {
+    fun load(id: Int, npc: NpcDefinition, flatShading: Boolean): RawModel {
         Store(File(CACHE_PATH)).use { store ->
             store.load()
             val storage = store.storage
@@ -24,6 +25,12 @@ class DatLoader(private val loader: Loader) {
 
             val modelLoader = ModelLoader()
             val def = modelLoader.load(archive.archiveId, contents)
+
+            if (npc.recolorToFind != null) {
+                for (i in 0 until npc.recolorToFind.size) {
+                    def.recolor(npc.recolorToFind[i], npc.recolorToReplace[i])
+                }
+            }
 
             return parse(def, flatShading)
         }

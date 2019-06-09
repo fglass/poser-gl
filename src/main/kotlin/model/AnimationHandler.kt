@@ -22,6 +22,7 @@ class AnimationHandler(private val context: Processor) {
     private val frames = HashMultimap.create<Int, FrameDefinition>()
     private var frameCount = 0
     private var frameLength = 0
+    var timer = 0
 
     init {
         val store = Store(File(CACHE_PATH))
@@ -84,18 +85,27 @@ class AnimationHandler(private val context: Processor) {
             return
         }
 
-        if (frameLength-- <= 0) {
-            frameCount++
-            frameLength = currentSequence.frameLenghts[frameCount % currentSequence.frameIDs.size]
+        val frameIndex = frameCount % currentSequence.frameIDs.size
+
+        if (frameIndex == 0) {
+            timer = 0 // Animation restarted
+        } else {
+            timer++
         }
 
-        val seqFrameId = currentSequence.frameIDs[frameCount % currentSequence.frameIDs.size]
+        if (frameLength-- <= 0) {
+            frameCount++
+            frameLength = currentSequence.frameLenghts[frameIndex]
+        }
+
+        val seqFrameId = currentSequence.frameIDs[frameIndex]
         val frames = frames.get(seqFrameId.ushr(16))
         val frameFileId = seqFrameId and 0xFFFF
 
         val first = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst()
         val frame = first.get()
         applyFrame(frame, context)
+        context.gui.animationPanel.tickCursor(timer)
     }
 
     private fun applyFrame(frame: FrameDefinition, context: Processor) {

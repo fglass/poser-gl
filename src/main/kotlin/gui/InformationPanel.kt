@@ -18,7 +18,6 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
 
     private var npcName: Label
     private var npcId: Label
-    var animationId: Label
     private val modelPanel: Panel
 
     init {
@@ -37,12 +36,8 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
         npcId = Label("N/A", 60f, 40f, 104f, 15f)
         npcId.textState.horizontalAlign = HorizontalAlign.RIGHT
 
-        val animation = Label("Animation:", 5f, 55f, 100f, 15f)
-        animationId = Label("N/A", 60f, 55f, 104f, 15f)
-        animationId.textState.horizontalAlign = HorizontalAlign.RIGHT
-
-        val models = Label("Composition:", 5f, 70f, 100f, 15f)
-        modelPanel = Panel(5f, 87f, 159f, 15f)
+        val models = Label("Composition:", 5f, 55f, 100f, 15f)
+        modelPanel = Panel(5f, 72f, 159f, 15f)
         modelPanel.style.border.isEnabled = false
         modelPanel.style.background.color = ColorConstants.darkGray()
 
@@ -51,8 +46,6 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
         add(npcName)
         add(id)
         add(npcId)
-        add(animation)
-        add(animationId)
         add(modelPanel)
         add(models)
     }
@@ -60,7 +53,6 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
     fun update(npc: NpcDefinition) {
         npcName.textState.text = npc.name
         npcId.textState.text = npc.id.toString()
-        animationId.textState.text = "N/A"
 
         val offset = 16f
         modelPanel.removeAll(modelPanel.childComponents)

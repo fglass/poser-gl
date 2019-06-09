@@ -49,7 +49,7 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
 
         override fun onClickEvent() {
             context.animationHandler.playAnimation(sequence)
-            context.gui.infoPanel.animationId.textState.text = sequence.id.toString()
+            context.gui.animationPanel.setTimeline(sequence)
         }
     }
 }

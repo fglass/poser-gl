@@ -10,6 +10,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
 import org.liquidengine.legui.image.FBOImage
+import org.liquidengine.legui.style.Style
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader

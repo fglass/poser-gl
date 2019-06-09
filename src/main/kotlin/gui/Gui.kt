@@ -2,7 +2,6 @@ package gui
 
 import Processor
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Component
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.TextInput
@@ -22,7 +21,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     private val animationList = AnimationList(5f, 49f, this, context)
 
     val infoPanel = InformationPanel(this, context)
-    private val animationPanel = AnimationPanel(this)
+    val animationPanel = AnimationPanel(this)
     private val renderBox = SelectBox<String>(size.x - 175, 27f, 82f, 15f)
     private val shadingBox = SelectBox<String>(size.x - 87, 27f, 82f, 15f)
 
@@ -71,7 +70,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
 
     private fun addSearch() {
         val searchField = TextInput("Search", 5f, 5f, 150f, 15f)
-        searchField.textState.textColor = ColorConstants.lightGray()
+        searchField.textState.textColor = ColorConstants.gray()
 
         searchField.listenerMap.addListener(MouseClickEvent::class.java) {
             if (searchField.textState.text == "Search") { // Placeholder text
