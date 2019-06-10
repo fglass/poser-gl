@@ -34,6 +34,8 @@ class Framebuffer(
     init {
         position = (Vector2f(160f, 49f))
         resize()
+        focusedStyle.border.isEnabled = false
+        focusedStyle.display = Style.DisplayType.NONE
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
@@ -45,7 +47,7 @@ class Framebuffer(
             mouse.handleScroll(event.yoffset)
         }
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-            mouse.handleBoundary(event.isEntered)
+            mouse.handleCursorEvent(event.isEntered)
         }
     }
 

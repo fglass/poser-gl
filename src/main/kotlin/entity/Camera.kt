@@ -21,7 +21,7 @@ class Camera(private val mouse: Mouse) {
     fun move() {
         calculateZoom()
         calculatePitch()
-        calculateRoll()
+        calculateAngle()
 
         val h = calculateHorizontalDistance()
         val v = calculateVerticalDistance()
@@ -45,7 +45,7 @@ class Camera(private val mouse: Mouse) {
         }
     }
 
-    private fun calculateRoll() {
+    private fun calculateAngle() {
         if (mouse.pressed) {
             angle -= mouse.delta.x * 0.5f
         }

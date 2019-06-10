@@ -2,7 +2,7 @@ package utils
 
 class VSyncTimer {
 
-    private val fps = 50
+    private val fps = 50f
     private var lastTime = System.currentTimeMillis()
 
     fun waitIfNecessary() {

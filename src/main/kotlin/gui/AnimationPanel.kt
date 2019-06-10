@@ -9,6 +9,7 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
+import kotlin.math.max
 
 class AnimationPanel(private val gui: Gui): Panel() {
 
@@ -75,7 +76,9 @@ class AnimationPanel(private val gui: Gui): Panel() {
 
     private fun addTimes() {
         addTime(maxLength)
-        for (i in 0..maxLength step 5) {
+        val sqrt = Math.sqrt(maxLength.toDouble())
+        val timeStep = 5 * (Math.round(sqrt / 5))
+        for (i in 0..maxLength step timeStep.toInt()) {
             addTime(i)
         }
     }

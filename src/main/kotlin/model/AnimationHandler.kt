@@ -15,6 +15,8 @@ import net.runelite.cache.fs.Store
 import shader.ShadingType
 import java.io.File
 
+// https://www.rune-server.ee/runescape-development/rs2-client/tutorials/340745-runescapes-rendering-animation-system.html
+
 class AnimationHandler(private val context: Processor) {
 
     var currentSequence: SequenceDefinition = SequenceDefinition(-1)
@@ -85,9 +87,7 @@ class AnimationHandler(private val context: Processor) {
             return
         }
 
-        val frameIndex = frameCount % currentSequence.frameIDs.size
-
-        if (frameIndex == 0) { // Animation restarted
+        if (getFrameIndex() == 0 && frameLength <= 0) { // Animation restarted
             timer = 0
         } else {
             timer++
@@ -95,10 +95,10 @@ class AnimationHandler(private val context: Processor) {
 
         if (frameLength-- <= 0) {
             frameCount++
-            frameLength = currentSequence.frameLenghts[frameIndex]
+            frameLength = currentSequence.frameLenghts[getFrameIndex()]
         }
 
-        val seqFrameId = currentSequence.frameIDs[frameIndex]
+        val seqFrameId = currentSequence.frameIDs[getFrameIndex()]
         val frames = frames.get(seqFrameId.ushr(16))
         val frameFileId = seqFrameId and 0xFFFF
 
@@ -108,16 +108,23 @@ class AnimationHandler(private val context: Processor) {
         context.gui.animationPanel.tickCursor(timer)
     }
 
+    private fun getFrameIndex(): Int {
+        return frameCount % currentSequence.frameIDs.size
+    }
+
     private fun applyFrame(frame: FrameDefinition, context: Processor) {
         val frameMap = frame.framemap
+
+        // Reset from last frame
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
-
+        context.loader.cleanUp()
         for (entity in context.entities) {
             entity.rawModel.definition.resetAnim()
         }
 
+        // Apply transformations
         for (i in 0 until frame.translatorCount) {
             val type = frame.indexFrameIds[i]
             val fmType = frameMap.types[type]
@@ -129,8 +136,14 @@ class AnimationHandler(private val context: Processor) {
             for (entity in context.entities) {
                 val def = entity.rawModel.definition
                 def.animate(fmType, fm, dx, dy, dz)
-                entity.rawModel = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
             }
+        }
+
+        // Reload models
+        for (entity in context.entities) {
+            entity.rawModel = context.datLoader.parse(
+                entity.rawModel.definition, context.framebuffer.shadingType == ShadingType.FLAT
+            )
         }
     }
 

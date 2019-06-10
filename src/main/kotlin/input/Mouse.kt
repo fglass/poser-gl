@@ -31,10 +31,9 @@ class Mouse {
         this.dWheel = dWheel.toFloat()
     }
 
-    fun handleBoundary(entered: Boolean) {
+    fun handleCursorEvent(entered: Boolean) {
         if (!entered) {
             pressed = false
-            println("test")
         }
     }
 }
