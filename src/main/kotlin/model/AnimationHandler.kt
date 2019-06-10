@@ -24,6 +24,8 @@ class AnimationHandler(private val context: Processor) {
     private val frames = HashMultimap.create<Int, FrameDefinition>()
     private var frameCount = 0
     private var frameLength = 0
+
+    var playing = true
     var timer = 0
 
     init {
@@ -76,14 +78,15 @@ class AnimationHandler(private val context: Processor) {
         println("Loaded ${frames.size()} frames")
     }
 
-    fun playAnimation(sequence: SequenceDefinition) {
+    fun play(sequence: SequenceDefinition) {
+        context.gui.animationPanel.play(sequence)
         currentSequence = sequence
         frameCount = 0
         frameLength = currentSequence.frameLenghts[0]
     }
 
-    fun tickAnimation() {
-        if (context.entities.isEmpty() || currentSequence.id == -1) {
+    fun tick() {
+        if (!playing || context.entities.isEmpty() || currentSequence.id == -1) {
             return
         }
 
@@ -101,7 +104,7 @@ class AnimationHandler(private val context: Processor) {
         val seqFrameId = currentSequence.frameIDs[getFrameIndex()]
         val frames = frames.get(seqFrameId.ushr(16))
         val frameFileId = seqFrameId and 0xFFFF
-
+        
         val first = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst()
         val frame = first.get()
         applyFrame(frame, context)

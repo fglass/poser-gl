@@ -1,6 +1,10 @@
 package gui
 
 import Processor
+import gui.component.AnimationList
+import gui.component.NpcList
+import gui.panel.AnimationPanel
+import gui.panel.InformationPanel
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.SelectBox
@@ -21,7 +25,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     private val animationList = AnimationList(5f, 49f, this, context)
 
     val infoPanel = InformationPanel(this, context)
-    val animationPanel = AnimationPanel(this)
+    val animationPanel = AnimationPanel(this, context)
     private val renderBox = SelectBox<String>(size.x - 175, 27f, 82f, 15f)
     private val shadingBox = SelectBox<String>(size.x - 87, 27f, 82f, 15f)
 
@@ -32,6 +36,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         add(npcList)
         add(infoPanel)
         add(animationPanel)
+        style.focusedStrokeColor = null
     }
 
     private fun addToggles() {

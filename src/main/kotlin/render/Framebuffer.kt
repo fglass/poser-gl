@@ -11,7 +11,6 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
 import org.liquidengine.legui.image.FBOImage
-import org.liquidengine.legui.style.Style
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader
@@ -34,8 +33,6 @@ class Framebuffer(
     init {
         position = (Vector2f(160f, 49f))
         resize()
-        focusedStyle.border.isEnabled = false
-        focusedStyle.display = Style.DisplayType.NONE
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
@@ -49,6 +46,7 @@ class Framebuffer(
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             mouse.handleCursorEvent(event.isEntered)
         }
+        style.focusedStrokeColor = null
     }
 
     fun lateInit() {
@@ -114,7 +112,7 @@ class Framebuffer(
         }
 
         // Render entities
-        context.animationHandler.tickAnimation()
+        context.animationHandler.tick()
         camera.move()
         shader.start()
         shader.loadViewMatrix(camera)

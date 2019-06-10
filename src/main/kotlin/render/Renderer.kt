@@ -24,7 +24,7 @@ class Renderer(private val context: Processor, private val shader: StaticShader)
     private fun init(loadLight: Boolean) {
         shader.start()
         if (loadLight) {
-            shader.loadLight(Light(Vector3f(0f, 0F, -1000F), Vector3f(1F, 1F, 1F)))
+            shader.loadLight(Light(Vector3f(0f, 0f, -1000f), Vector3f(1f, 1f, 1f)))
         }
         shader.loadProjectionMatrix(createProjectionMatrix())
         shader.stop()
