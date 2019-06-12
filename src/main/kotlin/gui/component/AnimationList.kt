@@ -6,12 +6,14 @@ import net.runelite.cache.definitions.SequenceDefinition
 
 class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor): ItemList(x, y, gui) {
 
+    private val animationItems = mutableListOf<AnimationItem>()
+
     init {
         var index = 0
         for ((i, sequence) in context.animationHandler.sequences.values.withIndex()) {
             val item = AnimationItem(sequence, context, listX, listY + index++ * listYOffset, 137f, 14f)
             item.addClickListener()
-            gui.animationItems.add(item)
+            animationItems.add(item)
             container.add(item)
             maxIndex = i
         }
@@ -25,7 +27,7 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
     }
 
     override fun getItems(): List<Item> {
-        return gui.animationItems
+        return animationItems
     }
 
     override fun handleItem(index: Int, item: Item) {
@@ -38,7 +40,6 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
 
     class AnimationItem(var sequence: SequenceDefinition, private val context: Processor, x: Float, y: Float,
                         width: Float, height: Float): Item(x, y, width, height) {
-
         init {
             updateText()
         }

@@ -2,7 +2,6 @@ package gui.component
 
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.Image
 import org.liquidengine.legui.style.color.ColorConstants
 

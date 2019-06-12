@@ -15,12 +15,11 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
 
-class InformationPanel(private val gui: Gui, private val context: Processor) : Panel() {
+class InformationPanel(private val gui: Gui, private val context: Processor): Panel() {
 
     private var npcName: Label
     private var npcId: Label
     private val modelPanel: Panel
-
     private val modelIcon = BufferedImage(RESOURCES_PATH + "model.png")
     private val deleteIcon = BufferedImage(RESOURCES_PATH + "delete.png")
 
@@ -72,10 +71,10 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
             modelImage.position = Vector2f(4f, y + 3)
             modelImage.style.border.isEnabled = false
 
-            val deleteImage = ImageView(deleteIcon)
-            deleteImage.position = Vector2f(145f, y + 3)
-            deleteImage.style.border.isEnabled = false
-            deleteImage.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            val deleteButton = ImageView(deleteIcon)
+            deleteButton.position = Vector2f(145f, y + 3)
+            deleteButton.style.border.isEnabled = false
+            deleteButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                     entity.remove(model, context.npcLoader)
                     update(entity)
@@ -85,7 +84,7 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
             modelPanel.add(empty)
             modelPanel.add(label)
             modelPanel.add(modelImage)
-            modelPanel.add(deleteImage)
+            modelPanel.add(deleteButton)
         }
     }
 

@@ -36,6 +36,9 @@ fun main() {
     Processor().run()
 }
 
+const val WIDTH = 800
+const val HEIGHT = 600
+
 class Processor {
 
     private var running = true
@@ -56,26 +59,23 @@ class Processor {
             throw RuntimeException("Unable to initialize GLFW")
         }
 
-        val width = 800
-        val height = 600
-
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
 
-        val window = glfwCreateWindow(width, height, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
+        val window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
         glfwShowWindow(window)
 
         glfwMakeContextCurrent(window)
         GL.createCapabilities()
 
-        val frame = Frame(width.toFloat(), height.toFloat())
-        Themes.setDefaultTheme(Themes.FLAT_DARK)
-        Themes.getDefaultTheme().applyAll(frame)
-
         val context = Context(window)
         context.updateGlfwWindow()
+
+        val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
+        Themes.setDefaultTheme(Themes.FLAT_DARK)
+        Themes.getDefaultTheme().applyAll(frame)
 
         val frameSize = frame.container.size
         gui = Gui(Vector2f(0f, 0f), frameSize, this)

@@ -19,14 +19,14 @@ import java.io.File
 
 class AnimationHandler(private val context: Processor) {
 
-    var currentSequence: SequenceDefinition = SequenceDefinition(-1)
+    private var currentSequence: SequenceDefinition = SequenceDefinition(-1)
     val sequences = java.util.HashMap<Int, SequenceDefinition>()
     private val frames = HashMultimap.create<Int, FrameDefinition>()
     private var frameCount = 0
     private var frameLength = 0
 
     var playing = true
-    var timer = 0
+    private var timer = 0
 
     init {
         val store = Store(File(CACHE_PATH))
@@ -109,7 +109,6 @@ class AnimationHandler(private val context: Processor) {
         val frame = first.get()
 
         applyFrame(frame)
-
         context.gui.animationPanel.tickCursor(timer)
     }
 

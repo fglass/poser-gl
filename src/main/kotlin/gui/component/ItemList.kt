@@ -9,10 +9,11 @@ import org.liquidengine.legui.style.color.ColorConstants
 
 abstract class ItemList(x: Float, y: Float, val gui: Gui): ScrollablePanel() {
 
-    var maxIndex = 0
-    val listX = 2f
-    val listY = 2f
-    val listYOffset = 17
+    var searchText = "Search"
+    protected var maxIndex = 0
+    protected val listX = 2f
+    protected val listY = 2f
+    protected val listYOffset = 17
 
     init {
         position.x = x
@@ -53,10 +54,6 @@ abstract class ItemList(x: Float, y: Float, val gui: Gui): ScrollablePanel() {
     private fun adjustScroll(filteredSize: Int) {
         verticalScrollBar.curValue = 0f // Reset scroll position
         container.setSize(142f, listY + filteredSize * listYOffset) // Adjust scroll size
-    }
-
-    fun resetSearch() {
-        search("")
     }
 
     abstract class Item(x: Float, y: Float, width: Float, height: Float): Button(x, y, width, height) {

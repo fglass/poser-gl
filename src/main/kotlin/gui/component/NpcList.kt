@@ -8,6 +8,8 @@ import net.runelite.cache.definitions.NpcDefinition
 class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcManager: NpcManager):
     ItemList(x, y, gui) {
 
+    private val npcItems = mutableListOf<NpcItem>()
+
     init {
         var index = 0
         for ((i, npc) in npcManager.npcs.withIndex()) {
@@ -17,7 +19,7 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
 
             val item = NpcItem(npc, context, listX, listY + index++ * listYOffset, 137f, 14f)
             item.addClickListener()
-            gui.npcItems.add(item)
+            npcItems.add(item)
             container.add(item)
             maxIndex = i
         }
@@ -33,7 +35,7 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
     }
 
     override fun getItems(): List<Item> {
-        return gui.npcItems
+        return npcItems
     }
 
     override fun handleItem(index: Int, item: Item) {
@@ -46,7 +48,6 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
 
     class NpcItem(var npc: NpcDefinition, private val context: Processor, x: Float, y: Float,
                   width: Float, height: Float): Item(x, y, width, height) {
-
         init {
             updateText()
         }
