@@ -1,7 +1,5 @@
 package entity
 
-import ENTITY_POS
-import ENTITY_ROT
 import input.Mouse
 import org.joml.Vector3f
 

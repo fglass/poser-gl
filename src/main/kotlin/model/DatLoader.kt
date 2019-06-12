@@ -4,7 +4,6 @@ import CACHE_PATH
 import net.runelite.cache.IndexType
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
-import net.runelite.cache.definitions.loaders.ModelLoader
 import net.runelite.cache.fs.Store
 import org.joml.Vector3f
 import render.Loader
@@ -14,7 +13,7 @@ class DatLoader(private val loader: Loader) {
 
     private val maxPriority = 255
 
-    fun load(id: Int, npc: NpcDefinition, flatShading: Boolean): RawModel {
+    fun load(id: Int, npc: NpcDefinition): ModelDefinition {
         Store(File(CACHE_PATH)).use { store ->
             store.load()
             val storage = store.storage
@@ -32,11 +31,11 @@ class DatLoader(private val loader: Loader) {
                 }
             }
 
-            return parse(def, flatShading)
+            return def
         }
     }
 
-    fun parse(def: ModelDefinition, flatShading: Boolean): RawModel {
+    fun parse(def: ModelDefinition, flatShading: Boolean): Model {
         val nPosition = 4
         val nNormal = 3
         val positions = IntArray(def.faceCount * nPosition * 3)
@@ -47,12 +46,12 @@ class DatLoader(private val loader: Loader) {
         var vIndex = 0
         var nIndex = 0
 
-        for (priority in maxPriority downTo 0) {
+        //for (priority in maxPriority downTo 0) {
             for (i in 0 until def.faceCount) {
 
-                if (!prioritised(priority, i, def)) {
+                /*if (!prioritised(priority, i, def)) {
                     continue
-                }
+                }*/
 
                 var alpha = 0
                 if (def.faceAlphas != null) {
@@ -78,7 +77,7 @@ class DatLoader(private val loader: Loader) {
                     nIndex += nNormal
                 }
             }
-        }
+        //}
         return loader.loadToVao(positions, normals, def)
     }
 

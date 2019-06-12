@@ -60,11 +60,11 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
             when (event.newValue.toString()) {
                 "Smooth" -> {
                     context.framebuffer.shadingType = ShadingType.SMOOTH
-                    context.npcLoader.reload()
+                    context.entity!!.reload(context.npcLoader)
                 }
                 "Flat" -> {
                     context.framebuffer.shadingType = ShadingType.FLAT
-                    context.npcLoader.reload()
+                    context.entity!!.reload(context.npcLoader)
                 }
                 "None" -> context.framebuffer.shadingType = ShadingType.NONE
             }

@@ -3,8 +3,8 @@ package gui.panel
 import BG_COLOUR
 import Processor
 import RESOURCES_PATH
+import entity.Entity
 import gui.Gui
-import net.runelite.cache.definitions.NpcDefinition
 import org.joml.Vector2f
 import org.joml.Vector4f
 import org.liquidengine.legui.component.ImageView
@@ -20,6 +20,9 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
     private var npcName: Label
     private var npcId: Label
     private val modelPanel: Panel
+
+    private val modelIcon = BufferedImage(RESOURCES_PATH + "model.png")
+    private val deleteIcon = BufferedImage(RESOURCES_PATH + "delete.png")
 
     init {
         position = getPanelPosition()
@@ -38,7 +41,7 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
         npcId.textState.horizontalAlign = HorizontalAlign.RIGHT
 
         val models = Label("Composition:", 5f, 55f, 100f, 15f)
-        modelPanel = Panel(5f, 72f, 159f, 15f)
+        modelPanel = Panel(5f, 72f, 159f, 16f)
         modelPanel.style.border.isEnabled = false
         modelPanel.style.background.color = ColorConstants.darkGray()
 
@@ -51,39 +54,38 @@ class InformationPanel(private val gui: Gui, private val context: Processor) : P
         add(models)
     }
 
-    fun update(npc: NpcDefinition) {
-        npcName.textState.text = npc.name
-        npcId.textState.text = npc.id.toString()
+    fun update(entity: Entity) {
+        npcName.textState.text = entity.npc.name
+        npcId.textState.text = entity.npc.id.toString()
 
         val offset = 16f
         modelPanel.removeAll(modelPanel.childComponents)
-        modelPanel.size.y = npc.models.size * offset
+        modelPanel.size.y = entity.composition.size * offset
 
-        for ((i, entity) in context.entities.withIndex()) {
+        for ((i, model) in entity.composition.withIndex()) {
             val y = i * offset
             val empty = Label("", 0f, y, 159f, 15f )
             empty.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
 
-            val label = Label("Model ${entity.rawModel.definition.id}", 18f, y, 139f, 15f)
-            val modelIcon = ImageView(BufferedImage(RESOURCES_PATH + "model.png"))
-            modelIcon.position = Vector2f(4f, y + 3)
-            modelIcon.style.border.isEnabled = false
+            val label = Label("Model $model", 18f, y, 139f, 15f)
+            val modelImage = ImageView(modelIcon)
+            modelImage.position = Vector2f(4f, y + 3)
+            modelImage.style.border.isEnabled = false
 
-            val deleteIcon = ImageView(BufferedImage(RESOURCES_PATH + "delete.png"))
-            deleteIcon.position = Vector2f(145f, y + 3)
-            deleteIcon.style.border.isEnabled = false
-            deleteIcon.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            val deleteImage = ImageView(deleteIcon)
+            deleteImage.position = Vector2f(145f, y + 3)
+            deleteImage.style.border.isEnabled = false
+            deleteImage.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    context.entities.remove(entity)
-                    modelPanel.remove(deleteIcon)
-                    update(npc)
+                    entity.remove(model, context.npcLoader)
+                    update(entity)
                 }
             }
 
             modelPanel.add(empty)
             modelPanel.add(label)
-            modelPanel.add(modelIcon)
-            modelPanel.add(deleteIcon)
+            modelPanel.add(modelImage)
+            modelPanel.add(deleteImage)
         }
     }
 

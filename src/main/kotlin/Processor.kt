@@ -1,13 +1,11 @@
+import animation.AnimationHandler
 import entity.Entity
 import gui.Gui
 import input.Mouse
-import model.AnimationHandler
 import model.DatLoader
 import model.NpcLoader
-import model.RawModel
 import org.joml.Vector2f
 import org.joml.Vector2i
-import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.event.WindowSizeEvent
@@ -33,8 +31,6 @@ const val TITLE = "PoserGL"
 const val BG_COLOUR = 33 / 255f
 const val CACHE_PATH = "./repository/old/"
 const val RESOURCES_PATH = "src/main/resources/"
-val ENTITY_POS = Vector3f(0f, 0f, 0f)
-val ENTITY_ROT = Vector3f(0f, 0f, 0f)
 
 fun main() {
     Processor().run()
@@ -50,7 +46,7 @@ class Processor {
     val datLoader = DatLoader(loader)
     val npcLoader = NpcLoader(this)
     val animationHandler = AnimationHandler(this)
-    val entities = ArrayList<Entity>()
+    var entity: Entity? = null // TODO: !!
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -161,10 +157,6 @@ class Processor {
         guiRenderer.destroy()
         glfwDestroyWindow(window)
         glfwTerminate()
-    }
-
-    fun addModel(model: RawModel) {
-        entities.add(Entity(model, ENTITY_POS, ENTITY_ROT, 0.05f))
     }
 
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {

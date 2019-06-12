@@ -1,4 +1,4 @@
-package model
+package animation
 
 import CACHE_PATH
 import Processor
@@ -86,7 +86,7 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun tick() {
-        if (!playing || context.entities.isEmpty() || currentSequence.id == -1) {
+        if (!playing || currentSequence.id == -1 || context.entity == null) {
             return
         }
 
@@ -107,7 +107,9 @@ class AnimationHandler(private val context: Processor) {
         
         val first = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst()
         val frame = first.get()
-        applyFrame(frame, context)
+
+        applyFrame(frame)
+
         context.gui.animationPanel.tickCursor(timer)
     }
 
@@ -115,37 +117,36 @@ class AnimationHandler(private val context: Processor) {
         return frameCount % currentSequence.frameIDs.size
     }
 
-    private fun applyFrame(frame: FrameDefinition, context: Processor) {
+    private fun applyFrame(frame: FrameDefinition) {
         val frameMap = frame.framemap
+        val transformations = ArrayList<Transformation>()
+
+        for (i in 0 until frame.translatorCount) {
+            val type = frame.indexFrameIds[i]
+            transformations.add(Transformation(
+                    frameMap.types[type], frameMap.frameMaps[type],
+                    frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
+                )
+            )
+        }
 
         // Reset from last frame
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
-        context.loader.cleanUp()
-        for (entity in context.entities) {
-            entity.rawModel.definition.resetAnim()
-        }
 
-        // Apply transformations
-        for (i in 0 until frame.translatorCount) {
-            val type = frame.indexFrameIds[i]
-            val fmType = frameMap.types[type]
-            val fm = frameMap.frameMaps[type]
-            val dx = frame.translator_x[i]
-            val dy = frame.translator_y[i]
-            val dz = frame.translator_z[i]
+        if (context.entity != null) {
+            val def = context.entity!!.model.definition
+            def.resetAnim()
 
-            for (entity in context.entities) {
-                val def = entity.rawModel.definition
-                def.animate(fmType, fm, dx, dy, dz)
+            // Apply transformations
+            for (t in transformations) {
+                def.animate(t.fmType, t.fm, t.dx, t.dy, t.dz)
             }
-        }
 
-        // Reload models
-        for (entity in context.entities) {
-            entity.rawModel = context.datLoader.parse(
-                entity.rawModel.definition, context.framebuffer.shadingType == ShadingType.FLAT
+            context.loader.cleanUp()
+            context.entity!!.model = context.datLoader.parse(
+                context.entity!!.model.definition, context.framebuffer.shadingType == ShadingType.FLAT
             )
         }
     }
@@ -155,4 +156,6 @@ class AnimationHandler(private val context: Processor) {
         frameCount = 0
         frameLength = 0
     }
+
+    class Transformation(val fmType: Int, val fm: IntArray, val dx: Int, val dy: Int, val dz: Int)
 }

@@ -117,7 +117,7 @@ class Framebuffer(
         shader.start()
         shader.loadViewMatrix(camera)
         shader.loadShadingToggle(shadingType != ShadingType.NONE)
-        glRenderer.render(context.entities, shader)
+        glRenderer.render(context.entity, shader)
         shader.stop()
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
