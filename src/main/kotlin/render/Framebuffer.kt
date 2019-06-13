@@ -31,7 +31,7 @@ class Framebuffer(
     var shadingType = ShadingType.SMOOTH
 
     init {
-        position = (Vector2f(160f, 49f))
+        position = (Vector2f(160f, 5f))
         resize()
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -135,6 +135,6 @@ class Framebuffer(
     }
 
     private fun getFboSize(): Vector2f {
-        return Vector2f(context.gui.size.x - 340, context.gui.size.y - 159)
+        return Vector2f(context.gui.size.x - 340, context.gui.size.y - 122)
     }
 }

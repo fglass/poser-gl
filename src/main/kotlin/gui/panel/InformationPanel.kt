@@ -94,10 +94,10 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(gui.size.x - 175, 49f)
+        return Vector2f(gui.size.x - 175, 27f)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 159)
+        return Vector2f(170f, gui.size.y - 144)
     }
 }

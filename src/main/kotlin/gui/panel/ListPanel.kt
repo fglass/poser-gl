@@ -76,9 +76,7 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
     }
 
     private fun setSearchText(text: String) {
-        if (text == "Search") {
-            search.textState.textColor = ColorConstants.gray()
-        }
+        search.textState.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
         search.textState.text = text
     }
 

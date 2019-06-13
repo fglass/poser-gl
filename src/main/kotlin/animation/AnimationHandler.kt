@@ -17,6 +17,8 @@ import java.io.File
 
 // https://www.rune-server.ee/runescape-development/rs2-client/tutorials/340745-runescapes-rendering-animation-system.html
 
+const val MAX_LENGTH = 999
+
 class AnimationHandler(private val context: Processor) {
 
     private var currentSequence: SequenceDefinition = SequenceDefinition(-1)
@@ -25,7 +27,7 @@ class AnimationHandler(private val context: Processor) {
     private var frameCount = 0
     private var frameLength = 0
 
-    var playing = true
+    var playing = false
     private var timer = 0
 
     init {
@@ -79,8 +81,14 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun play(sequence: SequenceDefinition) {
-        context.gui.animationPanel.play(sequence)
+        playing = true
         currentSequence = sequence
+        reset()
+        context.gui.animationPanel.play(sequence)
+    }
+
+    private fun reset() {
+        timer = 0
         frameCount = 0
         frameLength = currentSequence.frameLenghts[0]
     }
@@ -88,6 +96,10 @@ class AnimationHandler(private val context: Processor) {
     fun tick() {
         if (!playing || currentSequence.id == -1 || context.entity == null) {
             return
+        }
+
+        if (timer > MAX_LENGTH) {
+            reset()
         }
 
         if (getFrameIndex() == 0 && frameLength <= 0) { // Animation restarted
@@ -154,6 +166,7 @@ class AnimationHandler(private val context: Processor) {
         currentSequence = SequenceDefinition(-1)
         frameCount = 0
         frameLength = 0
+        context.gui.animationPanel.stop()
     }
 
     class Transformation(val fmType: Int, val fm: IntArray, val dx: Int, val dy: Int, val dz: Int)

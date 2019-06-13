@@ -15,8 +15,8 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     private val listPanel = ListPanel(this, context)
     val infoPanel = InformationPanel(this, context)
     val animationPanel = AnimationPanel(this, context)
-    private val renderBox = SelectBox<String>(size.x - 175, 27f, 82f, 15f)
-    private val shadingBox = SelectBox<String>(size.x - 87, 27f, 82f, 15f)
+    private val renderBox = SelectBox<String>(size.x - 175, 5f, 82f, 15f)
+    private val shadingBox = SelectBox<String>(size.x - 87, 5f, 82f, 15f)
 
     fun createElements() {
         addToggles()
@@ -65,7 +65,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         listPanel.resize()
         infoPanel.resize()
         animationPanel.resize()
-        renderBox.position = Vector2f(size.x - 175, 27f)
-        shadingBox.position = Vector2f(size.x - 87, 27f)
+        renderBox.position = Vector2f(size.x - 175, 5f)
+        shadingBox.position = Vector2f(size.x - 87, 5f)
     }
 }
