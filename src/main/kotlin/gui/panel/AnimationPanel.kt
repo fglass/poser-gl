@@ -1,10 +1,11 @@
 package gui.panel
 
 import BG_COLOUR
+import Processor
 import RESOURCES_PATH
 import animation.MAX_LENGTH
-import Processor
 import gui.Gui
+import gui.component.HoverButton
 import gui.component.ImageButton
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector2f
@@ -28,6 +29,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private val pauseIcon = BufferedImage(RESOURCES_PATH + "pause.png")
     private val greyLine = BufferedImage(RESOURCES_PATH + "grey-line.png")
     private val yellowLine = BufferedImage(RESOURCES_PATH + "yellow-line.png")
+    private val pinkLine = BufferedImage(RESOURCES_PATH + "pink-line.png")
     private val greenLine = BufferedImage(RESOURCES_PATH + "green-line.png")
     private val cursor = ImageButton(Vector2f(0f, 0f), greenLine)
     private var sequence = SequenceDefinition(-1)
@@ -38,6 +40,11 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         timeline.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
         timeline.style.setBorderRadius(0f)
         timeline.style.focusedStrokeColor = null
+        timeline.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                adjustTime(event.position.x)
+            }
+        }
         add(timeline)
 
         times = Panel(0f, 90f, size.x, 15f)
@@ -46,6 +53,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         add(times)
 
         style.background.color = ColorConstants.darkGray()
+        isFocusable = false
         resize()
 
         val menu = Panel(0f, 0f, size.x, 19f)
@@ -119,24 +127,44 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         time.textState.horizontalAlign = HorizontalAlign.CENTER
         times.add(time)
 
-        val marker = ImageButton(Vector2f(x, 0f), if (i == 0) yellowLine else greyLine)
-        timeline.add(marker)
+        if (i > 0) {
+            val marker = ImageButton(Vector2f(x, 0f), greyLine)
+            timeline.add(marker)
+        }
     }
 
     private fun addKeyframes(sequence: SequenceDefinition) {
-        var cumulative = 0f
-        for (i in 1 until sequence.frameLenghts.size) {
-            val previous = sequence.frameLenghts[i - 1]
+        var cumulative = 0
+        for (i in 0 until sequence.frameLenghts.size) {
+            val previous = if (i > 0) sequence.frameLenghts[i - 1] else 0
             cumulative += previous
-            val x = cumulative * unitX
 
-            val keyframe = ImageButton(Vector2f(x, 0f), yellowLine)
+            val x = cumulative * unitX
+            val keyframe = HoverButton(Vector2f(x, 0f), 2f, yellowLine, pinkLine)
+            keyframe.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    adjustTime(x)
+                }
+            }
             timeline.add(keyframe)
         }
     }
 
     fun tickCursor(timer: Int) {
         cursor.position.x = timer * getUnitX()
+    }
+
+    private fun adjustTime(x: Float) {
+        val timer = Math.round(x / unitX)
+        var cumulative = 0
+
+        for ((frameCount, length) in sequence.frameLenghts.withIndex()) {
+            if (timer >= cumulative && timer < cumulative + length) {
+                context.animationHandler.setFrame(timer, frameCount, timer - cumulative)
+                return
+            }
+            cumulative += length
+        }
     }
 
     fun resize() {

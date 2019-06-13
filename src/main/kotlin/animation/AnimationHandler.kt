@@ -88,13 +88,17 @@ class AnimationHandler(private val context: Processor) {
     }
 
     private fun reset() {
-        timer = 0
-        frameCount = 0
-        frameLength = currentSequence.frameLenghts[0]
+        setFrame(0, 0, 0)
+    }
+
+    fun setFrame(time: Int, frame: Int, offset: Int) {
+        timer = time
+        frameCount = frame
+        frameLength = currentSequence.frameLenghts[frame] - offset
     }
 
     fun tick() {
-        if (!playing || currentSequence.id == -1 || context.entity == null) {
+        if (currentSequence.id == -1 || context.entity == null) {
             return
         }
 
@@ -102,15 +106,17 @@ class AnimationHandler(private val context: Processor) {
             reset()
         }
 
-        if (getFrameIndex() == 0 && frameLength <= 0) { // Animation restarted
-            timer = 0
-        } else {
-            timer++
-        }
+        if (playing) {
+            if (getFrameIndex() == 0 && frameLength <= 0) { // Animation restarted
+                timer = 0
+            } else {
+                timer++
+            }
 
-        if (frameLength-- <= 0) {
-            frameCount++
-            frameLength = currentSequence.frameLenghts[getFrameIndex()]
+            if (frameLength-- <= 0) { // Traverse frame
+                frameCount++
+                frameLength = currentSequence.frameLenghts[getFrameIndex()]
+            }
         }
 
         val seqFrameId = currentSequence.frameIDs[getFrameIndex()]
