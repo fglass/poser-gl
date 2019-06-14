@@ -10,10 +10,10 @@ import net.runelite.cache.fs.Store
 import shader.ShadingType
 import java.io.File
 
-class NpcLoader(private val context: Processor) {
+class EntityLoader(private val context: Processor) {
 
     private val player = NpcDefinition(-1)
-    val npcs = ArrayList<NpcDefinition>()
+    val entities = ArrayList<NpcDefinition>()
 
     init {
         Store(File(CACHE_PATH)).use { store ->
@@ -26,7 +26,7 @@ class NpcLoader(private val context: Processor) {
                 if (npc == null || npc.name == "null") {
                     continue
                 }
-                npcs.add(npc)
+                entities.add(npc)
             }
         }
     }
@@ -34,37 +34,37 @@ class NpcLoader(private val context: Processor) {
     private fun addPlayer() {
         player.name = "Player"
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
-        npcs.add(player)
+        entities.add(player)
     }
 
     fun loadPlayer() {
         load(player)
     }
 
-    fun load(npc: NpcDefinition) {
+    fun load(entity: NpcDefinition) {
         clear()
-        process(npc, npc.models.asList())
-        context.gui.infoPanel.update(context.entity!!)
+        process(entity, entity.models.asList())
     }
 
-    fun process(npc: NpcDefinition, models: List<Int>) { // TODO: Clean-up
+    fun process(entity: NpcDefinition, models: List<Int>) { // TODO: Clean-up
         if (models.size == 1) {
             val modelId = models[0]
-            val def = context.datLoader.load(modelId, npc)
+            val def = context.datLoader.load(modelId, entity)
             def.computeAnimationTables()
             val model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-            context.entity = Entity(model, npc, intArrayOf(modelId))
+            context.entity = Entity(model, entity, intArrayOf(modelId))
         } else {
             val defs = ArrayList<ModelDefinition>()
             models.forEach {
-                defs.add(context.datLoader.load(it, npc))
+                defs.add(context.datLoader.load(it, entity))
             }
             val merged = merge(defs)
             merged.computeNormals()
             merged.computeAnimationTables()
             val model = context.datLoader.parse(merged, context.framebuffer.shadingType == ShadingType.FLAT)
-            context.entity = Entity(model, npc, models.toIntArray())
+            context.entity = Entity(model, entity, models.toIntArray())
         }
+        context.gui.infoPanel.update(context.entity!!)
     }
 
     private fun clear() {

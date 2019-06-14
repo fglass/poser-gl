@@ -1,79 +1,59 @@
 package gui.component
 
+import Processor
 import gui.Gui
-import org.joml.Vector2f
-import org.liquidengine.legui.component.Button
-import org.liquidengine.legui.component.ScrollablePanel
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.style.color.ColorConstants
+import net.runelite.cache.definitions.ItemDefinition
 
-abstract class ItemList(x: Float, y: Float, val gui: Gui): ScrollablePanel() {
+class ItemList(x: Float, y: Float, gui: Gui, context: Processor) : ElementList(x, y, gui) {
 
-    var searchText = "Search"
-    protected var maxIndex = 0
-    protected val listX = 2f
-    protected val listY = 2f
-    protected val listYOffset = 17
+    private val items = context.itemLoader.items
+    private val itemElements = mutableListOf<ItemElement>()
 
     init {
-        position.x = x
-        position.y = y
-        size = getListSize()
-        this.remove(horizontalScrollBar)
+        var index = 0
+        for ((i, item) in items.withIndex()) {
+            val element = ItemElement(item, context, listX, listY + index++ * listYOffset, 137f, 14f)
+            element.addClickListener()
+            itemElements.add(element)
+            container.add(element)
+            maxIndex = i
+        }
+        container.setSize(142f, listY + index * listYOffset)
+        println("Loaded $index items")
     }
 
-    fun resize() {
-        size = getListSize()
-    }
-
-    private fun getListSize(): Vector2f {
-        return Vector2f(150f, gui.size.y - 166)
-    }
-
-    fun search(input: String) {
-        val filtered = getFiltered(input)
-        val items = getItems()
-        adjustScroll(filtered.size)
-
-        for (i in 0 until items.size) {
-            val item = items[i]
-            when {
-                filtered.size >= maxIndex -> handleItem(i, item) // Reset as no matches
-                i < filtered.size -> handleItem(filtered[i], item) // Shift matches up
-                else -> item.isEnabled = false // Hide filtered
-            }
+    override fun getFiltered(input: String): List<Int> {
+        return (0 until maxIndex).toList().filter {
+            items[it].name.toLowerCase().contains(input)
         }
     }
 
-    abstract fun getFiltered(input: String): List<Int>
-
-    abstract fun getItems(): List<Item>
-
-    abstract fun handleItem(index: Int, item: Item)
-
-    private fun adjustScroll(filteredSize: Int) {
-        verticalScrollBar.curValue = 0f // Reset scroll position
-        container.setSize(142f, listY + filteredSize * listYOffset) // Adjust scroll size
+    override fun getElements(): List<Element> {
+        return itemElements
     }
 
-    abstract class Item(x: Float, y: Float, width: Float, height: Float): Button(x, y, width, height) {
+    override fun handleElement(index: Int, element: Element) {
+        val item = items[index]
+        if (element is ItemElement) {
+            element.item = item
+            element.updateText()
+        }
+    }
 
+    class ItemElement(var item: ItemDefinition, private val context: Processor, x: Float, y: Float,
+                           width: Float, height: Float): Element(x, y, width, height) {
         init {
-            style.background.color = ColorConstants.darkGray()
-            style.border.isEnabled = false
+            updateText()
         }
 
-        abstract fun updateText()
-
-        fun addClickListener() {
-            listenerMap.addListener(MouseClickEvent::class.java) { event ->
-                if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    onClickEvent()
-                }
-            }
+        override fun updateText() {
+            textState.text = item.name
+            isEnabled = true
         }
 
-        abstract fun onClickEvent()
+        override fun onClickEvent() {
+            val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
+            context.entity?.add(models, context.entityLoader)
+        }
     }
 }
-

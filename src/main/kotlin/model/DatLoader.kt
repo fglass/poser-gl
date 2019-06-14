@@ -30,7 +30,6 @@ class DatLoader(private val loader: Loader) {
                     def.recolor(npc.recolorToFind[i], npc.recolorToReplace[i])
                 }
             }
-
             return def
         }
     }

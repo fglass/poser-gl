@@ -3,7 +3,8 @@ import entity.Entity
 import gui.Gui
 import input.Mouse
 import model.DatLoader
-import model.NpcLoader
+import model.EntityLoader
+import model.ItemLoader
 import org.joml.Vector2f
 import org.joml.Vector2i
 import org.liquidengine.legui.animation.AnimatorProvider
@@ -47,7 +48,8 @@ class Processor {
 
     val loader = Loader()
     val datLoader = DatLoader(loader)
-    val npcLoader = NpcLoader(this)
+    val entityLoader = EntityLoader(this)
+    val itemLoader = ItemLoader()
     val animationHandler = AnimationHandler(this)
     var entity: Entity? = null // TODO: !!
 
@@ -108,7 +110,7 @@ class Processor {
         }
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-        npcLoader.loadPlayer()
+        entityLoader.loadPlayer()
 
         // Render loop
         while (running) {

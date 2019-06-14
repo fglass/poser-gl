@@ -77,7 +77,7 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
             deleteButton.style.border.isEnabled = false
             deleteButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    entity.remove(model, context.npcLoader)
+                    entity.remove(model, context.entityLoader)
                     update(entity)
                 }
             }

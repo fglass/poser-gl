@@ -4,17 +4,17 @@ import Processor
 import gui.Gui
 import net.runelite.cache.definitions.SequenceDefinition
 
-class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor): ItemList(x, y, gui) {
+class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor): ElementList(x, y, gui) {
 
-    private val animationItems = mutableListOf<AnimationItem>()
+    private val animationElements = mutableListOf<AnimationElement>()
 
     init {
         var index = 0
         for ((i, sequence) in context.animationHandler.sequences.values.withIndex()) {
-            val item = AnimationItem(sequence, context, listX, listY + index++ * listYOffset, 137f, 14f)
-            item.addClickListener()
-            animationItems.add(item)
-            container.add(item)
+            val element = AnimationElement(sequence, context, listX, listY + index++ * listYOffset, 137f, 14f)
+            element.addClickListener()
+            animationElements.add(element)
+            container.add(element)
             maxIndex = i
         }
         container.setSize(142f, listY + index * listYOffset)
@@ -26,20 +26,20 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
         }
     }
 
-    override fun getItems(): List<Item> {
-        return animationItems
+    override fun getElements(): List<Element> {
+        return animationElements
     }
 
-    override fun handleItem(index: Int, item: Item) {
+    override fun handleElement(index: Int, element: Element) {
         val sequence = context.animationHandler.sequences[index]
-        if (sequence != null && item is AnimationItem) {
-            item.sequence = sequence
-            item.updateText()
+        if (sequence != null && element is AnimationElement) {
+            element.sequence = sequence
+            element.updateText()
         }
     }
 
-    class AnimationItem(var sequence: SequenceDefinition, private val context: Processor, x: Float, y: Float,
-                        width: Float, height: Float): Item(x, y, width, height) {
+    class AnimationElement(var sequence: SequenceDefinition, private val context: Processor, x: Float, y: Float,
+                           width: Float, height: Float): Element(x, y, width, height) {
         init {
             updateText()
         }

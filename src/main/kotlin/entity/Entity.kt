@@ -1,7 +1,7 @@
 package entity
 
 import model.Model
-import model.NpcLoader
+import model.EntityLoader
 import net.runelite.cache.definitions.NpcDefinition
 import org.joml.Vector3f
 
@@ -22,12 +22,17 @@ class Entity(var model: Model, val npc: NpcDefinition, references: IntArray) {
         }
     }
 
-    fun remove(model: Int, npcLoader: NpcLoader) {
-        composition.remove(model)
-        reload(npcLoader)
+    fun add(models: IntArray, entityLoader: EntityLoader) {
+        models.filter { it != -1 }.forEach { composition.add(it) }
+        reload(entityLoader)
     }
 
-    fun reload(npcLoader: NpcLoader) {
-        npcLoader.process(npc, composition)
+    fun remove(model: Int, entityLoader: EntityLoader) {
+        composition.remove(model)
+        reload(entityLoader)
+    }
+
+    fun reload(entityLoader: EntityLoader) {
+        entityLoader.process(npc, composition)
     }
 }

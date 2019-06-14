@@ -1,7 +1,8 @@
 package gui.panel
 
 import gui.component.AnimationList
-import gui.component.NpcList
+import gui.component.EntityList
+import gui.component.ItemList
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.TextInput
@@ -16,8 +17,10 @@ import org.joml.Vector2f
 class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
     private val search = TextInput("Search", 5f, 5f, 150f, 15f)
-    private val npcList = NpcList(5f, 49f, gui, context)
+    private val entityList = EntityList(5f, 49f, gui, context)
     private val animationList = AnimationList(5f, 49f, gui, context)
+    private val itemList = ItemList(5f, 49f, gui, context)
+    val lists = arrayOf(entityList, animationList, itemList)
 
     init {
         position = Vector2f(0f, 0f)
@@ -26,7 +29,7 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
         addSearch()
         addSelectBox()
-        add(npcList)
+        add(entityList)
     }
 
     private fun addSearch() {
@@ -39,8 +42,7 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
         }
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                val input = search.textState.text
-                if (contains(npcList)) npcList.search(input) else animationList.search(input)
+                lists.first { contains(it) }.search(search.textState.text)
             }
         }
         search.style.focusedStrokeColor = null
@@ -49,26 +51,26 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
     private fun addSelectBox() {
         val selectBox = SelectBox<String>(5f, 27f, 150f, 15f)
-        selectBox.addElement("NPCs")
-        selectBox.addElement("Animations")
+        selectBox.addElement("Entity")
+        selectBox.addElement("Animation")
+        selectBox.addElement("Item")
 
         selectBox.addSelectBoxChangeSelectionEventListener { event ->
+            val list = lists.first { contains(it) }
+            list.searchText = search.textState.text
+            remove(list)
             when (event.newValue.toString()) {
-                "NPCs" -> {
-                    if (contains(animationList)) {
-                        animationList.searchText = search.textState.text
-                        setSearchText(npcList.searchText)
-                        remove(animationList)
-                        add(npcList)
-                    }
+                "Entity" -> {
+                    setSearchText(entityList.searchText)
+                    add(entityList)
                 }
-                "Animations" -> {
-                    if (contains(npcList)) {
-                        npcList.searchText = search.textState.text
-                        setSearchText(animationList.searchText)
-                        remove(npcList)
-                        add(animationList)
-                    }
+                "Animation" -> {
+                    setSearchText(animationList.searchText)
+                    add(animationList)
+                }
+                "Item" -> {
+                    setSearchText(itemList.searchText)
+                    add(itemList)
                 }
             }
         }
@@ -82,7 +84,7 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
     fun resize() {
         size = getPanelSize()
-        npcList.resize()
+        entityList.resize()
         animationList.resize()
     }
 
