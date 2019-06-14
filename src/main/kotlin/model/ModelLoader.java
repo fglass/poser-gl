@@ -4,7 +4,7 @@ import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.io.InputStream;
 
 /**
- * Originates from RuneLite cache module
+ * Originates from RuneLite cache module TODO kotlin and clean-up
  */
 public class ModelLoader {
 

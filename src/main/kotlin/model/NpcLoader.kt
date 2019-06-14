@@ -12,14 +12,33 @@ import java.io.File
 
 class NpcLoader(private val context: Processor) {
 
-    lateinit var manager: NpcManager
+    private val player = NpcDefinition(-1)
+    val npcs = ArrayList<NpcDefinition>()
 
     init {
         Store(File(CACHE_PATH)).use { store ->
             store.load()
-            manager = NpcManager(store)
+            val manager = NpcManager(store)
             manager.load()
+
+            addPlayer()
+            for (npc in manager.npcs) {
+                if (npc == null || npc.name == "null") {
+                    continue
+                }
+                npcs.add(npc)
+            }
         }
+    }
+
+    private fun addPlayer() {
+        player.name = "Player"
+        player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
+        npcs.add(player)
+    }
+
+    fun loadPlayer() {
+        load(player)
     }
 
     fun load(npc: NpcDefinition) {

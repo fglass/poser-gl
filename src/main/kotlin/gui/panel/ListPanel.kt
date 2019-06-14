@@ -16,7 +16,7 @@ import org.joml.Vector2f
 class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
     private val search = TextInput("Search", 5f, 5f, 150f, 15f)
-    private val npcList = NpcList(5f, 49f, gui, context, context.npcLoader.manager)
+    private val npcList = NpcList(5f, 49f, gui, context)
     private val animationList = AnimationList(5f, 49f, gui, context)
 
     init {

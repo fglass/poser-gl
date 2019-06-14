@@ -108,7 +108,7 @@ class Processor {
         }
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-        npcLoader.load(npcLoader.manager.get(0)) // Load first npc
+        npcLoader.loadPlayer()
 
         // Render loop
         while (running) {

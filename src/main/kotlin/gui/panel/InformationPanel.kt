@@ -55,7 +55,8 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
 
     fun update(entity: Entity) {
         npcName.textState.text = entity.npc.name
-        npcId.textState.text = entity.npc.id.toString()
+        val id = entity.npc.id
+        npcId.textState.text = if (id >= 0) id.toString() else "N/A"
 
         val offset = 16f
         modelPanel.removeAll(modelPanel.childComponents)

@@ -2,21 +2,16 @@ package gui.component
 
 import Processor
 import gui.Gui
-import net.runelite.cache.NpcManager
 import net.runelite.cache.definitions.NpcDefinition
 
-class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcManager: NpcManager):
-    ItemList(x, y, gui) {
+class NpcList(x: Float, y: Float, gui: Gui, context: Processor): ItemList(x, y, gui) {
 
+    private val npcs = context.npcLoader.npcs
     private val npcItems = mutableListOf<NpcItem>()
 
     init {
         var index = 0
-        for ((i, npc) in npcManager.npcs.withIndex()) {
-            if (npc == null || npc.name == "null") {
-                continue
-            }
-
+        for ((i, npc) in npcs.withIndex()) {
             val item = NpcItem(npc, context, listX, listY + index++ * listYOffset, 137f, 14f)
             item.addClickListener()
             npcItems.add(item)
@@ -29,8 +24,7 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
 
     override fun getFiltered(input: String): List<Int> {
         return (0 until maxIndex).toList().filter {
-            val npc = npcManager.get(it)
-            npc.name != "null" && npc.name.toLowerCase().contains(input)
+            npcs[it].name.toLowerCase().contains(input)
         }
     }
 
@@ -39,7 +33,7 @@ class NpcList(x: Float, y: Float, gui: Gui, context: Processor, private val npcM
     }
 
     override fun handleItem(index: Int, item: Item) {
-        val npc = npcManager.get(index)
+        val npc = npcs[index]
         if (item is NpcItem) {
             item.npc = npc
             item.updateText()
