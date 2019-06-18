@@ -1,12 +1,17 @@
 import animation.AnimationHandler
+import animation.reference.PointRenderer
+import animation.reference.ReferencePoint
 import entity.Entity
+import entity.Camera
 import gui.Gui
 import input.Mouse
 import model.DatLoader
 import model.EntityLoader
 import model.ItemLoader
+import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
+import org.joml.Vector3f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.event.WindowSizeEvent
@@ -154,6 +159,7 @@ class Processor {
             vSync.waitIfNecessary()
         }
 
+        framebuffer.pointRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()
         guiRenderer.destroy()

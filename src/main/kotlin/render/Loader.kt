@@ -23,6 +23,13 @@ class Loader {
         return Model(vaoId, positions.size / 4, definition)
     }
 
+    fun loadToVao(positions: FloatArray): Model {
+        val vaoId = createVao()
+        storeFloatData(0, 2, positions)
+        unbindVao()
+        return Model(vaoId, positions.size / 2, ModelDefinition())
+    }
+
     private fun createVao(): Int {
         val vaoId = GL30.glGenVertexArrays()
         vaos.add(vaoId)

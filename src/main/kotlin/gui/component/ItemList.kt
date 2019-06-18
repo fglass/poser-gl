@@ -1,8 +1,10 @@
 package gui.component
 
 import Processor
+import RESOURCES_PATH
 import gui.Gui
 import net.runelite.cache.definitions.ItemDefinition
+import org.liquidengine.legui.image.BufferedImage
 
 class ItemList(x: Float, y: Float, gui: Gui, context: Processor) : ElementList(x, y, gui) {
 

@@ -17,16 +17,19 @@ const val FAR_PLANE = 10000F
 
 class Renderer(private val context: Processor, private val shader: StaticShader) {
 
+    val projectionMatrix: Matrix4f
+
     init {
+        projectionMatrix = createProjectionMatrix()
         init(true)
     }
 
     private fun init(loadLight: Boolean) {
         shader.start()
         if (loadLight) {
-            shader.loadLight(Light(Vector3f(0f, 0f, -1000f), Vector3f(1f, 1f, 1f)))
+            shader.loadLight(Light(Vector3f(0f, -500f, -2000f), Vector3f(1f, 1f, 1f)))
         }
-        shader.loadProjectionMatrix(createProjectionMatrix())
+        shader.loadProjectionMatrix(projectionMatrix)
         shader.stop()
     }
 
@@ -60,9 +63,7 @@ class Renderer(private val context: Processor, private val shader: StaticShader)
         GL20.glEnableVertexAttribArray(0)
         GL20.glEnableVertexAttribArray(1)
 
-        val transformationMatrix = Maths.createTransformationMatrix(
-            entity.position, entity.rotation, entity.scale
-        )
+        val transformationMatrix = Maths.createTransformationMatrix(entity.position, entity.rotation, entity.scale)
         shader.loadTransformationMatrix(transformationMatrix)
 
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, entity.model.vertexCount)

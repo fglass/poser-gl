@@ -3,8 +3,8 @@ package entity
 import input.Mouse
 import org.joml.Vector3f
 
-const val MIN_ZOOM = 5f
-const val MAX_ZOOM = 80f
+const val MIN_ZOOM = 100f
+const val MAX_ZOOM = 1600f
 
 class Camera(private val mouse: Mouse) {
 
@@ -13,7 +13,7 @@ class Camera(private val mouse: Mouse) {
     var yaw = 0f
     var roll = 0f
 
-    private var distance = 15f
+    private var distance = 300f
     private var angle = 0f
 
     fun move() {
@@ -30,7 +30,7 @@ class Camera(private val mouse: Mouse) {
 
     private fun calculateZoom() {
         if (mouse.zooming) {
-            val zoomLevel = mouse.dWheel * 0.1f
+            val zoomLevel = mouse.dWheel * 2f
             distance = Math.max(distance - zoomLevel, MIN_ZOOM)
             distance = Math.min(distance, MAX_ZOOM)
             mouse.zooming = false
@@ -60,7 +60,7 @@ class Camera(private val mouse: Mouse) {
     private fun calculatePosition(h: Float, v: Float) {
         val theta = (ENTITY_ROT.y + angle).toDouble()
         val xOffset = (h * Math.sin(Math.toRadians(theta))).toFloat()
-        val yOffset = v - 3f
+        val yOffset = v - 60f
         val zOffset = (h * Math.cos(Math.toRadians(theta))).toFloat()
 
         position.x = ENTITY_POS.x - xOffset

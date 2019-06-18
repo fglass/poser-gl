@@ -7,7 +7,7 @@ import org.joml.Vector3f
 
 val ENTITY_POS = Vector3f(0f, 0f, 0f)
 val ENTITY_ROT = Vector3f(0f, 0f, 0f)
-const val ENTITY_SCALE = 0.05f
+const val ENTITY_SCALE = 1f
 
 class Entity(var model: Model, val npc: NpcDefinition, references: IntArray) {
 

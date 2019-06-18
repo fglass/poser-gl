@@ -2,6 +2,8 @@ package render
 
 import BG_COLOUR
 import Processor
+import animation.reference.PointRenderer
+import animation.reference.ReferencePoint
 import entity.Camera
 import input.Mouse
 import org.joml.Vector2f
@@ -11,6 +13,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
 import org.liquidengine.legui.image.FBOImage
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader
@@ -25,6 +28,7 @@ class Framebuffer(
     private var textureHeight = 0
 
     private lateinit var glRenderer: Renderer
+    lateinit var pointRenderer: PointRenderer
     private val camera = Camera(mouse)
 
     var polygonMode = PolygonMode.FILL
@@ -51,6 +55,7 @@ class Framebuffer(
 
     fun lateInit() {
         glRenderer = Renderer(context, shader)
+        pointRenderer = PointRenderer(glRenderer.projectionMatrix)
     }
 
     private fun createTexture(): FBOImage {
@@ -97,7 +102,7 @@ class Framebuffer(
         glViewport(0, 0, textureWidth, textureHeight)
 
         glClearColor(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
-        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
 
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_CULL_FACE)
@@ -119,6 +124,9 @@ class Framebuffer(
         shader.loadShadingToggle(shadingType != ShadingType.NONE)
         glRenderer.render(context.entity, shader)
         shader.stop()
+
+        // Render reference points
+        //pointRenderer.render(context.entity, camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
