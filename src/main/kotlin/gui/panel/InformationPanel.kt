@@ -99,6 +99,6 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 144)
+        return Vector2f(170f, gui.size.y - 150)
     }
 }

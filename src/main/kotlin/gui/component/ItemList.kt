@@ -12,13 +12,13 @@ class ItemList(x: Float, y: Float, gui: Gui, context: Processor) : ElementList(x
     init {
         var index = 0
         for ((i, item) in items.withIndex()) {
-            val element = ItemElement(item, context, listX, listY + index++ * listYOffset, 137f, 14f)
+            val element = ItemElement(item, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
             itemElements.add(element)
             container.add(element)
             maxIndex = i
         }
-        container.setSize(142f, listY + index * listYOffset)
+        container.setSize(containerX, listY + index * listYOffset)
         println("Loaded $index items")
     }
 

@@ -11,16 +11,15 @@ import shader.StaticShader
 import utils.Maths
 import Processor
 
-const val FOV = 70F
-const val NEAR_PLANE = 1F
-const val FAR_PLANE = 10000F
+const val FOV = 70f
+const val NEAR_PLANE = 1f
+const val FAR_PLANE = 10000f
 
 class Renderer(private val context: Processor, private val shader: StaticShader) {
 
-    val projectionMatrix: Matrix4f
+    lateinit var projectionMatrix: Matrix4f
 
     init {
-        projectionMatrix = createProjectionMatrix()
         init(true)
     }
 
@@ -29,6 +28,7 @@ class Renderer(private val context: Processor, private val shader: StaticShader)
         if (loadLight) {
             shader.loadLight(Light(Vector3f(0f, -500f, -2000f), Vector3f(1f, 1f, 1f)))
         }
+        projectionMatrix = createProjectionMatrix()
         shader.loadProjectionMatrix(projectionMatrix)
         shader.stop()
     }

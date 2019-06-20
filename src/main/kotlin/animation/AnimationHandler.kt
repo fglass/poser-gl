@@ -148,16 +148,14 @@ class AnimationHandler(private val context: Processor) {
 
         // Apply transformations
         for (i in 0 until frame.translatorCount) {
-            val type = frame.indexFrameIds[i]
-            val transformation = Transformation(
-                frameMap.types[type], frameMap.frameMaps[type],
+            val index = frame.indexFrameIds[i]
+            val tf = Transformation(
+                frameMap.types[index], frameMap.frameMaps[index],
                 frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
             )
 
-            context.framebuffer.pointRenderer.addPoint(def, transformation)
-            def.animate(
-                transformation.fmType, transformation.fm, transformation.dx, transformation.dy, transformation.dz
-            )
+            context.framebuffer.pointRenderer.addPoint(def, tf)
+            def.animate(tf.type, tf.frameMap, tf.dx, tf.dy, tf.dz)
         }
 
         // Load transformed model
@@ -172,5 +170,5 @@ class AnimationHandler(private val context: Processor) {
         context.gui.animationPanel.stop()
     }
 
-    class Transformation(val fmType: Int, val fm: IntArray, val dx: Int, val dy: Int, val dz: Int)
+    class Transformation(val type: Int, val frameMap: IntArray, val dx: Int, val dy: Int, val dz: Int)
 }

@@ -11,13 +11,13 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
     init {
         var index = 0
         for ((i, sequence) in context.animationHandler.sequences.values.withIndex()) {
-            val element = AnimationElement(sequence, context, listX, listY + index++ * listYOffset, 137f, 14f)
+            val element = AnimationElement(sequence, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
             animationElements.add(element)
             container.add(element)
             maxIndex = i
         }
-        container.setSize(142f, listY + index * listYOffset)
+        container.setSize(containerX, listY + index * listYOffset)
     }
 
     override fun getFiltered(input: String): List<Int> {

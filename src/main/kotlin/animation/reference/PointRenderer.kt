@@ -2,16 +2,16 @@ package animation.reference
 
 import animation.AnimationHandler
 import entity.Camera
-import entity.Entity
 import model.Model
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL30.*
 import render.Loader
+import render.Renderer
 import utils.Maths
 
-class PointRenderer(projectionMatrix: Matrix4f) {
+class PointRenderer(private val glRenderer: Renderer) {
 
     private val quad: Model
     private val loader = Loader()
@@ -21,73 +21,42 @@ class PointRenderer(projectionMatrix: Matrix4f) {
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
         quad = loader.loadToVao(vertices)
-        shader.start()
-        shader.loadProjectionMatrix(projectionMatrix)
-        shader.stop()
     }
 
-    fun render(entity: Entity?, camera: Camera) {
-        if (entity == null) {
-            return
-        }
-
-        if (points.isEmpty()) {
-            //addPoint(entity)
-        }
-
+    fun render(camera: Camera) {
         prepare()
         for (point in points) {
-            val viewMatrix = Maths.createViewMatrix(camera)
-            updateMatrix(point.position, point.rotation, point.scale, viewMatrix)
+            loadMatrices(point.position, point.rotation, point.scale, Maths.createViewMatrix(camera))
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
     }
 
-    fun addPoint(def: ModelDefinition, transformation: AnimationHandler.Transformation) { // TODO: Clean-up
-        if (transformation.fmType != 0) {
+    fun addPoint(def: ModelDefinition, tf: AnimationHandler.Transformation) {
+        if (tf.type != 0) {
             return
         }
 
-        var index = 0
-        var offsetX = 0
-        var offsetY = 0
-        var offsetZ = 0
+        var index = 0f
+        val offset = Vector3f(tf.dx.toFloat(), tf.dy.toFloat(), tf.dz.toFloat())
 
-        var i = 0
-        while (i < transformation.fm.size) {
-            val fIndex = transformation.fm[i]
-            if (fIndex < def.vertexGroups.size) {
-                val vg = def.vertexGroups[fIndex]
+        for (i in tf.frameMap) {
+            if (i < def.vertexGroups.size) {
+                val group = def.vertexGroups[i]
+                index += group.size
 
-                var j = 0
-                while (j < vg.size) {
-                    val vIndex = vg[j]
-                    offsetX += def.vertexPositionsX[vIndex]
-                    offsetY += def.vertexPositionsY[vIndex]
-                    offsetZ += def.vertexPositionsZ[vIndex]
-                    ++index
-                    ++j
+                for (j in group) {
+                    offset.x += def.vertexPositionsX[j]
+                    offset.y += def.vertexPositionsY[j]
+                    offset.z += def.vertexPositionsZ[j]
                 }
             }
-            ++i
         }
 
         if (index > 0) {
-            offsetX = transformation.dx + offsetX / index
-            offsetY = transformation.dy + offsetY / index
-            offsetZ = transformation.dz + offsetZ / index
-        } else {
-            offsetX = transformation.dx
-            offsetY = transformation.dy
-            offsetZ = transformation.dz
+            offset.div(index)
         }
-
-        points.add(ReferencePoint(Vector3f(
-                    offsetX.toFloat(),
-                    offsetY.toFloat(),
-                    offsetZ.toFloat()), 0f, 2f)
-        )
+        points.add(ReferencePoint(offset, 0f, 2f))
     }
 
     private fun prepare() {
@@ -99,7 +68,7 @@ class PointRenderer(projectionMatrix: Matrix4f) {
         glDisable(GL_DEPTH_TEST)
     }
 
-    private fun updateMatrix(position: Vector3f, rotation: Float, scale: Float, viewMatrix: Matrix4f) {
+    private fun loadMatrices(position: Vector3f, rotation: Float, scale: Float, viewMatrix: Matrix4f) {
         val modelMatrix = Matrix4f()
         modelMatrix.translate(position)
         modelMatrix.m00(viewMatrix.m00())
@@ -114,6 +83,7 @@ class PointRenderer(projectionMatrix: Matrix4f) {
         modelMatrix.rotate(Math.toRadians(rotation.toDouble()).toFloat(), Vector3f(0f, 0f, 1f))
         modelMatrix.scale(scale)
         shader.loadModelViewMatrix(viewMatrix.mul(modelMatrix))
+        shader.loadProjectionMatrix(glRenderer.projectionMatrix)
     }
 
     private fun finish() {

@@ -4,7 +4,6 @@ import gui.component.AnimationList
 import gui.component.EntityList
 import gui.component.ItemList
 import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
@@ -13,14 +12,17 @@ import org.lwjgl.glfw.GLFW
 import Processor
 import gui.Gui
 import org.joml.Vector2f
+import org.liquidengine.legui.component.Button
+import org.liquidengine.legui.theme.Themes
 
 class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
-    private val search = TextInput("Search", 5f, 5f, 150f, 15f)
-    private val entityList = EntityList(5f, 49f, gui, context)
-    private val animationList = AnimationList(5f, 49f, gui, context)
-    private val itemList = ItemList(5f, 49f, gui, context)
-    val lists = arrayOf(entityList, animationList, itemList)
+    private val search = TextInput("Search", 5f, 5f, 164f, 15f)
+    private val tabs = ArrayList<Button>()
+    private val entityList = EntityList(5f, 43f, gui, context)
+    private val animationList = AnimationList(5f, 43f, gui, context)
+    private val itemList = ItemList(5f, 43f, gui, context)
+    private val lists = arrayOf(entityList, animationList, itemList)
 
     init {
         position = Vector2f(0f, 0f)
@@ -28,7 +30,7 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
         style.border.isEnabled = false
 
         addSearch()
-        addSelectBox()
+        addTabs()
         add(entityList)
     }
 
@@ -49,32 +51,48 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
         add(search)
     }
 
-    private fun addSelectBox() {
-        val selectBox = SelectBox<String>(5f, 27f, 150f, 15f)
-        selectBox.addElement("Entity")
-        selectBox.addElement("Animation")
-        selectBox.addElement("Item")
+    private fun addTabs() {
+        val names = arrayOf("Entity", "Seq", "Item")
+        val offset = 55f
 
-        selectBox.addSelectBoxChangeSelectionEventListener { event ->
-            val list = lists.first { contains(it) }
-            list.searchText = search.textState.text
-            remove(list)
-            when (event.newValue.toString()) {
-                "Entity" -> {
-                    setSearchText(entityList.searchText)
-                    add(entityList)
-                }
-                "Animation" -> {
-                    setSearchText(animationList.searchText)
-                    add(animationList)
-                }
-                "Item" -> {
-                    setSearchText(itemList.searchText)
-                    add(itemList)
-                }
+        for ((i, name) in names.withIndex()) {
+            val tab = Button(name, 5f + i * offset, 27f, offset - 1, 15f)
+            tab.style.focusedStrokeColor = null
+            tab.listenerMap.addListener(MouseClickEvent::class.java) {
+                changeList(tab)
+                selectTab(tab)
+            }
+            tabs.add(tab)
+            add(tab)
+        }
+        selectTab(tabs[0])
+    }
+
+    private fun changeList(tab: Button) {
+        val list = lists.first { contains(it) }
+        list.searchText = search.textState.text
+        remove(list)
+        when (tab) {
+            tabs[0] -> {
+                setSearchText(entityList.searchText)
+                add(entityList)
+            }
+            tabs[1] -> {
+                setSearchText(animationList.searchText)
+                add(animationList)
+            }
+            tabs[2] -> {
+                setSearchText(itemList.searchText)
+                add(itemList)
             }
         }
-        add(selectBox)
+    }
+
+    private fun selectTab(tab: Button) {
+        tabs.forEach {
+            it.style.background.color =
+                if (it == tab) it.hoveredStyle.background.color else it.focusedStyle.background.color
+        }
     }
 
     private fun setSearchText(text: String) {
@@ -89,6 +107,6 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(156f, gui.size.y)
+        return Vector2f(170f, gui.size.y)
     }
 }

@@ -1,8 +1,8 @@
 package gui.panel
 
 import BG_COLOUR
-import Processor
 import RESOURCES_PATH
+import Processor
 import animation.MAX_LENGTH
 import gui.Gui
 import gui.component.HoverButton
@@ -74,8 +74,8 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         play.size = Vector2f(10f, 10f)
         menu.add(play)
 
-        val animation = Label("Animation:", x + 14, 3f, 100f, 15f)
-        animationId = Label("N/A", x + 76, 3f, 104f, 15f)
+        val animation = Label("Sequence:", x + 14, 3f, 100f, 15f)
+        animationId = Label("N/A", x + 74, 3f, 104f, 15f)
         menu.add(animation)
         menu.add(animationId)
     }
@@ -179,11 +179,11 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(5f, gui.size.y - 112)
+        return Vector2f(5f, gui.size.y - 117)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(gui.size.x - 10, 107f)
+        return Vector2f(gui.size.x - 10, 112f)
     }
 
     private fun getTimelineWidth(): Float {

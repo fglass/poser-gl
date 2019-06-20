@@ -14,6 +14,7 @@ abstract class ElementList(x: Float, y: Float, val gui: Gui): ScrollablePanel() 
     protected val listX = 2f
     protected val listY = 2f
     protected val listYOffset = 17
+    protected val containerX = 157f
 
     init {
         position.x = x
@@ -27,7 +28,7 @@ abstract class ElementList(x: Float, y: Float, val gui: Gui): ScrollablePanel() 
     }
 
     private fun getListSize(): Vector2f {
-        return Vector2f(150f, gui.size.y - 166)
+        return Vector2f(164f, gui.size.y - 166)
     }
 
     fun search(input: String) {
@@ -53,7 +54,7 @@ abstract class ElementList(x: Float, y: Float, val gui: Gui): ScrollablePanel() 
 
     private fun adjustScroll(filteredSize: Int) {
         verticalScrollBar.curValue = 0f // Reset scroll position
-        container.setSize(142f, listY + filteredSize * listYOffset) // Adjust scroll size
+        container.setSize(containerX, listY + filteredSize * listYOffset) // Adjust scroll size
     }
 
     abstract class Element(x: Float, y: Float, width: Float, height: Float): Button(x, y, width, height) {

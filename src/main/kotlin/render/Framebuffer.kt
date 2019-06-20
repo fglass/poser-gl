@@ -3,7 +3,6 @@ package render
 import BG_COLOUR
 import Processor
 import animation.reference.PointRenderer
-import animation.reference.ReferencePoint
 import entity.Camera
 import input.Mouse
 import org.joml.Vector2f
@@ -18,9 +17,8 @@ import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader
 
-class Framebuffer(
-    private val context: Processor, private val shader: StaticShader,
-    private val mouse: Mouse, private val scaleFactor: Int) : ImageView() {
+class Framebuffer(private val context: Processor, private val shader: StaticShader,
+                  private val mouse: Mouse, private val scaleFactor: Int) : ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0
@@ -35,7 +33,7 @@ class Framebuffer(
     var shadingType = ShadingType.SMOOTH
 
     init {
-        position = (Vector2f(160f, 5f))
+        position = Vector2f(174f, 5f)
         resize()
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -55,7 +53,7 @@ class Framebuffer(
 
     fun lateInit() {
         glRenderer = Renderer(context, shader)
-        pointRenderer = PointRenderer(glRenderer.projectionMatrix)
+        pointRenderer = PointRenderer(glRenderer)
     }
 
     private fun createTexture(): FBOImage {
@@ -126,7 +124,7 @@ class Framebuffer(
         shader.stop()
 
         // Render reference points
-        pointRenderer.render(context.entity, camera)
+        pointRenderer.render(camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
@@ -143,6 +141,6 @@ class Framebuffer(
     }
 
     private fun getFboSize(): Vector2f {
-        return Vector2f(context.gui.size.x - 340, context.gui.size.y - 122)
+        return Vector2f(context.gui.size.x - 354, context.gui.size.y - 128)
     }
 }

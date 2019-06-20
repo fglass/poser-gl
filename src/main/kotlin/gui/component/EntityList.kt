@@ -12,13 +12,13 @@ class EntityList(x: Float, y: Float, gui: Gui, context: Processor): ElementList(
     init {
         var index = 0
         for ((i, npc) in entities.withIndex()) {
-            val element = EntityElement(npc, context, listX, listY + index++ * listYOffset, 137f, 14f)
+            val element = EntityElement(npc, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
             entityElements.add(element)
             container.add(element)
             maxIndex = i
         }
-        container.setSize(142f, listY + index * listYOffset)
+        container.setSize(containerX, listY + index * listYOffset)
         println("Loaded $index npcs")
     }
 
