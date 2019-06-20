@@ -1,8 +1,10 @@
 package animation.reference
 
+import animation.AnimationHandler
 import entity.Camera
 import entity.Entity
 import model.Model
+import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL30.*
@@ -14,7 +16,7 @@ class PointRenderer(projectionMatrix: Matrix4f) {
     private val quad: Model
     private val loader = Loader()
     private val shader = ReferenceShader()
-    private val points = ArrayList<ReferencePoint>()
+    val points = ArrayList<ReferencePoint>()
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
@@ -30,7 +32,7 @@ class PointRenderer(projectionMatrix: Matrix4f) {
         }
 
         if (points.isEmpty()) {
-            addPoints(entity)
+            //addPoint(entity)
         }
 
         prepare()
@@ -42,17 +44,50 @@ class PointRenderer(projectionMatrix: Matrix4f) {
         finish()
     }
 
-    private fun addPoints(entity: Entity) {
-        val def = entity.model.definition
-        for (i in 0 until def.vertexPositionsX.size) {
-            points.add(
-                ReferencePoint(Vector3f(
-                    def.vertexPositionsX[i].toFloat(),
-                    def.vertexPositionsY[i].toFloat(),
-                    def.vertexPositionsZ[i].toFloat()), 0f, 1f
-                )
-            )
+    fun addPoint(def: ModelDefinition, transformation: AnimationHandler.Transformation) { // TODO: Clean-up
+        if (transformation.fmType != 0) {
+            return
         }
+
+        var index = 0
+        var offsetX = 0
+        var offsetY = 0
+        var offsetZ = 0
+
+        var i = 0
+        while (i < transformation.fm.size) {
+            val fIndex = transformation.fm[i]
+            if (fIndex < def.vertexGroups.size) {
+                val vg = def.vertexGroups[fIndex]
+
+                var j = 0
+                while (j < vg.size) {
+                    val vIndex = vg[j]
+                    offsetX += def.vertexPositionsX[vIndex]
+                    offsetY += def.vertexPositionsY[vIndex]
+                    offsetZ += def.vertexPositionsZ[vIndex]
+                    ++index
+                    ++j
+                }
+            }
+            ++i
+        }
+
+        if (index > 0) {
+            offsetX = transformation.dx + offsetX / index
+            offsetY = transformation.dy + offsetY / index
+            offsetZ = transformation.dz + offsetZ / index
+        } else {
+            offsetX = transformation.dx
+            offsetY = transformation.dy
+            offsetZ = transformation.dz
+        }
+
+        points.add(ReferencePoint(Vector3f(
+                    offsetX.toFloat(),
+                    offsetY.toFloat(),
+                    offsetZ.toFloat()), 0f, 2f)
+        )
     }
 
     private fun prepare() {
@@ -61,6 +96,7 @@ class PointRenderer(projectionMatrix: Matrix4f) {
         glEnableVertexAttribArray(0)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDisable(GL_DEPTH_TEST)
     }
 
     private fun updateMatrix(position: Vector3f, rotation: Float, scale: Float, viewMatrix: Matrix4f) {
@@ -82,6 +118,7 @@ class PointRenderer(projectionMatrix: Matrix4f) {
 
     private fun finish() {
         glDisable(GL_BLEND)
+        glEnable(GL_DEPTH_TEST)
         glDisableVertexAttribArray(0)
         glBindVertexArray(0)
         shader.stop()

@@ -126,7 +126,7 @@ class Framebuffer(
         shader.stop()
 
         // Render reference points
-        //pointRenderer.render(context.entity, camera)
+        pointRenderer.render(context.entity, camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

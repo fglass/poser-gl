@@ -135,37 +135,34 @@ class AnimationHandler(private val context: Processor) {
     }
 
     private fun applyFrame(frame: FrameDefinition) {
-        val frameMap = frame.framemap
-        val transformations = ArrayList<Transformation>()
-
-        for (i in 0 until frame.translatorCount) {
-            val type = frame.indexFrameIds[i]
-            transformations.add(Transformation(
-                    frameMap.types[type], frameMap.frameMaps[type],
-                    frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
-                )
-            )
-        }
-
         // Reset from last frame
+        context.framebuffer.pointRenderer.points.clear()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
 
-        if (context.entity != null) {
-            val def = context.entity!!.model.definition
-            def.resetAnim()
+        val entity = context.entity ?: return
+        val frameMap = frame.framemap
+        val def = entity.model.definition
+        def.resetAnim()
 
-            // Apply transformations
-            for (t in transformations) {
-                def.animate(t.fmType, t.fm, t.dx, t.dy, t.dz)
-            }
+        // Apply transformations
+        for (i in 0 until frame.translatorCount) {
+            val type = frame.indexFrameIds[i]
+            val transformation = Transformation(
+                frameMap.types[type], frameMap.frameMaps[type],
+                frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
+            )
 
-            context.loader.cleanUp()
-            context.entity!!.model = context.datLoader.parse(
-                context.entity!!.model.definition, context.framebuffer.shadingType == ShadingType.FLAT
+            context.framebuffer.pointRenderer.addPoint(def, transformation)
+            def.animate(
+                transformation.fmType, transformation.fm, transformation.dx, transformation.dy, transformation.dz
             )
         }
+
+        // Load transformed model
+        context.loader.cleanUp()
+        entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
     fun resetAnimation() {
