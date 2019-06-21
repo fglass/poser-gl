@@ -2,6 +2,7 @@ package gui
 
 import Processor
 import gui.panel.AnimationPanel
+import gui.panel.EditPanel
 import gui.panel.InformationPanel
 import gui.panel.ListPanel
 import org.joml.Vector2f
@@ -14,6 +15,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
 
     private val listPanel = ListPanel(this, context)
     val infoPanel = InformationPanel(this, context)
+    val editPanel = EditPanel(this)
     val animationPanel = AnimationPanel(this, context)
     private val renderBox = SelectBox<String>(size.x - 175, 5f, 82f, 15f)
     private val shadingBox = SelectBox<String>(size.x - 87, 5f, 82f, 15f)
@@ -22,6 +24,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         addToggles()
         add(listPanel)
         add(infoPanel)
+        add(editPanel)
         add(animationPanel)
         style.focusedStrokeColor = null
     }
@@ -64,6 +67,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
         setSize(size)
         listPanel.resize()
         infoPanel.resize()
+        editPanel.resize()
         animationPanel.resize()
         renderBox.position = Vector2f(size.x - 175, 5f)
         shadingBox.position = Vector2f(size.x - 87, 5f)
