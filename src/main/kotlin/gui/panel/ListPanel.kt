@@ -88,16 +88,16 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
         }
     }
 
+    private fun setSearchText(text: String) {
+        search.textState.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
+        search.textState.text = text
+    }
+
     private fun selectTab(tab: Button) {
         tabs.forEach {
             it.style.background.color =
                 if (it == tab) it.hoveredStyle.background.color else it.focusedStyle.background.color
         }
-    }
-
-    private fun setSearchText(text: String) {
-        search.textState.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
-        search.textState.text = text
     }
 
     fun resize() {

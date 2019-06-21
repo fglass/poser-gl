@@ -122,9 +122,7 @@ class AnimationHandler(private val context: Processor) {
         val seqFrameId = currentSequence.frameIDs[getFrameIndex()]
         val frames = frames.get(seqFrameId.ushr(16))
         val frameFileId = seqFrameId and 0xFFFF
-        
-        val first = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst()
-        val frame = first.get()
+        val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
 
         applyFrame(frame)
         context.gui.animationPanel.tickCursor(timer)
@@ -136,7 +134,7 @@ class AnimationHandler(private val context: Processor) {
 
     private fun applyFrame(frame: FrameDefinition) {
         // Reset from last frame
-        context.framebuffer.pointRenderer.points.clear()
+        context.framebuffer.pointRenderer.reset()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0

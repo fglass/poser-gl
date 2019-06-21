@@ -16,20 +16,12 @@ class PointRenderer(private val glRenderer: Renderer) {
     private val quad: Model
     private val loader = Loader()
     private val shader = ReferenceShader()
-    val points = ArrayList<ReferencePoint>()
+    private val points = ArrayList<ReferencePoint>()
+    var enabled = false
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
         quad = loader.loadToVao(vertices)
-    }
-
-    fun render(camera: Camera) {
-        prepare()
-        for (point in points) {
-            loadMatrices(point.position, point.rotation, point.scale, Maths.createViewMatrix(camera))
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
-        }
-        finish()
     }
 
     fun addPoint(def: ModelDefinition, tf: AnimationHandler.Transformation) {
@@ -57,6 +49,23 @@ class PointRenderer(private val glRenderer: Renderer) {
             offset.div(index)
         }
         points.add(ReferencePoint(offset, 0f, 2f))
+    }
+
+    fun reset() {
+        points.clear()
+    }
+
+    fun render(camera: Camera) {
+        if (!enabled) {
+            return
+        }
+
+        prepare()
+        for (point in points) {
+            loadMatrices(point.position, point.rotation, point.scale, Maths.createViewMatrix(camera))
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
+        }
+        finish()
     }
 
     private fun prepare() {

@@ -10,6 +10,7 @@ import gui.component.ImageButton
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector2f
 import org.joml.Vector4f
+import org.liquidengine.legui.component.CheckBox
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -21,6 +22,8 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
 
     private val animationId: Label
     private val play: ImageButton
+    private val menu: Panel
+    private val pointToggle: CheckBox
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
@@ -56,7 +59,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         isFocusable = false
         resize()
 
-        val menu = Panel(0f, 0f, size.x, 19f)
+        menu = Panel(0f, 0f, size.x, 19f)
         menu.style.background.color = ColorConstants.darkGray()
         menu.style.setBorderRadius(0f)
         menu.style.border.isEnabled = false
@@ -78,6 +81,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         animationId = Label("N/A", x + 74, 3f, 104f, 15f)
         menu.add(animation)
         menu.add(animationId)
+
+        pointToggle = CheckBox("References", size.x - 85, 3f, 150f, 15f)
+        pointToggle.style.focusedStrokeColor = null
+        pointToggle.listenerMap.addListener(MouseClickEvent::class.java) {
+            context.framebuffer.pointRenderer.enabled = !context.framebuffer.pointRenderer.enabled
+        }
+        menu.add(pointToggle)
     }
 
     fun play(sequence: SequenceDefinition) {
@@ -172,6 +182,10 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         size = getPanelSize()
         times.size.x = size.x
         timeline.size.x = getTimelineWidth()
+        if (menu != null) {
+            menu.size.x = size.x
+            pointToggle.position.x = size.x - 85
+        }
         if (sequence.id != -1) {
             unitX = getUnitX()
             setTimeline()
