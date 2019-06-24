@@ -2,7 +2,6 @@
 
 layout (location = 0) in vec2 position;
 
-uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 

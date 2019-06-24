@@ -53,7 +53,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
     fun lateInit() {
         glRenderer = Renderer(context, shader)
-        pointRenderer = PointRenderer(glRenderer)
+        pointRenderer = PointRenderer(glRenderer.projectionMatrix, Vector2f(textureWidth.toFloat(), textureHeight.toFloat()))
     }
 
     private fun createTexture(): FBOImage {
