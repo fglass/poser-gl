@@ -4,7 +4,7 @@ import org.joml.Vector2f
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 
-class Mouse {
+class MouseHandler {
 
     var pressed = false
     var zooming = false

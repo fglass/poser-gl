@@ -1,12 +1,16 @@
 package entity
 
-import input.Mouse
+import input.MouseHandler
 import org.joml.Vector3f
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 
 const val MIN_ZOOM = 100f
 const val MAX_ZOOM = 1600f
 
-class Camera(private val mouse: Mouse) {
+class Camera(private val mouse: MouseHandler) {
 
     val position = Vector3f(0f, 0f, 0f)
     var pitch = -20f
@@ -31,8 +35,8 @@ class Camera(private val mouse: Mouse) {
     private fun calculateZoom() {
         if (mouse.zooming) {
             val zoomLevel = mouse.dWheel * 2f
-            distance = Math.max(distance - zoomLevel, MIN_ZOOM)
-            distance = Math.min(distance, MAX_ZOOM)
+            distance = max(distance - zoomLevel, MIN_ZOOM)
+            distance = min(distance, MAX_ZOOM)
             mouse.zooming = false
         }
     }
@@ -50,18 +54,18 @@ class Camera(private val mouse: Mouse) {
     }
 
     private fun calculateHorizontalDistance(): Float {
-        return (distance * Math.cos(Math.toRadians(pitch.toDouble()))).toFloat()
+        return (distance * cos(Math.toRadians(pitch.toDouble()))).toFloat()
     }
 
     private fun calculateVerticalDistance(): Float {
-        return (distance * Math.sin(Math.toRadians(pitch.toDouble()))).toFloat()
+        return (distance * sin(Math.toRadians(pitch.toDouble()))).toFloat()
     }
 
     private fun calculatePosition(h: Float, v: Float) {
         val theta = (ENTITY_ROT.y + angle).toDouble()
-        val xOffset = (h * Math.sin(Math.toRadians(theta))).toFloat()
+        val xOffset = (h * sin(Math.toRadians(theta))).toFloat()
         val yOffset = v - 60f
-        val zOffset = (h * Math.cos(Math.toRadians(theta))).toFloat()
+        val zOffset = (h * cos(Math.toRadians(theta))).toFloat()
 
         position.x = ENTITY_POS.x - xOffset
         position.y = ENTITY_POS.y + yOffset

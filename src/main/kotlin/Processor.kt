@@ -1,7 +1,7 @@
 import animation.AnimationHandler
 import entity.Entity
 import gui.Gui
-import input.Mouse
+import input.MouseHandler
 import model.DatLoader
 import model.EntityLoader
 import model.ItemLoader
@@ -88,7 +88,7 @@ class Processor {
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
 
-        val mouse = Mouse()
+        val mouse = MouseHandler()
         val windowCloseCallback = GLFWWindowCloseCallbackI { running = false }
         keeper.chainWindowCloseCallback.add(windowCloseCallback)
 
@@ -124,11 +124,7 @@ class Processor {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
             // Render gui
-            try {
-                guiRenderer.render(frame, context)
-            } catch (ignore: NullPointerException) {
-                println("Render error: ${ignore.message}")
-            }
+            guiRenderer.render(frame, context)
 
             // Render fbo
             framebuffer.render()
@@ -142,20 +138,16 @@ class Processor {
             EventProcessor.getInstance().processEvents()
 
             // Relayout components
-            try {
-                LayoutManager.getInstance().layout(frame)
-            } catch (ignore: NullPointerException) {
-                println("Layout error: ${ignore.message}")
-            }
+            LayoutManager.getInstance().layout(frame)
 
-            // Run animations
+            // Run legui animations
             AnimatorProvider.getAnimator().runAnimations()
 
             // Control fps
             vSync.waitIfNecessary()
         }
 
-        framebuffer.pointRenderer.cleanUp()
+        framebuffer.jointRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()
         guiRenderer.destroy()

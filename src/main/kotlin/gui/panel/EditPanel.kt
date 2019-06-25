@@ -19,6 +19,8 @@ import org.liquidengine.legui.listener.CursorEnterEventListener
 import org.liquidengine.legui.listener.MouseClickEventListener
 import org.liquidengine.legui.style.color.ColorConstants
 import org.lwjgl.glfw.GLFW
+import kotlin.math.max
+import kotlin.math.min
 
 class EditPanel(private val gui: Gui): Panel() {
 
@@ -133,8 +135,8 @@ class EditPanel(private val gui: Gui): Panel() {
 
         private fun limitValue(value: Int): Int {
             val limit = 255
-            val newValue = Math.min(value, limit)
-            return Math.max(newValue, -limit)
+            val newValue = min(value, limit)
+            return max(newValue, -limit)
         }
     }
 }

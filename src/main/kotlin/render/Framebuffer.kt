@@ -2,9 +2,9 @@ package render
 
 import BG_COLOUR
 import Processor
-import animation.reference.PointRenderer
+import animation.joint.JointRenderer
 import entity.Camera
-import input.Mouse
+import input.MouseHandler
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.CursorEnterEvent
@@ -18,15 +18,15 @@ import shader.ShadingType
 import shader.StaticShader
 
 class Framebuffer(private val context: Processor, private val shader: StaticShader,
-                  private val mouse: Mouse, private val scaleFactor: Int) : ImageView() {
+                  private val mouse: MouseHandler, private val scaleFactor: Int) : ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0
     private var textureWidth = 0
     private var textureHeight = 0
 
-    private lateinit var glRenderer: Renderer
-    lateinit var pointRenderer: PointRenderer
+    private lateinit var glRenderer: GlRenderer
+    lateinit var jointRenderer: JointRenderer
     private val camera = Camera(mouse)
 
     var polygonMode = PolygonMode.FILL
@@ -52,8 +52,8 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     }
 
     fun lateInit() {
-        glRenderer = Renderer(context, shader)
-        pointRenderer = PointRenderer(glRenderer.projectionMatrix, size, position)
+        glRenderer = GlRenderer(context, shader)
+        jointRenderer = JointRenderer(glRenderer.projectionMatrix, size, position)
     }
 
     private fun createTexture(): FBOImage {
@@ -62,18 +62,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         textureId = glGenTextures()
         glBindTexture(GL_TEXTURE_2D, textureId)
-
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            textureWidth,
-            textureHeight,
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            0
-        )
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0)
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -101,7 +90,17 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         glClearColor(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
         glClear(GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
+        setGlState()
 
+        context.animationHandler.tick()
+        camera.move()
+        renderEntity()
+        jointRenderer.render(camera)
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    }
+
+    private fun setGlState() {
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_CULL_FACE)
         glCullFace(GL_BACK)
@@ -113,20 +112,14 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         } else if (polygonMode == PolygonMode.LINE) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         }
+    }
 
-        // Render entities
-        context.animationHandler.tick()
-        camera.move()
+    private fun renderEntity() {
         shader.start()
         shader.loadViewMatrix(camera)
         shader.loadShadingToggle(shadingType != ShadingType.NONE)
         glRenderer.render(context.entity, shader)
         shader.stop()
-
-        // Render reference points
-        pointRenderer.render(camera)
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
 
     fun resize() {
@@ -137,7 +130,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         if (::glRenderer.isInitialized) {
             glRenderer.reloadProjectionMatrix()
-            pointRenderer.resize(glRenderer.projectionMatrix, size, position)
+            jointRenderer.resize(glRenderer.projectionMatrix, size, position)
         }
     }
 

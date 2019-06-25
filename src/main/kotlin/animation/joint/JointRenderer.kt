@@ -1,4 +1,4 @@
-package animation.reference
+package animation.joint
 
 import animation.AnimationHandler
 import entity.Camera
@@ -10,13 +10,13 @@ import org.lwjgl.opengl.GL30.*
 import render.Loader
 import utils.Maths
 
-class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize: Vector2f,
+class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize: Vector2f,
                     private var fboPosition: Vector2f) {
 
     private val quad: Model
     private val loader = Loader()
-    private val shader = ReferenceShader()
-    private val points = HashSet<ReferencePoint>()
+    private val shader = JointShader()
+    private val joints = HashSet<Joint>()
     var enabled = false
 
     init {
@@ -24,7 +24,7 @@ class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         quad = loader.loadToVao(vertices)
     }
 
-    fun addPoint(def: ModelDefinition, tf: AnimationHandler.Transformation) {
+    fun addJoint(def: ModelDefinition, tf: AnimationHandler.Transformation) {
         if (tf.type != 0) {
             return
         }
@@ -48,11 +48,11 @@ class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         if (index > 0) {
             offset.div(index)
         }
-        points.add(ReferencePoint(offset))
+        joints.add(Joint(offset))
     }
 
     fun reset() {
-        points.clear()
+        joints.clear()
     }
 
     fun render(camera: Camera) {
@@ -64,9 +64,9 @@ class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         val viewMatrix = Maths.createViewMatrix(camera)
         setHighlighted(viewMatrix)
 
-        for (point in points) {
-            shader.setHighlighted(point.highlighted) // TODO toggling
-            loadMatrices(point, viewMatrix)
+        for (joint in joints) {
+            shader.setHighlighted(joint.highlighted) // TODO toggling
+            loadMatrices(joint, viewMatrix)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
@@ -78,25 +78,26 @@ class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         glEnableVertexAttribArray(0)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         glDisable(GL_DEPTH_TEST)
     }
 
     private fun setHighlighted(viewMatrix: Matrix4f) {
         val ray = calculateRay(viewMatrix)
         var minDistance = Float.MAX_VALUE
-        var closest: ReferencePoint? = null
+        var closest: Joint? = null
 
-        for (point in points) {
-            val scale = point.scale
-            val min = Vector3f(point.position).sub(scale, scale, scale)
-            val max = Vector3f(point.position).add(scale, scale, scale)
+        for (joint in joints) {
+            val scale = joint.scale
+            val min = Vector3f(joint.position).sub(scale, scale, scale)
+            val max = Vector3f(joint.position).add(scale, scale, scale)
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
                 minDistance = nearFar.x
-                closest = point
+                closest = joint
             }
-            point.highlighted = false // Reset
+            joint.highlighted = false // Reset
         }
         closest?.highlighted = true
     }
@@ -113,9 +114,9 @@ class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         return Rayf(origin, dir)
     }
 
-    private fun loadMatrices(point: ReferencePoint, viewMatrix: Matrix4f) {
+    private fun loadMatrices(joint: Joint, viewMatrix: Matrix4f) {
         val modelMatrix = Matrix4f()
-        modelMatrix.translate(point.position)
+        modelMatrix.translate(joint.position)
         modelMatrix.m00(viewMatrix.m00())
         modelMatrix.m01(viewMatrix.m10())
         modelMatrix.m02(viewMatrix.m20())
@@ -125,7 +126,7 @@ class PointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         modelMatrix.m20(viewMatrix.m02())
         modelMatrix.m21(viewMatrix.m12())
         modelMatrix.m22(viewMatrix.m22())
-        modelMatrix.scale(point.scale)
+        modelMatrix.scale(joint.scale)
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
         shader.loadProjectionMatrix(projectionMatrix)
     }

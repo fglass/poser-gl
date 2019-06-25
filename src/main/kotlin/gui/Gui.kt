@@ -15,8 +15,8 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
 
     private val listPanel = ListPanel(this, context)
     val infoPanel = InformationPanel(this, context)
-    val editPanel = EditPanel(this)
     val animationPanel = AnimationPanel(this, context)
+    private val editPanel = EditPanel(this)
     private val renderBox = SelectBox<String>(size.x - 175, 5f, 82f, 15f)
     private val shadingBox = SelectBox<String>(size.x - 87, 5f, 82f, 15f)
 
@@ -30,33 +30,31 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     }
 
     private fun addToggles() {
-        renderBox.addElement("Fill")
-        renderBox.addElement("Vertices")
-        renderBox.addElement("Wireframe")
+        val modes = arrayOf("Fill", "Vertices", "Wireframe")
+        modes.forEach { renderBox.addElement(it) }
 
         renderBox.addSelectBoxChangeSelectionEventListener { event ->
             when (event.newValue.toString()) {
-                "Fill" -> context.framebuffer.polygonMode = PolygonMode.FILL
-                "Vertices" -> context.framebuffer.polygonMode = PolygonMode.POINT
-                "Wireframe" -> context.framebuffer.polygonMode = PolygonMode.LINE
+                modes[0] -> context.framebuffer.polygonMode = PolygonMode.FILL
+                modes[1] -> context.framebuffer.polygonMode = PolygonMode.POINT
+                modes[2] -> context.framebuffer.polygonMode = PolygonMode.LINE
             }
         }
 
-        shadingBox.addElement("Smooth")
-        shadingBox.addElement("Flat")
-        shadingBox.addElement("None")
+        val types = arrayOf("Smooth", "Flat", "None")
+        types.forEach { shadingBox.addElement(it) }
 
         shadingBox.addSelectBoxChangeSelectionEventListener { event ->
             when (event.newValue.toString()) {
-                "Smooth" -> {
+                types[0] -> {
                     context.framebuffer.shadingType = ShadingType.SMOOTH
                     context.entity!!.reload(context.entityLoader)
                 }
-                "Flat" -> {
+                types[1] -> {
                     context.framebuffer.shadingType = ShadingType.FLAT
                     context.entity!!.reload(context.entityLoader)
                 }
-                "None" -> context.framebuffer.shadingType = ShadingType.NONE
+                types[2] -> context.framebuffer.shadingType = ShadingType.NONE
             }
         }
         add(renderBox)

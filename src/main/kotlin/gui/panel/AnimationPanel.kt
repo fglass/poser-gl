@@ -17,13 +17,16 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
+import kotlin.math.min
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class AnimationPanel(private val gui: Gui, private val context: Processor): Panel() {
 
     private val animationId: Label
     private val play: ImageButton
     private val menu: Panel
-    private val pointToggle: CheckBox
+    private val jointToggle: CheckBox
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
@@ -82,12 +85,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         menu.add(animation)
         menu.add(animationId)
 
-        pointToggle = CheckBox("References", size.x - 85, 3f, 150f, 15f)
-        pointToggle.style.focusedStrokeColor = null
-        pointToggle.listenerMap.addListener(MouseClickEvent::class.java) {
-            context.framebuffer.pointRenderer.enabled = !context.framebuffer.pointRenderer.enabled
+        jointToggle = CheckBox("Joints", size.x - 61, 3f, 49f, 15f)
+        jointToggle.style.focusedStrokeColor = null
+        jointToggle.textState.horizontalAlign = HorizontalAlign.RIGHT
+        jointToggle.listenerMap.addListener(MouseClickEvent::class.java) {
+            context.framebuffer.jointRenderer.enabled = !context.framebuffer.jointRenderer.enabled
         }
-        menu.add(pointToggle)
+        menu.add(jointToggle)
     }
 
     fun play(sequence: SequenceDefinition) {
@@ -123,9 +127,9 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private fun addTimes() {
         val max = getMaxLength()
         addTime(max)
-        val sqrt = Math.sqrt(max.toDouble())
-        val timeStep = 5 * (Math.round(sqrt / 5))
-        for (i in 0 until max step timeStep.toInt()) {
+        val sqrt = sqrt(max.toDouble())
+        val timeStep = 5 * ((sqrt / 5).roundToInt())
+        for (i in 0 until max step timeStep) {
             addTime(i)
         }
     }
@@ -165,7 +169,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     }
 
     private fun adjustTime(x: Float) {
-        val timer = Math.round(x / unitX)
+        val timer = (x / unitX).roundToInt()
         var cumulative = 0
 
         for ((frameCount, length) in sequence.frameLenghts.withIndex()) {
@@ -184,7 +188,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         timeline.size.x = getTimelineWidth()
         if (menu != null) {
             menu.size.x = size.x
-            pointToggle.position.x = size.x - 85
+            jointToggle.position.x = size.x - 61
         }
         if (sequence.id != -1) {
             unitX = getUnitX()
@@ -209,6 +213,6 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     }
 
     private fun getMaxLength(): Int {
-        return Math.min(sequence.frameLenghts.sum(), MAX_LENGTH)
+        return min(sequence.frameLenghts.sum(), MAX_LENGTH)
     }
 }

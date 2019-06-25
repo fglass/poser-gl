@@ -1,13 +1,12 @@
 package model
 
 import CACHE_PATH
-import Processor
 import net.runelite.cache.ItemManager
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.fs.Store
 import java.io.File
 
-class ItemLoader() {
+class ItemLoader {
 
     val items = ArrayList<ItemDefinition>()
 

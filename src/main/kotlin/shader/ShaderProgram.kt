@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL20
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
+import kotlin.system.exitProcess
 
 abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
 
@@ -77,9 +78,7 @@ abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
         val shaderSource = StringBuilder()
         try {
             val reader = BufferedReader(FileReader(file))
-            for (line in reader.lines()) {
-                shaderSource.append(line).append("\n")
-            }
+            reader.lines().forEach { shaderSource.append(it).append("\n") }
             reader.close()
         } catch (e: IOException) {
             e.printStackTrace()
@@ -91,7 +90,7 @@ abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
 
         if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             println(GL20.glGetShaderInfoLog(shaderId, 500))
-            System.exit(-1)
+            exitProcess(-1)
         }
 
         return shaderId

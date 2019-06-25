@@ -134,7 +134,7 @@ class AnimationHandler(private val context: Processor) {
 
     private fun applyFrame(frame: FrameDefinition) {
         // Reset from last frame
-        context.framebuffer.pointRenderer.reset()
+        context.framebuffer.jointRenderer.reset()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
@@ -152,7 +152,7 @@ class AnimationHandler(private val context: Processor) {
                 frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
             )
 
-            context.framebuffer.pointRenderer.addPoint(def, tf)
+            context.framebuffer.jointRenderer.addJoint(def, tf)
             def.animate(tf.type, tf.frameMap, tf.dx, tf.dy, tf.dz)
         }
 
