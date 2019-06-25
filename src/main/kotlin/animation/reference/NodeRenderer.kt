@@ -1,34 +1,36 @@
-package animation.joint
+package animation.reference
 
 import animation.AnimationHandler
 import entity.Camera
-import input.MouseHandler
 import model.Model
+import Processor
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
+import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
 import render.Loader
 import utils.Maths
 
-class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize: Vector2f,
-                    private var fboPosition: Vector2f) {
+class NodeRenderer(private val context: Processor, private var projectionMatrix: Matrix4f,
+                   private var fboSize: Vector2f, private var fboPosition: Vector2f) {
 
     private val quad: Model
     private val loader = Loader()
-    private val shader = JointShader()
-    private val joints = HashSet<Joint>()
-    private var selected: Int? = null
-    private var canSelect = true
+    private val shader = NodeShader()
+    private var viewMatrix = Matrix4f()
+    private val nodes = HashSet<ReferenceNode>()
     var enabled = false
+    var activeType = 0
+    var selected: Int? = null
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
         quad = loader.loadToVao(vertices)
     }
 
-    fun addJoint(def: ModelDefinition, tf: AnimationHandler.Transformation) {
-        if (tf.type != 0) {
+    fun addNode(def: ModelDefinition, tf: AnimationHandler.Transformation) {
+        if (tf.type != activeType) {
             return
         }
 
@@ -51,11 +53,11 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         if (index > 0) {
             offset.div(index)
         }
-        joints.add(Joint(joints.size, offset))
+        nodes.add(ReferenceNode(tf, offset))
     }
 
     fun reset() {
-        joints.clear()
+        nodes.clear()
     }
 
     fun render(camera: Camera) {
@@ -64,12 +66,12 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         }
 
         prepare()
-        val viewMatrix = Maths.createViewMatrix(camera)
-        highlight(viewMatrix, camera.mouse)
+        viewMatrix = Maths.createViewMatrix(camera)
+        getClosestNode()?.highlighted = true
 
-        for (joint in joints) {
-            shader.setHighlighted(joint.highlighted || joint.id == selected)
-            loadMatrices(joint, viewMatrix)
+        for (node in nodes) {
+            shader.setHighlighted(node.highlighted || node.transformation.id == selected)
+            loadMatrices(node)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
@@ -85,37 +87,26 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         glDisable(GL_DEPTH_TEST)
     }
 
-    private fun highlight(viewMatrix: Matrix4f, mouse: MouseHandler) {
-        val ray = calculateRay(viewMatrix)
+    private fun getClosestNode(): ReferenceNode? {
+        val ray = calculateRay()
         var minDistance = Float.MAX_VALUE
-        var closest: Joint? = null
+        var closest: ReferenceNode? = null
 
-        for (joint in joints) {
-            val scale = joint.scale
-            val min = Vector3f(joint.position).sub(scale, scale, scale)
-            val max = Vector3f(joint.position).add(scale, scale, scale)
+        for (node in nodes) {
+            val scale = node.scale
+            val min = Vector3f(node.position).sub(scale, scale, scale)
+            val max = Vector3f(node.position).add(scale, scale, scale)
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
                 minDistance = nearFar.x
-                closest = joint
+                closest = node
             }
         }
-
-        if (closest == null) {
-            return
-        }
-
-        if (mouse.pressed && canSelect) {
-            selected = closest.id
-            canSelect = false
-        } else if (!mouse.pressed){
-            closest.highlighted = true
-            canSelect = true
-        }
+        return closest
     }
 
-    private fun calculateRay(viewMatrix: Matrix4f): Rayf {
+    private fun calculateRay(): Rayf {
         val mousePosition = Mouse.getCursorPosition()
         mousePosition.sub(fboPosition)
 
@@ -127,9 +118,22 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         return Rayf(origin, dir)
     }
 
-    private fun loadMatrices(joint: Joint, viewMatrix: Matrix4f) {
+    fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
+        if (button != Mouse.MouseButton.MOUSE_BUTTON_LEFT || action != MouseClickEvent.MouseClickAction.CLICK ||
+            !enabled) {
+            return
+        }
+
+        val closest = getClosestNode()
+        if (closest != null) {
+            selected = closest.transformation.id
+            context.gui.editorPanel.setNode(closest.transformation)
+        }
+    }
+
+    private fun loadMatrices(node: ReferenceNode) {
         val modelMatrix = Matrix4f()
-        modelMatrix.translate(joint.position)
+        modelMatrix.translate(node.position)
         modelMatrix.m00(viewMatrix.m00())
         modelMatrix.m01(viewMatrix.m10())
         modelMatrix.m02(viewMatrix.m20())
@@ -139,7 +143,7 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         modelMatrix.m20(viewMatrix.m02())
         modelMatrix.m21(viewMatrix.m12())
         modelMatrix.m22(viewMatrix.m22())
-        modelMatrix.scale(joint.scale)
+        modelMatrix.scale(node.scale)
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
         shader.loadProjectionMatrix(projectionMatrix)
     }

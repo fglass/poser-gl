@@ -4,7 +4,7 @@ import Processor
 import gui.Gui
 import net.runelite.cache.definitions.ItemDefinition
 
-class ItemList(x: Float, y: Float, gui: Gui, context: Processor) : ElementList(x, y, gui) {
+class ItemList(x: Float, y: Float, gui: Gui, context: Processor): ElementList(x, y, gui) {
 
     private val items = context.itemLoader.items
     private val itemElements = mutableListOf<ItemElement>()

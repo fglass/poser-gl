@@ -132,12 +132,16 @@ class AnimationHandler(private val context: Processor) {
         return frameCount % currentSequence.frameIDs.size
     }
 
+    var currentFrame = FrameDefinition()
+
     private fun applyFrame(frame: FrameDefinition) {
         // Reset from last frame
-        context.framebuffer.jointRenderer.reset()
+        context.framebuffer.nodeRenderer.reset()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
+
+        currentFrame = frame
 
         val entity = context.entity ?: return
         val frameMap = frame.framemap
@@ -146,13 +150,12 @@ class AnimationHandler(private val context: Processor) {
 
         // Apply transformations
         for (i in 0 until frame.translatorCount) {
-            val index = frame.indexFrameIds[i]
+            val id = frame.indexFrameIds[i]
             val tf = Transformation(
-                frameMap.types[index], frameMap.frameMaps[index],
+                id, frameMap.types[id], frameMap.frameMaps[id],
                 frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
             )
-
-            context.framebuffer.jointRenderer.addJoint(def, tf)
+            context.framebuffer.nodeRenderer.addNode(def, tf)
             def.animate(tf.type, tf.frameMap, tf.dx, tf.dy, tf.dz)
         }
 
@@ -161,12 +164,21 @@ class AnimationHandler(private val context: Processor) {
         entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
+    fun transformNode(coordIndex: Int, newValue: Int) {
+        val id = context.framebuffer.nodeRenderer.selected ?: return
+        val frame = currentFrame
+        val translations = arrayOf(frame.translator_x, frame.translator_y, frame.translator_z)
+        val transformIndex = frame.indexFrameIds.indexOf(id)
+        translations[coordIndex][transformIndex] = newValue
+    }
+
     fun resetAnimation() {
         currentSequence = SequenceDefinition(-1)
         frameCount = 0
         frameLength = 0
+        context.framebuffer.nodeRenderer.reset()
         context.gui.animationPanel.stop()
     }
 
-    class Transformation(val type: Int, val frameMap: IntArray, val dx: Int, val dy: Int, val dz: Int)
+    class Transformation(val id: Int, val type: Int, val frameMap: IntArray, val dx: Int, val dy: Int, val dz: Int)
 }

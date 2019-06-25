@@ -2,7 +2,7 @@ package render
 
 import BG_COLOUR
 import Processor
-import animation.joint.JointRenderer
+import animation.reference.NodeRenderer
 import entity.Camera
 import input.MouseHandler
 import org.joml.Vector2f
@@ -26,7 +26,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     private var textureHeight = 0
 
     private lateinit var glRenderer: GlRenderer
-    lateinit var jointRenderer: JointRenderer
+    lateinit var nodeRenderer: NodeRenderer
     private val camera = Camera(mouse)
 
     var polygonMode = PolygonMode.FILL
@@ -38,6 +38,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
+            nodeRenderer.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
             mouse.handleDrag(event.delta)
@@ -53,7 +54,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
     fun lateInit() {
         glRenderer = GlRenderer(context, shader)
-        jointRenderer = JointRenderer(glRenderer.projectionMatrix, size, position)
+        nodeRenderer = NodeRenderer(context, glRenderer.projectionMatrix, size, position)
     }
 
     private fun createTexture(): FBOImage {
@@ -95,7 +96,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         context.animationHandler.tick()
         camera.move()
         renderEntity()
-        jointRenderer.render(camera)
+        nodeRenderer.render(camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
@@ -130,7 +131,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         if (::glRenderer.isInitialized) {
             glRenderer.reloadProjectionMatrix()
-            jointRenderer.resize(glRenderer.projectionMatrix, size, position)
+            nodeRenderer.resize(glRenderer.projectionMatrix, size, position)
         }
     }
 

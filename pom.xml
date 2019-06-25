@@ -16,12 +16,6 @@
         <runelite.version>1.5.25-SNAPSHOT</runelite.version>
     </properties>
 
-    <parent>
-        <groupId>net.runelite</groupId>
-        <artifactId>runelite-parent</artifactId>
-        <version>1.5.25-SNAPSHOT</version>
-    </parent>
-
     <build>
         <sourceDirectory>src/main/kotlin/</sourceDirectory>
         <plugins>
@@ -89,11 +83,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.runelite</groupId>
-            <artifactId>cache</artifactId>
-            <version>${runelite.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
             <version>${lwjgl.version}</version>
@@ -151,6 +140,11 @@
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
             <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.runelite</groupId>
+            <artifactId>cache</artifactId>
+            <version>${runelite.version}</version>
         </dependency>
     </dependencies>
 </project>

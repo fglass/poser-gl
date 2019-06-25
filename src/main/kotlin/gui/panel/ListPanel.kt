@@ -101,8 +101,7 @@ class ListPanel(private val gui: Gui, context: Processor): Panel() {
 
     fun resize() {
         size = getPanelSize()
-        entityList.resize()
-        animationList.resize()
+        lists.forEach { it.resize() }
     }
 
     private fun getPanelSize(): Vector2f {

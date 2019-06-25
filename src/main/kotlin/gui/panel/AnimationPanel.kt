@@ -26,7 +26,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private val animationId: Label
     private val play: ImageButton
     private val menu: Panel
-    private val jointToggle: CheckBox
+    private val nodeToggle: CheckBox
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
@@ -85,13 +85,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         menu.add(animation)
         menu.add(animationId)
 
-        jointToggle = CheckBox("Joints", size.x - 61, 3f, 49f, 15f)
-        jointToggle.style.focusedStrokeColor = null
-        jointToggle.textState.horizontalAlign = HorizontalAlign.RIGHT
-        jointToggle.listenerMap.addListener(MouseClickEvent::class.java) {
-            context.framebuffer.jointRenderer.enabled = !context.framebuffer.jointRenderer.enabled
+        nodeToggle = CheckBox("Nodes", size.x - 61, 3f, 49f, 15f)
+        nodeToggle.style.focusedStrokeColor = null
+        nodeToggle.textState.horizontalAlign = HorizontalAlign.RIGHT
+        nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
+            context.framebuffer.nodeRenderer.enabled = !context.framebuffer.nodeRenderer.enabled
         }
-        menu.add(jointToggle)
+        menu.add(nodeToggle)
     }
 
     fun play(sequence: SequenceDefinition) {
@@ -188,7 +188,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         timeline.size.x = getTimelineWidth()
         if (menu != null) {
             menu.size.x = size.x
-            jointToggle.position.x = size.x - 61
+            nodeToggle.position.x = size.x - 61
         }
         if (sequence.id != -1) {
             unitX = getUnitX()

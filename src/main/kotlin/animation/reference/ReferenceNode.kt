@@ -1,15 +1,16 @@
-package animation.joint
+package animation.reference
 
+import animation.AnimationHandler
 import org.joml.Vector3f
 import java.util.*
 
-class Joint(val id: Int, val position: Vector3f) {
+class ReferenceNode(val transformation: AnimationHandler.Transformation, val position: Vector3f) {
 
     val scale = 2.5f
     var highlighted = false
 
     override fun equals(other: Any?): Boolean {
-        other as Joint
+        other as ReferenceNode
         return position == other.position
     }
 

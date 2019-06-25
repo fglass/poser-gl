@@ -1,12 +1,12 @@
-package animation.joint
+package animation.reference
 
 import shader.ShaderProgram
 import org.joml.Matrix4f
 
-private const val VERTEX_FILE = "src/main/kotlin/animation/joint/joint-vs.glsl"
-private const val FRAGMENT_FILE = "src/main/kotlin/animation/joint/joint-fs.glsl"
+private const val VERTEX_FILE = "src/main/kotlin/animation/reference/node-vs.glsl"
+private const val FRAGMENT_FILE = "src/main/kotlin/animation/reference/node-fs.glsl"
 
-class JointShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
+class NodeShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
 
     private var locationProjectionMatrix = 0
     private var locationModelViewMatrix = 0

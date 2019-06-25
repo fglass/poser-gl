@@ -10,6 +10,7 @@ import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.fs.Store
 import shader.ShadingType
 import java.io.File
+import java.lang.NullPointerException
 
 class EntityLoader(private val context: Processor) {
 
@@ -21,7 +22,6 @@ class EntityLoader(private val context: Processor) {
             store.load()
             val manager = NpcManager(store)
             manager.load()
-
             addPlayer()
             for (npc in manager.npcs) {
                 if (npc == null || npc.name == "null") {

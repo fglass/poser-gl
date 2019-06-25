@@ -147,7 +147,7 @@ class Processor {
             vSync.waitIfNecessary()
         }
 
-        framebuffer.jointRenderer.cleanUp()
+        framebuffer.nodeRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()
         guiRenderer.destroy()
