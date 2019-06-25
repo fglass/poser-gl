@@ -2,6 +2,7 @@ package animation.joint
 
 import animation.AnimationHandler
 import entity.Camera
+import input.MouseHandler
 import model.Model
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
@@ -17,6 +18,8 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
     private val loader = Loader()
     private val shader = JointShader()
     private val joints = HashSet<Joint>()
+    private var selected: Int? = null
+    private var canSelect = true
     var enabled = false
 
     init {
@@ -48,7 +51,7 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         if (index > 0) {
             offset.div(index)
         }
-        joints.add(Joint(offset))
+        joints.add(Joint(joints.size, offset))
     }
 
     fun reset() {
@@ -62,10 +65,10 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
 
         prepare()
         val viewMatrix = Maths.createViewMatrix(camera)
-        setHighlighted(viewMatrix)
+        highlight(viewMatrix, camera.mouse)
 
         for (joint in joints) {
-            shader.setHighlighted(joint.highlighted) // TODO toggling
+            shader.setHighlighted(joint.highlighted || joint.id == selected)
             loadMatrices(joint, viewMatrix)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
@@ -82,7 +85,7 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
         glDisable(GL_DEPTH_TEST)
     }
 
-    private fun setHighlighted(viewMatrix: Matrix4f) {
+    private fun highlight(viewMatrix: Matrix4f, mouse: MouseHandler) {
         val ray = calculateRay(viewMatrix)
         var minDistance = Float.MAX_VALUE
         var closest: Joint? = null
@@ -97,9 +100,19 @@ class JointRenderer(private var projectionMatrix: Matrix4f, private var fboSize:
                 minDistance = nearFar.x
                 closest = joint
             }
-            joint.highlighted = false // Reset
         }
-        closest?.highlighted = true
+
+        if (closest == null) {
+            return
+        }
+
+        if (mouse.pressed && canSelect) {
+            selected = closest.id
+            canSelect = false
+        } else if (!mouse.pressed){
+            closest.highlighted = true
+            canSelect = true
+        }
     }
 
     private fun calculateRay(viewMatrix: Matrix4f): Rayf {

@@ -3,7 +3,7 @@ package animation.joint
 import org.joml.Vector3f
 import java.util.*
 
-class Joint(val position: Vector3f) {
+class Joint(val id: Int, val position: Vector3f) {
 
     val scale = 2.5f
     var highlighted = false

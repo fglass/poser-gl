@@ -10,7 +10,7 @@ import kotlin.math.sin
 const val MIN_ZOOM = 100f
 const val MAX_ZOOM = 1600f
 
-class Camera(private val mouse: MouseHandler) {
+class Camera(val mouse: MouseHandler) {
 
     val position = Vector3f(0f, 0f, 0f)
     var pitch = -20f
