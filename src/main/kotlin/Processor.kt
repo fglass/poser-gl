@@ -19,6 +19,7 @@ import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFWWindowCloseCallbackI
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL30.*
@@ -88,7 +89,7 @@ class Processor {
         CallbackKeeper.registerCallbacks(window, keeper)
 
         val mouse = Mouse()
-        val windowCloseCallback = {_: Long -> running = false }
+        val windowCloseCallback = GLFWWindowCloseCallbackI { running = false }
         keeper.chainWindowCloseCallback.add(windowCloseCallback)
 
         val systemEventProcessor = SystemEventProcessor()
