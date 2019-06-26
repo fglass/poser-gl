@@ -21,9 +21,10 @@ const val MAX_LENGTH = 999
 
 class AnimationHandler(private val context: Processor) {
 
-    private var currentSequence: SequenceDefinition = SequenceDefinition(-1)
     val sequences = java.util.HashMap<Int, SequenceDefinition>()
-    private val frames = HashMultimap.create<Int, FrameDefinition>()
+    val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
+
+    private var currentAnimation: Animation? = null
     private var frameCount = 0
     private var frameLength = 0
 
@@ -81,10 +82,10 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun play(sequence: SequenceDefinition) {
-        playing = true
-        currentSequence = sequence
-        reset()
+        currentAnimation = Animation(sequence, this)
         context.gui.animationPanel.play(sequence)
+        reset()
+        playing = true
     }
 
     private fun reset() {
@@ -94,11 +95,11 @@ class AnimationHandler(private val context: Processor) {
     fun setFrame(time: Int, frame: Int, offset: Int) {
         timer = time
         frameCount = frame
-        frameLength = currentSequence.frameLenghts[frame] - offset
+        frameLength = currentAnimation!!.keyframes[frame].length - offset
     }
 
     fun tick() {
-        if (currentSequence.id == -1 || context.entity == null) {
+        if (currentAnimation == null || context.entity == null) {
             return
         }
 
@@ -107,56 +108,45 @@ class AnimationHandler(private val context: Processor) {
         }
 
         if (playing) {
+            // Adjust timer
             if (getFrameIndex() == 0 && frameLength <= 0) { // Animation restarted
                 timer = 0
             } else {
                 timer++
             }
 
-            if (frameLength-- <= 0) { // Traverse frame
+            // Traverse frame
+            if (frameLength-- <= 0) {
                 frameCount++
-                frameLength = currentSequence.frameLenghts[getFrameIndex()]
+                frameLength = currentAnimation!!.keyframes[getFrameIndex()].length
             }
         }
 
-        val seqFrameId = currentSequence.frameIDs[getFrameIndex()]
-        val frames = frames.get(seqFrameId.ushr(16))
-        val frameFileId = seqFrameId and 0xFFFF
-        val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
-
-        applyFrame(frame)
+        val keyframe = currentAnimation!!.keyframes[getFrameIndex()]
+        applyKeyframe(keyframe)
         context.gui.animationPanel.tickCursor(timer)
     }
 
     private fun getFrameIndex(): Int {
-        return frameCount % currentSequence.frameIDs.size
+        return frameCount % currentAnimation!!.keyframes.size
     }
 
-    var currentFrame = FrameDefinition()
-
-    private fun applyFrame(frame: FrameDefinition) {
+    private fun applyKeyframe(keyframe: Keyframe) {
         // Reset from last frame
         context.framebuffer.nodeRenderer.reset()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
 
-        currentFrame = frame
-
         val entity = context.entity ?: return
-        val frameMap = frame.framemap
         val def = entity.model.definition
         def.resetAnim()
 
-        // Apply transformations
-        for (i in 0 until frame.translatorCount) {
-            val id = frame.indexFrameIds[i]
-            val tf = Transformation(
-                id, frameMap.types[id], frameMap.frameMaps[id],
-                frame.translator_x[i], frame.translator_y[i], frame.translator_z[i]
-            )
-            context.framebuffer.nodeRenderer.addNode(def, tf)
-            def.animate(tf.type, tf.frameMap, tf.dx, tf.dy, tf.dz)
+        for (transformation in keyframe.transformations) {
+            if (transformation is Reference) {
+                context.framebuffer.nodeRenderer.addNode(def, transformation)
+            }
+            transformation.apply(def)
         }
 
         // Load transformed model
@@ -164,21 +154,29 @@ class AnimationHandler(private val context: Processor) {
         entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
-    fun transformNode(coordIndex: Int, newValue: Int) {
-        val id = context.framebuffer.nodeRenderer.selected ?: return
-        val frame = currentFrame
-        val translations = arrayOf(frame.translator_x, frame.translator_y, frame.translator_z)
-        val transformIndex = frame.indexFrameIds.indexOf(id)
-        translations[coordIndex][transformIndex] = newValue
+    fun transformNode(type: TransformationType, coordIndex: Int, newValue: Int) {
+        val selected = context.framebuffer.nodeRenderer.selected ?: return
+        var id = selected.reference.id
+
+        if (type != TransformationType.REFERENCE) {
+            id = selected.reference.children[type.id - 1].id // TODO
+        }
+
+        val keyframe = currentAnimation!!.keyframes[getFrameIndex()]
+        val transformation = keyframe.transformations.first { it.id == id }
+
+        when (coordIndex) { // TODO
+            0 -> transformation.offset.x = newValue
+            1 -> transformation.offset.y = newValue
+            2 -> transformation.offset.z = newValue
+        }
     }
 
     fun resetAnimation() {
-        currentSequence = SequenceDefinition(-1)
+        currentAnimation = null
         frameCount = 0
         frameLength = 0
         context.framebuffer.nodeRenderer.reset()
         context.gui.animationPanel.stop()
     }
-
-    class Transformation(val id: Int, val type: Int, val frameMap: IntArray, val dx: Int, val dy: Int, val dz: Int)
 }

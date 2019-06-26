@@ -10,16 +10,15 @@ import org.joml.Vector4f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
+import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
 
-class InformationPanel(private val gui: Gui, private val context: Processor): Panel() {
+class CompositionPanel(private val gui: Gui, private val context: Processor): Panel() {
 
-    private var npcName: Label
-    private var npcId: Label
-    private val modelPanel: Panel
+    private val modelPanel: ScrollablePanel
     private val modelIcon = BufferedImage(RESOURCES_PATH + "model.png")
     private val deleteIcon = BufferedImage(RESOURCES_PATH + "delete.png")
 
@@ -29,43 +28,30 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
         style.background.color = ColorConstants.darkGray()
         isFocusable = false
 
-        val title = Label("Information", 0f, 5f, size.x, 15f)
+        val title = Label("Composition Tree", 0f, 5f, size.x, 15f)
         title.textState.horizontalAlign = HorizontalAlign.CENTER
-        val name = Label("Name:", 5f, 25f, 80f, 15f)
-        npcName = Label("N/A", 60f, 25f, 104f, 15f)
-        npcName.textState.horizontalAlign = HorizontalAlign.RIGHT
-
-        val id = Label("Id:", 5f, 40f, 100f, 15f)
-        npcId = Label("N/A", 60f, 40f, 104f, 15f)
-        npcId.textState.horizontalAlign = HorizontalAlign.RIGHT
-
-        val models = Label("Composition:", 5f, 55f, 100f, 15f)
-        modelPanel = Panel(5f, 72f, 159f, 16f)
-        modelPanel.style.border.isEnabled = false
-        modelPanel.style.background.color = ColorConstants.darkGray()
-
         add(title)
-        add(name)
-        add(npcName)
-        add(id)
-        add(npcId)
+
+        modelPanel = ScrollablePanel(5f, 25f, 160f, 127f)
+        modelPanel.remove(modelPanel.horizontalScrollBar)
+
+        val components = arrayOf(modelPanel, modelPanel.viewport, modelPanel.container)
+        components.forEach {
+            it.style.border.isEnabled = false
+            it.style.background.color = ColorConstants.darkGray()
+        }
         add(modelPanel)
-        add(models)
     }
 
     fun update(entity: Entity) {
-        npcName.textState.text = entity.npc.name
-        val id = entity.npc.id
-        npcId.textState.text = if (id >= 0) id.toString() else "N/A"
-
-        val offset = 16f
-        modelPanel.removeAll(modelPanel.childComponents)
-        modelPanel.size.y = entity.composition.size * offset
+        val offset = 17f
+        modelPanel.container.removeAll(modelPanel.container.childComponents)
+        modelPanel.container.size.y = entity.composition.size * offset
 
         for ((i, model) in entity.composition.withIndex()) {
             val y = i * offset
-            val empty = Label("", 0f, y, 159f, 15f )
-            empty.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+            val background = Label("", 0f, y, 148f, 15f)
+            background.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
 
             val label = Label("Model $model", 18f, y, 139f, 15f)
             val modelImage = ImageView(modelIcon)
@@ -73,7 +59,7 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
             modelImage.style.border.isEnabled = false
 
             val deleteButton = ImageView(deleteIcon)
-            deleteButton.position = Vector2f(145f, y + 3)
+            deleteButton.position = Vector2f(136f, y + 3)
             deleteButton.style.border.isEnabled = false
             deleteButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
@@ -82,10 +68,8 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
                 }
             }
 
-            modelPanel.add(empty)
-            modelPanel.add(label)
-            modelPanel.add(modelImage)
-            modelPanel.add(deleteButton)
+            val components = arrayOf(background, label, modelImage, deleteButton)
+            components.forEach { modelPanel.container.add(it) }
         }
     }
 
@@ -99,6 +83,6 @@ class InformationPanel(private val gui: Gui, private val context: Processor): Pa
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 377)
+        return Vector2f(170f, gui.size.y - 453)
     }
 }

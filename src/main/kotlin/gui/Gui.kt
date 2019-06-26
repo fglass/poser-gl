@@ -3,7 +3,7 @@ package gui
 import Processor
 import gui.panel.AnimationPanel
 import gui.panel.EditorPanel
-import gui.panel.InformationPanel
+import gui.panel.CompositionPanel
 import gui.panel.ListPanel
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
@@ -14,7 +14,7 @@ import shader.ShadingType
 class Gui(position: Vector2f, size: Vector2f, private val context: Processor): Panel(position, size) {
 
     private val listPanel = ListPanel(this, context)
-    val infoPanel = InformationPanel(this, context)
+    val compositionPanel = CompositionPanel(this, context)
     val animationPanel = AnimationPanel(this, context)
     val editorPanel = EditorPanel(this, context)
     private val renderBox = SelectBox<String>(size.x - 175, 5f, 82f, 15f)
@@ -23,7 +23,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     fun createElements() {
         addToggles()
         add(listPanel)
-        add(infoPanel)
+        add(compositionPanel)
         add(editorPanel)
         add(animationPanel)
         style.focusedStrokeColor = null
@@ -64,7 +64,7 @@ class Gui(position: Vector2f, size: Vector2f, private val context: Processor): P
     fun resize(size: Vector2f) {
         setSize(size)
         listPanel.resize()
-        infoPanel.resize()
+        compositionPanel.resize()
         editorPanel.resize()
         animationPanel.resize()
         renderBox.position = Vector2f(size.x - 175, 5f)

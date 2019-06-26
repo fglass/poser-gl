@@ -54,7 +54,7 @@ abstract class ElementList(x: Float, y: Float, val gui: Gui): ScrollablePanel() 
 
     private fun adjustScroll(filteredSize: Int) {
         verticalScrollBar.curValue = 0f // Reset scroll position
-        container.setSize(containerX, listY + filteredSize * listYOffset) // Adjust scroll size
+        container.size.y = listY + filteredSize * listYOffset // Adjust scroll size
     }
 
     abstract class Element(x: Float, y: Float, width: Float, height: Float): Button(x, y, width, height) {

@@ -1,20 +1,20 @@
 package gui.panel
 
 import Processor
-import animation.AnimationHandler
+import animation.Transformation
+import animation.TransformationType
+import animation.reference.Node
 import gui.Gui
 import gui.component.TextSlider
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.style.color.ColorConstants
 
 class EditorPanel(private val gui: Gui, private val context: Processor): Panel() {
 
-    private var selectedNode = Label("N/A", 91f, 49f, 50f, 15f)
-    private val sliders = ArrayList<TextSlider>()
+    private val sliders = HashMap<TransformationType, ArrayList<TextSlider>>()
 
     init {
         position = getPanelPosition()
@@ -26,43 +26,36 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
-        val types = arrayOf("Reference", "Translation", "Rotation", "Scale")
-        val selectBox = SelectBox<String>(44f, 27f, 82f, 15f)
-        types.forEach { selectBox.addElement(it) }
-        selectBox.visibleCount = 4
-        selectBox.addSelectBoxChangeSelectionEventListener { event ->
-            for ((i, type) in types.withIndex()) {
-                if (type == event.newValue.toString()) {
-                    context.framebuffer.nodeRenderer.activeType = i
-                    break
-                }
+        val types = TransformationType.values()
+        val coords = arrayOf("X", "Y", "Z")
+        var y = 40f
+
+        for (type in types) {
+            sliders[type] = ArrayList()
+            for ((i, coord) in coords.withIndex()){
+                val label = Label("$type $coord", 5f, y, 72f, 15f)
+                label.textState.horizontalAlign = HorizontalAlign.RIGHT
+                add(label)
+
+                val slider = TextSlider(context, type, i, 94f, y, 65f, 15f)
+                sliders[type]?.add(slider)
+                add(slider)
+                y += 20
             }
-        }
-        add(selectBox)
-
-        val node = Label("Node:", 55f, 49f, 50f, 15f)
-        add(node)
-        add(selectedNode)
-
-        val transformations = arrayOf("X", "Y", "Z")
-        var y = 71f
-
-        for ((i, name) in transformations.withIndex()){
-            val label = Label(name, 20f, y, 50f, 15f)
-            add(label)
-
-            val slider = TextSlider(context, i, 44f, y, 82f, 15f)
-            sliders.add(slider)
-            add(slider)
-            y += 20
+            y += 3
         }
     }
 
-    fun setNode(transformation: AnimationHandler.Transformation) {
-        selectedNode.textState.text = transformation.id.toString()
-        sliders[0].value.textState.text = transformation.dx.toString()
-        sliders[1].value.textState.text = transformation.dy.toString()
-        sliders[2].value.textState.text = transformation.dz.toString()
+    fun setNode(node: Node) {
+        setSlider(node.reference)
+        node.reference.children.forEach { setSlider(it) }
+    }
+
+    private fun setSlider(tf: Transformation) { // TODO: Clean-up
+        val slider = sliders[tf.type]?: return
+        slider[0].value.textState.text = tf.offset.x.toString()
+        slider[1].value.textState.text = tf.offset.y.toString()
+        slider[2].value.textState.text = tf.offset.z.toString()
     }
 
     fun resize() {
@@ -71,10 +64,10 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(gui.size.x - 175, gui.size.y - 345)
+        return Vector2f(gui.size.x - 175, gui.size.y - 421)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, 222f)
+        return Vector2f(170f, 298f)
     }
 }

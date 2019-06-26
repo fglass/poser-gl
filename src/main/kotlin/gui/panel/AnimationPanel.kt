@@ -23,7 +23,7 @@ import kotlin.math.sqrt
 
 class AnimationPanel(private val gui: Gui, private val context: Processor): Panel() {
 
-    private val animationId: Label
+    private val sequenceId: Label
     private val play: ImageButton
     private val menu: Panel
     private val nodeToggle: CheckBox
@@ -81,9 +81,9 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         menu.add(play)
 
         val animation = Label("Sequence:", x + 14, 3f, 100f, 15f)
-        animationId = Label("N/A", x + 74, 3f, 104f, 15f)
+        sequenceId = Label("N/A", x + 74, 3f, 104f, 15f)
         menu.add(animation)
-        menu.add(animationId)
+        menu.add(sequenceId)
 
         nodeToggle = CheckBox("Nodes", size.x - 61, 3f, 49f, 15f)
         nodeToggle.style.focusedStrokeColor = null
@@ -111,11 +111,11 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         times.removeAll(times.childComponents)
 
         if (sequence.id == -1) {
-            animationId.textState.text = "N/A"
+            sequenceId.textState.text = "N/A"
             return
         }
 
-        animationId.textState.text = sequence.id.toString()
+        sequenceId.textState.text = sequence.id.toString()
         unitX = getUnitX()
 
         addTimes()

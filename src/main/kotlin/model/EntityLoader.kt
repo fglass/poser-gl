@@ -10,7 +10,6 @@ import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.fs.Store
 import shader.ShadingType
 import java.io.File
-import java.lang.NullPointerException
 
 class EntityLoader(private val context: Processor) {
 
@@ -65,7 +64,7 @@ class EntityLoader(private val context: Processor) {
             val model = context.datLoader.parse(merged, context.framebuffer.shadingType == ShadingType.FLAT)
             context.entity = Entity(model, entity, models.toIntArray())
         }
-        context.gui.infoPanel.update(context.entity!!)
+        context.gui.compositionPanel.update(context.entity!!)
     }
 
     private fun clear() {

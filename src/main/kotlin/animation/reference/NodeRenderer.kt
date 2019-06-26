@@ -1,9 +1,10 @@
 package animation.reference
 
-import animation.AnimationHandler
+import Processor
+import animation.Reference
+import animation.Transformation
 import entity.Camera
 import model.Model
-import Processor
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
@@ -19,33 +20,31 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     private val loader = Loader()
     private val shader = NodeShader()
     private var viewMatrix = Matrix4f()
-    private val nodes = HashSet<ReferenceNode>()
+    private val nodes = HashSet<Node>()
     var enabled = false
-    var activeType = 0
-    var selected: Int? = null
+    var selected: Node? = null
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
         quad = loader.loadToVao(vertices)
     }
 
-    fun addNode(def: ModelDefinition, tf: AnimationHandler.Transformation) {
-        if (tf.type != activeType) {
-            return
-        }
-
+    fun addNode(def: ModelDefinition, reference: Reference) {
         var index = 0f
-        val offset = Vector3f(tf.dx.toFloat(), tf.dy.toFloat(), tf.dz.toFloat())
+        val offset = Vector3f(reference.offset)
 
-        for (i in tf.frameMap) {
+        for (i in reference.frameMap) {
             if (i < def.vertexGroups.size) {
-                val group = def.vertexGroups[i]
-                index += group.size
+                val vertexGroup = def.vertexGroups[i]
+                index += vertexGroup.size
 
-                for (j in group) {
-                    offset.x += def.vertexPositionsX[j]
-                    offset.y += def.vertexPositionsY[j]
-                    offset.z += def.vertexPositionsZ[j]
+                for (j in vertexGroup) {
+                    val position = Vector3f(
+                        def.vertexPositionsX[j].toFloat(),
+                        def.vertexPositionsY[j].toFloat(),
+                        def.vertexPositionsZ[j].toFloat()
+                    )
+                    offset.add(position)
                 }
             }
         }
@@ -53,11 +52,7 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         if (index > 0) {
             offset.div(index)
         }
-        nodes.add(ReferenceNode(tf, offset))
-    }
-
-    fun reset() {
-        nodes.clear()
+        nodes.add(Node(reference, offset))
     }
 
     fun render(camera: Camera) {
@@ -70,7 +65,7 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         getClosestNode()?.highlighted = true
 
         for (node in nodes) {
-            shader.setHighlighted(node.highlighted || node.transformation.id == selected)
+            shader.setHighlighted(node.highlighted || node.isToggled(selected))
             loadMatrices(node)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
@@ -87,10 +82,10 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         glDisable(GL_DEPTH_TEST)
     }
 
-    private fun getClosestNode(): ReferenceNode? {
+    private fun getClosestNode(): Node? {
         val ray = calculateRay()
         var minDistance = Float.MAX_VALUE
-        var closest: ReferenceNode? = null
+        var closest: Node? = null
 
         for (node in nodes) {
             val scale = node.scale
@@ -126,12 +121,20 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
 
         val closest = getClosestNode()
         if (closest != null) {
-            selected = closest.transformation.id
-            context.gui.editorPanel.setNode(closest.transformation)
+            selected = closest
+            context.gui.editorPanel.setNode(closest)
         }
     }
 
-    private fun loadMatrices(node: ReferenceNode) {
+    fun unselect() { // TODO: Implement
+        selected = null
+    }
+
+    fun reset() {
+        nodes.clear()
+    }
+
+    private fun loadMatrices(node: Node) {
         val modelMatrix = Matrix4f()
         modelMatrix.translate(node.position)
         modelMatrix.m00(viewMatrix.m00())

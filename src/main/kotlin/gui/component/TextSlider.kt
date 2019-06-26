@@ -2,6 +2,7 @@ package gui.component
 
 import RESOURCES_PATH
 import Processor
+import animation.TransformationType
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,8 +20,8 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.max
 import kotlin.math.min
 
-class TextSlider(private val context: Processor, private val coordIndex: Int, x: Float, y: Float,
-                 width: Float, height: Float): Panel(x, y, width, height) {
+class TextSlider(private val context: Processor, private val type: TransformationType, private val coordIndex: Int,
+                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
 
     val value = TextInput("0", 12f, 0f, width - 24, height)
     private var adjusting = false
@@ -40,7 +41,7 @@ class TextSlider(private val context: Processor, private val coordIndex: Int, x:
                     if (current != limited) {
                         value.textState.text = limited.toString()
                     }
-                    context.animationHandler.transformNode(coordIndex, limited)
+                    context.animationHandler.transformNode(type, coordIndex, limited)
                 }
             }
         }
@@ -67,7 +68,7 @@ class TextSlider(private val context: Processor, private val coordIndex: Int, x:
                     GlobalScope.launch {
                         while (adjusting) {
                             adjustValue(increment)
-                            delay(50)
+                            delay(10)
                         }
                     }
                 }
@@ -87,7 +88,7 @@ class TextSlider(private val context: Processor, private val coordIndex: Int, x:
     private fun adjustValue(increment: Boolean) {
         val newValue = value.textState.text.toInt() + if (increment) 1 else -1
         value.textState.text = limitValue(newValue).toString()
-        context.animationHandler.transformNode(coordIndex, newValue)
+        context.animationHandler.transformNode(type, coordIndex, newValue)
     }
 
     private fun limitValue(value: Int): Int {
