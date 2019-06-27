@@ -28,29 +28,10 @@ class AnimationHandler(private val context: Processor) {
 
     fun load(sequence: SequenceDefinition) {
         currentAnimation = Animation(sequence, frames)
-        reset()
+        restart()
         isPlaying(true)
         context.framebuffer.nodeRenderer.deselectNode()
         context.gui.animationPanel.loadSequence(sequence)
-    }
-
-    fun togglePlay() {
-        isPlaying(!playing)
-    }
-
-    fun isPlaying(playing: Boolean) {
-        this.playing = playing
-        context.gui.animationPanel.updatePlayIcon(playing)
-    }
-
-    private fun reset() {
-        setFrame(0, 0, 0)
-    }
-
-    fun setFrame(time: Int, frame: Int, offset: Int) {
-        timer = time
-        frameCount = frame
-        frameLength = currentAnimation!!.keyframes[frame].length - offset
     }
 
     fun tick() {
@@ -59,7 +40,7 @@ class AnimationHandler(private val context: Processor) {
         }
 
         if (timer > MAX_LENGTH) {
-            reset()
+            restart()
         }
 
         if (playing) {
@@ -81,18 +62,13 @@ class AnimationHandler(private val context: Processor) {
         keyframe.apply(context)
 
         if (keyframe.id != previousFrame.id) {
-            onNewFrame()
-            previousFrame = keyframe
+            onNewFrame(keyframe)
         }
         context.gui.animationPanel.tickCursor(timer)
     }
 
     private fun getFrameIndex(): Int {
         return frameCount % currentAnimation!!.keyframes.size
-    }
-
-    private fun onNewFrame() {
-        context.framebuffer.nodeRenderer.reselectNode()
     }
 
     fun transformNode(coordIndex: Int, newValue: Int) {
@@ -105,6 +81,30 @@ class AnimationHandler(private val context: Processor) {
         val keyframe = currentAnimation!!.keyframes[getFrameIndex()]
         val transformation = keyframe.transformations.first { it.id == id }
         transformation.offset.setComponent(coordIndex, newValue)
+    }
+
+    private fun onNewFrame(keyframe: Keyframe) {
+        context.framebuffer.nodeRenderer.reselectNode()
+        previousFrame = keyframe
+    }
+
+    fun togglePlay() {
+        isPlaying(!playing)
+    }
+
+    fun isPlaying(playing: Boolean) {
+        this.playing = playing
+        context.gui.animationPanel.updatePlayIcon(playing)
+    }
+
+    fun setFrame(time: Int, frame: Int, offset: Int) {
+        timer = time
+        frameCount = frame
+        frameLength = currentAnimation!!.keyframes[frame].length - offset
+    }
+
+    private fun restart() {
+        setFrame(0, 0, 0)
     }
 
     fun resetAnimation() {

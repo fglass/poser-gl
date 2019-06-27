@@ -16,7 +16,7 @@ class ReferenceNode(val reference: Reference, val position: Vector3f) {
         return selected.reference.id == reference.id
     }
 
-    override fun equals(other: Any?): Boolean { // TODO
+    override fun equals(other: Any?): Boolean {
         other as ReferenceNode
         return position == other.position
     }

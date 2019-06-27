@@ -1,16 +1,16 @@
 package gui.panel
 
 import BG_COLOUR
-import RESOURCES_PATH
 import Processor
+import RESOURCES_PATH
 import animation.MAX_LENGTH
 import gui.Gui
 import gui.component.HoverButton
 import gui.component.ImageButton
+import gui.component.ToggleButton
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector2f
 import org.joml.Vector4f
-import org.liquidengine.legui.component.CheckBox
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -27,7 +27,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private val sequenceId: Label
     private val play: ImageButton
     private val menu: Panel
-    private val nodeToggle: CheckBox
+    private val nodeToggle: ToggleButton
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
@@ -38,12 +38,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private val yellowLine = BufferedImage(RESOURCES_PATH + "yellow-line.png")
     private val pinkLine = BufferedImage(RESOURCES_PATH + "pink-line.png")
     private val greenLine = BufferedImage(RESOURCES_PATH + "green-line.png")
+    private val nodeIcon = BufferedImage(RESOURCES_PATH + "nodes.png")
     private val cursor = ImageButton(Vector2f(0f, 0f), greenLine)
     private var sequence = SequenceDefinition(-1)
 
     init {
         val x = 12f
-        timeline = Panel(x, 24f, getTimelineWidth(), 65f)
+        timeline = Panel(x, 27f, getTimelineWidth(), 65f)
         timeline.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
         timeline.style.setBorderRadius(0f)
         timeline.style.focusedStrokeColor = null
@@ -54,7 +55,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         }
         add(timeline)
 
-        times = Panel(0f, 90f, size.x, 15f)
+        times = Panel(0f, 93f, size.x, 15f)
         times.style.background.color = ColorConstants.darkGray()
         times.style.border.isEnabled = false
         add(times)
@@ -63,13 +64,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         isFocusable = false
         resize()
 
-        menu = Panel(0f, 0f, size.x, 19f)
+        menu = Panel(0f, 0f, size.x, 23f)
         menu.style.background.color = ColorConstants.darkGray()
         menu.style.setBorderRadius(0f)
         menu.style.border.isEnabled = false
         add(menu)
 
-        play = ImageButton(Vector2f(x, 6f), playIcon)
+        play = ImageButton(Vector2f(x, 8f), playIcon)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK && sequence.id != -1) {
                 context.animationHandler.togglePlay()
@@ -78,14 +79,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         play.size = Vector2f(10f, 10f)
         menu.add(play)
 
-        val animation = Label("Sequence:", x + 14, 3f, 100f, 15f)
-        sequenceId = Label("N/A", x + 74, 3f, 104f, 15f)
+        val animation = Label("Sequence:", x + 14, 5f, 50f, 15f)
+        sequenceId = Label("N/A", x + 74, 5f, 50f, 15f)
         menu.add(animation)
         menu.add(sequenceId)
 
-        nodeToggle = CheckBox("Nodes", size.x - 61, 3f, 49f, 15f)
-        nodeToggle.style.focusedStrokeColor = null
-        nodeToggle.textState.horizontalAlign = HorizontalAlign.RIGHT
+        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon)
+        nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.framebuffer.nodeRenderer.enabled = !context.framebuffer.nodeRenderer.enabled
         }
@@ -192,7 +192,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         timeline.size.x = getTimelineWidth()
         if (menu != null) {
             menu.size.x = size.x
-            nodeToggle.position.x = size.x - 61
+            nodeToggle.position.x = size.x - 32
         }
         if (sequence.id != -1) {
             unitX = getUnitX()

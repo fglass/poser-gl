@@ -33,6 +33,10 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     }
 
     fun addNode(def: ModelDefinition, reference: Reference) {
+        if (!enabled) {
+            return
+        }
+
         var index = 0f
         val offset = Vector3f(reference.offset)
 
@@ -55,7 +59,6 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         if (index > 0) {
             offset.div(index)
         }
-        //println("${nodes.size} ${reference.id} ${offset.x} ${offset.y} ${offset.z} ${selectedNode?.reference?.id}") TODO
         nodes.add(ReferenceNode(reference, offset))
     }
 

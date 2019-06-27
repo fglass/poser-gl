@@ -1,23 +1,32 @@
 package gui.panel
 
 import Processor
+import RESOURCES_PATH
 import animation.Reference
 import animation.TransformationType
 import animation.node.ReferenceNode
 import gui.Gui
 import gui.component.TextSlider
+import gui.component.ConfigGroup
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import org.liquidengine.legui.event.MouseClickEvent
+import org.liquidengine.legui.image.BufferedImage
+import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 
 class EditorPanel(private val gui: Gui, private val context: Processor): Panel() {
 
     private val sliders = ArrayList<TextSlider>()
-    private val selectBox = SelectBox<String>(44f, 40f, 82f, 15f)
     private var currentReference: Reference? = null
+
+    private val referenceIcon = BufferedImage(RESOURCES_PATH + "reference.png")
+    private val translationIcon = BufferedImage(RESOURCES_PATH + "translation.png")
+    private val rotationIcon = BufferedImage(RESOURCES_PATH + "rotation.png")
+    private val scaleIcon = BufferedImage(RESOURCES_PATH + "scale.png")
+    private val transformations = ConfigGroup(31f, 30f, referenceIcon, translationIcon, rotationIcon, scaleIcon)
 
     init {
         position = getPanelPosition()
@@ -29,28 +38,24 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
-        val types = TransformationType.values()
-        selectBox.visibleCount = types.size
-        types.forEach { selectBox.addElement(it.toString()) }
-        selectBox.addSelectBoxChangeSelectionEventListener { event ->
-            for (type in types) {
-                if (event.newValue.toString() == type.toString()) {
-                    context.framebuffer.nodeRenderer.selectedType = type
-                    updateSliders(type)
-                    break
+        for ((i, button) in transformations.buttons.withIndex()) {
+            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    updateType(TransformationType.fromInt(i))
                 }
             }
         }
-        add(selectBox)
+        add(transformations)
 
-        var y = 65f
+        var y = 70f
         val coords = arrayOf("X", "Y", "Z")
 
         for ((i, coord) in coords.withIndex()){
-            val label = Label(coord, 19f, y, 50f, 15f)
+            val label = Label(coord, 41f, y, 50f, 15f)
             add(label)
 
-            val slider = TextSlider(context, i, 44f, y, 82f, 15f)
+            val slider = TextSlider(context, i, 63f, y, 75f, 15f) //139
             sliders.add(slider)
             add(slider)
             y += 20
@@ -58,22 +63,21 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
     }
 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
-        for (i in selectBox.elements.size - 1 downTo 0) {
-            selectBox.removeElement(i)
+        for ((i, button) in transformations.buttons.withIndex()) {
+            val type = TransformationType.fromInt(i)
+            button.isFocusable = node.reference.group[type] != null
         }
-
-        node.reference.group.forEach {
-            selectBox.addElement(it.value.type.toString())
-        }
-        selectBox.visibleCount = node.reference.group.size
-        selectBox.setSelected(selectedType.toString(), true)
+        transformations.updateConfigs(transformations.buttons[selectedType.id])
 
         currentReference = node.reference
-        updateSliders(selectedType)
+        updateType(selectedType)
     }
 
-    private fun updateSliders(type: TransformationType) {
-        val transformation = currentReference!!.group[type]!!
+    private fun updateType(type: TransformationType) {
+        val reference = currentReference?: return
+        val transformation = reference.group[type]?: return
+
+        context.framebuffer.nodeRenderer.selectedType = type
         for (i in 0 until sliders.size) {
             sliders[i].setValue(transformation.offset.get(i))
         }
