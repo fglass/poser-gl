@@ -20,7 +20,7 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.max
 import kotlin.math.min
 
-class TextSlider(private val context: Processor, private val type: TransformationType, private val coordIndex: Int,
+class TextSlider(private val context: Processor, private val coordIndex: Int,
                  x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
 
     val value = TextInput("0", 12f, 0f, width - 24, height)
@@ -41,7 +41,7 @@ class TextSlider(private val context: Processor, private val type: Transformatio
                     if (current != limited) {
                         value.textState.text = limited.toString()
                     }
-                    context.animationHandler.transformNode(type, coordIndex, limited)
+                    context.animationHandler.transformNode(coordIndex, limited)
                 }
             }
         }
@@ -78,7 +78,7 @@ class TextSlider(private val context: Processor, private val type: Transformatio
     }
 
     private fun getCursorListener(): CursorEnterEventListener {
-        return CursorEnterEventListener { event->
+        return CursorEnterEventListener { event ->
             if (!event.isEntered) {
                 adjusting = false
             }
@@ -88,12 +88,16 @@ class TextSlider(private val context: Processor, private val type: Transformatio
     private fun adjustValue(increment: Boolean) {
         val newValue = value.textState.text.toInt() + if (increment) 1 else -1
         value.textState.text = limitValue(newValue).toString()
-        context.animationHandler.transformNode(type, coordIndex, newValue)
+        context.animationHandler.transformNode(coordIndex, newValue)
     }
 
     private fun limitValue(value: Int): Int {
         val limit = 255
         val newValue = min(value, limit)
         return max(newValue, -limit)
+    }
+
+    fun setValue(newValue: Int) {
+        value.textState.text = newValue.toString()
     }
 }

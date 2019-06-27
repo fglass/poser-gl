@@ -2,7 +2,7 @@ package render
 
 import BG_COLOUR
 import Processor
-import animation.reference.NodeRenderer
+import animation.node.NodeRenderer
 import entity.Camera
 import input.MouseHandler
 import org.joml.Vector2f

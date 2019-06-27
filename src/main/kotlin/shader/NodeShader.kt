@@ -1,10 +1,9 @@
-package animation.reference
+package shader
 
-import shader.ShaderProgram
 import org.joml.Matrix4f
 
-private const val VERTEX_FILE = "src/main/kotlin/animation/reference/node-vs.glsl"
-private const val FRAGMENT_FILE = "src/main/kotlin/animation/reference/node-fs.glsl"
+private const val VERTEX_FILE = "src/main/kotlin/shader/node-vs.glsl"
+private const val FRAGMENT_FILE = "src/main/kotlin/shader/node-fs.glsl"
 
 class NodeShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
 

@@ -1,20 +1,23 @@
 package gui.panel
 
 import Processor
-import animation.Transformation
+import animation.Reference
 import animation.TransformationType
-import animation.reference.Node
+import animation.node.ReferenceNode
 import gui.Gui
 import gui.component.TextSlider
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
+import org.liquidengine.legui.component.SelectBox
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.style.color.ColorConstants
 
 class EditorPanel(private val gui: Gui, private val context: Processor): Panel() {
 
-    private val sliders = HashMap<TransformationType, ArrayList<TextSlider>>()
+    private val sliders = ArrayList<TextSlider>()
+    private val selectBox = SelectBox<String>(44f, 40f, 82f, 15f)
+    private var currentReference: Reference? = null
 
     init {
         position = getPanelPosition()
@@ -27,35 +30,57 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
         add(title)
 
         val types = TransformationType.values()
-        val coords = arrayOf("X", "Y", "Z")
-        var y = 40f
-
-        for (type in types) {
-            sliders[type] = ArrayList()
-            for ((i, coord) in coords.withIndex()){
-                val label = Label("$type $coord", 5f, y, 72f, 15f)
-                label.textState.horizontalAlign = HorizontalAlign.RIGHT
-                add(label)
-
-                val slider = TextSlider(context, type, i, 94f, y, 65f, 15f)
-                sliders[type]?.add(slider)
-                add(slider)
-                y += 20
+        selectBox.visibleCount = types.size
+        types.forEach { selectBox.addElement(it.toString()) }
+        selectBox.addSelectBoxChangeSelectionEventListener { event ->
+            for (type in types) {
+                if (event.newValue.toString() == type.toString()) {
+                    context.framebuffer.nodeRenderer.selectedType = type
+                    updateSliders(type)
+                    break
+                }
             }
-            y += 3
+        }
+        add(selectBox)
+
+        var y = 65f
+        val coords = arrayOf("X", "Y", "Z")
+
+        for ((i, coord) in coords.withIndex()){
+            val label = Label(coord, 19f, y, 50f, 15f)
+            add(label)
+
+            val slider = TextSlider(context, i, 44f, y, 82f, 15f)
+            sliders.add(slider)
+            add(slider)
+            y += 20
         }
     }
 
-    fun setNode(node: Node) {
-        setSlider(node.reference)
-        node.reference.children.forEach { setSlider(it) }
+    fun setNode(node: ReferenceNode, selectedType: TransformationType) {
+        for (i in selectBox.elements.size - 1 downTo 0) {
+            selectBox.removeElement(i)
+        }
+
+        node.reference.group.forEach {
+            selectBox.addElement(it.value.type.toString())
+        }
+        selectBox.visibleCount = node.reference.group.size
+        selectBox.setSelected(selectedType.toString(), true)
+
+        currentReference = node.reference
+        updateSliders(selectedType)
     }
 
-    private fun setSlider(tf: Transformation) { // TODO: Clean-up
-        val slider = sliders[tf.type]?: return
-        slider[0].value.textState.text = tf.offset.x.toString()
-        slider[1].value.textState.text = tf.offset.y.toString()
-        slider[2].value.textState.text = tf.offset.z.toString()
+    private fun updateSliders(type: TransformationType) {
+        val transformation = currentReference!!.group[type]!!
+        for (i in 0 until sliders.size) {
+            sliders[i].setValue(transformation.offset.get(i))
+        }
+    }
+
+    fun resetSliders() {
+        sliders.forEach { it.setValue(0) }
     }
 
     fun resize() {

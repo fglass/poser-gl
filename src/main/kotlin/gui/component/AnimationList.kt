@@ -50,7 +50,7 @@ class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor
         }
 
         override fun onClickEvent() {
-            context.animationHandler.play(sequence)
+            context.animationHandler.load(sequence)
         }
     }
 }

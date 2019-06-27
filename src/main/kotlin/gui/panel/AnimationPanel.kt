@@ -17,6 +17,7 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -70,11 +71,8 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
 
         play = ImageButton(Vector2f(x, 6f), playIcon)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                if (sequence.id != -1) {
-                    context.animationHandler.playing = !context.animationHandler.playing
-                    play.image = if (context.animationHandler.playing) pauseIcon else playIcon
-                }
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK && sequence.id != -1) {
+                context.animationHandler.togglePlay()
             }
         }
         play.size = Vector2f(10f, 10f)
@@ -94,10 +92,13 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         menu.add(nodeToggle)
     }
 
-    fun play(sequence: SequenceDefinition) {
+    fun loadSequence(sequence: SequenceDefinition) {
         this.sequence = sequence
-        play.image = pauseIcon
         setTimeline()
+    }
+
+    fun updatePlayIcon(playing: Boolean) {
+        play.image = if (playing) pauseIcon else playIcon
     }
 
     fun stop() {
@@ -127,8 +128,11 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private fun addTimes() {
         val max = getMaxLength()
         addTime(max)
-        val sqrt = sqrt(max.toDouble())
-        val timeStep = 5 * ((sqrt / 5).roundToInt())
+
+        val base = 5
+        val sqrt = max(sqrt(max.toDouble()), base.toDouble())
+        val timeStep = base * (sqrt / base).roundToInt()
+
         for (i in 0 until max step timeStep) {
             addTime(i)
         }

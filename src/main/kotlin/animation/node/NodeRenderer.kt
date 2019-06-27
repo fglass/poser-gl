@@ -1,10 +1,11 @@
-package animation.reference
+package animation.node
 
 import Processor
 import animation.Reference
-import animation.Transformation
+import animation.TransformationType
 import entity.Camera
 import model.Model
+import shader.NodeShader
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
@@ -20,9 +21,11 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     private val loader = Loader()
     private val shader = NodeShader()
     private var viewMatrix = Matrix4f()
-    private val nodes = HashSet<Node>()
+
+    private val nodes = HashSet<ReferenceNode>()
+    var selectedNode: ReferenceNode? = null
+    var selectedType = TransformationType.REFERENCE
     var enabled = false
-    var selected: Node? = null
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
@@ -52,7 +55,8 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         if (index > 0) {
             offset.div(index)
         }
-        nodes.add(Node(reference, offset))
+        //println("${nodes.size} ${reference.id} ${offset.x} ${offset.y} ${offset.z} ${selectedNode?.reference?.id}") TODO
+        nodes.add(ReferenceNode(reference, offset))
     }
 
     fun render(camera: Camera) {
@@ -65,7 +69,7 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         getClosestNode()?.highlighted = true
 
         for (node in nodes) {
-            shader.setHighlighted(node.highlighted || node.isToggled(selected))
+            shader.setHighlighted(node.highlighted || node.isToggled(selectedNode))
             loadMatrices(node)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
@@ -82,10 +86,10 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         glDisable(GL_DEPTH_TEST)
     }
 
-    private fun getClosestNode(): Node? {
+    private fun getClosestNode(): ReferenceNode? {
         val ray = calculateRay()
         var minDistance = Float.MAX_VALUE
-        var closest: Node? = null
+        var closest: ReferenceNode? = null
 
         for (node in nodes) {
             val scale = node.scale
@@ -114,27 +118,42 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     }
 
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (button != Mouse.MouseButton.MOUSE_BUTTON_LEFT || action != MouseClickEvent.MouseClickAction.CLICK ||
-            !enabled) {
-            return
+        if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+            action == MouseClickEvent.MouseClickAction.CLICK) {
+            clickNode()
         }
 
-        val closest = getClosestNode()
-        if (closest != null) {
-            selected = closest
-            context.gui.editorPanel.setNode(closest)
+    }
+
+    private fun clickNode() {
+        val closest = getClosestNode()?: return
+        selectNode(closest)
+        context.animationHandler.isPlaying(false)
+    }
+
+    private fun selectNode(node: ReferenceNode) {
+        selectedNode = node
+        if (!node.reference.hasType(selectedType)) {
+            selectedType = TransformationType.REFERENCE
         }
+        context.gui.editorPanel.setNode(node, selectedType)
     }
 
-    fun unselect() { // TODO: Implement
-        selected = null
+    fun reselectNode() {
+        val node = nodes.firstOrNull { it.isToggled(selectedNode) }?: return
+        selectNode(node)
     }
 
-    fun reset() {
+    fun deselectNode() {
+        selectedNode = null
+        context.gui.editorPanel.resetSliders()
+    }
+
+    fun clearNodes() {
         nodes.clear()
     }
 
-    private fun loadMatrices(node: Node) {
+    private fun loadMatrices(node: ReferenceNode) {
         val modelMatrix = Matrix4f()
         modelMatrix.translate(node.position)
         modelMatrix.m00(viewMatrix.m00())
