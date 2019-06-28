@@ -3,6 +3,7 @@ package gui.panel
 import BG_COLOUR
 import RESOURCES_PATH
 import Processor
+import animation.Animation
 import animation.Keyframe
 import animation.Reference
 import animation.TransformationType
@@ -27,7 +28,6 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     private var currentReference: Reference? = null
     private val selectedFrame: Label
     private val frameLength: TextSlider
-
     private val selectedNode: Label
 
     private val addIcon = BufferedImage(RESOURCES_PATH + "add-keyframe.png")
@@ -68,9 +68,21 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
                                  Pair(1, 99), 82f, 40f, 50f, 15f)
         framePanel.add(frameLength)
 
-        val operations = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f), addIcon, copyIcon, pasteIcon, deleteIcon)
-        operations.style.background.color = ColorConstants.transparent()
-        framePanel.add(operations)
+        val icons = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f), addIcon, copyIcon, pasteIcon, deleteIcon)
+        icons.style.background.color = ColorConstants.transparent()
+        val operations = arrayOf(Animation::addKeyframe, Animation::copyKeyframe,
+                                 Animation::pasteKeyframe, Animation::deleteKeyframe)
+
+        for ((i, button) in icons.buttons.withIndex()) {
+            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    val animation = context.animationHandler.currentAnimation?: return@addListener
+                    operations[i].invoke(animation)
+                }
+            }
+        }
+        framePanel.add(icons)
 
         val nodePanel = Panel(0f, 95f, size.x, 150f)
         nodePanel.style.background.color = ColorConstants.darkGray()
@@ -100,7 +112,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         nodePanel.add(transformations)
 
         val transformPanel = Panel(31f, 80f, 108f, 78f)
-        val colour = 61 / 255f
+        val colour = 71 / 255f
         transformPanel.style.background.color = Vector4f(colour, colour, colour, 1f)
         transformPanel.style.border.isEnabled = false
         nodePanel.add(transformPanel)

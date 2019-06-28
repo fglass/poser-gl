@@ -1,5 +1,6 @@
 package animation
 
+import Processor
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3i
@@ -8,7 +9,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
-class Animation(val sequence: SequenceDefinition, private val frames: HashMultimap<Int, FrameDefinition>) {
+class Animation(private val context: Processor, val sequence: SequenceDefinition,
+                private val frames: HashMultimap<Int, FrameDefinition>) {
 
     val keyframes = ArrayList<Keyframe>()
     var maximumLength: Int
@@ -63,5 +65,44 @@ class Animation(val sequence: SequenceDefinition, private val frames: HashMultim
 
     fun getMaxLength(): Int {
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
+    }
+
+    fun addKeyframe() {
+        val newIndex = context.animationHandler.getFrameIndex(this) + 1
+        val keyframe = keyframes[newIndex - 1].copy(keyframes.size) // Copy previous
+        insertKeyframe(newIndex, keyframe)
+    }
+
+    fun copyKeyframe() {
+        val index = context.animationHandler.getFrameIndex(this)
+        context.animationHandler.copiedFrame = keyframes[index]
+    }
+
+    fun pasteKeyframe() {
+        val copied = context.animationHandler.copiedFrame
+        if (copied.id != -1) {
+            val newIndex = context.animationHandler.getFrameIndex(this) + 1
+            val keyframe = copied.copy(keyframes.size) // Copy after to avoid shared references
+            insertKeyframe(newIndex, keyframe)
+        }
+    }
+
+    fun deleteKeyframe() {
+        if (keyframes.size > 1) {
+            val frameIndex = context.animationHandler.getFrameIndex(this)
+            keyframes.remove(keyframes[frameIndex])
+            updateKeyframes()
+        }
+    }
+
+    private fun insertKeyframe(index: Int, keyframe: Keyframe) {
+        keyframes.add(index, keyframe)
+        context.animationHandler.setFrame(index, 0)
+        updateKeyframes()
+    }
+
+    private fun updateKeyframes() {
+        maximumLength = getMaxLength()
+        context.gui.animationPanel.setTimeline()
     }
 }

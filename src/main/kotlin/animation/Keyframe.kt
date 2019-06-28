@@ -3,6 +3,7 @@ package animation
 import net.runelite.cache.definitions.ModelDefinition.*
 import shader.ShadingType
 import Processor
+import org.joml.Vector3i
 
 class Keyframe(val id: Int, var length: Int) {
 
@@ -40,5 +41,23 @@ class Keyframe(val id: Int, var length: Int) {
         length = newLength
         context.animationHandler.restartFrame()
         context.gui.animationPanel.setTimeline()
+    }
+
+    fun copy(newId: Int): Keyframe {
+        val newKeyframe = Keyframe(newId, length)
+        transformations.forEach { // Replace transformation references
+            val newTransformation: Transformation
+
+            if (it is Reference)  {
+                newTransformation = Reference(it)
+                newTransformation.group = it.group
+            } else {
+                newTransformation = Transformation(it)
+            }
+
+            newTransformation.offset = Vector3i(it.offset)
+            newKeyframe.transformations.add(newTransformation)
+        }
+        return newKeyframe
     }
 }

@@ -16,6 +16,7 @@ class AnimationHandler(private val context: Processor) {
 
     var currentAnimation: Animation? = null
     var currentFrame = Keyframe(-1, -1)
+    var copiedFrame = Keyframe(-1, -1)
     private var frameLength = 0
     private var frameCount = 0
 
@@ -28,8 +29,11 @@ class AnimationHandler(private val context: Processor) {
 
     fun load(sequence: SequenceDefinition) {
         resetAnimation()
-        currentAnimation = Animation(sequence, frames)
-        frameLength = currentAnimation!!.keyframes[0].length
+
+        val animation = Animation(context, sequence, frames)
+        frameLength = animation.keyframes.first().length
+        currentAnimation = animation
+
         isPlaying(true)
         context.gui.animationPanel.setTimeline()
     }
@@ -61,7 +65,7 @@ class AnimationHandler(private val context: Processor) {
         context.gui.animationPanel.tickCursor(timer, animation.maximumLength)
     }
 
-    private fun getFrameIndex(animation: Animation): Int {
+    fun getFrameIndex(animation: Animation): Int {
         return frameCount % animation.keyframes.size
     }
 

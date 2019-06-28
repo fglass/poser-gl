@@ -48,7 +48,6 @@ class AnimationLoader(private val handler: AnimationHandler) {
             val archiveFiles = archive.getFiles(archiveData)
             for (archiveFile in archiveFiles.files) {
                 val contents = archiveFile.contents
-
                 val frameMapArchiveId = (contents[0].toInt() and 0xff) shl 8 or (contents[1].toInt() and 0xff)
 
                 val frameMapArchive = frameMapIndex.archives[frameMapArchiveId]

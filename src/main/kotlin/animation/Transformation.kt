@@ -4,17 +4,18 @@ import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Vector3i
 import java.util.LinkedHashMap
 
-open class Transformation(var id: Int, val type: TransformationType, var frameMap: IntArray, val offset: Vector3i) {
+open class Transformation(var id: Int, val type: TransformationType, var frameMap: IntArray, var offset: Vector3i) {
+    constructor(transformation: Transformation): this(transformation.id, transformation.type,
+                                                      transformation.frameMap, transformation.offset)
 
     fun apply(def: ModelDefinition) {
         def.animate(type.id, frameMap, offset.x, offset.y, offset.z)
     }
 }
 
-class Reference(transformation: Transformation):
-    Transformation(transformation.id, transformation.type, transformation.frameMap, transformation.offset) {
+class Reference(transformation: Transformation): Transformation(transformation) {
 
-    val group = LinkedHashMap<TransformationType, Transformation>()
+    var group = LinkedHashMap<TransformationType, Transformation>()
 
     init {
         group[type] = this

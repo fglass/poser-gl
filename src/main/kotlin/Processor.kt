@@ -29,7 +29,6 @@ import render.Framebuffer
 import render.Loader
 import shader.StaticShader
 import utils.VSyncTimer
-import java.io.IOException
 import java.lang.NullPointerException
 
 const val TITLE = "PoserGL"
