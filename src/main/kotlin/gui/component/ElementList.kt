@@ -1,13 +1,13 @@
 package gui.component
 
-import gui.Gui
+import gui.GuiManager
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.color.ColorConstants
 
-abstract class ElementList(x: Float, y: Float, val gui: Gui): ScrollablePanel() {
+abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollablePanel() {
 
     var searchText = "Search"
     protected var maxIndex = 0

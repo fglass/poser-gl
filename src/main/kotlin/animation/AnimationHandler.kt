@@ -14,10 +14,10 @@ class AnimationHandler(private val context: Processor) {
     val sequences = HashMap<Int, SequenceDefinition>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
-    private var currentAnimation: Animation? = null
-    private var frameCount = 0
+    var currentAnimation: Animation? = null
+    var currentFrame = Keyframe(-1, -1)
     private var frameLength = 0
-    private var previousFrame = Keyframe(-1, -1)
+    private var frameCount = 0
 
     private var playing = false
     private var timer = 0
@@ -27,48 +27,42 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun load(sequence: SequenceDefinition) {
+        resetAnimation()
         currentAnimation = Animation(sequence, frames)
-        restart()
+        frameLength = currentAnimation!!.keyframes[0].length
         isPlaying(true)
-        context.framebuffer.nodeRenderer.deselectNode()
-        context.gui.animationPanel.loadSequence(sequence)
+        context.gui.animationPanel.setTimeline()
     }
 
     fun tick() {
-        if (currentAnimation == null || context.entity == null) {
+        val animation = currentAnimation
+        if (animation == null || context.entity == null) {
             return
         }
 
         if (timer > MAX_LENGTH) {
-            restart()
+            restartAnimation()
         }
 
         if (playing) {
-            // Adjust timer
-            if (getFrameIndex() == 0 && frameLength <= 0) { // Animation restarted
-                timer = 0
-            } else {
-                timer++
-            }
-
-            // Traverse frame
-            if (frameLength-- <= 0) {
+            if (--frameLength <= 0) { // Traverse frame
                 frameCount++
-                frameLength = currentAnimation!!.keyframes[getFrameIndex()].length
+                frameLength = animation.keyframes[getFrameIndex(animation)].length
             }
+            timer = ++timer % animation.maximumLength // Increment timer
         }
 
-        val keyframe = currentAnimation!!.keyframes[getFrameIndex()]
+        val keyframe = animation.keyframes[getFrameIndex(animation)]
         keyframe.apply(context)
 
-        if (keyframe.id != previousFrame.id) {
+        if (keyframe.id != currentFrame.id) {
             onNewFrame(keyframe)
         }
-        context.gui.animationPanel.tickCursor(timer)
+        context.gui.animationPanel.tickCursor(timer, animation.maximumLength)
     }
 
-    private fun getFrameIndex(): Int {
-        return frameCount % currentAnimation!!.keyframes.size
+    private fun getFrameIndex(animation: Animation): Int {
+        return frameCount % animation.keyframes.size
     }
 
     fun transformNode(coordIndex: Int, newValue: Int) {
@@ -78,14 +72,16 @@ class AnimationHandler(private val context: Processor) {
         val child = selected.reference.group[type]?: return
         val id = child.id
 
-        val keyframe = currentAnimation!!.keyframes[getFrameIndex()]
+        val animation = currentAnimation?: return
+        val keyframe = animation.keyframes[getFrameIndex(animation)]
         val transformation = keyframe.transformations.first { it.id == id }
         transformation.offset.setComponent(coordIndex, newValue)
     }
 
     private fun onNewFrame(keyframe: Keyframe) {
         context.framebuffer.nodeRenderer.reselectNode()
-        previousFrame = keyframe
+        context.gui.editorPanel.setKeyframe(keyframe)
+        currentFrame = keyframe
     }
 
     fun togglePlay() {
@@ -93,26 +89,43 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun isPlaying(playing: Boolean) {
+        if (playing && currentAnimation == null) {
+            return
+        }
         this.playing = playing
         context.gui.animationPanel.updatePlayIcon(playing)
     }
 
-    fun setFrame(time: Int, frame: Int, offset: Int) {
-        timer = time
+    fun setFrame(frame: Int, offset: Int) {
+        val animation = currentAnimation?: return
         frameCount = frame
-        frameLength = currentAnimation!!.keyframes[frame].length - offset
+
+        var cumulative = 0
+        for (i in 0 until frameCount) {
+            cumulative += animation.keyframes[i].length
+        }
+
+        timer = cumulative + offset
+        frameLength = animation.keyframes[frame].length - offset
     }
 
-    private fun restart() {
-        setFrame(0, 0, 0)
+    fun restartFrame() {
+        val animation = currentAnimation?: return
+        animation.maximumLength = animation.getMaxLength()
+        setFrame(frameCount, 0)
+    }
+
+    private fun restartAnimation() {
+        setFrame(0, 0)
     }
 
     fun resetAnimation() {
         currentAnimation = null
+        timer = 0
         frameCount = 0
         frameLength = 0
         context.framebuffer.nodeRenderer.deselectNode()
-        context.framebuffer.nodeRenderer.clearNodes()
-        context.gui.animationPanel.stop()
+        context.framebuffer.nodeRenderer.nodes.clear()
+        context.gui.animationPanel.reset()
     }
 }

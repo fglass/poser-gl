@@ -1,10 +1,10 @@
 package gui.component
 
 import Processor
-import gui.Gui
+import gui.GuiManager
 import net.runelite.cache.definitions.NpcDefinition
 
-class EntityList(x: Float, y: Float, gui: Gui, context: Processor): ElementList(x, y, gui) {
+class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): ElementList(x, y, gui) {
 
     private val entities = context.entityLoader.entities
     private val entityElements = mutableListOf<EntityElement>()

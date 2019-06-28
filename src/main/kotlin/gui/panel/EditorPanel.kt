@@ -1,12 +1,13 @@
 package gui.panel
 
 import BG_COLOUR
-import Processor
 import RESOURCES_PATH
+import Processor
+import animation.Keyframe
 import animation.Reference
 import animation.TransformationType
 import animation.node.ReferenceNode
-import gui.Gui
+import gui.GuiManager
 import gui.component.ButtonGroup
 import gui.component.ConfigGroup
 import gui.component.TextSlider
@@ -20,10 +21,14 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 
-class EditorPanel(private val gui: Gui, private val context: Processor): Panel() {
+class EditorPanel(private val gui: GuiManager, private val context: Processor): Panel() {
 
     private val sliders = ArrayList<TextSlider>()
     private var currentReference: Reference? = null
+    private val selectedFrame: Label
+    private val frameLength: TextSlider
+
+    private val selectedNode: Label
 
     private val addIcon = BufferedImage(RESOURCES_PATH + "add-keyframe.png")
     private val copyIcon = BufferedImage(RESOURCES_PATH + "copy.png")
@@ -34,8 +39,7 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
     private val translationIcon = BufferedImage(RESOURCES_PATH + "translation.png")
     private val rotationIcon = BufferedImage(RESOURCES_PATH + "rotation.png")
     private val scaleIcon = BufferedImage(RESOURCES_PATH + "scale.png")
-    private val transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
-                                              referenceIcon, translationIcon, rotationIcon, scaleIcon)
+    private val transformations: ConfigGroup
 
     init {
         position = getPanelPosition()
@@ -53,14 +57,15 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
         frameTitle.textState.horizontalAlign = HorizontalAlign.CENTER
         framePanel.add(frameTitle)
 
-        val selectedFrame = Label("Selected: 5", 0f, 20f, size.x, 15f)
+        selectedFrame = Label("Selected: N/A", 0f, 20f, size.x, 15f)
         selectedFrame.textState.horizontalAlign = HorizontalAlign.CENTER
         framePanel.add(selectedFrame)
 
         val length = Label("Length:", 35f, 40f, 50f, 15f)
         framePanel.add(length)
 
-        val frameLength = TextSlider({ }, 82f, 40f, 50f, 15f)
+        frameLength = TextSlider({ context.animationHandler.currentFrame.changeLength(it, context) },
+                                 Pair(1, 99), 82f, 40f, 50f, 15f)
         framePanel.add(frameLength)
 
         val operations = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f), addIcon, copyIcon, pasteIcon, deleteIcon)
@@ -77,9 +82,12 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
         nodeTitle.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(nodeTitle)
 
-        val selectedNode = Label("Selected: 21", 0f, 20f, size.x, 15f)
+        selectedNode = Label("Selected: N/A", 0f, 20f, size.x, 15f)
         selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(selectedNode)
+
+        transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
+                                      referenceIcon, translationIcon, rotationIcon, scaleIcon)
 
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -104,11 +112,17 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
             val label = Label(coord, 16f, y, 50f, 15f)
             transformPanel.add(label)
 
-            val slider = TextSlider( { context.animationHandler.transformNode(i, it) }, 39f, y, 60f, 15f)
+            val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
+                                    Pair(-255, 255), 39f, y, 60f, 15f)
             sliders.add(slider)
             transformPanel.add(slider)
             y += 20
         }
+    }
+
+    fun setKeyframe(keyframe: Keyframe) {
+        selectedFrame.textState.text = "Selected: ${keyframe.id}"
+        frameLength.setValue(keyframe.length)
     }
 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
@@ -119,6 +133,7 @@ class EditorPanel(private val gui: Gui, private val context: Processor): Panel()
         transformations.updateConfigs(transformations.buttons[selectedType.id])
 
         currentReference = node.reference
+        selectedNode.textState.text = "Selected: ${node.reference.id}"
         updateType(selectedType)
     }
 

@@ -3,14 +3,12 @@ package gui.panel
 import BG_COLOUR
 import Processor
 import RESOURCES_PATH
-import animation.MAX_LENGTH
-import gui.Gui
+import animation.Keyframe
+import gui.GuiManager
 import gui.component.HoverButton
 import gui.component.ImageButton
 import gui.component.ToggleButton
-import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector2f
-import org.joml.Vector4f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -18,11 +16,10 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class AnimationPanel(private val gui: Gui, private val context: Processor): Panel() {
+class AnimationPanel(private val gui: GuiManager, private val context: Processor): Panel() {
 
     private val sequenceId: Label
     private val play: ImageButton
@@ -40,7 +37,6 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     private val greenLine = BufferedImage(RESOURCES_PATH + "green-line.png")
     private val nodeIcon = BufferedImage(RESOURCES_PATH + "nodes.png")
     private val cursor = ImageButton(Vector2f(0f, 0f), greenLine)
-    private var sequence = SequenceDefinition(-1)
 
     init {
         val x = 12f
@@ -72,7 +68,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
 
         play = ImageButton(Vector2f(x, 8f), playIcon)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK && sequence.id != -1) {
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 context.animationHandler.togglePlay()
             }
         }
@@ -92,48 +88,40 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         menu.add(nodeToggle)
     }
 
-    fun loadSequence(sequence: SequenceDefinition) {
-        this.sequence = sequence
-        setTimeline()
-    }
-
     fun updatePlayIcon(playing: Boolean) {
         play.image = if (playing) pauseIcon else playIcon
     }
 
-    fun stop() {
+    fun reset() {
         play.image = playIcon
-        sequence = SequenceDefinition(-1)
         setTimeline()
     }
 
-    private fun setTimeline() {
+    fun setTimeline() {
         timeline.removeAll(timeline.childComponents)
         times.removeAll(times.childComponents)
 
-        if (sequence.id == -1) {
+        val animation = context.animationHandler.currentAnimation
+        if (animation == null) {
             sequenceId.textState.text = "N/A"
             return
         }
 
-        sequenceId.textState.text = sequence.id.toString()
-        unitX = getUnitX()
-
-        addTimes()
-        addKeyframes(sequence)
-        cursor.position.x = 0f
+        sequenceId.textState.text = animation.sequence.id.toString()
+        unitX = getUnitX(animation.maximumLength)
+        addTimes(animation.maximumLength)
+        addKeyframes(animation.keyframes)
         timeline.add(cursor)
     }
 
-    private fun addTimes() {
-        val max = getMaxLength()
-        addTime(max)
+    private fun addTimes(maxLength: Int) {
+        addTime(maxLength)
 
         val base = 5
-        val sqrt = max(sqrt(max.toDouble()), base.toDouble())
+        val sqrt = max(sqrt(maxLength.toDouble()), base.toDouble())
         val timeStep = base * (sqrt / base).roundToInt()
 
-        for (i in 0 until max step timeStep) {
+        for (i in 0 until maxLength step timeStep) {
             addTime(i)
         }
     }
@@ -151,10 +139,10 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         }
     }
 
-    private fun addKeyframes(sequence: SequenceDefinition) {
+    private fun addKeyframes(keyframes: ArrayList<Keyframe>) {
         var cumulative = 0
-        for (i in 0 until sequence.frameLenghts.size) {
-            val previous = if (i > 0) sequence.frameLenghts[i - 1] else 0
+        for (i in 0 until keyframes.size) {
+            val previous = if (i > 0) keyframes[i - 1].length else 0
             cumulative += previous
 
             val x = cumulative * unitX
@@ -168,20 +156,21 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         }
     }
 
-    fun tickCursor(timer: Int) {
-        cursor.position.x = timer * getUnitX()
+    fun tickCursor(timer: Int, maxLength: Int) {
+        cursor.position.x = timer * getUnitX(maxLength)
     }
 
     private fun adjustTime(x: Float) {
         val timer = (x / unitX).roundToInt()
         var cumulative = 0
 
-        for ((frameCount, length) in sequence.frameLenghts.withIndex()) {
-            if (timer >= cumulative && timer < cumulative + length) {
-                context.animationHandler.setFrame(timer, frameCount, timer - cumulative)
+        val animation = context.animationHandler.currentAnimation?: return
+        for ((frameCount, frame) in animation.keyframes.withIndex()) {
+            if (timer >= cumulative && timer < cumulative + frame.length) {
+                context.animationHandler.setFrame(frameCount, timer - cumulative)
                 return
             }
-            cumulative += length
+            cumulative += frame.length
         }
     }
 
@@ -194,10 +183,9 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
             menu.size.x = size.x
             nodeToggle.position.x = size.x - 32
         }
-        if (sequence.id != -1) {
-            unitX = getUnitX()
-            setTimeline()
-        }
+        val animation = context.animationHandler.currentAnimation?: return
+        unitX = getUnitX(animation.maximumLength)
+        setTimeline()
     }
 
     private fun getPanelPosition(): Vector2f {
@@ -212,11 +200,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         return size.x - 2 * 12 - 1
     }
 
-    private fun getUnitX(): Float {
-        return timeline.size.x / getMaxLength()
-    }
-
-    private fun getMaxLength(): Int {
-        return min(sequence.frameLenghts.sum(), MAX_LENGTH)
+    private fun getUnitX(maxLength: Int): Float {
+        return timeline.size.x / maxLength
     }
 }

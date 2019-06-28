@@ -1,10 +1,10 @@
 package gui.component
 
 import Processor
-import gui.Gui
+import gui.GuiManager
 import net.runelite.cache.definitions.SequenceDefinition
 
-class AnimationList(x: Float, y: Float, gui: Gui, private val context: Processor): ElementList(x, y, gui) {
+class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Processor): ElementList(x, y, gui) {
 
     private val animationElements = mutableListOf<AnimationElement>()
 

@@ -11,7 +11,7 @@ import org.liquidengine.legui.component.SelectBox
 import render.PolygonMode
 import shader.ShadingType
 
-class Gui(position: Vector2f, size: Vector2f, private val context: Processor): Panel(position, size) {
+class GuiManager(position: Vector2f, size: Vector2f, private val context: Processor): Panel(position, size) {
 
     private val listPanel = ListPanel(this, context)
     val treePanel = TreePanel(this, context)

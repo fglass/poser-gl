@@ -6,13 +6,16 @@ import org.joml.Vector3i
 import com.google.common.collect.HashMultimap
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.min
 
-class Animation(private val sequence: SequenceDefinition, private val frames: HashMultimap<Int, FrameDefinition>) {
+class Animation(val sequence: SequenceDefinition, private val frames: HashMultimap<Int, FrameDefinition>) {
 
     val keyframes = ArrayList<Keyframe>()
+    var maximumLength: Int
 
     init {
         load()
+        maximumLength = getMaxLength()
     }
 
     private fun load() {
@@ -56,5 +59,9 @@ class Animation(private val sequence: SequenceDefinition, private val frames: Ha
                 index != -1 -> Vector3i(frame.translator_x[index], frame.translator_y[index], frame.translator_z[index])
                 else -> type.getDefaultOffset()
         }
+    }
+
+    fun getMaxLength(): Int {
+        return min(keyframes.sumBy { it.length }, MAX_LENGTH)
     }
 }

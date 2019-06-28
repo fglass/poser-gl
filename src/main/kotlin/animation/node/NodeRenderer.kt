@@ -22,7 +22,7 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     private val shader = NodeShader()
     private var viewMatrix = Matrix4f()
 
-    private val nodes = HashSet<ReferenceNode>()
+    val nodes = HashSet<ReferenceNode>()
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
     var enabled = true
@@ -150,10 +150,6 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     fun deselectNode() {
         selectedNode = null
         context.gui.editorPanel.resetSliders()
-    }
-
-    fun clearNodes() {
-        nodes.clear()
     }
 
     private fun loadMatrices(node: ReferenceNode) {

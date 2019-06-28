@@ -1,6 +1,6 @@
 import animation.AnimationHandler
 import entity.Entity
-import gui.Gui
+import gui.GuiManager
 import input.MouseHandler
 import model.DatLoader
 import model.EntityLoader
@@ -29,6 +29,8 @@ import render.Framebuffer
 import render.Loader
 import shader.StaticShader
 import utils.VSyncTimer
+import java.io.IOException
+import java.lang.NullPointerException
 
 const val TITLE = "PoserGL"
 const val CACHE_PATH = "./repository/old/"
@@ -45,7 +47,7 @@ const val HEIGHT = 600
 class Processor {
 
     private var running = true
-    lateinit var gui: Gui
+    lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
 
     val loader = Loader()
@@ -53,7 +55,7 @@ class Processor {
     val entityLoader = EntityLoader(this)
     val itemLoader = ItemLoader()
     val animationHandler = AnimationHandler(this)
-    var entity: Entity? = null // TODO: !!
+    var entity: Entity? = null
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
@@ -82,7 +84,7 @@ class Processor {
         Themes.getDefaultTheme().applyAll(frame)
 
         val frameSize = frame.container.size
-        gui = Gui(Vector2f(0f, 0f), frameSize, this)
+        gui = GuiManager(Vector2f(0f, 0f), frameSize, this)
         gui.createElements()
         frame.container.add(gui)
 
@@ -125,7 +127,11 @@ class Processor {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
             // Render gui
-            guiRenderer.render(frame, context)
+            try {
+                guiRenderer.render(frame, context)
+            } catch (ignored: NullPointerException) {
+                println("Render error")
+            }
 
             // Render fbo
             framebuffer.render()
@@ -139,7 +145,11 @@ class Processor {
             EventProcessor.getInstance().processEvents()
 
             // Relayout components
-            LayoutManager.getInstance().layout(frame)
+            try {
+                LayoutManager.getInstance().layout(frame)
+            } catch (ignored: NullPointerException) {
+                println("Layout error")
+            }
 
             // Run legui animations
             AnimatorProvider.getAnimator().runAnimations()

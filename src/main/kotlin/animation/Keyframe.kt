@@ -4,7 +4,7 @@ import net.runelite.cache.definitions.ModelDefinition.*
 import shader.ShadingType
 import Processor
 
-class Keyframe(val id: Int, val length: Int) {
+class Keyframe(val id: Int, var length: Int) {
 
     val transformations = ArrayList<Transformation>()
 
@@ -15,7 +15,7 @@ class Keyframe(val id: Int, val length: Int) {
 
     fun apply(context: Processor) {
         // Reset from last frame
-        context.framebuffer.nodeRenderer.clearNodes()
+        context.framebuffer.nodeRenderer.nodes.clear()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
@@ -34,5 +34,11 @@ class Keyframe(val id: Int, val length: Int) {
         // Load transformed model
         context.loader.cleanUp()
         entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
+    }
+
+    fun changeLength(newLength: Int, context: Processor) {
+        length = newLength
+        context.animationHandler.restartFrame()
+        context.gui.animationPanel.setTimeline()
     }
 }

@@ -4,9 +4,8 @@ import BG_COLOUR
 import Processor
 import RESOURCES_PATH
 import entity.Entity
-import gui.Gui
+import gui.GuiManager
 import org.joml.Vector2f
-import org.joml.Vector4f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
@@ -16,7 +15,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
 
-class TreePanel(private val gui: Gui, private val context: Processor): Panel() {
+class TreePanel(private val gui: GuiManager, private val context: Processor): Panel() {
 
     private val modelPanel: ScrollablePanel
     private val modelIcon = BufferedImage(RESOURCES_PATH + "model.png")

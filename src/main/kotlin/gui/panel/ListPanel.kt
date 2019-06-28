@@ -1,7 +1,7 @@
 package gui.panel
 
 import Processor
-import gui.Gui
+import gui.GuiManager
 import gui.component.AnimationList
 import gui.component.EntityList
 import gui.component.ItemList
@@ -14,7 +14,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.color.ColorConstants
 import org.lwjgl.glfw.GLFW
 
-class ListPanel(private val gui: Gui, context: Processor): Panel() {
+class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
 
     private val search = TextInput("Search", 5f, 5f, 164f, 15f)
     private val tabs = ArrayList<Button>()

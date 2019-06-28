@@ -20,10 +20,10 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.max
 import kotlin.math.min
 
-class TextSlider(private val onValueChange: (Int) -> Unit, x: Float, y: Float, width: Float, height: Float):
-                 Panel(x, y, width, height) {
+class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
+                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
 
-    private val value = TextInput("0", 12f, 0f, width - 24, height)
+    private val value = TextInput("", 12f, 0f, width - 24, height)
     private var adjusting = false
     private val leftArrow = BufferedImage(RESOURCES_PATH + "left.png")
     private val rightArrow = BufferedImage(RESOURCES_PATH + "right.png")
@@ -45,6 +45,7 @@ class TextSlider(private val onValueChange: (Int) -> Unit, x: Float, y: Float, w
                 }
             }
         }
+        setValue(limitValue(0))
         add(value)
 
         val right = ImageButton(Vector2f(width - 10, 3f), rightArrow)
@@ -86,14 +87,14 @@ class TextSlider(private val onValueChange: (Int) -> Unit, x: Float, y: Float, w
 
     private fun adjustValue(increment: Boolean) {
         val newValue = value.textState.text.toInt() + if (increment) 1 else -1
-        value.textState.text = limitValue(newValue).toString()
-        onValueChange(newValue)
+        val limited = limitValue(newValue)
+        setValue(limited)
+        onValueChange(limited)
     }
 
     private fun limitValue(value: Int): Int {
-        val limit = 255
-        val newValue = min(value, limit)
-        return max(newValue, -limit)
+        val newValue = min(value, limits.second)
+        return max(newValue, limits.first)
     }
 
     fun setValue(newValue: Int) {
