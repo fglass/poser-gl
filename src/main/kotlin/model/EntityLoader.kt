@@ -64,7 +64,7 @@ class EntityLoader(private val context: Processor) {
             val model = context.datLoader.parse(merged, context.framebuffer.shadingType == ShadingType.FLAT)
             context.entity = Entity(model, entity, models.toIntArray())
         }
-        context.gui.compositionPanel.update(context.entity!!)
+        context.gui.treePanel.update(context.entity!!)
     }
 
     private fun clear() {

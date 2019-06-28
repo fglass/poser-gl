@@ -20,10 +20,10 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.max
 import kotlin.math.min
 
-class TextSlider(private val context: Processor, private val coordIndex: Int,
-                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
+class TextSlider(private val onValueChange: (Int) -> Unit, x: Float, y: Float, width: Float, height: Float):
+                 Panel(x, y, width, height) {
 
-    val value = TextInput("0", 12f, 0f, width - 24, height)
+    private val value = TextInput("0", 12f, 0f, width - 24, height)
     private var adjusting = false
     private val leftArrow = BufferedImage(RESOURCES_PATH + "left.png")
     private val rightArrow = BufferedImage(RESOURCES_PATH + "right.png")
@@ -41,23 +41,22 @@ class TextSlider(private val context: Processor, private val coordIndex: Int,
                     if (current != limited) {
                         value.textState.text = limited.toString()
                     }
-                    context.animationHandler.transformNode(coordIndex, limited)
+                    onValueChange(limited)
                 }
             }
         }
         add(value)
 
         val right = ImageButton(Vector2f(width - 10, 3f), rightArrow)
-        right.size = Vector2f(10f, 10f)
-        right.listenerMap.addListener(MouseClickEvent::class.java, getClickListener(true))
-        right.listenerMap.addListener(CursorEnterEvent::class.java, getCursorListener())
-        add(right)
-
         val left = ImageButton(Vector2f(0f, 3f), leftArrow)
-        left.size = Vector2f(10f, 10f)
-        left.listenerMap.addListener(MouseClickEvent::class.java, getClickListener(false))
-        left.listenerMap.addListener(CursorEnterEvent::class.java, getCursorListener())
-        add(left)
+        val arrows = arrayOf(left, right)
+
+        arrows.forEach {
+            it.size = Vector2f(10f, 10f)
+            it.listenerMap.addListener(MouseClickEvent::class.java, getClickListener(it == right))
+            it.listenerMap.addListener(CursorEnterEvent::class.java, getCursorListener())
+            add(it)
+        }
     }
 
     private fun getClickListener(increment: Boolean): MouseClickEventListener {
@@ -88,7 +87,7 @@ class TextSlider(private val context: Processor, private val coordIndex: Int,
     private fun adjustValue(increment: Boolean) {
         val newValue = value.textState.text.toInt() + if (increment) 1 else -1
         value.textState.text = limitValue(newValue).toString()
-        context.animationHandler.transformNode(coordIndex, newValue)
+        onValueChange(newValue)
     }
 
     private fun limitValue(value: Int): Int {

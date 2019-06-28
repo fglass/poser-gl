@@ -45,7 +45,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
     init {
         val x = 12f
         timeline = Panel(x, 27f, getTimelineWidth(), 65f)
-        timeline.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+        timeline.style.background.color = BG_COLOUR
         timeline.style.setBorderRadius(0f)
         timeline.style.focusedStrokeColor = null
         timeline.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -84,7 +84,7 @@ class AnimationPanel(private val gui: Gui, private val context: Processor): Pane
         menu.add(animation)
         menu.add(sequenceId)
 
-        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon)
+        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, true)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.framebuffer.nodeRenderer.enabled = !context.framebuffer.nodeRenderer.enabled

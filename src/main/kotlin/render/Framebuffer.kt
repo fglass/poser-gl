@@ -13,6 +13,7 @@ import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
 import org.liquidengine.legui.image.FBOImage
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader
@@ -89,7 +90,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         glBindFramebuffer(GL_FRAMEBUFFER, id)
         glViewport(0, 0, textureWidth, textureHeight)
 
-        glClearColor(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+        glClearColor(BG_COLOUR.x, BG_COLOUR.y, BG_COLOUR.z, BG_COLOUR.w)
         glClear(GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
         setGlState()
 

@@ -34,7 +34,7 @@ enum class TransformationType(val id: Int) {
 
     companion object {
         private val map = values().associateBy { it.id }
-        fun fromInt(type: Int) = map[type]?: throw IllegalArgumentException()
+        fun fromId(type: Int) = map[type]?: throw IllegalArgumentException()
     }
 
     fun getDefaultOffset(): Vector3i {

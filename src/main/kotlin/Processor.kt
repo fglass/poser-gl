@@ -7,6 +7,7 @@ import model.EntityLoader
 import model.ItemLoader
 import org.joml.Vector2f
 import org.joml.Vector2i
+import org.joml.Vector4f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.event.WindowSizeEvent
@@ -30,9 +31,9 @@ import shader.StaticShader
 import utils.VSyncTimer
 
 const val TITLE = "PoserGL"
-const val BG_COLOUR = 33 / 255f
 const val CACHE_PATH = "./repository/old/"
 const val RESOURCES_PATH = "src/main/resources/"
+val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
 
 fun main() {
     Processor().run()
@@ -118,7 +119,7 @@ class Processor {
             context.updateGlfwWindow()
             val windowSize = context.framebufferSize
 
-            glClearColor(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+            glClearColor(BG_COLOUR.x, BG_COLOUR.y, BG_COLOUR.z, BG_COLOUR.w)
             glViewport(0, 0, windowSize.x, windowSize.y)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)

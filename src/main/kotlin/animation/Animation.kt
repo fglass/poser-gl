@@ -1,13 +1,9 @@
 package animation
 
 import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.ModelDefinition.*
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3i
-import shader.ShadingType
-import Processor
 import com.google.common.collect.HashMultimap
-import net.runelite.cache.definitions.ModelDefinition
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -36,7 +32,7 @@ class Animation(private val sequence: SequenceDefinition, private val frames: Ha
                     continue
                 }
 
-                val type = TransformationType.fromInt(typeId)
+                val type = TransformationType.fromId(typeId)
                 val transformation = Transformation(id, type, frameMap.frameMaps[id], getOffset(frame, id, type))
 
                 if (transformation.type == TransformationType.REFERENCE) {

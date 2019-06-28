@@ -16,7 +16,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
 
-class CompositionPanel(private val gui: Gui, private val context: Processor): Panel() {
+class TreePanel(private val gui: Gui, private val context: Processor): Panel() {
 
     private val modelPanel: ScrollablePanel
     private val modelIcon = BufferedImage(RESOURCES_PATH + "model.png")
@@ -28,7 +28,8 @@ class CompositionPanel(private val gui: Gui, private val context: Processor): Pa
         style.background.color = ColorConstants.darkGray()
         isFocusable = false
 
-        val title = Label("Composition Tree", 0f, 5f, size.x, 15f)
+        val title = Label("Composition Tree", 0f, 0f, size.x, 16f)
+        title.style.background.color = BG_COLOUR
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
@@ -51,7 +52,7 @@ class CompositionPanel(private val gui: Gui, private val context: Processor): Pa
         for ((i, model) in entity.composition.withIndex()) {
             val y = i * offset
             val background = Label("", 0f, y, 148f, 15f)
-            background.style.background.color = Vector4f(BG_COLOUR, BG_COLOUR, BG_COLOUR, 1f)
+            background.style.background.color = BG_COLOUR
 
             val label = Label("Model $model", 18f, y, 139f, 15f)
             val modelImage = ImageView(modelIcon)
@@ -83,6 +84,6 @@ class CompositionPanel(private val gui: Gui, private val context: Processor): Pa
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 453)
+        return Vector2f(170f, gui.size.y - 409)
     }
 }
