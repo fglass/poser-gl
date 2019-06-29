@@ -1,6 +1,7 @@
 package animation
 
 import CACHE_PATH
+import Processor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.runelite.cache.ConfigType
@@ -11,7 +12,7 @@ import net.runelite.cache.definitions.loaders.SequenceLoader
 import net.runelite.cache.fs.Store
 import java.io.File
 
-class AnimationLoader(private val handler: AnimationHandler) {
+class AnimationLoader(private val context: Processor, private val handler: AnimationHandler) {
 
     init {
         val store = Store(File(CACHE_PATH))
@@ -33,9 +34,10 @@ class AnimationLoader(private val handler: AnimationHandler) {
         for (file in files.files) {
             val loader = SequenceLoader()
             val seq = loader.load(file.fileId, file.contents)
-            handler.sequences[file.fileId] = seq
+            val animation = Animation(context, seq)
+            handler.animations[file.fileId] = animation
         }
-        println("Loaded ${handler.sequences.size} sequences")
+        println("Loaded ${handler.animations.size} sequences")
     }
 
     private fun loadFrames(store: Store) {

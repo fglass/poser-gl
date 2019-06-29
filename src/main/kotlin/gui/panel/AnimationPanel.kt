@@ -21,7 +21,7 @@ import kotlin.math.sqrt
 
 class AnimationPanel(private val gui: GuiManager, private val context: Processor): Panel() {
 
-    private val sequenceId: Label
+    val sequenceId: Label
     private val play: ImageButton
     private val menu: Panel
     private val nodeToggle: ToggleButton

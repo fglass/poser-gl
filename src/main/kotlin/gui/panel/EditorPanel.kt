@@ -64,7 +64,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         val length = Label("Length:", 35f, 40f, 50f, 15f)
         framePanel.add(length)
 
-        frameLength = TextSlider({ context.animationHandler.currentFrame.changeLength(it, context) },
+        frameLength = TextSlider({ context.animationHandler.modifyKeyframeLength(it) },
                                  Pair(1, 99), 82f, 40f, 50f, 15f)
         framePanel.add(frameLength)
 

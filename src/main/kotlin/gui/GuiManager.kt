@@ -13,7 +13,7 @@ import shader.ShadingType
 
 class GuiManager(position: Vector2f, size: Vector2f, private val context: Processor): Panel(position, size) {
 
-    private val listPanel = ListPanel(this, context)
+    val listPanel = ListPanel(this, context)
     val treePanel = TreePanel(this, context)
     val animationPanel = AnimationPanel(this, context)
     val editorPanel = EditorPanel(this, context)

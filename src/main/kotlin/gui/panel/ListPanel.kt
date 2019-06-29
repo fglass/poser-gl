@@ -19,7 +19,7 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
     private val search = TextInput("Search", 5f, 5f, 164f, 15f)
     private val tabs = ArrayList<Button>()
     private val entityList = EntityList(5f, 43f, gui, context)
-    private val animationList = AnimationList(5f, 43f, gui, context)
+    val animationList = AnimationList(5f, 43f, gui, context)
     private val itemList = ItemList(5f, 43f, gui, context)
     private val lists = arrayOf(entityList, animationList, itemList)
 
@@ -55,7 +55,7 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
         val offset = 55f
 
         for ((i, name) in names.withIndex()) {
-            val tab = Button(name, 5f + i * offset, 27f, offset - 1, 15f)
+            val tab = Button(name, 5f + i * offset, 27f, offset - 1, 17f)
             tab.style.focusedStrokeColor = null
             tab.listenerMap.addListener(MouseClickEvent::class.java) {
                 changeList(tab)
@@ -64,7 +64,7 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
             tabs.add(tab)
             add(tab)
         }
-        selectTab(tabs[0])
+        selectTab(tabs.first())
     }
 
     private fun changeList(tab: Button) {

@@ -1,8 +1,8 @@
 package gui.component
 
 import Processor
+import animation.Animation
 import gui.GuiManager
-import net.runelite.cache.definitions.SequenceDefinition
 
 class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Processor): ElementList(x, y, gui) {
 
@@ -10,8 +10,8 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
 
     init {
         var index = 0
-        for ((i, sequence) in context.animationHandler.sequences.values.withIndex()) {
-            val element = AnimationElement(sequence, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
+        for ((i, animation) in context.animationHandler.animations.values.withIndex()) {
+            val element = AnimationElement(animation, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
             animationElements.add(element)
             container.add(element)
@@ -20,8 +20,19 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
         container.setSize(containerX, listY + index * listYOffset)
     }
 
+    fun addElement(animation: Animation) {
+        val element = AnimationElement(animation, context, listX, container.size.y, containerX - 6, 14f)
+        element.addClickListener()
+        animationElements.add(element)
+        container.add(element)
+
+        maxIndex += 1
+        container.size.y += listYOffset
+        verticalScrollBar.curValue = container.size.y // Scroll to bottom
+    }
+
     override fun getFiltered(input: String): List<Int> {
-        return (0 until maxIndex).toList().filter {
+        return (0..maxIndex).toList().filter {
             it.toString().contains(input)
         }
     }
@@ -31,26 +42,27 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
     }
 
     override fun handleElement(index: Int, element: Element) {
-        val sequence = context.animationHandler.sequences[index]
-        if (sequence != null && element is AnimationElement) {
-            element.sequence = sequence
+        val animation = context.animationHandler.animations[index]
+        if (animation != null && element is AnimationElement) {
+            element.animation = animation
             element.updateText()
         }
     }
 
-    class AnimationElement(var sequence: SequenceDefinition, private val context: Processor, x: Float, y: Float,
+    class AnimationElement(var animation: Animation, private val context: Processor, x: Float, y: Float,
                            width: Float, height: Float): Element(x, y, width, height) {
         init {
             updateText()
         }
 
         override fun updateText() {
-            textState.text = sequence.id.toString()
+            val prefix = if (animation.modified) "*" else ""
+            textState.text = "$prefix${animation.sequence.id}"
             isEnabled = true
         }
 
         override fun onClickEvent() {
-            context.animationHandler.load(sequence)
+            context.animationHandler.load(animation)
         }
     }
 }

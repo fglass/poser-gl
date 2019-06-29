@@ -23,7 +23,7 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
     }
 
     override fun getFiltered(input: String): List<Int> {
-        return (0 until maxIndex).toList().filter {
+        return (0..maxIndex).toList().filter {
             entities[it].name.toLowerCase().contains(input)
         }
     }

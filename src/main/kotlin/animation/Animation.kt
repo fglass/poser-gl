@@ -4,25 +4,34 @@ import Processor
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3i
-import com.google.common.collect.HashMultimap
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
-class Animation(private val context: Processor, val sequence: SequenceDefinition,
-                private val frames: HashMultimap<Int, FrameDefinition>) {
+class Animation(private val context: Processor, val sequence: SequenceDefinition) {
 
-    val keyframes = ArrayList<Keyframe>()
-    var maximumLength: Int
-
-    init {
-        load()
+    // Copy constructor
+    constructor(newId: Int, animation: Animation): this(animation.context, SequenceDefinition(newId)) {
+        animation.keyframes.forEach {
+            keyframes.add(Keyframe(it.id, it))
+        }
+        loaded = true
+        modified = true
         maximumLength = getMaxLength()
     }
 
-    private fun load() {
+    var modified = false
+    private var loaded = false
+    val keyframes = ArrayList<Keyframe>()
+    var maximumLength = 0
+
+    fun load() {
+        if (loaded) {
+            return
+        }
+
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
-            val frames = frames.get(frameId.ushr(16))
+            val frames = context.animationHandler.frames.get(frameId.ushr(16))
             val frameFileId = frameId and 0xFFFF
             val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
 
@@ -53,6 +62,9 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             }
             keyframes.add(keyframe)
         }
+
+        maximumLength = getMaxLength()
+        loaded = true
     }
 
     private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -105,5 +117,12 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         context.animationHandler.playPause(false)
         maximumLength = getMaxLength()
         context.gui.animationPanel.setTimeline()
+    }
+
+    fun modifyKeyframeLength(newLength: Int) {
+        val index = context.animationHandler.getFrameIndex(this)
+        val keyframe = keyframes[index]
+        keyframe.length = newLength
+        maximumLength = getMaxLength()
     }
 }

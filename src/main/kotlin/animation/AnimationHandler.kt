@@ -3,7 +3,6 @@ package animation
 import Processor
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.SequenceDefinition
 
 // https://www.rune-server.ee/runescape-development/rs2-client/tutorials/340745-runescapes-rendering-animation-system.html
 
@@ -11,26 +10,27 @@ const val MAX_LENGTH = 999
 
 class AnimationHandler(private val context: Processor) {
 
-    val sequences = HashMap<Int, SequenceDefinition>()
+    val animations = HashMap<Int, Animation>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
+    var cacheAnimations: Int
 
     var currentAnimation: Animation? = null
-    var currentFrame = Keyframe(-1, -1)
+    var previousFrame = Keyframe(-1, -1)
     var copiedFrame = Keyframe(-1, -1)
-    private var frameLength = 0
     private var frameCount = 0
+    private var frameLength = 0
 
     private var playing = false
     private var timer = 0
 
     init {
-        AnimationLoader(this)
+        AnimationLoader(context, this)
+        cacheAnimations = animations.size
     }
 
-    fun load(sequence: SequenceDefinition) {
+    fun load(animation: Animation) {
         resetAnimation()
-
-        val animation = Animation(context, sequence, frames)
+        animation.load()
         frameLength = animation.keyframes.first().length
         currentAnimation = animation
 
@@ -45,7 +45,7 @@ class AnimationHandler(private val context: Processor) {
         }
 
         if (timer > MAX_LENGTH) {
-            restartAnimation()
+            setFrame(0, 0) // Restart animation
         }
 
         if (playing) {
@@ -59,7 +59,7 @@ class AnimationHandler(private val context: Processor) {
         val keyframe = animation.keyframes[getFrameIndex(animation)]
         keyframe.apply(context)
 
-        if (keyframe.id != currentFrame.id) {
+        if (keyframe.id != previousFrame.id) {
             onNewFrame(keyframe)
         }
         context.gui.animationPanel.tickCursor(timer, animation.maximumLength)
@@ -70,22 +70,50 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun transformNode(coordIndex: Int, newValue: Int) {
-        val selected = context.framebuffer.nodeRenderer.selectedNode?: return
+        if (!context.framebuffer.nodeRenderer.enabled) {
+            return
+        }
 
+        val selected = context.framebuffer.nodeRenderer.selectedNode?: return
         val type = context.framebuffer.nodeRenderer.selectedType
         val child = selected.reference.group[type]?: return
         val id = child.id
 
-        val animation = currentAnimation?: return
+        val animation = copyIfNecessary()?: return
+
         val keyframe = animation.keyframes[getFrameIndex(animation)]
         val transformation = keyframe.transformations.first { it.id == id }
         transformation.offset.setComponent(coordIndex, newValue)
     }
 
+    fun modifyKeyframeLength(newLength: Int) {
+        val animation = copyIfNecessary()?: return
+        animation.modifyKeyframeLength(newLength)
+        setFrame(frameCount, 0) // Restart frame
+        context.gui.animationPanel.setTimeline()
+    }
+
+    private fun copyIfNecessary(): Animation? {
+        val animation = currentAnimation?: return null
+
+        return if (!animation.modified) {
+            val newId = animations.size
+            val newAnimation = Animation(newId, animation)
+
+            currentAnimation = newAnimation
+            animations[newId] = newAnimation
+            context.gui.listPanel.animationList.addElement(newAnimation)
+            context.gui.animationPanel.sequenceId.textState.text = newId.toString()
+            newAnimation
+        } else {
+            animation
+        }
+    }
+
     private fun onNewFrame(keyframe: Keyframe) {
         context.framebuffer.nodeRenderer.reselectNode()
         context.gui.editorPanel.setKeyframe(keyframe)
-        currentFrame = keyframe
+        previousFrame = keyframe
     }
 
     fun togglePlay() {
@@ -111,17 +139,9 @@ class AnimationHandler(private val context: Processor) {
         }
 
         timer = cumulative + offset
-        frameLength = animation.keyframes[frameIndex].length - offset
-    }
-
-    fun restartFrame() {
-        val animation = currentAnimation?: return
-        animation.maximumLength = animation.getMaxLength()
-        setFrame(frameCount, 0)
-    }
-
-    private fun restartAnimation() {
-        setFrame(0, 0)
+        val keyframe = animation.keyframes[frameIndex]
+        frameLength = keyframe.length - offset
+        onNewFrame(keyframe)
     }
 
     fun resetAnimation() {
@@ -129,6 +149,7 @@ class AnimationHandler(private val context: Processor) {
         timer = 0
         frameCount = 0
         frameLength = 0
+        previousFrame = Keyframe(-1,-1)
         context.framebuffer.nodeRenderer.deselectNode()
         context.framebuffer.nodeRenderer.nodes.clear()
         context.gui.animationPanel.reset()

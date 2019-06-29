@@ -11,7 +11,7 @@ class Keyframe(val id: Int, var length: Int) {
         keyframe.transformations.forEach {
             if (it is Reference) {
                 val newReference = Reference(it)
-                this.transformations.add(newReference)
+                transformations.add(newReference)
 
                 for (transformation in it.group.values) {
                     if (transformation.type == TransformationType.REFERENCE) {
@@ -19,7 +19,7 @@ class Keyframe(val id: Int, var length: Int) {
                     }
                     val newTransformation = Transformation(transformation)
                     newReference.group[transformation.type] = newTransformation
-                    this.transformations.add(newTransformation)
+                    transformations.add(newTransformation)
                 }
             }
         }
@@ -53,11 +53,5 @@ class Keyframe(val id: Int, var length: Int) {
         // Load transformed model
         context.loader.cleanUp()
         entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-    }
-
-    fun changeLength(newLength: Int, context: Processor) {
-        length = newLength
-        context.animationHandler.restartFrame()
-        context.gui.animationPanel.setTimeline()
     }
 }
