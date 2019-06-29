@@ -5,8 +5,9 @@ import org.joml.Vector3i
 import java.util.LinkedHashMap
 
 open class Transformation(var id: Int, val type: TransformationType, var frameMap: IntArray, var offset: Vector3i) {
+
     constructor(transformation: Transformation): this(transformation.id, transformation.type,
-                                                      transformation.frameMap, transformation.offset)
+                                                      transformation.frameMap, Vector3i(transformation.offset))
 
     fun apply(def: ModelDefinition) {
         def.animate(type.id, frameMap, offset.x, offset.y, offset.z)
@@ -15,7 +16,7 @@ open class Transformation(var id: Int, val type: TransformationType, var frameMa
 
 class Reference(transformation: Transformation): Transformation(transformation) {
 
-    var group = LinkedHashMap<TransformationType, Transformation>()
+    var group = LinkedHashMap<TransformationType, Transformation>() // TODO children
 
     init {
         group[type] = this

@@ -1,11 +1,29 @@
 package animation
 
+import Processor
 import net.runelite.cache.definitions.ModelDefinition.*
 import shader.ShadingType
-import Processor
-import org.joml.Vector3i
 
 class Keyframe(val id: Int, var length: Int) {
+
+    // Copy constructor
+    constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.length) {
+        keyframe.transformations.forEach {
+            if (it is Reference) {
+                val newReference = Reference(it)
+                this.transformations.add(newReference)
+
+                for (transformation in it.group.values) {
+                    if (transformation.type == TransformationType.REFERENCE) {
+                        continue
+                    }
+                    val newTransformation = Transformation(transformation)
+                    newReference.group[transformation.type] = newTransformation
+                    this.transformations.add(newTransformation)
+                }
+            }
+        }
+    }
 
     val transformations = ArrayList<Transformation>()
 
@@ -41,23 +59,5 @@ class Keyframe(val id: Int, var length: Int) {
         length = newLength
         context.animationHandler.restartFrame()
         context.gui.animationPanel.setTimeline()
-    }
-
-    fun copy(newId: Int): Keyframe {
-        val newKeyframe = Keyframe(newId, length)
-        transformations.forEach { // Replace transformation references
-            val newTransformation: Transformation
-
-            if (it is Reference)  {
-                newTransformation = Reference(it)
-                newTransformation.group = it.group
-            } else {
-                newTransformation = Transformation(it)
-            }
-
-            newTransformation.offset = Vector3i(it.offset)
-            newKeyframe.transformations.add(newTransformation)
-        }
-        return newKeyframe
     }
 }

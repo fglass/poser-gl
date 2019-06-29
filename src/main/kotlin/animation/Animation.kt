@@ -69,7 +69,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun addKeyframe() {
         val newIndex = context.animationHandler.getFrameIndex(this) + 1
-        val keyframe = keyframes[newIndex - 1].copy(keyframes.size) // Copy previous
+        val keyframe = Keyframe(keyframes.size, keyframes[newIndex - 1]) // Copy previous
         insertKeyframe(newIndex, keyframe)
     }
 
@@ -82,7 +82,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         val copied = context.animationHandler.copiedFrame
         if (copied.id != -1) {
             val newIndex = context.animationHandler.getFrameIndex(this) + 1
-            val keyframe = copied.copy(keyframes.size) // Copy after to avoid shared references
+            val keyframe = Keyframe(keyframes.size, copied) // Copy after to avoid shared references
             insertKeyframe(newIndex, keyframe)
         }
     }
@@ -102,6 +102,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     private fun updateKeyframes() {
+        context.animationHandler.playPause(false)
         maximumLength = getMaxLength()
         context.gui.animationPanel.setTimeline()
     }

@@ -34,7 +34,7 @@ class AnimationHandler(private val context: Processor) {
         frameLength = animation.keyframes.first().length
         currentAnimation = animation
 
-        isPlaying(true)
+        playPause(true)
         context.gui.animationPanel.setTimeline()
     }
 
@@ -70,7 +70,7 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun transformNode(coordIndex: Int, newValue: Int) {
-        val selected = context.framebuffer.nodeRenderer.selectedNode ?: return
+        val selected = context.framebuffer.nodeRenderer.selectedNode?: return
 
         val type = context.framebuffer.nodeRenderer.selectedType
         val child = selected.reference.group[type]?: return
@@ -89,10 +89,10 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun togglePlay() {
-        isPlaying(!playing)
+        playPause(!playing)
     }
 
-    fun isPlaying(playing: Boolean) {
+    fun playPause(playing: Boolean) {
         if (playing && currentAnimation == null) {
             return
         }
@@ -105,12 +105,13 @@ class AnimationHandler(private val context: Processor) {
         frameCount = frame
 
         var cumulative = 0
-        for (i in 0 until frameCount) {
+        val frameIndex = getFrameIndex(animation)
+        for (i in 0 until frameIndex) {
             cumulative += animation.keyframes[i].length
         }
 
         timer = cumulative + offset
-        frameLength = animation.keyframes[frame].length - offset
+        frameLength = animation.keyframes[frameIndex].length - offset
     }
 
     fun restartFrame() {

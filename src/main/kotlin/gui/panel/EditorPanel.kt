@@ -150,10 +150,10 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     }
 
     private fun updateType(type: TransformationType) {
+        context.framebuffer.nodeRenderer.selectedType = type
         val reference = currentReference?: return
         val transformation = reference.group[type]?: return
 
-        context.framebuffer.nodeRenderer.selectedType = type
         for (i in 0 until sliders.size) {
             sliders[i].setValue(transformation.offset.get(i))
         }
