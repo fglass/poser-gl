@@ -33,7 +33,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
     fun apply(context: Processor) {
         // Reset from last frame
-        context.framebuffer.nodeRenderer.nodes.clear()
+        context.nodeRenderer.nodes.clear()
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
@@ -44,7 +44,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
         for (transformation in transformations) {
             if (transformation is Reference) {
-                context.framebuffer.nodeRenderer.addNode(def, transformation)
+                context.nodeRenderer.addNode(def, transformation)
             }
             transformation.apply(def)
         }

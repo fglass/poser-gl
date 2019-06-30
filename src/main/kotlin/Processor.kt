@@ -1,4 +1,5 @@
 import animation.AnimationHandler
+import animation.node.NodeRenderer
 import entity.Entity
 import gui.GuiManager
 import input.MouseHandler
@@ -48,6 +49,7 @@ class Processor {
     private var running = true
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
+    lateinit var nodeRenderer: NodeRenderer
 
     val loader = Loader()
     val datLoader = DatLoader(loader)
@@ -112,8 +114,9 @@ class Processor {
             framebuffer.resize()
         }
 
-        glEnable(GL_PROGRAM_POINT_SIZE_EXT)
+        nodeRenderer = NodeRenderer(this, framebuffer)
         entityLoader.loadPlayer()
+        glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
         // Render loop
         while (running) {
@@ -157,7 +160,7 @@ class Processor {
             vSync.waitIfNecessary()
         }
 
-        framebuffer.nodeRenderer.cleanUp()
+        nodeRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()
         guiRenderer.destroy()

@@ -19,18 +19,13 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 
-class EditorPanel(private val gui: GuiManager, private val context: Processor): Panel() {
+class EditorPanel(private val gui: GuiManager, private val context: Processor): Panel() { // TODO: Clean-up
 
     private val sliders = ArrayList<TextSlider>()
     private var currentReference: Reference? = null
     private val selectedFrame: Label
     private val frameLength: TextSlider
     private val selectedNode: Label
-
-    private val referenceIcon = BufferedImage(RESOURCES_PATH + "reference.png")
-    private val translationIcon = BufferedImage(RESOURCES_PATH + "translation.png")
-    private val rotationIcon = BufferedImage(RESOURCES_PATH + "rotation.png")
-    private val scaleIcon = BufferedImage(RESOURCES_PATH + "scale.png")
     private val transformations: ConfigGroup
 
     init {
@@ -90,7 +85,8 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         nodePanel.add(selectedNode)
 
         transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
-                                      referenceIcon, translationIcon, rotationIcon, scaleIcon)
+            BufferedImage(RESOURCES_PATH + "reference.png"), BufferedImage(RESOURCES_PATH + "translation.png"),
+            BufferedImage(RESOURCES_PATH + "rotation.png"), BufferedImage(RESOURCES_PATH + "scale.png"))
 
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -141,7 +137,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     }
 
     private fun updateType(type: TransformationType) {
-        context.framebuffer.nodeRenderer.selectedType = type
+        context.nodeRenderer.selectedType = type
         val transformation = currentReference?.getTransformation(type)?: return
 
         for (i in 0 until sliders.size) {

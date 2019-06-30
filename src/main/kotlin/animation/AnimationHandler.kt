@@ -72,18 +72,18 @@ class AnimationHandler(private val context: Processor) {
     }
 
     private fun onNewFrame(keyframe: Keyframe) {
-        context.framebuffer.nodeRenderer.reselectNode()
+        context.nodeRenderer.reselectNode()
         context.gui.editorPanel.setKeyframe(keyframe)
         previousFrame = keyframe
     }
 
     fun transformNode(coordIndex: Int, newValue: Int) {
-        if (!context.framebuffer.nodeRenderer.enabled) {
+        if (!context.nodeRenderer.enabled) {
             return
         }
 
-        val selected = context.framebuffer.nodeRenderer.selectedNode?: return
-        val type = context.framebuffer.nodeRenderer.selectedType
+        val selected = context.nodeRenderer.selectedNode?: return
+        val type = context.nodeRenderer.selectedType
         val preCopy = selected.reference.getTransformation(type)?: return
 
         val animation = getAnimation(false)?: return
@@ -140,8 +140,8 @@ class AnimationHandler(private val context: Processor) {
         frameCount = 0
         frameLength = 0
         previousFrame = Keyframe(-1,-1, -1)
-        context.framebuffer.nodeRenderer.deselectNode()
-        context.framebuffer.nodeRenderer.nodes.clear()
+        context.nodeRenderer.deselectNode()
+        context.nodeRenderer.nodes.clear()
         context.gui.animationPanel.reset()
     }
 }

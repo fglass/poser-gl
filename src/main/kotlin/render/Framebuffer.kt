@@ -26,8 +26,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     private var textureWidth = 0
     private var textureHeight = 0
 
-    private lateinit var glRenderer: GlRenderer
-    lateinit var nodeRenderer: NodeRenderer
+    lateinit var glRenderer: GlRenderer
     private val camera = Camera(mouse)
 
     var polygonMode = PolygonMode.FILL
@@ -39,7 +38,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
-            nodeRenderer.handleClick(event.button, event.action)
+            context.nodeRenderer.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
             mouse.handleDrag(event.delta)
@@ -55,7 +54,6 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
     fun lateInit() {
         glRenderer = GlRenderer(context, shader)
-        nodeRenderer = NodeRenderer(context, glRenderer.projectionMatrix, size, position)
     }
 
     private fun createTexture(): FBOImage {
@@ -97,7 +95,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         context.animationHandler.tick()
         camera.move()
         renderEntity()
-        nodeRenderer.render(camera)
+        context.nodeRenderer.render(camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
@@ -132,7 +130,6 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         if (::glRenderer.isInitialized) {
             glRenderer.reloadProjectionMatrix()
-            nodeRenderer.resize(glRenderer.projectionMatrix, size, position)
         }
     }
 

@@ -11,11 +11,11 @@ import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
+import render.Framebuffer
 import render.Loader
 import utils.Maths
 
-class NodeRenderer(private val context: Processor, private var projectionMatrix: Matrix4f,
-                   private var fboSize: Vector2f, private var fboPosition: Vector2f) {
+class NodeRenderer(private val context: Processor, private val framebuffer: Framebuffer) {
 
     private val quad: Model
     private val loader = Loader()
@@ -110,12 +110,12 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
 
     private fun calculateRay(): Rayf {
         val mousePosition = Mouse.getCursorPosition()
-        mousePosition.sub(fboPosition)
+        mousePosition.sub(framebuffer.position)
 
         val origin = Vector3f()
         val dir = Vector3f()
-        Matrix4f(projectionMatrix).mul(viewMatrix).unprojectRay(
-            mousePosition.x, mousePosition.y, intArrayOf(0, 0, fboSize.x.toInt(), fboSize.y.toInt()), origin, dir
+        Matrix4f(framebuffer.glRenderer.projectionMatrix).mul(viewMatrix).unprojectRay(mousePosition.x, mousePosition.y,
+            intArrayOf(0, 0, framebuffer.size.x.toInt(), framebuffer.size.y.toInt()), origin, dir
         )
         return Rayf(origin, dir)
     }
@@ -166,7 +166,7 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         modelMatrix.m22(viewMatrix.m22())
         modelMatrix.scale(node.scale)
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
-        shader.loadProjectionMatrix(projectionMatrix)
+        shader.loadProjectionMatrix(framebuffer.glRenderer.projectionMatrix)
     }
 
     private fun finish() {
@@ -175,12 +175,6 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
         glDisableVertexAttribArray(0)
         glBindVertexArray(0)
         shader.stop()
-    }
-
-    fun resize(projectionMatrix: Matrix4f, fboSize: Vector2f, fboPosition: Vector2f) {
-        this.projectionMatrix = projectionMatrix
-        this.fboSize = fboSize
-        this.fboPosition = fboPosition
     }
 
     fun cleanUp() {
