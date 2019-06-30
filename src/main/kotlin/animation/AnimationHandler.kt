@@ -4,8 +4,6 @@ import Processor
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
 
-// https://www.rune-server.ee/runescape-development/rs2-client/tutorials/340745-runescapes-rendering-animation-system.html
-
 const val MAX_LENGTH = 999
 
 class AnimationHandler(private val context: Processor) {
@@ -17,24 +15,28 @@ class AnimationHandler(private val context: Processor) {
     var currentAnimation: Animation? = null
     var previousFrame = Keyframe(-1, -1, -1)
     var copiedFrame = Keyframe(-1, -1, -1)
-    private var frameCount = 0
+    var frameCount = 0
     private var frameLength = 0
 
     private var playing = false
     private var timer = 0
 
     init {
-        AnimationLoader(context, this)
+        AnimationService(context, this)
         cacheAnimations = animations.size
     }
 
     fun load(animation: Animation) {
         resetAnimation()
         animation.load()
-        frameLength = animation.keyframes.first().length // TODO empty
-        currentAnimation = animation
 
-        playPause(true)
+        if (animation.keyframes.isEmpty()) {
+            return
+        }
+
+        frameLength = animation.keyframes.first().length
+        currentAnimation = animation
+        setPlay(true)
         context.gui.animationPanel.setTimeline()
     }
 
@@ -69,6 +71,12 @@ class AnimationHandler(private val context: Processor) {
         return frameCount % animation.keyframes.size
     }
 
+    private fun onNewFrame(keyframe: Keyframe) {
+        context.framebuffer.nodeRenderer.reselectNode()
+        context.gui.editorPanel.setKeyframe(keyframe)
+        previousFrame = keyframe
+    }
+
     fun transformNode(coordIndex: Int, newValue: Int) {
         if (!context.framebuffer.nodeRenderer.enabled) {
             return
@@ -79,48 +87,31 @@ class AnimationHandler(private val context: Processor) {
         val child = selected.reference.group[type]?: return
         val id = child.id
 
-        val animation = copyIfNecessary()?: return
-
+        val animation = getAnimation(false)?: return
         val keyframe = animation.keyframes[getFrameIndex(animation)]
         val transformation = keyframe.transformations.first { it.id == id }
         transformation.offset.setComponent(coordIndex, newValue)
     }
 
-    fun modifyKeyframeLength(newLength: Int) {
-        val animation = copyIfNecessary()?: return
-        animation.modifyKeyframeLength(newLength)
-        setFrame(frameCount, 0) // Restart frame
-        context.gui.animationPanel.setTimeline()
-    }
-
-    private fun copyIfNecessary(): Animation? { // TODO
-        val animation = currentAnimation?: return null
-
-        return if (!animation.modified) {
-            val newId = animations.size
-            val newAnimation = Animation(newId, animation)
-
-            currentAnimation = newAnimation
-            animations[newId] = newAnimation
-            context.gui.listPanel.animationList.addElement(newAnimation)
-            context.gui.animationPanel.sequenceId.textState.text = newId.toString()
-            newAnimation
-        } else {
-            animation
+    fun getAnimation(useCurrent: Boolean): Animation? {
+        val current = currentAnimation?: return null
+        if (current.modified || useCurrent) {
+            return current
         }
-    }
 
-    private fun onNewFrame(keyframe: Keyframe) {
-        context.framebuffer.nodeRenderer.reselectNode()
-        context.gui.editorPanel.setKeyframe(keyframe)
-        previousFrame = keyframe
+        val copied = Animation(animations.size, current)
+        currentAnimation = copied
+        animations[copied.sequence.id] = copied
+        context.gui.listPanel.animationList.addElement(copied)
+        context.gui.animationPanel.sequenceId.textState.text = copied.sequence.id.toString()
+        return copied
     }
 
     fun togglePlay() {
-        playPause(!playing)
+        setPlay(!playing)
     }
 
-    fun playPause(playing: Boolean) {
+    fun setPlay(playing: Boolean) {
         if (playing && currentAnimation == null) {
             return
         }

@@ -12,7 +12,7 @@ import net.runelite.cache.definitions.loaders.SequenceLoader
 import net.runelite.cache.fs.Store
 import java.io.File
 
-class AnimationLoader(private val context: Processor, private val handler: AnimationHandler) {
+class AnimationService(private val context: Processor, private val handler: AnimationHandler) {
 
     init {
         val store = Store(File(CACHE_PATH))
@@ -64,5 +64,9 @@ class AnimationLoader(private val context: Processor, private val handler: Anima
         }
         println("Loaded ${handler.frames.size()} frames")
         store.close()
+    }
+
+    fun pack() { // TODO
+
     }
 }

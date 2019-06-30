@@ -78,15 +78,15 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
             }
 
             if (mask and 1 != 0) {
-                writeTransformValue(os, transformation.offset.x)
+                writeSmartShort(os, transformation.offset.x)
             }
 
             if (mask and 2 != 0) {
-                writeTransformValue(os, transformation.offset.y)
+                writeSmartShort(os, transformation.offset.y)
             }
 
             if (mask and 4 != 0) {
-                writeTransformValue(os, transformation.offset.z)
+                writeSmartShort(os, transformation.offset.z)
             }
         }
 
@@ -94,7 +94,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         return out.toByteArray()
     }
 
-    private fun writeTransformValue(os: DataOutputStream, value: Int) {
+    private fun writeSmartShort(os: DataOutputStream, value: Int) {
         if (value >= -64 && value < 64) {
             os.writeByte(value + 64)
         } else if (value >= -16384 && value < 16384) {

@@ -131,7 +131,7 @@ class NodeRenderer(private val context: Processor, private var projectionMatrix:
     private fun clickNode() {
         val closest = getClosestNode()?: return
         selectNode(closest)
-        context.animationHandler.playPause(false)
+        context.animationHandler.setPlay(false)
     }
 
     private fun selectNode(node: ReferenceNode) {

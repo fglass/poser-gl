@@ -3,10 +3,7 @@ package gui.panel
 import BG_COLOUR
 import RESOURCES_PATH
 import Processor
-import animation.Animation
-import animation.Keyframe
-import animation.Reference
-import animation.TransformationType
+import animation.*
 import animation.node.ReferenceNode
 import gui.GuiManager
 import gui.component.ButtonGroup
@@ -29,11 +26,6 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     private val selectedFrame: Label
     private val frameLength: TextSlider
     private val selectedNode: Label
-
-    private val addIcon = BufferedImage(RESOURCES_PATH + "add-keyframe.png")
-    private val copyIcon = BufferedImage(RESOURCES_PATH + "copy.png")
-    private val pasteIcon = BufferedImage(RESOURCES_PATH + "paste.png")
-    private val deleteIcon = BufferedImage(RESOURCES_PATH + "delete-keyframe.png")
 
     private val referenceIcon = BufferedImage(RESOURCES_PATH + "reference.png")
     private val translationIcon = BufferedImage(RESOURCES_PATH + "translation.png")
@@ -64,24 +56,23 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         val length = Label("Length:", 35f, 40f, 50f, 15f)
         framePanel.add(length)
 
-        frameLength = TextSlider({ context.animationHandler.modifyKeyframeLength(it) },
+        frameLength = TextSlider({ context.animationHandler.getAnimation(false)?.changeKeyframeLength(it) },
                                  Pair(1, 99), 82f, 40f, 50f, 15f)
         framePanel.add(frameLength)
 
-        val icons = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f), addIcon, copyIcon, pasteIcon, deleteIcon)
-        icons.style.background.color = ColorConstants.transparent()
-        val operations = arrayOf(Animation::addKeyframe, Animation::copyKeyframe,
-                                 Animation::pasteKeyframe, Animation::deleteKeyframe)
+        val icons = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f),
+                                KeyframeAction.ADD.getIcon(), KeyframeAction.COPY.getIcon(),
+                                KeyframeAction.PASTE.getIcon(), KeyframeAction.DELETE.getIcon())
 
         for ((i, button) in icons.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                     event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    val animation = context.animationHandler.currentAnimation?: return@addListener
-                    operations[i].invoke(animation)
+                    KeyframeAction.values()[i].apply(context)
                 }
             }
         }
+        icons.style.background.color = ColorConstants.transparent()
         framePanel.add(icons)
 
         val nodePanel = Panel(0f, 95f, size.x, 150f)

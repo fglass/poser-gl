@@ -17,7 +17,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
         loaded = true
         modified = true
-        maximumLength = getMaxLength()
+        updateMaxLength()
     }
 
     var modified = false
@@ -65,7 +65,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             keyframes.add(keyframe)
         }
 
-        maximumLength = getMaxLength()
+        updateMaxLength()
         loaded = true
         encode() // TODO
     }
@@ -76,6 +76,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 index != -1 -> Vector3i(frame.translator_x[index], frame.translator_y[index], frame.translator_z[index])
                 else -> type.getDefaultOffset()
         }
+    }
+
+    fun updateMaxLength() {
+        maximumLength = getMaxLength()
     }
 
     private fun getMaxLength(): Int {
@@ -104,10 +108,19 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun deleteKeyframe() {
         if (keyframes.size > 1) {
-            val frameIndex = context.animationHandler.getFrameIndex(this)
-            keyframes.remove(keyframes[frameIndex])
+            val index = context.animationHandler.getFrameIndex(this)
+            keyframes.remove(keyframes[index])
             updateKeyframes()
         }
+    }
+
+    fun changeKeyframeLength(newLength: Int) {
+        val index = context.animationHandler.getFrameIndex(this)
+        keyframes[index].length = newLength
+        updateMaxLength()
+
+        context.animationHandler.setFrame(context.animationHandler.frameCount, 0) // Restart frame
+        context.gui.animationPanel.setTimeline()
     }
 
     private fun insertKeyframe(index: Int, keyframe: Keyframe) {
@@ -117,19 +130,12 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     private fun updateKeyframes() {
-        context.animationHandler.playPause(false)
-        maximumLength = getMaxLength()
+        context.animationHandler.setPlay(false)
+        updateMaxLength()
         context.gui.animationPanel.setTimeline()
     }
 
-    fun modifyKeyframeLength(newLength: Int) {
-        val index = context.animationHandler.getFrameIndex(this)
-        val keyframe = keyframes[index]
-        keyframe.length = newLength
-        maximumLength = getMaxLength()
-    }
-
-    fun encode(): ByteArray {
+    private fun encode(): ByteArray {
         // If !modified...
         val sequence = SequenceDefinition(sequence.id)
 
@@ -165,7 +171,6 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             //val test2 = FrameLoader().load(frame.framemap, keyframe.id, test)
             break
         }
-
 
         return ByteArray(0)
     }
