@@ -17,13 +17,13 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
         loaded = true
         modified = true
-        updateMaxLength()
+        length = calculateLength()
     }
 
-    var modified = false
     private var loaded = false
+    var modified = false
     val keyframes = ArrayList<Keyframe>()
-    var maximumLength = 0
+    var length = 0
 
     fun load() {
         if (loaded) {
@@ -40,7 +40,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index])
             val frameMap = frame.framemap
             val references = ArrayDeque<Reference>()
-            val maxId = frame.indexFrameIds.max() ?: continue
+            val maxId = frame.indexFrameIds.max()?: continue
 
             for (id in 0..maxId) {
                 val typeId = frameMap.types[id]
@@ -54,20 +54,21 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 if (transformation.type == TransformationType.REFERENCE) {
                     references.add(Reference(transformation))
                 } else {
-                    references.peekLast().group[transformation.type] = transformation
+                    references.peekLast().children[transformation.type] = transformation
                 }
             }
 
             var newId = 0
             for (reference in references) {
-                reference.group.forEach { keyframe.add(it.value, newId++) }
+                keyframe.add(reference, newId++)
+                reference.children.forEach { keyframe.add(it.value, newId++) }
             }
             keyframes.add(keyframe)
         }
 
-        updateMaxLength()
+        length = calculateLength()
         loaded = true
-        encode() // TODO
+        encode()
     }
 
     private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -78,11 +79,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
     }
 
-    fun updateMaxLength() {
-        maximumLength = getMaxLength()
-    }
-
-    private fun getMaxLength(): Int {
+    private fun calculateLength(): Int {
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
     }
 
@@ -117,7 +114,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     fun changeKeyframeLength(newLength: Int) {
         val index = context.animationHandler.getFrameIndex(this)
         keyframes[index].length = newLength
-        updateMaxLength()
+        length = calculateLength()
 
         context.animationHandler.setFrame(context.animationHandler.frameCount, 0) // Restart frame
         context.gui.animationPanel.setTimeline()
@@ -131,7 +128,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     private fun updateKeyframes() {
         context.animationHandler.setPlay(false)
-        updateMaxLength()
+        length = calculateLength()
         context.gui.animationPanel.setTimeline()
     }
 

@@ -15,12 +15,9 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
                 val newReference = Reference(it)
                 transformations.add(newReference)
 
-                for (transformation in it.group.values) {
-                    if (transformation.type == TransformationType.REFERENCE) {
-                        continue
-                    }
+                for (transformation in it.children.values) {
                     val newTransformation = Transformation(transformation)
-                    newReference.group[transformation.type] = newTransformation
+                    newReference.children[transformation.type] = newTransformation
                     transformations.add(newTransformation)
                 }
             }
@@ -41,7 +38,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         animOffsetY = 0
         animOffsetZ = 0
 
-        val entity = context.entity ?: return
+        val entity = context.entity?: return
         val def = entity.model.definition
         def.resetAnim()
 

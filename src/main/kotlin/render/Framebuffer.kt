@@ -19,7 +19,7 @@ import shader.ShadingType
 import shader.StaticShader
 
 class Framebuffer(private val context: Processor, private val shader: StaticShader,
-                  private val mouse: MouseHandler, private val scaleFactor: Int) : ImageView() {
+                  private val mouse: MouseHandler, private val scaleFactor: Int): ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0

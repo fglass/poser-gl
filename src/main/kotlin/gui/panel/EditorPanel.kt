@@ -131,7 +131,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
         for ((i, button) in transformations.buttons.withIndex()) {
             val type = TransformationType.fromId(i)
-            button.isFocusable = node.reference.group[type] != null
+            button.isFocusable = node.reference.getTransformation(type) != null
         }
         transformations.updateConfigs(transformations.buttons[selectedType.id])
 
@@ -142,8 +142,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
 
     private fun updateType(type: TransformationType) {
         context.framebuffer.nodeRenderer.selectedType = type
-        val reference = currentReference?: return
-        val transformation = reference.group[type]?: return
+        val transformation = currentReference?.getTransformation(type)?: return
 
         for (i in 0 until sliders.size) {
             sliders[i].setValue(transformation.offset.get(i))

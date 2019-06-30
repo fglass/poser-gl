@@ -108,8 +108,8 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         }
 
         sequenceId.textState.text = animation.sequence.id.toString()
-        unitX = getUnitX(animation.maximumLength)
-        addTimes(animation.maximumLength)
+        unitX = getUnitX(animation.length)
+        addTimes(animation.length)
         addKeyframes(animation.keyframes)
         timeline.add(cursor)
     }
@@ -184,7 +184,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
             nodeToggle.position.x = size.x - 32
         }
         val animation = context.animationHandler.currentAnimation?: return
-        unitX = getUnitX(animation.maximumLength)
+        unitX = getUnitX(animation.length)
         setTimeline()
     }
 

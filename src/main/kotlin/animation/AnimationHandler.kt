@@ -55,7 +55,7 @@ class AnimationHandler(private val context: Processor) {
                 frameCount++
                 frameLength = animation.keyframes[getFrameIndex(animation)].length
             }
-            timer = ++timer % animation.maximumLength // Increment timer
+            timer = ++timer % animation.length // Increment timer
         }
 
         val keyframe = animation.keyframes[getFrameIndex(animation)]
@@ -64,7 +64,7 @@ class AnimationHandler(private val context: Processor) {
         if (keyframe.id != previousFrame.id) {
             onNewFrame(keyframe)
         }
-        context.gui.animationPanel.tickCursor(timer, animation.maximumLength)
+        context.gui.animationPanel.tickCursor(timer, animation.length)
     }
 
     fun getFrameIndex(animation: Animation): Int {
@@ -84,12 +84,11 @@ class AnimationHandler(private val context: Processor) {
 
         val selected = context.framebuffer.nodeRenderer.selectedNode?: return
         val type = context.framebuffer.nodeRenderer.selectedType
-        val child = selected.reference.group[type]?: return
-        val id = child.id
+        val preCopy = selected.reference.getTransformation(type)?: return
 
         val animation = getAnimation(false)?: return
         val keyframe = animation.keyframes[getFrameIndex(animation)]
-        val transformation = keyframe.transformations.first { it.id == id }
+        val transformation = keyframe.transformations.first { it.id == preCopy.id }
         transformation.offset.setComponent(coordIndex, newValue)
     }
 

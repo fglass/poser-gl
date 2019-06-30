@@ -16,14 +16,14 @@ open class Transformation(var id: Int, val type: TransformationType, var frameMa
 
 class Reference(transformation: Transformation): Transformation(transformation) {
 
-    var group = LinkedHashMap<TransformationType, Transformation>() // TODO children
-
-    init {
-        group[type] = this
-    }
+    var children = LinkedHashMap<TransformationType, Transformation>()
 
     fun hasType(type: TransformationType): Boolean {
-        return group.containsKey(type)
+        return children.containsKey(type)
+    }
+
+    fun getTransformation(type: TransformationType): Transformation? {
+        return if (type == TransformationType.REFERENCE) this else children[type]
     }
 }
 
