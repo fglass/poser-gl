@@ -35,7 +35,9 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             val frameFileId = frameId and 0xFFFF
             val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
 
-            val keyframe = Keyframe(index, sequence.frameLenghts[index])
+            //println("Index: $index seqFrameId: $frameId framesId: ${frameId.ushr(16)} fileId: $frameFileId") TODO
+
+            val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index])
             val frameMap = frame.framemap
             val references = ArrayDeque<Reference>()
             val maxId = frame.indexFrameIds.max() ?: continue
@@ -65,6 +67,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         maximumLength = getMaxLength()
         loaded = true
+        encode() // TODO
     }
 
     private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -75,7 +78,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
     }
 
-    fun getMaxLength(): Int {
+    private fun getMaxLength(): Int {
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
     }
 
@@ -124,5 +127,46 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         val keyframe = keyframes[index]
         keyframe.length = newLength
         maximumLength = getMaxLength()
+    }
+
+    fun encode(): ByteArray {
+        // If !modified...
+        val sequence = SequenceDefinition(sequence.id)
+
+        sequence.frameLenghts = IntArray(keyframes.size)
+        sequence.frameIDs = IntArray(keyframes.size)
+
+        var maxOffset = 0
+
+        for (i in 0 until keyframes.size) {
+            val keyframe = keyframes[i]
+            sequence.frameLenghts[i] = keyframe.length
+
+            val frameId = keyframe.frameId
+            val archiveId = frameId.ushr(16)
+
+            val maxArchiveId = context.animationHandler.frames.keySet().max()!!
+            val newArchiveId = maxArchiveId + 1
+
+            val frames = context.animationHandler.frames.get(archiveId)
+            val frameFileId = frameId and 0xFFFF
+            val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
+
+            //val maxFileId = frames.maxBy { it.id }!!.id
+            //val newFileId = maxFileId + ++maxOffset
+
+            // Use new archive file with reset file ids or same archive and maxFileId? TODO
+            val newFrameId = ((newArchiveId and 0xFF) shl 16) or (i and 0xFFFF)
+            //println("Original $frameId new $newFrameId archive $newArchiveId file $i")
+
+            sequence.frameIDs[i] = newFrameId
+
+            //val test = FrameEncoder().encode(keyframe)
+            //val test2 = FrameLoader().load(frame.framemap, keyframe.id, test)
+            break
+        }
+
+
+        return ByteArray(0)
     }
 }

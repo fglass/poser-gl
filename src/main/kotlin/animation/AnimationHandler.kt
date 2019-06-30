@@ -15,8 +15,8 @@ class AnimationHandler(private val context: Processor) {
     var cacheAnimations: Int
 
     var currentAnimation: Animation? = null
-    var previousFrame = Keyframe(-1, -1)
-    var copiedFrame = Keyframe(-1, -1)
+    var previousFrame = Keyframe(-1, -1, -1)
+    var copiedFrame = Keyframe(-1, -1, -1)
     private var frameCount = 0
     private var frameLength = 0
 
@@ -31,7 +31,7 @@ class AnimationHandler(private val context: Processor) {
     fun load(animation: Animation) {
         resetAnimation()
         animation.load()
-        frameLength = animation.keyframes.first().length
+        frameLength = animation.keyframes.first().length // TODO empty
         currentAnimation = animation
 
         playPause(true)
@@ -93,7 +93,7 @@ class AnimationHandler(private val context: Processor) {
         context.gui.animationPanel.setTimeline()
     }
 
-    private fun copyIfNecessary(): Animation? {
+    private fun copyIfNecessary(): Animation? { // TODO
         val animation = currentAnimation?: return null
 
         return if (!animation.modified) {
@@ -149,7 +149,7 @@ class AnimationHandler(private val context: Processor) {
         timer = 0
         frameCount = 0
         frameLength = 0
-        previousFrame = Keyframe(-1,-1)
+        previousFrame = Keyframe(-1,-1, -1)
         context.framebuffer.nodeRenderer.deselectNode()
         context.framebuffer.nodeRenderer.nodes.clear()
         context.gui.animationPanel.reset()

@@ -32,9 +32,8 @@ class AnimationLoader(private val context: Processor, private val handler: Anima
         val files = archive.getFiles(archiveData)
 
         for (file in files.files) {
-            val loader = SequenceLoader()
-            val seq = loader.load(file.fileId, file.contents)
-            val animation = Animation(context, seq)
+            val sequence = SequenceLoader().load(file.fileId, file.contents)
+            val animation = Animation(context, sequence)
             handler.animations[file.fileId] = animation
         }
         println("Loaded ${handler.animations.size} sequences")
@@ -48,6 +47,7 @@ class AnimationLoader(private val context: Processor, private val handler: Anima
         for (archive in frameIndex.archives) {
             var archiveData = storage.loadArchive(archive)
             val archiveFiles = archive.getFiles(archiveData)
+
             for (archiveFile in archiveFiles.files) {
                 val contents = archiveFile.contents
                 val frameMapArchiveId = (contents[0].toInt() and 0xff) shl 8 or (contents[1].toInt() and 0xff)
