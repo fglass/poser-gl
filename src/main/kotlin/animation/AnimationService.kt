@@ -66,7 +66,7 @@ class AnimationService(private val context: Processor, private val handler: Anim
         store.close()
     }
 
-    fun pack() { // TODO
+    fun pack() {
 
     }
 }

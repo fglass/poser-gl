@@ -3,7 +3,10 @@ package animation
 import Processor
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.SequenceDefinition
+import net.runelite.cache.definitions.loaders.SequenceLoader
 import org.joml.Vector3i
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
@@ -31,7 +34,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
 
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
-            val frames = context.animationHandler.frames.get(frameId.ushr(16))
+            val frames = context.animationHandler.frames.get(frameId ushr 16)
             val frameFileId = frameId and 0xFFFF
             val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
 
@@ -68,7 +71,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         length = calculateLength()
         loaded = true
-        encode()
+        toSequence()
     }
 
     private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -132,21 +135,20 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         context.gui.animationPanel.setTimeline()
     }
 
-    private fun encode(): ByteArray {
-        // If !modified...
+    private fun toSequence() {
+        // If (!modified) TODO
         val sequence = SequenceDefinition(sequence.id)
-
         sequence.frameLenghts = IntArray(keyframes.size)
         sequence.frameIDs = IntArray(keyframes.size)
 
-        var maxOffset = 0
+        //var maxOffset = 0
 
         for (i in 0 until keyframes.size) {
             val keyframe = keyframes[i]
             sequence.frameLenghts[i] = keyframe.length
 
             val frameId = keyframe.frameId
-            val archiveId = frameId.ushr(16)
+            val archiveId = frameId ushr 16
 
             val maxArchiveId = context.animationHandler.frames.keySet().max()!!
             val newArchiveId = maxArchiveId + 1
@@ -158,17 +160,38 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             //val maxFileId = frames.maxBy { it.id }!!.id
             //val newFileId = maxFileId + ++maxOffset
 
-            // Use new archive file with reset file ids or same archive and maxFileId? TODO
+            // Use new archive file with reset file ids or same archive and maxFileId?
+            // Solution: Put in new archive file, but any unmodified keyframe has an untouched frameId
             val newFrameId = ((newArchiveId and 0xFF) shl 16) or (i and 0xFFFF)
+
             //println("Original $frameId new $newFrameId archive $newArchiveId file $i")
+            sequence.frameIDs[i] = if (keyframe.modified) newFrameId else frameId
+        }
+    }
 
-            sequence.frameIDs[i] = newFrameId
+    //val buf = encode(sequence)
+    //val test2 = SequenceLoader().load(-1, buf)
+    private fun encode(sequence: SequenceDefinition): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
 
-            //val test = FrameEncoder().encode(keyframe)
-            //val test2 = FrameLoader().load(frame.framemap, keyframe.id, test)
-            break
+        os.writeByte(1) // Opcode 1
+        os.writeShort(keyframes.size)
+
+        for (keyframe in keyframes) {
+            os.writeShort(keyframe.length)
         }
 
-        return ByteArray(0)
+        for (frameId in sequence.frameIDs) {
+            os.writeShort(frameId and 0xFFFF)
+        }
+
+        for (frameId in sequence.frameIDs) {
+            os.writeShort(frameId ushr 16)
+        }
+
+        os.writeByte(0) // Opcode 0
+        os.close()
+        return out.toByteArray()
     }
 }

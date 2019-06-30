@@ -8,6 +8,8 @@ import java.io.DataOutputStream
 
 class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
+    var modified = true // TODO
+
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length) {
         keyframe.transformations.forEach {
@@ -54,6 +56,8 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
+    //val test = FrameEncoder().encode(keyframe)
+    //val test2 = FrameLoader().load(frame.framemap, keyframe.id, test)
     fun encode(keyframe: Keyframe): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
