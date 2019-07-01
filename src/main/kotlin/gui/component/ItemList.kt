@@ -6,35 +6,35 @@ import net.runelite.cache.definitions.ItemDefinition
 
 class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): ElementList(x, y, gui) {
 
-    private val items = context.itemLoader.items
-    private val itemElements = mutableListOf<ItemElement>()
+    private val items = context.cacheService.items
+    private val elements = HashMap<Int, Element>()
 
     init {
         var index = 0
-        for ((i, item) in items.withIndex()) {
+        for (item in items.values) {
             val element = ItemElement(item, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
-            itemElements.add(element)
+            elements[item.id] = element
             container.add(element)
-            maxIndex = i
+            maxIndex = item.id
         }
         container.setSize(containerX, listY + index * listYOffset)
-        println("Loaded $index items")
     }
 
     override fun getFiltered(input: String): List<Int> {
-        return (0..maxIndex).toList().filter {
-            items[it].name.toLowerCase().contains(input)
+        return elements.keys.filter {
+            val item = items[it]
+            item != null && item.name.toLowerCase().contains(input)
         }
     }
 
-    override fun getElements(): List<Element> {
-        return itemElements
+    override fun getElements(): HashMap<Int, Element> {
+        return elements
     }
 
     override fun handleElement(index: Int, element: Element) {
         val item = items[index]
-        if (element is ItemElement) {
+        if (item != null && element is ItemElement) {
             element.item = item
             element.updateText()
         }
@@ -53,7 +53,7 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
 
         override fun onClickEvent() {
             val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
-            context.entity?.add(models, context.entityLoader)
+            context.entity?.add(models, context.entityHandler)
         }
     }
 }

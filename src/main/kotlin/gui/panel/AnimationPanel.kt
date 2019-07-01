@@ -1,14 +1,15 @@
 package gui.panel
 
+import RESOURCES_PATH
 import BG_COLOUR
 import Processor
-import RESOURCES_PATH
 import animation.Keyframe
 import gui.GuiManager
 import gui.component.HoverButton
 import gui.component.ImageButton
 import gui.component.ToggleButton
 import org.joml.Vector2f
+import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -79,6 +80,15 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         sequenceId = Label("N/A", x + 74, 5f, 50f, 15f)
         menu.add(animation)
         menu.add(sequenceId)
+
+        val pack = Button("Pack", size.x - 100, 5f, 50f, 15f)
+        pack.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                val anim = context.animationHandler.currentAnimation?: return@addListener
+                context.cacheService.pack(anim)
+            }
+        }
+        menu.add(pack)
 
         nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, true)
         nodeToggle.style.setBorderRadius(1f)

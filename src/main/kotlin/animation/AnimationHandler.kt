@@ -8,10 +8,6 @@ const val MAX_LENGTH = 999
 
 class AnimationHandler(private val context: Processor) {
 
-    val animations = HashMap<Int, Animation>()
-    val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
-    var cacheAnimations: Int
-
     var currentAnimation: Animation? = null
     var previousFrame = Keyframe(-1, -1, -1)
     var copiedFrame = Keyframe(-1, -1, -1)
@@ -20,11 +16,6 @@ class AnimationHandler(private val context: Processor) {
 
     private var playing = false
     private var timer = 0
-
-    init {
-        AnimationService(context, this)
-        cacheAnimations = animations.size
-    }
 
     fun load(animation: Animation) {
         resetAnimation()
@@ -98,9 +89,9 @@ class AnimationHandler(private val context: Processor) {
             return current
         }
 
-        val copied = Animation(animations.size, current)
+        val copied = Animation(context.cacheService.animations.size, current) // TODO animations.size
         currentAnimation = copied
-        animations[copied.sequence.id] = copied
+        context.cacheService.animations[copied.sequence.id] = copied
         context.gui.listPanel.animationList.addElement(copied)
         context.gui.animationPanel.sequenceId.textState.text = copied.sequence.id.toString()
         return copied
@@ -131,7 +122,6 @@ class AnimationHandler(private val context: Processor) {
         timer = cumulative + offset
         val keyframe = animation.keyframes[frameIndex]
         frameLength = keyframe.length - offset
-        onNewFrame(keyframe)
     }
 
     fun resetAnimation() {

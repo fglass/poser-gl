@@ -4,34 +4,27 @@ import CACHE_PATH
 import net.runelite.cache.IndexType
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
-import net.runelite.cache.fs.Store
+import org.displee.CacheLibrary
 import org.joml.Vector3f
 import render.Loader
-import java.io.File
 
 class DatLoader(private val loader: Loader) {
 
     private val maxPriority = 255
 
-    fun load(id: Int, npc: NpcDefinition): ModelDefinition {
-        Store(File(CACHE_PATH)).use { store ->
-            store.load()
-            val storage = store.storage
-            val index = store.getIndex(IndexType.MODELS)
+    fun load(id: Int, entity: NpcDefinition): ModelDefinition {
+        val library = CacheLibrary(CACHE_PATH)
+        val model = library.getIndex(IndexType.MODELS.number).getArchive(id).getFile(0)
+        val def = ModelLoader().load(id, model.data)
 
-            val archive = index.getArchive(id)
-            val contents = archive.decompress(storage.loadArchive(archive))
-
-            val modelLoader = ModelLoader()
-            val def = modelLoader.load(archive.archiveId, contents)
-
-            if (npc.recolorToFind != null) {
-                for (i in 0 until npc.recolorToFind.size) {
-                    def.recolor(npc.recolorToFind[i], npc.recolorToReplace[i])
-                }
+        if (entity.recolorToFind != null) {
+            for (i in 0 until entity.recolorToFind.size) {
+                def.recolor(entity.recolorToFind[i], entity.recolorToReplace[i])
             }
-            return def
         }
+
+        library.close()
+        return def
     }
 
     fun parse(def: ModelDefinition, flatShading: Boolean): Model {
@@ -54,7 +47,7 @@ class DatLoader(private val loader: Loader) {
 
                 var alpha = 0
                 if (def.faceAlphas != null) {
-                    alpha = (def.faceAlphas[i].toInt() and 0xFF) shl 16
+                    alpha = (def.faceAlphas[i].toInt() and 0xFFFF) shl 16
                 }
 
                 // 16-bit value in HSB format. First 6 bits hue, next 3 bits saturation, last 7 bits brightness

@@ -8,6 +8,7 @@ import org.joml.Vector3i
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.*
+import kotlin.NoSuchElementException
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
@@ -34,12 +35,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
 
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
-            val frames = context.animationHandler.frames.get(frameId ushr 16)
+            val frames = context.cacheService.frames.get(frameId ushr 16)
             val frameFileId = frameId and 0xFFFF
-            val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
 
-            //println("Index: $index seqFrameId: $frameId framesId: ${frameId.ushr(16)} fileId: $frameFileId") TODO
-
+            val frame = frames.stream().filter { f -> f.id == frameFileId }.findFirst().get()
             val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index])
             val frameMap = frame.framemap
             val references = ArrayDeque<Reference>()
@@ -52,11 +51,12 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 }
 
                 val type = TransformationType.fromId(typeId)
-                val transformation = Transformation(id, type, frameMap.frameMaps[id], getOffset(frame, id, type))
+                val transformation = Transformation(id, type, frameMap.id, frameMap.frameMaps[id],
+                                                    getOffset(frame, id, type))
 
                 if (transformation.type == TransformationType.REFERENCE) {
                     references.add(Reference(transformation))
-                } else {
+                } else if (references.size > 0) {
                     references.peekLast().children[transformation.type] = transformation
                 }
             }
@@ -71,7 +71,6 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         length = calculateLength()
         loaded = true
-        toSequence()
     }
 
     private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -135,7 +134,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         context.gui.animationPanel.setTimeline()
     }
 
-    private fun toSequence() {
+    fun toSequence(): SequenceDefinition {
         // If (!modified) TODO
         val sequence = SequenceDefinition(sequence.id)
         sequence.frameLenghts = IntArray(keyframes.size)
@@ -143,35 +142,39 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         //var maxOffset = 0
 
+        val maxArchiveId = context.cacheService.frames.keySet().max()!!
+        val newArchiveId = maxArchiveId + 1
+
         for (i in 0 until keyframes.size) {
             val keyframe = keyframes[i]
             sequence.frameLenghts[i] = keyframe.length
 
             val frameId = keyframe.frameId
-            val archiveId = frameId ushr 16
+            //val archiveId = frameId ushr 16
 
-            val maxArchiveId = context.animationHandler.frames.keySet().max()!!
-            val newArchiveId = maxArchiveId + 1
-
-            val frames = context.animationHandler.frames.get(archiveId)
+           /* val frames = context.animationHandler.frames.get(archiveId)
             val frameFileId = frameId and 0xFFFF
-            val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()
+            val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()*/
 
             //val maxFileId = frames.maxBy { it.id }!!.id
             //val newFileId = maxFileId + ++maxOffset
 
             // Use new archive file with reset file ids or same archive and maxFileId?
             // Solution: Put in new archive file, but any unmodified keyframe has an untouched frameId
-            val newFrameId = ((newArchiveId and 0xFF) shl 16) or (i and 0xFFFF)
+            val newFrameId = ((newArchiveId and 0xFFFF) shl 16) or (i and 0xFFFF)
 
-            //println("Original $frameId new $newFrameId archive $newArchiveId file $i")
+            //val id1 = newFrameId ushr 16
+            //val id2 = newFrameId and 0xFFFF
+
+            //println("Original frame $newFrameId archive $newArchiveId file $i new $id1 $id2")
             sequence.frameIDs[i] = if (keyframe.modified) newFrameId else frameId
         }
+        return sequence
     }
 
     //val buf = encode(sequence)
     //val test2 = SequenceLoader().load(-1, buf)
-    private fun encode(sequence: SequenceDefinition): ByteArray {
+    fun encode(sequence: SequenceDefinition): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 

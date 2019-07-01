@@ -36,10 +36,10 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
         val elements = getElements()
         adjustScroll(filtered.size)
 
-        for (i in 0 until elements.size) {
-            val element = elements[i]
+        for (i in 0 until maxIndex) {
+            val element = elements[i]?: continue
             when {
-                filtered.size >= maxIndex -> handleElement(i, element) // Reset as no matches
+                filtered.size >= elements.size -> handleElement(i, element) // Reset as no matches
                 i < filtered.size -> handleElement(filtered[i], element) // Shift matches up
                 else -> element.isEnabled = false // Hide filtered
             }
@@ -48,7 +48,7 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
 
     abstract fun getFiltered(input: String): List<Int>
 
-    abstract fun getElements(): List<Element>
+    abstract fun getElements(): HashMap<Int, Element>
 
     abstract fun handleElement(index: Int, element: Element)
 

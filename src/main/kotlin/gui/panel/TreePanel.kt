@@ -63,7 +63,7 @@ class TreePanel(private val gui: GuiManager, private val context: Processor): Pa
             deleteButton.style.border.isEnabled = false
             deleteButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    entity.remove(model, context.entityLoader)
+                    entity.remove(model, context.entityHandler)
                     update(entity)
                 }
             }

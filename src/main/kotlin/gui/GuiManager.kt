@@ -48,11 +48,11 @@ class GuiManager(position: Vector2f, size: Vector2f, private val context: Proces
             when (event.newValue.toString()) {
                 types[0] -> {
                     context.framebuffer.shadingType = ShadingType.SMOOTH
-                    context.entity!!.reload(context.entityLoader)
+                    context.entity!!.reload(context.entityHandler)
                 }
                 types[1] -> {
                     context.framebuffer.shadingType = ShadingType.FLAT
-                    context.entity!!.reload(context.entityLoader)
+                    context.entity!!.reload(context.entityHandler)
                 }
                 types[2] -> context.framebuffer.shadingType = ShadingType.NONE
             }

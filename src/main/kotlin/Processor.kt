@@ -1,11 +1,11 @@
 import animation.AnimationHandler
+import animation.CacheService
 import animation.node.NodeRenderer
 import entity.Entity
 import gui.GuiManager
 import input.MouseHandler
 import model.DatLoader
-import model.EntityLoader
-import model.ItemLoader
+import model.EntityHandler
 import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector4f
@@ -24,16 +24,16 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL30.*
+import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import render.Framebuffer
 import render.Loader
 import shader.StaticShader
 import utils.VSyncTimer
-import java.lang.NullPointerException
 
 const val TITLE = "PoserGL"
-const val CACHE_PATH = "./repository/old/"
+const val CACHE_PATH = "./repository/cache/"
+const val CACHE_317_PATH = "./repository/cache317/"
 const val RESOURCES_PATH = "src/main/resources/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
 
@@ -51,10 +51,10 @@ class Processor {
     lateinit var framebuffer: Framebuffer
     lateinit var nodeRenderer: NodeRenderer
 
+    val cacheService = CacheService(this)
     val loader = Loader()
     val datLoader = DatLoader(loader)
-    val entityLoader = EntityLoader(this)
-    val itemLoader = ItemLoader()
+    val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
     var entity: Entity? = null
 
@@ -115,7 +115,7 @@ class Processor {
         }
 
         nodeRenderer = NodeRenderer(this, framebuffer)
-        entityLoader.loadPlayer()
+        entityHandler.loadPlayer()
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
         // Render loop

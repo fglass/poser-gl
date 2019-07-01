@@ -6,35 +6,35 @@ import net.runelite.cache.definitions.NpcDefinition
 
 class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): ElementList(x, y, gui) {
 
-    private val entities = context.entityLoader.entities
-    private val entityElements = mutableListOf<EntityElement>()
+    private val entities = context.cacheService.entities
+    private val elements = HashMap<Int, Element>()
 
     init {
         var index = 0
-        for ((i, npc) in entities.withIndex()) {
+        for (npc in entities.values) {
             val element = EntityElement(npc, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
-            entityElements.add(element)
+            elements[npc.id] = element
             container.add(element)
-            maxIndex = i
+            maxIndex = npc.id
         }
         container.setSize(containerX, listY + index * listYOffset)
-        println("Loaded $index npcs")
     }
 
     override fun getFiltered(input: String): List<Int> {
-        return (0..maxIndex).toList().filter {
-            entities[it].name.toLowerCase().contains(input)
+        return elements.keys.filter {
+            val entity = entities[it]
+            entity != null && entity.name.toLowerCase().contains(input)
         }
     }
 
-    override fun getElements(): List<Element> {
-        return entityElements
+    override fun getElements(): HashMap<Int, Element> {
+        return elements
     }
 
     override fun handleElement(index: Int, element: Element) {
         val entity = entities[index]
-        if (element is EntityElement) {
+        if (entity != null && element is EntityElement) {
             element.npc = entity
             element.updateText()
         }
@@ -52,7 +52,7 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
         }
 
         override fun onClickEvent() {
-            context.entityLoader.load(npc)
+            context.entityHandler.load(npc)
         }
     }
 }

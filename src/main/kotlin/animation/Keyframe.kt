@@ -2,6 +2,7 @@ package animation
 
 import Processor
 import net.runelite.cache.definitions.ModelDefinition.*
+import net.runelite.cache.io.InputStream
 import shader.ShadingType
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -58,20 +59,25 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
     //val test = FrameEncoder().encode(keyframe)
     //val test2 = FrameLoader().load(frame.framemap, keyframe.id, test)
-    fun encode(keyframe: Keyframe): ByteArray {
+    fun encode(): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        os.writeShort(1)
-        os.writeByte(keyframe.transformations.size)
+        val frameMapId = transformations.first().frameMapId
+        // (contents[0].toInt() and 0xff) shl 8 or (contents[1].toInt() and 0xff)
+        os.writeByte(frameMapId ushr 8)
+        os.writeByte(frameMapId and 0xFF)
+
+        //os.writeShort(1)
+        os.writeByte(transformations.size)
 
         // Write masks first
-        for (transformation in keyframe.transformations) {
+        for (transformation in transformations) {
             os.writeByte(getMask(transformation))
         }
 
         // Write transformation values
-        for (transformation in keyframe.transformations) {
+        for (transformation in transformations) {
             val mask = getMask(transformation)
 
             if (mask == 0) {
@@ -90,7 +96,6 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
                 writeSmartShort(os, transformation.offset.z)
             }
         }
-
         os.close()
         return out.toByteArray()
     }
