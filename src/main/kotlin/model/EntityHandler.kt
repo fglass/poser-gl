@@ -18,24 +18,21 @@ class EntityHandler(private val context: Processor) {
         process(entity, entity.models.asList())
     }
 
-    fun process(entity: NpcDefinition, models: List<Int>) { // TODO: Clean-up
-        if (models.size == 1) {
-            val modelId = models[0]
-            val def = context.datLoader.load(modelId, entity)
-            def.computeAnimationTables()
-            val model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-            context.entity = Entity(model, entity, intArrayOf(modelId))
-        } else {
-            val defs = ArrayList<ModelDefinition>()
-            models.forEach {
-                defs.add(context.datLoader.load(it, entity))
+    fun process(entity: NpcDefinition, models: List<Int>) {
+        val def = when {
+            models.size == 1 -> {
+                context.datLoader.load(models.first(), entity)
+            } else -> {
+                val defs = ArrayList<ModelDefinition>()
+                models.forEach { defs.add(context.datLoader.load(it, entity)) }
+                val merged = merge(defs)
+                merged.computeNormals()
+                merged
             }
-            val merged = merge(defs)
-            merged.computeNormals()
-            merged.computeAnimationTables()
-            val model = context.datLoader.parse(merged, context.framebuffer.shadingType == ShadingType.FLAT)
-            context.entity = Entity(model, entity, models.toIntArray())
         }
+        def.computeAnimationTables()
+        val model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
+        context.entity = Entity(model, entity, models.toIntArray())
         context.gui.treePanel.update(context.entity!!)
     }
 

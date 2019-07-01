@@ -33,6 +33,7 @@ data/saves/
 *.iws
 
 ## Plugin-specific files:
+/repository/
 
 # IntelliJ
 /out/

@@ -15,18 +15,16 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
             element.addClickListener()
             elements[animation.sequence.id] = element
             container.add(element)
-            maxIndex = animation.sequence.id
         }
         container.setSize(containerX, listY + index * listYOffset)
     }
 
-    fun addElement(animation: Animation) { // TODO while searching
+    fun addElement(animation: Animation) {
+        search("") // Reset search
         val element = AnimationElement(animation, context, listX, container.size.y, containerX - 6, 14f)
         element.addClickListener()
         elements[animation.sequence.id] = element
         container.add(element)
-
-        maxIndex += 1
         container.size.y += listYOffset
         verticalScrollBar.curValue = container.size.y // Scroll to bottom
     }
@@ -42,8 +40,8 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
     }
 
     override fun handleElement(index: Int, element: Element) {
-        val animation = context.cacheService.animations[index]
-        if (animation != null && element is AnimationElement) {
+        val animation = context.cacheService.animations[index]?: return
+        if (element is AnimationElement) {
             element.animation = animation
             element.updateText()
         }

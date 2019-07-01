@@ -16,7 +16,6 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
             element.addClickListener()
             elements[item.id] = element
             container.add(element)
-            maxIndex = item.id
         }
         container.setSize(containerX, listY + index * listYOffset)
     }
@@ -33,8 +32,9 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
     }
 
     override fun handleElement(index: Int, element: Element) {
-        val item = items[index]
-        if (item != null && element is ItemElement) {
+        val item = items[index]?: return
+        if (element is ItemElement) {
+            println("Index: $index ${item.name}")
             element.item = item
             element.updateText()
         }

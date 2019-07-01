@@ -10,7 +10,6 @@ import org.liquidengine.legui.style.color.ColorConstants
 abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollablePanel() {
 
     var searchText = "Search"
-    protected var maxIndex = 0
     protected val listX = 2f
     protected val listY = 2f
     protected val listYOffset = 17
@@ -36,13 +35,14 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
         val elements = getElements()
         adjustScroll(filtered.size)
 
-        for (i in 0 until maxIndex) {
-            val element = elements[i]?: continue
+        var index = 0
+        for (element in elements) {
             when {
-                filtered.size >= elements.size -> handleElement(i, element) // Reset as no matches
-                i < filtered.size -> handleElement(filtered[i], element) // Shift matches up
-                else -> element.isEnabled = false // Hide filtered
+                filtered.size >= elements.size -> handleElement(element.key, element.value) // Reset as no matches
+                index < filtered.size -> handleElement(filtered[index], element.value) // Shift matches up
+                else -> element.value.isEnabled = false // Hide filtered
             }
+            index++
         }
     }
 

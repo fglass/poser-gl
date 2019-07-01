@@ -89,11 +89,13 @@ class AnimationHandler(private val context: Processor) {
             return current
         }
 
-        val copied = Animation(context.cacheService.animations.size, current) // TODO animations.size
+        val newIndex = context.cacheService.animations.maxBy { it.key }!!.key + 1
+        val copied = Animation(newIndex, current)
+
         currentAnimation = copied
-        context.cacheService.animations[copied.sequence.id] = copied
+        context.cacheService.animations[newIndex] = copied
         context.gui.listPanel.animationList.addElement(copied)
-        context.gui.animationPanel.sequenceId.textState.text = copied.sequence.id.toString()
+        context.gui.animationPanel.sequenceId.textState.text = newIndex.toString()
         return copied
     }
 

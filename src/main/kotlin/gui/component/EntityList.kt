@@ -16,7 +16,6 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
             element.addClickListener()
             elements[npc.id] = element
             container.add(element)
-            maxIndex = npc.id
         }
         container.setSize(containerX, listY + index * listYOffset)
     }
@@ -33,8 +32,8 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
     }
 
     override fun handleElement(index: Int, element: Element) {
-        val entity = entities[index]
-        if (entity != null && element is EntityElement) {
+        val entity = entities[index]?: return
+        if (element is EntityElement) {
             element.npc = entity
             element.updateText()
         }
