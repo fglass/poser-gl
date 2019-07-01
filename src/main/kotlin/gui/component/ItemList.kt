@@ -34,7 +34,6 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
     override fun handleElement(index: Int, element: Element) {
         val item = items[index]?: return
         if (element is ItemElement) {
-            println("Index: $index ${item.name}")
             element.item = item
             element.updateText()
         }
@@ -52,8 +51,7 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
         }
 
         override fun onClickEvent() {
-            val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
-            context.entity?.add(models, context.entityHandler)
+            context.entity?.addItem(item, context.entityHandler)
         }
     }
 }

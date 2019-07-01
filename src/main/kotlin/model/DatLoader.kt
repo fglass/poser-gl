@@ -1,6 +1,8 @@
 package model
 
 import CACHE_PATH
+import entity.Entity
+import entity.EntityComponent
 import net.runelite.cache.IndexType
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
@@ -12,17 +14,16 @@ class DatLoader(private val loader: Loader) {
 
     private val maxPriority = 255
 
-    fun load(id: Int, entity: NpcDefinition): ModelDefinition {
+    fun load(component: EntityComponent): ModelDefinition {
         val library = CacheLibrary(CACHE_PATH)
-        val model = library.getIndex(IndexType.MODELS.number).getArchive(id).getFile(0)
-        val def = ModelLoader().load(id, model.data)
+        val model = library.getIndex(IndexType.MODELS.number).getArchive(component.id).getFile(0)
+        val def = ModelLoader().load(component.id, model.data)
 
-        if (entity.recolorToFind != null) {
-            for (i in 0 until entity.recolorToFind.size) {
-                def.recolor(entity.recolorToFind[i], entity.recolorToReplace[i])
+        if (component.originalColours != null && component.newColours != null) {
+            for (i in 0 until component.originalColours.size) {
+                def.recolor(component.originalColours[i], component.newColours[i])
             }
         }
-
         library.close()
         return def
     }

@@ -11,10 +11,10 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
 
     init {
         var index = 0
-        for (npc in entities.values) {
-            val element = EntityElement(npc, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
+        for (entity in entities.values) {
+            val element = EntityElement(entity, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
             element.addClickListener()
-            elements[npc.id] = element
+            elements[entity.id] = element
             container.add(element)
         }
         container.setSize(containerX, listY + index * listYOffset)
@@ -34,24 +34,24 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
     override fun handleElement(index: Int, element: Element) {
         val entity = entities[index]?: return
         if (element is EntityElement) {
-            element.npc = entity
+            element.entity = entity
             element.updateText()
         }
     }
 
-    class EntityElement(var npc: NpcDefinition, private val context: Processor, x: Float, y: Float,
+    class EntityElement(var entity: NpcDefinition, private val context: Processor, x: Float, y: Float,
                         width: Float, height: Float): Element(x, y, width, height) {
         init {
             updateText()
         }
 
         override fun updateText() {
-            textState.text = npc.name
+            textState.text = entity.name
             isEnabled = true
         }
 
         override fun onClickEvent() {
-            context.entityHandler.load(npc)
+            context.entityHandler.load(entity)
         }
     }
 }

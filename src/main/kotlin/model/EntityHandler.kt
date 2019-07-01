@@ -2,6 +2,7 @@ package model
 
 import Processor
 import entity.Entity
+import entity.EntityComponent
 import model.ModelMerger.Companion.merge
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
@@ -14,17 +15,21 @@ class EntityHandler(private val context: Processor) {
     }
 
     fun load(entity: NpcDefinition) {
+        val composition = ArrayList<EntityComponent>()
+        entity.models.forEach {
+            composition.add(EntityComponent(it, entity.recolorToFind, entity.recolorToReplace))
+        }
         clear()
-        process(entity, entity.models.asList())
+        process(composition)
     }
 
-    fun process(entity: NpcDefinition, models: List<Int>) {
+    fun process(composition: ArrayList<EntityComponent>) {
         val def = when {
-            models.size == 1 -> {
-                context.datLoader.load(models.first(), entity)
+            composition.size == 1 -> {
+                context.datLoader.load(composition.first())
             } else -> {
                 val defs = ArrayList<ModelDefinition>()
-                models.forEach { defs.add(context.datLoader.load(it, entity)) }
+                composition.forEach { defs.add(context.datLoader.load(it)) }
                 val merged = merge(defs)
                 merged.computeNormals()
                 merged
@@ -32,7 +37,7 @@ class EntityHandler(private val context: Processor) {
         }
         def.computeAnimationTables()
         val model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-        context.entity = Entity(model, entity, models.toIntArray())
+        context.entity = Entity(model, composition)
         context.gui.treePanel.update(context.entity!!)
     }
 

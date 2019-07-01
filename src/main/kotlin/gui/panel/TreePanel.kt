@@ -48,12 +48,12 @@ class TreePanel(private val gui: GuiManager, private val context: Processor): Pa
         modelPanel.container.removeAll(modelPanel.container.childComponents)
         modelPanel.container.size.y = entity.composition.size * offset
 
-        for ((i, model) in entity.composition.withIndex()) {
+        for ((i, component) in entity.composition.withIndex()) {
             val y = i * offset
             val background = Label("", 0f, y, 148f, 15f)
             background.style.background.color = BG_COLOUR
 
-            val label = Label("Model $model", 18f, y, 139f, 15f)
+            val label = Label("Model ${component.id}", 18f, y, 139f, 15f)
             val modelImage = ImageView(modelIcon)
             modelImage.position = Vector2f(4f, y + 3)
             modelImage.style.border.isEnabled = false
@@ -63,7 +63,7 @@ class TreePanel(private val gui: GuiManager, private val context: Processor): Pa
             deleteButton.style.border.isEnabled = false
             deleteButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    entity.remove(model, context.entityHandler)
+                    entity.remove(component, context.entityHandler)
                     update(entity)
                 }
             }
