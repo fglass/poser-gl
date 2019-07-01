@@ -1,9 +1,9 @@
 import animation.AnimationHandler
-import animation.CacheService
-import animation.node.NodeRenderer
+import cache.CacheService
+import render.NodeRenderer
 import entity.Entity
 import gui.GuiManager
-import input.MouseHandler
+import io.MouseHandler
 import model.DatLoader
 import model.EntityHandler
 import org.joml.Vector2f

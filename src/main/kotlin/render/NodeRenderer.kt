@@ -1,8 +1,9 @@
-package animation.node
+package render
 
 import Processor
 import animation.Reference
 import animation.TransformationType
+import animation.ReferenceNode
 import entity.Camera
 import model.Model
 import shader.NodeShader
@@ -11,8 +12,6 @@ import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
-import render.Framebuffer
-import render.Loader
 import utils.Maths
 
 class NodeRenderer(private val context: Processor, private val framebuffer: Framebuffer) {

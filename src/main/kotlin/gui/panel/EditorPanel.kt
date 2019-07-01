@@ -4,7 +4,7 @@ import BG_COLOUR
 import RESOURCES_PATH
 import Processor
 import animation.*
-import animation.node.ReferenceNode
+import animation.ReferenceNode
 import gui.GuiManager
 import gui.component.ButtonGroup
 import gui.component.ConfigGroup

@@ -1,11 +1,10 @@
 package model
 
 import CACHE_PATH
-import entity.Entity
+import cache.IndexType
+import cache.ModelLoader
 import entity.EntityComponent
-import net.runelite.cache.IndexType
 import net.runelite.cache.definitions.ModelDefinition
-import net.runelite.cache.definitions.NpcDefinition
 import org.displee.CacheLibrary
 import org.joml.Vector3f
 import render.Loader
@@ -16,7 +15,7 @@ class DatLoader(private val loader: Loader) {
 
     fun load(component: EntityComponent): ModelDefinition {
         val library = CacheLibrary(CACHE_PATH)
-        val model = library.getIndex(IndexType.MODELS.number).getArchive(component.id).getFile(0)
+        val model = library.getIndex(IndexType.MODEL.id).getArchive(component.id).getFile(0)
         val def = ModelLoader().load(component.id, model.data)
 
         if (component.originalColours != null && component.newColours != null) {

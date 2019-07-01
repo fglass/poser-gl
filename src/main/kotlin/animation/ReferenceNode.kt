@@ -1,6 +1,5 @@
-package animation.node
+package animation
 
-import animation.Reference
 import org.joml.Vector3f
 import java.util.*
 

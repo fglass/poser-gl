@@ -1,4 +1,4 @@
-package model;
+package cache;
 
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.io.InputStream;

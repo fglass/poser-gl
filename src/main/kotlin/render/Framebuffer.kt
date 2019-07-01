@@ -2,9 +2,8 @@ package render
 
 import BG_COLOUR
 import Processor
-import animation.node.NodeRenderer
 import entity.Camera
-import input.MouseHandler
+import io.MouseHandler
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.CursorEnterEvent
@@ -13,7 +12,6 @@ import org.liquidengine.legui.event.MouseDragEvent
 import org.liquidengine.legui.event.ScrollEvent
 import org.liquidengine.legui.image.FBOImage
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader
