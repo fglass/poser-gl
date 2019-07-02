@@ -35,10 +35,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
 
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
-            val frames = context.cacheService.frames.get(frameId ushr 16)
+            val frameArchive = context.cacheService.getFrameArchive(frameId ushr 16)
             val frameFileId = frameId and 0xFFFF
 
-            val frame = frames.stream().filter { f -> f.id == frameFileId }.findFirst().get()
+            val frame = frameArchive.stream().filter { f -> f.id == frameFileId }.findFirst().get()
             val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index])
             val frameMap = frame.framemap
             val references = ArrayDeque<Reference>()
@@ -142,7 +142,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         //var maxOffset = 0
 
-        val maxArchiveId = context.cacheService.frames.keySet().max()!!
+        val maxArchiveId = context.cacheService.getMaxFrameArchive()
         val newArchiveId = maxArchiveId + 1
 
         for (i in 0 until keyframes.size) {

@@ -4,8 +4,12 @@ import CACHE_PATH
 import Processor
 import animation.Animation
 import com.google.common.collect.HashMultimap
+import entity.EntityComponent
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
+import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
@@ -22,18 +26,17 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         val library = CacheLibrary(CACHE_PATH)
         osrs = library.isOSRS
         println("OSRS cache: $osrs")
-        loadEntities(library)
+        loadNpcDefinitions(library)
+        addPlayer()
         println("Loaded ${entities.size} entities")
-        loadItems(library)
+        loadItemDefinitions(library)
         println("Loaded ${items.size} items")
         loadSequences(library)
         println("Loaded ${animations.size} sequences")
-        loadFrames(library)
-        println("Loaded ${frames.size()} frames")
         library.close()
     }
 
-    private fun loadEntities(library: CacheLibrary) {
+    private fun loadNpcDefinitions(library: CacheLibrary) {
         if (!osrs) {
             val npcIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile("npc.idx")
             val npcArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile("npc.dat")
@@ -51,12 +54,11 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             val stream = InputStream317(npcArchive.data)
             for (i in 0 until total) {
                 stream.currentPosition = streamIndices[i]
-                val npc = Loader317().loadEntityDefinition(i, stream)// NpcLoader().load(i, stream.readBytes())
+                val npc = Loader317().loadEntityDefinition(i, stream)
                 if (npc.models != null && npc.name.toLowerCase() != "null") {
                     entities[npc.id] = npc
                 }
             }
-            addPlayer()
             return
         }
 
@@ -68,7 +70,6 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
                 entities[npc.id] = npc
             }
         }
-        addPlayer()
     }
 
     private fun addPlayer() {
@@ -78,8 +79,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         entities[player.id] = player
     }
 
-
-    private fun loadItems(library: CacheLibrary) {
+    private fun loadItemDefinitions(library: CacheLibrary) {
         if (!osrs) {
             val itemIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.ITEM.getIndexId(osrs)).getFile("obj.idx")
             val itemArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.ITEM.getIndexId(osrs)).getFile("obj.dat")
@@ -115,6 +115,20 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         }
     }
 
+    fun loadModelDefinition(component: EntityComponent): ModelDefinition {
+        val library = CacheLibrary(CACHE_PATH)
+        val model = library.getIndex(IndexType.MODEL.getIndexId(library.isOSRS)).getArchive(component.id).getFile(0)
+        val def = ModelLoader().load(component.id, model.data)
+
+        if (component.originalColours != null && component.newColours != null) {
+            for (i in 0 until component.originalColours.size) {
+                def.recolor(component.originalColours[i], component.newColours[i])
+            }
+        }
+        library.close()
+        return def
+    }
+
     private fun loadSequences(library: CacheLibrary) {
 
         if (!osrs) {
@@ -133,47 +147,59 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         }
     }
 
-    private fun loadFrames(library: CacheLibrary) {
+    fun getFrameArchive(archiveId: Int): MutableSet<FrameDefinition> {
+        if (archiveId !in frames.keySet()) {
+            loadFrameArchive(archiveId)
+        }
+        return frames.get(archiveId)
+    }
+
+    private fun loadFrameArchive(archiveId: Int) {
+        val library = CacheLibrary(CACHE_PATH)
         val frameIndex = IndexType.FRAME.getIndexId(osrs)
 
         if (!osrs) {
             val loader = Loader317()
-            for (i in 0..library.getIndex(IndexType.FRAME.getIndexId(osrs)).lastArchive.id) {
-                val file = library.getIndex(IndexType.FRAME.getIndexId(osrs)).getArchive(i).getFile(0)
-                if (file.data.isNotEmpty()) {
-                    loader.loadFrameFile(i, file.data, this)
-                }
+            val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
+            if (file.data.isNotEmpty()) {
+                loader.loadFrameFile(archiveId, file.data, this)
             }
             return
         }
 
+        val archive = library.getIndex(frameIndex).getArchive(archiveId)?: return
         val frameLoader = FrameLoader()
         val frameMapLoader = FramemapLoader()
         val frameMapIndex = IndexType.FRAME_MAP.getIndexId(osrs)
 
-        for (i in 0..library.getIndex(frameIndex).lastArchive.id) {
-            val archive = library.getIndex(frameIndex).getArchive(i)?: continue
+        for (j in 0..library.getIndex(frameIndex).getArchive(archiveId).lastFile.id) {
+            val frameFile = library.getIndex(frameIndex).getArchive(archiveId).getFile(j)?: continue
+            val frameData = frameFile.data
 
-            for (j in 0..library.getIndex(frameIndex).getArchive(i).lastFile.id) {
-                val frameFile = library.getIndex(frameIndex).getArchive(i).getFile(j)?: continue
-                val frameData = frameFile.data
+            val frameMapArchiveId = (frameData[0].toInt() and 0xff) shl 8 or (frameData[1].toInt() and 0xff)
+            val frameMapFile = library.getIndex(frameMapIndex).getArchive(frameMapArchiveId).getFile(0)
 
-                val frameMapArchiveId = (frameData[0].toInt() and 0xff) shl 8 or (frameData[1].toInt() and 0xff)
-                val frameMapFile = library.getIndex(frameMapIndex).getArchive(frameMapArchiveId).getFile(0)
-
-                val frameMap = frameMapLoader.load(frameMapArchiveId, frameMapFile.data)
-                val frame = frameLoader.load(frameMap, frameFile.id, frameData)
-                frames.put(archive.id, frame)
-            }
+            val frameMap = frameMapLoader.load(frameMapArchiveId, frameMapFile.data)
+            val frame = frameLoader.load(frameMap, frameFile.id, frameData)
+            frames.put(archive.id, frame)
         }
+        library.close()
     }
 
-    fun pack(animation: Animation) {
+    fun getMaxFrameArchive(): Int {
+        val library = CacheLibrary(CACHE_PATH)
+        val frameIndex = IndexType.FRAME.getIndexId(osrs)
+        val max = library.getIndex(frameIndex).lastArchive.id
+        library.close()
+        return max
+    }
+
+    fun packAnimation(animation: Animation) {
         println("Packing ${animation.sequence.id}")
         val library = CacheLibrary(CACHE_PATH)
         val frameIndex = IndexType.FRAME.getIndexId(osrs)
 
-        val maxArchiveId = frames.keySet().max()!!
+        val maxArchiveId = getMaxFrameArchive()
         val newArchiveId = maxArchiveId + 1
 
         library.getIndex(frameIndex).addArchive(newArchiveId)
@@ -190,7 +216,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
 
         library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.SEQUENCE.getIndexId(osrs)).addFile(sequence.id, data)
         library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update()
-        println("Packed ${animation.sequence.id}")
         library.close()
+        println("Packed ${animation.sequence.id}")
     }
 }

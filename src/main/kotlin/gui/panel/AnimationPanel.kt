@@ -85,7 +85,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         pack.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 val anim = context.animationHandler.currentAnimation?: return@addListener
-                context.cacheService.pack(anim)
+                context.cacheService.packAnimation(anim)
             }
         }
         menu.add(pack)

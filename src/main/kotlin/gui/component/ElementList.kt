@@ -1,5 +1,6 @@
 package gui.component
 
+import BG_COLOUR
 import gui.GuiManager
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Button
@@ -20,6 +21,10 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
         position.y = y
         size = getListSize()
         this.remove(horizontalScrollBar)
+        //this.style.background.color = BG_COLOUR
+        this.container.style.border.isEnabled = false
+        this.viewport.style.border.isEnabled = false
+
     }
 
     fun resize() {

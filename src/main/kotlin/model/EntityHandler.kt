@@ -26,17 +26,17 @@ class EntityHandler(private val context: Processor) {
     fun process(composition: ArrayList<EntityComponent>) {
         val def = when {
             composition.size == 1 -> {
-                context.datLoader.load(composition.first())
+                context.cacheService.loadModelDefinition(composition.first())
             } else -> {
                 val defs = ArrayList<ModelDefinition>()
-                composition.forEach { defs.add(context.datLoader.load(it)) }
+                composition.forEach { defs.add(context.cacheService.loadModelDefinition(it)) }
                 val merged = merge(defs)
                 merged.computeNormals()
                 merged
             }
         }
         def.computeAnimationTables()
-        val model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
+        val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
         context.entity = Entity(model, composition)
         context.gui.treePanel.update(context.entity!!)
     }

@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW
 class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
 
     private val search = TextInput("Search", 5f, 5f, 164f, 15f)
-    private val tabs = ArrayList<Button>()
+    private val tabs = LinkedHashSet<Button>()
     private val entityList = EntityList(5f, 43f, gui, context)
     val animationList = AnimationList(5f, 43f, gui, context)
     private val itemList = ItemList(5f, 43f, gui, context)
@@ -57,9 +57,11 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
         for ((i, name) in names.withIndex()) {
             val tab = Button(name, 5f + i * offset, 27f, offset - 1, 17f)
             tab.style.focusedStrokeColor = null
-            tab.listenerMap.addListener(MouseClickEvent::class.java) {
-                changeList(tab)
-                selectTab(tab)
+            tab.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    changeList(tab)
+                    selectTab(tab)
+                }
             }
             tabs.add(tab)
             add(tab)
@@ -71,32 +73,21 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
         val list = lists.first { contains(it) }
         list.searchText = search.textState.text
         remove(list)
-        when (tab) {
-            tabs[0] -> {
-                setSearchText(entityList.searchText)
-                add(entityList)
-            }
-            tabs[1] -> {
-                setSearchText(animationList.searchText)
-                add(animationList)
-            }
-            tabs[2] -> {
-                setSearchText(itemList.searchText)
-                add(itemList)
-            }
+
+        val newList = lists[tabs.indexOf(tab)]
+        setSearchText(newList.searchText)
+        add(newList)
+    }
+
+    private fun selectTab(tab: Button) {
+        tabs.forEach { it.style.background.color =
+            if (it == tab) it.hoveredStyle.background.color else it.focusedStyle.background.color
         }
     }
 
     private fun setSearchText(text: String) {
         search.textState.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
         search.textState.text = text
-    }
-
-    private fun selectTab(tab: Button) {
-        tabs.forEach {
-            it.style.background.color =
-                if (it == tab) it.hoveredStyle.background.color else it.focusedStyle.background.color
-        }
     }
 
     fun resize() {

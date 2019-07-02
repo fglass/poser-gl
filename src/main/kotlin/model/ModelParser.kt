@@ -1,32 +1,12 @@
 package model
 
-import CACHE_317_PATH
-import CACHE_PATH
-import cache.IndexType
-import cache.ModelLoader
-import entity.EntityComponent
 import net.runelite.cache.definitions.ModelDefinition
-import org.displee.CacheLibrary
 import org.joml.Vector3f
 import render.Loader
 
-class DatLoader(private val loader: Loader) {
+class ModelParser(private val loader: Loader) {
 
     private val maxPriority = 255
-
-    fun load(component: EntityComponent): ModelDefinition {
-        val library = CacheLibrary(CACHE_PATH)
-        val model = library.getIndex(IndexType.MODEL.getIndexId(library.isOSRS)).getArchive(component.id).getFile(0)
-        val def = ModelLoader().load(component.id, model.data)
-
-        if (component.originalColours != null && component.newColours != null) {
-            for (i in 0 until component.originalColours.size) {
-                def.recolor(component.originalColours[i], component.newColours[i])
-            }
-        }
-        library.close()
-        return def
-    }
 
     fun parse(def: ModelDefinition, flatShading: Boolean): Model {
         val nPosition = 4

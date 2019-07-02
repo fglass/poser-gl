@@ -4,7 +4,7 @@ import render.NodeRenderer
 import entity.Entity
 import gui.GuiManager
 import io.MouseHandler
-import model.DatLoader
+import model.ModelParser
 import model.EntityHandler
 import org.joml.Vector2f
 import org.joml.Vector2i
@@ -32,7 +32,8 @@ import shader.StaticShader
 import utils.VSyncTimer
 
 const val TITLE = "PoserGL"
-const val CACHE_PATH = "./repository/cache317/"
+const val VERSION = 1.0
+const val CACHE_PATH = "./repository/cache/"
 const val CACHE_317_PATH = "./repository/cache317/"
 const val RESOURCES_PATH = "src/main/resources/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
@@ -53,7 +54,7 @@ class Processor {
 
     val cacheService = CacheService(this)
     val loader = Loader()
-    val datLoader = DatLoader(loader)
+    val modelParser = ModelParser(loader)
     val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
     var entity: Entity? = null
@@ -71,7 +72,7 @@ class Processor {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
 
-        val window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
+        val window = glfwCreateWindow(WIDTH, HEIGHT, "$TITLE v$VERSION", MemoryUtil.NULL, MemoryUtil.NULL)
         glfwShowWindow(window)
 
         glfwMakeContextCurrent(window)

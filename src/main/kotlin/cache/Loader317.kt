@@ -59,18 +59,18 @@ class Loader317 {
         val stream = InputStream317(data)
         val frameMap = getFrameMap(stream)
 
-        val frame = stream.readUShort()
+        val fileLength = stream.readUShort()
         val indexFrameIds = IntArray(500)
         val scratchTranslatorX = IntArray(500)
         val scratchTranslatorY = IntArray(500)
         val scratchTranslatorZ = IntArray(500)
 
-        for (j in 0 until frame) {
+        for (frameFileId in 0 until fileLength) {
             val frameMapArchiveIndex = stream.readUShort()
             frameMap.id = frameMapArchiveIndex
-            
+
             val def = FrameDefinition()
-            def.id = j
+            def.id = frameFileId
             def.framemap = frameMap
 
             val length = stream.readUnsignedByte()

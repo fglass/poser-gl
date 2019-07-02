@@ -2,7 +2,6 @@ package animation
 
 import Processor
 import net.runelite.cache.definitions.ModelDefinition.*
-import net.runelite.cache.io.InputStream
 import shader.ShadingType
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -54,7 +53,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
         // Load transformed model
         context.loader.cleanUp()
-        entity.model = context.datLoader.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
+        entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
     //val test = FrameEncoder().encode(keyframe)
