@@ -58,7 +58,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
     }
 
     //val test = FrameEncoder().encode(keyframe)
-    //val test2 = FrameLoader().load(frame.framemap, keyframe.id, test)
+    //val test2 = FrameLoader().loadFrames(frame.framemap, keyframe.id, test)
     fun encode(): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)

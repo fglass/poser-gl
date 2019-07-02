@@ -1,5 +1,6 @@
 package model
 
+import CACHE_317_PATH
 import CACHE_PATH
 import cache.IndexType
 import cache.ModelLoader
@@ -15,7 +16,7 @@ class DatLoader(private val loader: Loader) {
 
     fun load(component: EntityComponent): ModelDefinition {
         val library = CacheLibrary(CACHE_PATH)
-        val model = library.getIndex(IndexType.MODEL.id).getArchive(component.id).getFile(0)
+        val model = library.getIndex(IndexType.MODEL.getIndexId(library.isOSRS)).getArchive(component.id).getFile(0)
         val def = ModelLoader().load(component.id, model.data)
 
         if (component.originalColours != null && component.newColours != null) {

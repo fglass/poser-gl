@@ -19,7 +19,7 @@ class Entity(var model: Model, val composition: ArrayList<EntityComponent>) {
 
     fun addItem(item: ItemDefinition, entityHandler: EntityHandler) {
         val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
-        models.filter { it != -1 }.forEach { composition.add((EntityComponent(it, item.colorFind, item.colorReplace))) }
+        models.filter { it > 0 }.forEach { composition.add((EntityComponent(it, item.colorFind, item.colorReplace))) }
         reload(entityHandler)
     }
 
