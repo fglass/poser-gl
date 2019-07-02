@@ -51,7 +51,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             val stream = InputStream317(npcArchive.data)
             for (i in 0 until total) {
                 stream.currentPosition = streamIndices[i]
-                val npc = Loader317().loadEntity(i, stream)// NpcLoader().load(i, stream.readBytes())
+                val npc = Loader317().loadEntityDefinition(i, stream)// NpcLoader().load(i, stream.readBytes())
                 if (npc.models != null && npc.name.toLowerCase() != "null") {
                     entities[npc.id] = npc
                 }
@@ -97,7 +97,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             val stream = InputStream317(itemArchive.data)
             for (i in 0 until total) {
                 stream.currentPosition = streamIndices[i]
-                val item = Loader317().loadItem(i, stream)
+                val item = Loader317().loadItemDefinition(i, stream)
                 if (item.maleModel0 > 0 && item.name.toLowerCase() != "null") {
                     items[item.id] = item
                 }
@@ -134,19 +134,21 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
     }
 
     private fun loadFrames(library: CacheLibrary) {
-        val frameIndex = IndexType.FRAME.getIndexId(osrs) // TODO
+        val frameIndex = IndexType.FRAME.getIndexId(osrs)
 
-        /*val lib = CacheLibrary(CACHE_317_PATH)
-        for (i in 0..lib.getIndex(frameIndex).lastArchive.id) {
-            println("LOADING FILE $i ---------")
-            val file = lib.getIndex(frameIndex).getArchive(i).getFile(0)
-            //Loader317().loadFrames(file.id, file.data, this)
+        if (!osrs) {
+            val loader = Loader317()
+            for (i in 0..library.getIndex(IndexType.FRAME.getIndexId(osrs)).lastArchive.id) {
+                val file = library.getIndex(IndexType.FRAME.getIndexId(osrs)).getArchive(i).getFile(0)
+                if (file.data.isNotEmpty()) {
+                    loader.loadFrameFile(i, file.data, this)
+                }
+            }
+            return
         }
-        lib.close()*/
 
-        /*val frameLoader = FrameLoader()
+        val frameLoader = FrameLoader()
         val frameMapLoader = FramemapLoader()
-
         val frameMapIndex = IndexType.FRAME_MAP.getIndexId(osrs)
 
         for (i in 0..library.getIndex(frameIndex).lastArchive.id) {
@@ -163,7 +165,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
                 val frame = frameLoader.load(frameMap, frameFile.id, frameData)
                 frames.put(archive.id, frame)
             }
-        }*/
+        }
     }
 
     fun pack(animation: Animation) {

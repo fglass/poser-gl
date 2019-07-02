@@ -173,7 +173,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     //val buf = encode(sequence)
-    //val test2 = SequenceLoader().loadFrames(-1, buf)
+    //val test2 = SequenceLoader().loadFrameFile(-1, buf)
     fun encode(sequence: SequenceDefinition): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)

@@ -55,29 +55,25 @@ class Loader317 {
         }
     }
 
-    fun loadFrames(archive: Int, data: ByteArray, service: CacheService) {
+    fun loadFrameFile(archive: Int, data: ByteArray, service: CacheService) {
         val stream = InputStream317(data)
-        val frameMap = getFrameMap(-1, stream)
+        val frameMap = getFrameMap(stream)
 
-        val frames = stream.readUShort()
-        //animationlist[archive] = arrayOfNulls<Frame>(n * 3)
-        //frames[archive] = MutableSet<FrameDefinition>(n * 3)
+        val frame = stream.readUShort()
         val indexFrameIds = IntArray(500)
         val scratchTranslatorX = IntArray(500)
         val scratchTranslatorY = IntArray(500)
         val scratchTranslatorZ = IntArray(500)
 
-        for (j in 0 until frames) {
-            val framemapArchiveIndex = stream.readUShort()
-            frameMap.id = framemapArchiveIndex // TODO
+        for (j in 0 until frame) {
+            val frameMapArchiveIndex = stream.readUShort()
+            frameMap.id = frameMapArchiveIndex
+            
             val def = FrameDefinition()
             def.id = j
-
-            //animationlist[archive][framemapArchiveIndex] = def
             def.framemap = frameMap
 
             val length = stream.readUnsignedByte()
-            println("Length: $length")
             var lastI = -1
             var index = 0
 
@@ -99,17 +95,17 @@ class Loader317 {
                     indexFrameIds[index] = i
                     val value = if (frameMap.types[i] == 3) 128 else 0
 
-                    if (type and 1 != 0) {
+                    if ((type and 1) != 0) {
                         scratchTranslatorX[index] = stream.readShort2()
                     } else {
                         scratchTranslatorX[index] = value
                     }
-                    if (type and 2 != 0) {
+                    if ((type and 2) != 0) {
                         scratchTranslatorY[index] = stream.readShort2()
                     } else {
                         scratchTranslatorY[index] = value
                     }
-                    if (type and 3 != 0) {
+                    if ((type and 4) != 0) {
                         scratchTranslatorZ[index] = stream.readShort2()
                     } else {
                         scratchTranslatorZ[index] = value
@@ -131,42 +127,33 @@ class Loader317 {
                 def.translator_z[i] = scratchTranslatorZ[i]
             }
             service.frames.put(archive, def)
-            println("Adding $archive ${def.id}")
         }
     }
 
-    private fun getFrameMap(id: Int, stream: InputStream317): FramemapDefinition {
+    private fun getFrameMap(stream: InputStream317): FramemapDefinition {
         val def = FramemapDefinition()
-        //val stream = InputStream(b)
-        def.id = id
+        def.id = -1
         def.length = stream.readUShort()
         def.types = IntArray(def.length)
         def.frameMaps = arrayOfNulls(def.length)
 
-        var i = 0
-        while (i < def.length) {
+        for (i in 0 until def.length) {
             def.types[i] = stream.readUShort()
-            ++i
         }
 
-        i = 0
-        while (i < def.length) {
+        for (i in 0 until def.length) {
             def.frameMaps[i] = IntArray(stream.readUShort())
-            ++i
         }
 
-        i = 0
-        while (i < def.length) {
+        for (i in 0 until def.length) {
             for (j in 0 until def.frameMaps[i].size) {
                 def.frameMaps[i][j] = stream.readUShort()
             }
-            ++i
         }
-
         return def
     }
 
-    fun loadItem(id: Int, stream: InputStream317): ItemDefinition {
+    fun loadItemDefinition(id: Int, stream: InputStream317): ItemDefinition {
         val def = ItemDefinition(id)
         while (true) {
             val opCode = stream.readUnsignedByte()
@@ -177,7 +164,7 @@ class Loader317 {
             else if (opCode == 2)
                 def.name = stream.readString()
             else if (opCode == 3) {
-                val description = stream.readString()
+                stream.readString()
             } else if (opCode == 4)
                 def.zoom2d = stream.readUShort()
             else if (opCode == 5)
@@ -210,13 +197,13 @@ class Loader317 {
                 def.femaleOffset = stream.readSignedByte().toInt()
             } else if (opCode == 26)
                 def.femaleModel1 = stream.readUShort()
-            else if (opCode >= 30 && opCode < 35) {
+            else if (opCode in 30..34) {
                 if (def.options == null)
                     def.options = arrayOfNulls<String>(5)
                 def.options[opCode - 30] = stream.readString()
                 if (def.options[opCode - 30].equals("hidden", ignoreCase = true))
                     def.options[opCode - 30] = null
-            } else if (opCode >= 35 && opCode < 40) {
+            } else if (opCode in 35..39) {
                 if (def.interfaceOptions == null)
                     def.interfaceOptions = arrayOfNulls<String>(5)
                 def.interfaceOptions[opCode - 35] = stream.readString()
@@ -246,21 +233,13 @@ class Loader317 {
                 def.notedID = stream.readUShort()
             else if (opCode == 98)
                 def.notedTemplate = stream.readUShort()
-            else if (opCode >= 100 && opCode < 110) {
+            else if (opCode in 100..109) {
                 if (def.countObj == null) {
                     def.countObj = IntArray(10)
                     def.countCo = IntArray(10)
                 }
                 def.countObj[opCode - 100] = stream.readUShort()
                 def.countCo[opCode - 100] = stream.readUShort()
-
-                /*int length = stream.readUnsignedByte();
-				stack_variant_id = new int [length];
-				stack_variant_size = new int[length];
-				for (int i2 = 0; i2< length; i2++) {
-					stack_variant_id[i2] = stream.readUnsignedShort();
-					stack_variant_size[i2] = stream.readUnsignedShort();
-				}*/
             } else if (opCode == 110)
                 def.resizeX = stream.readUShort()
             else if (opCode == 111)
@@ -276,7 +255,7 @@ class Loader317 {
         }
     }
 
-    fun loadEntity(id: Int, stream: InputStream317): NpcDefinition {
+    fun loadEntityDefinition(id: Int, stream: InputStream317): NpcDefinition {
         val def = NpcDefinition(id)
         while (true) {
             val opCode = stream.readUnsignedByte()
@@ -291,7 +270,7 @@ class Loader317 {
             } else if (opCode == 2)
                 def.name = stream.readString()
             else if (opCode == 3) {
-                val description = stream.readBytes()
+                stream.readBytes()
             } else if (opCode == 12)
                 def.tileSpacesOccupied = stream.readSignedByte().toInt()
             else if (opCode == 13)
@@ -303,7 +282,7 @@ class Loader317 {
                 def.rotate180Animation = stream.readUShort()
                 def.rotate90RightAnimation = stream.readUShort()
                 def.rotate90LeftAnimation = stream.readUShort()
-            } else if (opCode >= 30 && opCode < 40) {
+            } else if (opCode in 30..39) {
                 if (def.options == null)
                     def.options = arrayOfNulls<String>(5)
                 def.options[opCode - 30] = stream.readString()
