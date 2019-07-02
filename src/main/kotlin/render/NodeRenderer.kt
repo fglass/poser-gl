@@ -24,7 +24,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
     val nodes = HashSet<ReferenceNode>()
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
-    var enabled = true
+    var enabled = false
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)

@@ -14,16 +14,16 @@ class EntityHandler(private val context: Processor) {
         load(context.cacheService.entities[0]!!)
     }
 
-    fun load(entity: NpcDefinition) {
+    fun load(def: NpcDefinition) {
         val composition = ArrayList<EntityComponent>()
-        entity.models.forEach {
-            composition.add(EntityComponent(it, entity.recolorToFind, entity.recolorToReplace))
+        def.models.forEach {
+            composition.add(EntityComponent(it, def.recolorToFind, def.recolorToReplace))
         }
         clear()
-        process(composition)
+        process(def.name, composition)
     }
 
-    fun process(composition: ArrayList<EntityComponent>) {
+    fun process(name: String, composition: ArrayList<EntityComponent>) {
         val def = when {
             composition.size == 1 -> {
                 context.cacheService.loadModelDefinition(composition.first())
@@ -37,8 +37,8 @@ class EntityHandler(private val context: Processor) {
         }
         def.computeAnimationTables()
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-        context.entity = Entity(model, composition)
-        context.gui.treePanel.update(context.entity!!)
+        context.entity = Entity(name, model, composition)
+        context.gui.managerPanel.update(context.entity!!)
     }
 
     private fun clear() {

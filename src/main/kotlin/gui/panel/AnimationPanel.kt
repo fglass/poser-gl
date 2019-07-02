@@ -1,6 +1,6 @@
 package gui.panel
 
-import RESOURCES_PATH
+import SPRITE_PATH
 import BG_COLOUR
 import Processor
 import animation.Keyframe
@@ -26,17 +26,18 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
     private val play: ImageButton
     private val menu: Panel
     private val nodeToggle: ToggleButton
+    private val packButton: ImageButton
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
 
-    private val playIcon = BufferedImage(RESOURCES_PATH + "play.png")
-    private val pauseIcon = BufferedImage(RESOURCES_PATH + "pause.png")
-    private val greyLine = BufferedImage(RESOURCES_PATH + "grey-line.png")
-    private val yellowLine = BufferedImage(RESOURCES_PATH + "yellow-line.png")
-    private val pinkLine = BufferedImage(RESOURCES_PATH + "pink-line.png")
-    private val greenLine = BufferedImage(RESOURCES_PATH + "green-line.png")
-    private val nodeIcon = BufferedImage(RESOURCES_PATH + "nodes.png")
+    private val playIcon = BufferedImage(SPRITE_PATH + "play.png")
+    private val pauseIcon = BufferedImage(SPRITE_PATH + "pause.png")
+    private val greyLine = BufferedImage(SPRITE_PATH + "grey-line.png")
+    private val yellowLine = BufferedImage(SPRITE_PATH + "yellow-line.png")
+    private val pinkLine = BufferedImage(SPRITE_PATH + "pink-line.png")
+    private val greenLine = BufferedImage(SPRITE_PATH + "green-line.png")
+    private val nodeIcon = BufferedImage(SPRITE_PATH + "nodes.png")
     private val cursor = ImageButton(Vector2f(0f, 0f), greenLine)
 
     init {
@@ -81,16 +82,17 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         menu.add(animation)
         menu.add(sequenceId)
 
-        val pack = Button("Pack", size.x - 100, 5f, 50f, 15f)
-        pack.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+        packButton = ImageButton(Vector2f(size.x - 60, 0f), BufferedImage(SPRITE_PATH + "pack.png"))
+        packButton.size = Vector2f(26f, 26f)
+        packButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 val anim = context.animationHandler.currentAnimation?: return@addListener
                 context.cacheService.packAnimation(anim)
             }
         }
-        menu.add(pack)
+        menu.add(packButton)
 
-        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, true)
+        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, false)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.nodeRenderer.enabled = !context.nodeRenderer.enabled
@@ -192,6 +194,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         if (menu != null) {
             menu.size.x = size.x
             nodeToggle.position.x = size.x - 32
+            packButton.position.x = size.x - 60
         }
         val animation = context.animationHandler.currentAnimation?: return
         unitX = getUnitX(animation.length)

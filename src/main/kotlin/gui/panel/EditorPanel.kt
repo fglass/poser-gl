@@ -1,7 +1,7 @@
 package gui.panel
 
+import SPRITE_PATH
 import BG_COLOUR
-import RESOURCES_PATH
 import Processor
 import animation.*
 import animation.ReferenceNode
@@ -70,7 +70,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         icons.style.background.color = ColorConstants.transparent()
         framePanel.add(icons)
 
-        val nodePanel = Panel(0f, 95f, size.x, 150f)
+        val nodePanel = Panel(0f, 95f, size.x, 155f)
         nodePanel.style.background.color = ColorConstants.darkGray()
         nodePanel.style.border.isEnabled = false
         add(nodePanel)
@@ -85,8 +85,8 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         nodePanel.add(selectedNode)
 
         transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
-            BufferedImage(RESOURCES_PATH + "reference.png"), BufferedImage(RESOURCES_PATH + "translation.png"),
-            BufferedImage(RESOURCES_PATH + "rotation.png"), BufferedImage(RESOURCES_PATH + "scale.png"))
+            BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
+            BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png"))
 
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -98,7 +98,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         }
         nodePanel.add(transformations)
 
-        val transformPanel = Panel(31f, 80f, 108f, 78f)
+        val transformPanel = Panel(32f, 80f, 106f, 70f)
         val colour = 71 / 255f
         transformPanel.style.background.color = Vector4f(colour, colour, colour, 1f)
         transformPanel.style.border.isEnabled = false
@@ -108,11 +108,11 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         val coords = arrayOf("X", "Y", "Z")
 
         for ((i, coord) in coords.withIndex()){
-            val label = Label(coord, 16f, y, 50f, 15f)
+            val label = Label(coord, 12f, y, 50f, 15f)
             transformPanel.add(label)
 
             val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
-                                    Pair(-255, 255), 39f, y, 60f, 15f)
+                                    Pair(-255, 255), 35f, y, 60f, 15f)
             sliders.add(slider)
             transformPanel.add(slider)
             y += 20

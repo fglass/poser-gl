@@ -1,7 +1,7 @@
 package animation
 
+import SPRITE_PATH
 import Processor
-import RESOURCES_PATH
 import org.liquidengine.legui.image.BufferedImage
 import kotlin.reflect.KFunction1
 
@@ -20,6 +20,6 @@ enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, priva
     }
 
     fun getIcon(): BufferedImage {
-        return BufferedImage(RESOURCES_PATH + iconPath)
+        return BufferedImage(SPRITE_PATH + iconPath)
     }
 }

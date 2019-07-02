@@ -1,12 +1,13 @@
 package shader
 
+import RESOURCES_PATH
 import org.joml.Matrix4f
 import utils.Maths
 import entity.Camera
 import entity.Light
 
-private const val VERTEX_FILE = "src/main/kotlin/shader/vs.glsl"
-private const val FRAGMENT_FILE = "src/main/kotlin/shader/fs.glsl"
+private const val VERTEX_FILE = RESOURCES_PATH + "shader/vs.glsl"
+private const val FRAGMENT_FILE = RESOURCES_PATH + "shader/fs.glsl"
 
 class StaticShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
 

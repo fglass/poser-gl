@@ -1,10 +1,11 @@
 package gui.panel
 
+import SPRITE_PATH
 import BG_COLOUR
 import Processor
-import RESOURCES_PATH
 import entity.Entity
 import gui.GuiManager
+import gui.component.ConfigGroup
 import org.joml.Vector2f
 import org.joml.Vector4f
 import org.liquidengine.legui.component.ImageView
@@ -14,14 +15,18 @@ import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
+import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
+import render.PolygonMode
+import shader.ShadingType
 import kotlin.math.max
 
-class TreePanel(private val gui: GuiManager, private val context: Processor): Panel() {
+class ManagerPanel(private val gui: GuiManager, private val context: Processor): Panel() {
 
+    private val selectedEntity = Label("Selected: N/A", 0f, 20f, 0f, 0f)
     private val modelPanel: ScrollablePanel
-    private val modelIcon = BufferedImage(RESOURCES_PATH + "model.png")
-    private val deleteIcon = BufferedImage(RESOURCES_PATH + "delete.png")
+    private val modelIcon = BufferedImage(SPRITE_PATH + "model.png")
+    private val deleteIcon = BufferedImage(SPRITE_PATH + "delete.png")
 
     init {
         position = getPanelPosition()
@@ -29,12 +34,58 @@ class TreePanel(private val gui: GuiManager, private val context: Processor): Pa
         style.background.color = ColorConstants.darkGray()
         isFocusable = false
 
-        val title = Label("Composition Tree", 0f, 0f, size.x, 16f)
+        val title = Label("Entity Manager", 0f, 0f, size.x, 16f)
         title.style.background.color = BG_COLOUR
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
-        modelPanel = ScrollablePanel(6f, 25f, 160f, 162f)
+        selectedEntity.size = Vector2f(size.x, 15f)
+        selectedEntity.textState.horizontalAlign = HorizontalAlign.CENTER
+        add(selectedEntity)
+
+        val modes = ConfigGroup(
+            Vector2f(6f, 41f), Vector2f(22f, 22f),
+            BufferedImage(SPRITE_PATH + "fill-cube.png"), BufferedImage(SPRITE_PATH + "line-cube.png"),
+            BufferedImage(SPRITE_PATH + "point-cube.png")
+        )
+        for ((i, button) in modes.buttons.withIndex()) {
+            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    when (i) {
+                        0 -> context.framebuffer.polygonMode = PolygonMode.FILL
+                        1 -> context.framebuffer.polygonMode = PolygonMode.LINE
+                        2 -> context.framebuffer.polygonMode = PolygonMode.POINT
+                    }
+                }
+            }
+        }
+        add(modes)
+
+        val types = ConfigGroup(
+            Vector2f(88f, 41f), Vector2f(22f, 22f),
+            BufferedImage(SPRITE_PATH + "smooth-shading.png"), BufferedImage(SPRITE_PATH + "flat-shading.png"),
+            BufferedImage(SPRITE_PATH + "no-shading.png")
+        )
+        for ((i, button) in types.buttons.withIndex()) {
+            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    when (i) {
+                        0 -> {
+                            context.framebuffer.shadingType = ShadingType.SMOOTH
+                            context.entity!!.reload(context.entityHandler)
+                        } 1 -> {
+                            context.framebuffer.shadingType = ShadingType.FLAT
+                            context.entity!!.reload(context.entityHandler)
+                        } 2 -> context.framebuffer.shadingType = ShadingType.NONE
+                    }
+                }
+            }
+        }
+        add(types)
+
+        modelPanel = ScrollablePanel(6f, 78f, 160f, 130f)
         modelPanel.remove(modelPanel.horizontalScrollBar)
 
         val colour = 71 / 255f
@@ -54,8 +105,10 @@ class TreePanel(private val gui: GuiManager, private val context: Processor): Pa
     }
 
     fun update(entity: Entity) {
-        val offset = 17f
         modelPanel.container.removeAll(modelPanel.container.childComponents)
+        selectedEntity.textState.text = "Selected: ${entity.name}"
+
+        val offset = 17f
         modelPanel.container.size.y = max(3 + entity.composition.size * offset, modelPanel.size.y - 7)
 
         for ((i, component) in entity.composition.withIndex()) {
@@ -89,10 +142,10 @@ class TreePanel(private val gui: GuiManager, private val context: Processor): Pa
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(gui.size.x - 175, 27f)
+        return Vector2f(gui.size.x - 175, 5f)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 409)
+        return Vector2f(170f, gui.size.y - 387)
     }
 }

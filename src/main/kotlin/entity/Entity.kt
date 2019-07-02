@@ -10,7 +10,7 @@ val ENTITY_POS = Vector3f(0f, 0f, 0f)
 val ENTITY_ROT = Vector3f(0f, 0f, 0f)
 const val ENTITY_SCALE = 1f
 
-class Entity(var model: Model, val composition: ArrayList<EntityComponent>) {
+class Entity(val name: String, var model: Model, val composition: ArrayList<EntityComponent>) {
 
     val position = ENTITY_POS
     val rotation = ENTITY_ROT
@@ -29,7 +29,7 @@ class Entity(var model: Model, val composition: ArrayList<EntityComponent>) {
     }
 
     fun reload(entityHandler: EntityHandler) {
-        entityHandler.process(composition)
+        entityHandler.process(name, composition)
     }
 }
 

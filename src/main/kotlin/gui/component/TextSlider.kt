@@ -1,8 +1,6 @@
 package gui.component
 
-import RESOURCES_PATH
-import Processor
-import animation.TransformationType
+import SPRITE_PATH
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,8 +23,8 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
 
     private val value = TextInput("", 12f, 0f, width - 24, height)
     private var adjusting = false
-    private val leftArrow = BufferedImage(RESOURCES_PATH + "left.png")
-    private val rightArrow = BufferedImage(RESOURCES_PATH + "right.png")
+    private val leftArrow = BufferedImage(SPRITE_PATH + "left.png")
+    private val rightArrow = BufferedImage(SPRITE_PATH + "right.png")
 
     init {
         isFocusable = false

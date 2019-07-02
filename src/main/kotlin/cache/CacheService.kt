@@ -5,8 +5,6 @@ import Processor
 import animation.Animation
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.ModelDefinition
