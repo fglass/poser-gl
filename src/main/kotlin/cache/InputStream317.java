@@ -357,5 +357,4 @@ public final class InputStream317 {
         }
 
     }
-
 }

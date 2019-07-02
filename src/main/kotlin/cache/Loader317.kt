@@ -2,33 +2,27 @@ package cache
 
 import Processor
 import animation.Animation
-import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.FramemapDefinition
-import net.runelite.cache.definitions.ItemDefinition
-import net.runelite.cache.definitions.SequenceDefinition
-import net.runelite.cache.io.InputStream
+import net.runelite.cache.definitions.*
 
 class Loader317 {
 
     fun loadSequences(context: Processor, data: ByteArray): HashMap<Int, Animation> {
-        val stream = InputStream(data)
-        val length = stream.readUnsignedShort()
+        val stream = InputStream317(data)
+        val length = stream.readUShort()
         val sequences = HashMap<Int, Animation>()
 
         for (i in 0 until length) {
             sequences[i] = Animation(context, decodeSequence(SequenceDefinition(i), stream))
         }
-
-        println("Loaded $length 317 sequences")
         return sequences
     }
 
-    private fun decodeSequence(def: SequenceDefinition, stream: InputStream): SequenceDefinition {
+    private fun decodeSequence(def: SequenceDefinition, stream: InputStream317): SequenceDefinition {
         while (true) {
             when (stream.readUnsignedByte()) {
                 0 -> return def
                 1 -> {
-                    val length = stream.readUnsignedShort()
+                    val length = stream.readUShort()
                     def.frameIDs = IntArray(length)
                     for (i in 0 until length) {
                         def.frameIDs[i] = stream.readInt()
@@ -39,7 +33,7 @@ class Loader317 {
                         def.frameLenghts[i] = stream.readUnsignedByte()
                     }
                 }
-                2 -> def.frameStep = stream.readUnsignedShort()
+                2 -> def.frameStep = stream.readUShort()
                 3 -> {
                     val length = stream.readUnsignedByte()
                     def.interleaveLeave = IntArray(length + 1)
@@ -50,8 +44,8 @@ class Loader317 {
                 }
                 4 -> def.stretches = true
                 5 -> def.forcedPriority = stream.readUnsignedByte()
-                6 -> def.leftHandItem = stream.readUnsignedShort()
-                7 -> def.rightHandItem = stream.readUnsignedShort()
+                6 -> def.leftHandItem = stream.readUShort()
+                7 -> def.rightHandItem = stream.readUShort()
                 8 -> def.maxLoops = stream.readUnsignedByte()
                 9 -> def.precedenceAnimating = stream.readUnsignedByte()
                 10 -> def.priority = stream.readUnsignedByte()
@@ -62,10 +56,10 @@ class Loader317 {
     }
 
     fun loadFrames(archive: Int, data: ByteArray, service: CacheService) {
-        val stream = InputStream(data)
+        val stream = InputStream317(data)
         val frameMap = getFrameMap(-1, stream)
 
-        val frames = stream.readUnsignedShort()
+        val frames = stream.readUShort()
         //animationlist[archive] = arrayOfNulls<Frame>(n * 3)
         //frames[archive] = MutableSet<FrameDefinition>(n * 3)
         val indexFrameIds = IntArray(500)
@@ -74,7 +68,7 @@ class Loader317 {
         val scratchTranslatorZ = IntArray(500)
 
         for (j in 0 until frames) {
-            val framemapArchiveIndex = stream.readUnsignedShort()
+            val framemapArchiveIndex = stream.readUShort()
             frameMap.id = framemapArchiveIndex // TODO
             val def = FrameDefinition()
             def.id = j
@@ -106,17 +100,17 @@ class Loader317 {
                     val value = if (frameMap.types[i] == 3) 128 else 0
 
                     if (type and 1 != 0) {
-                        scratchTranslatorX[index] = stream.readShortSmart()
+                        scratchTranslatorX[index] = stream.readShort2()
                     } else {
                         scratchTranslatorX[index] = value
                     }
                     if (type and 2 != 0) {
-                        scratchTranslatorY[index] = stream.readShortSmart()
+                        scratchTranslatorY[index] = stream.readShort2()
                     } else {
                         scratchTranslatorY[index] = value
                     }
                     if (type and 3 != 0) {
-                        scratchTranslatorZ[index] = stream.readShortSmart()
+                        scratchTranslatorZ[index] = stream.readShort2()
                     } else {
                         scratchTranslatorZ[index] = value
                     }
@@ -141,30 +135,30 @@ class Loader317 {
         }
     }
 
-    private fun getFrameMap(id: Int, stream: InputStream): FramemapDefinition {
+    private fun getFrameMap(id: Int, stream: InputStream317): FramemapDefinition {
         val def = FramemapDefinition()
         //val stream = InputStream(b)
         def.id = id
-        def.length = stream.readUnsignedShort()
+        def.length = stream.readUShort()
         def.types = IntArray(def.length)
         def.frameMaps = arrayOfNulls(def.length)
 
         var i = 0
         while (i < def.length) {
-            def.types[i] = stream.readUnsignedShort()
+            def.types[i] = stream.readUShort()
             ++i
         }
 
         i = 0
         while (i < def.length) {
-            def.frameMaps[i] = IntArray(stream.readUnsignedShort())
+            def.frameMaps[i] = IntArray(stream.readUShort())
             ++i
         }
 
         i = 0
         while (i < def.length) {
             for (j in 0 until def.frameMaps[i].size) {
-                def.frameMaps[i][j] = stream.readUnsignedShort()
+                def.frameMaps[i][j] = stream.readUShort()
             }
             ++i
         }
@@ -253,7 +247,6 @@ class Loader317 {
             else if (opCode == 98)
                 def.notedTemplate = stream.readUShort()
             else if (opCode >= 100 && opCode < 110) {
-
                 if (def.countObj == null) {
                     def.countObj = IntArray(10)
                     def.countCo = IntArray(10)
@@ -280,6 +273,97 @@ class Loader317 {
                 def.contrast = stream.readSignedByte() * 5
             else if (opCode == 115)
                 def.team = stream.readUnsignedByte()
+        }
+    }
+
+    fun loadEntity(id: Int, stream: InputStream317): NpcDefinition {
+        val def = NpcDefinition(id)
+        while (true) {
+            val opCode = stream.readUnsignedByte()
+            if (opCode == 0)
+                return def
+            if (opCode == 1) {
+                val j = stream.readUnsignedByte()
+                def.models = IntArray(j)
+                for (j1 in 0 until j)
+                    def.models[j1] = stream.readUShort()
+
+            } else if (opCode == 2)
+                def.name = stream.readString()
+            else if (opCode == 3) {
+                val description = stream.readBytes()
+            } else if (opCode == 12)
+                def.tileSpacesOccupied = stream.readSignedByte().toInt()
+            else if (opCode == 13)
+                def.stanceAnimation = stream.readUShort()
+            else if (opCode == 14)
+                def.walkAnimation = stream.readUShort()
+            else if (opCode == 17) {
+                def.walkAnimation = stream.readUShort()
+                def.rotate180Animation = stream.readUShort()
+                def.rotate90RightAnimation = stream.readUShort()
+                def.rotate90LeftAnimation = stream.readUShort()
+            } else if (opCode >= 30 && opCode < 40) {
+                if (def.options == null)
+                    def.options = arrayOfNulls<String>(5)
+                def.options[opCode - 30] = stream.readString()
+                if (def.options[opCode - 30].equals("hidden", ignoreCase = true))
+                    def.options[opCode - 30] = null
+            } else if (opCode == 40) {
+                val colours = stream.readUnsignedByte()
+                def.recolorToFind = ShortArray(colours)
+                def.recolorToReplace = ShortArray(colours)
+                for (k1 in 0 until colours) {
+                    def.recolorToFind[k1] = stream.readUShort().toShort()
+                    def.recolorToReplace[k1] = stream.readUShort().toShort()
+                }
+
+            } else if (opCode == 60) {
+                val additionalModelLen = stream.readUnsignedByte()
+                def.models_2 = IntArray(additionalModelLen)
+                for (l1 in 0 until additionalModelLen)
+                    def.models_2[l1] = stream.readUShort()
+
+            } else if (opCode == 90)
+                stream.readUShort()
+            else if (opCode == 91)
+                stream.readUShort()
+            else if (opCode == 92)
+                stream.readUShort()
+            else if (opCode == 93)
+                def.renderOnMinimap = false
+            else if (opCode == 95)
+                def.combatLevel = stream.readUShort()
+            else if (opCode == 97)
+                def.resizeX = stream.readUShort()
+            else if (opCode == 98)
+                def.resizeY = stream.readUShort()
+            else if (opCode == 99)
+                def.hasRenderPriority = true
+            else if (opCode == 100)
+                def.ambient = stream.readSignedByte().toInt()
+            else if (opCode == 101)
+                def.contrast = stream.readSignedByte() * 5
+            else if (opCode == 102)
+                def.headIcon = stream.readUShort()
+            else if (opCode == 103)
+                def.rotation = stream.readUShort()
+            else if (opCode == 106) {
+                def.varbitIndex = stream.readUShort()
+                if (def.varbitIndex == 65535)
+                    def.varbitIndex = -1
+                def.varpIndex = stream.readUShort()
+                if (def.varpIndex == 65535)
+                    def.varpIndex = -1
+                val childCount = stream.readUnsignedByte()
+                def.configs = IntArray(childCount + 1)
+                for (i2 in 0..childCount) {
+                    def.configs[i2] = stream.readUShort()
+                    if (def.configs[i2] == 65535)
+                        def.configs[i2] = -1
+                }
+            } else if (opCode == 107)
+                def.isClickable = false
         }
     }
 }

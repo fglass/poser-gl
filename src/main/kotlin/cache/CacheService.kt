@@ -1,6 +1,5 @@
 package cache
 
-import CACHE_317_PATH
 import CACHE_PATH
 import Processor
 import animation.Animation
@@ -11,7 +10,7 @@ import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
 
-class CacheService(private val context: Processor) {
+class CacheService(private val context: Processor) { // TODO: Clean-up this, loader & buffer
 
     private val osrs: Boolean
     val entities = HashMap<Int, NpcDefinition>()
@@ -22,6 +21,7 @@ class CacheService(private val context: Processor) {
     init {
         val library = CacheLibrary(CACHE_PATH)
         osrs = library.isOSRS
+        println("OSRS cache: $osrs")
         loadEntities(library)
         println("Loaded ${entities.size} entities")
         loadItems(library)
@@ -34,6 +34,32 @@ class CacheService(private val context: Processor) {
     }
 
     private fun loadEntities(library: CacheLibrary) {
+        if (!osrs) {
+            val npcIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile("npc.idx")
+            val npcArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile("npc.dat")
+
+            val idxStream = InputStream317(npcIdx.data)
+            val total = idxStream.readUShort()
+
+            val streamIndices = IntArray(total)
+            var offset = 2
+            for (i in 0 until total) {
+                streamIndices[i] = offset
+                offset += idxStream.readUShort()
+            }
+
+            val stream = InputStream317(npcArchive.data)
+            for (i in 0 until total) {
+                stream.currentPosition = streamIndices[i]
+                val npc = Loader317().loadEntity(i, stream)// NpcLoader().load(i, stream.readBytes())
+                if (npc.models != null && npc.name.toLowerCase() != "null") {
+                    entities[npc.id] = npc
+                }
+            }
+            addPlayer()
+            return
+        }
+
         val npcLoader = NpcLoader()
         for (i in 0..library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).lastFile.id) {
             val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile(i)?: continue
@@ -67,8 +93,8 @@ class CacheService(private val context: Processor) {
                 streamIndices[i] = offset
                 offset += idxStream.readUShort()
             }
-            val stream = InputStream317(itemArchive.data)
 
+            val stream = InputStream317(itemArchive.data)
             for (i in 0 until total) {
                 stream.currentPosition = streamIndices[i]
                 val item = Loader317().loadItem(i, stream)
@@ -118,7 +144,7 @@ class CacheService(private val context: Processor) {
         }
         lib.close()*/
 
-        val frameLoader = FrameLoader()
+        /*val frameLoader = FrameLoader()
         val frameMapLoader = FramemapLoader()
 
         val frameMapIndex = IndexType.FRAME_MAP.getIndexId(osrs)
@@ -137,7 +163,7 @@ class CacheService(private val context: Processor) {
                 val frame = frameLoader.load(frameMap, frameFile.id, frameData)
                 frames.put(archive.id, frame)
             }
-        }
+        }*/
     }
 
     fun pack(animation: Animation) {
