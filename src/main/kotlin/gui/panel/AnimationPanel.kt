@@ -78,7 +78,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         menu.add(play)
 
         val animation = Label("Sequence:", x + 14, 5f, 50f, 15f)
-        sequenceId = Label("N/A", x + 74, 5f, 50f, 15f)
+        sequenceId = Label("N/A", x + 73, 5f, 50f, 15f)
         menu.add(animation)
         menu.add(sequenceId)
 
@@ -98,6 +98,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
             context.nodeRenderer.enabled = !context.nodeRenderer.enabled
         }
         menu.add(nodeToggle)
+        reset()
     }
 
     fun updatePlayIcon(playing: Boolean) {
@@ -107,6 +108,9 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
     fun reset() {
         play.image = playIcon
         setTimeline()
+        val placeholder = 50
+        unitX = getUnitX(placeholder)
+        addTimes(placeholder)
     }
 
     fun setTimeline() {
@@ -128,7 +132,6 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
 
     private fun addTimes(maxLength: Int) {
         addTime(maxLength)
-
         val base = 5
         val sqrt = max(sqrt(maxLength.toDouble()), base.toDouble())
         val timeStep = base * (sqrt / base).roundToInt()
@@ -191,14 +194,21 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         size = getPanelSize()
         times.size.x = size.x
         timeline.size.x = getTimelineWidth()
-        if (menu != null) {
-            menu.size.x = size.x
-            nodeToggle.position.x = size.x - 32
-            packButton.position.x = size.x - 60
+
+        if (menu == null) { // Not initialised at the start
+            return
         }
-        val animation = context.animationHandler.currentAnimation?: return
-        unitX = getUnitX(animation.length)
-        setTimeline()
+        menu.size.x = size.x
+        nodeToggle.position.x = size.x - 32
+        packButton.position.x = size.x - 60
+
+        val animation = context.animationHandler.currentAnimation
+        if (animation == null) {
+            reset()
+        } else {
+            unitX = getUnitX(animation.length)
+            setTimeline()
+        }
     }
 
     private fun getPanelPosition(): Vector2f {

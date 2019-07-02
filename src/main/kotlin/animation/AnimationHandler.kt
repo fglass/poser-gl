@@ -127,13 +127,15 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun resetAnimation() {
-        currentAnimation = null
-        timer = 0
-        frameCount = 0
-        frameLength = 0
-        previousFrame = Keyframe(-1,-1, -1)
-        context.nodeRenderer.deselectNode()
-        context.nodeRenderer.nodes.clear()
-        context.gui.animationPanel.reset()
+        if (currentAnimation != null) {
+            currentAnimation = null
+            timer = 0
+            frameCount = 0
+            frameLength = 0
+            previousFrame = Keyframe(-1, -1, -1)
+            context.nodeRenderer.reset()
+            context.gui.editorPanel.reset()
+            context.gui.animationPanel.reset()
+        }
     }
 }

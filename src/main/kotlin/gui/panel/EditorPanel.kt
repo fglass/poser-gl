@@ -145,9 +145,14 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         }
     }
 
-    fun resetSliders() {
+    fun reset() {
+        val unselected = "Selected: N/A"
+        selectedFrame.textState.text = unselected
+        selectedNode.textState.text = unselected
+        frameLength.setValue(0)
         sliders.forEach { it.setValue(0) }
     }
+
 
     fun resize() {
         position = getPanelPosition()

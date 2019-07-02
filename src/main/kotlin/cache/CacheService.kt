@@ -53,7 +53,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             for (i in 0 until total) {
                 stream.currentPosition = streamIndices[i]
                 val npc = Loader317().loadEntityDefinition(i, stream)
-                if (npc.models != null && npc.name.toLowerCase() != "null") {
+                if (npc.models != null && npc.name.toLowerCase() != "null" && npc.name != "") {
                     entities[npc.id] = npc
                 }
             }
@@ -64,7 +64,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         for (i in 0..library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).lastFile.id) {
             val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile(i)?: continue
             val npc = npcLoader.load(file.id, file.data)
-            if (npc.models != null && npc.name.toLowerCase() != "null") {
+            if (npc.models != null && npc.name.toLowerCase() != "null" && npc.name != "") {
                 entities[npc.id] = npc
             }
         }

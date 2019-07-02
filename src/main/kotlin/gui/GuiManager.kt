@@ -1,18 +1,12 @@
 package gui
 
 import Processor
-import RESOURCES_PATH
-import gui.component.ConfigGroup
 import gui.panel.AnimationPanel
 import gui.panel.EditorPanel
-import gui.panel.ManagerPanel
 import gui.panel.ListPanel
+import gui.panel.ManagerPanel
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.SelectBox
-import org.liquidengine.legui.image.BufferedImage
-import render.PolygonMode
-import shader.ShadingType
 
 class GuiManager(position: Vector2f, size: Vector2f, context: Processor): Panel(position, size) {
 

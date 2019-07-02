@@ -146,9 +146,9 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         selectNode(node)
     }
 
-    fun deselectNode() {
+    fun reset() {
         selectedNode = null
-        context.gui.editorPanel.resetSliders()
+        nodes.clear()
     }
 
     private fun loadMatrices(node: ReferenceNode) {

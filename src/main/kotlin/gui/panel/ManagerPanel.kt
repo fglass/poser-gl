@@ -85,7 +85,7 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
         }
         add(types)
 
-        modelPanel = ScrollablePanel(6f, 78f, 160f, 130f)
+        modelPanel = ScrollablePanel(6f, 78f, 160f, size.y - 83)
         modelPanel.remove(modelPanel.horizontalScrollBar)
 
         val colour = 71 / 255f
@@ -106,7 +106,8 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
 
     fun update(entity: Entity) {
         modelPanel.container.removeAll(modelPanel.container.childComponents)
-        selectedEntity.textState.text = "Selected: ${entity.name}"
+        val name = if (entity.name.length < 20) entity.name else entity.name.split(" ").first()
+        selectedEntity.textState.text = "Selected: $name"
 
         val offset = 17f
         modelPanel.container.size.y = max(3 + entity.composition.size * offset, modelPanel.size.y - 7)
@@ -139,6 +140,7 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
     fun resize() {
         position = getPanelPosition()
         size = getPanelSize()
+        modelPanel.size.y = size.y - 83
     }
 
     private fun getPanelPosition(): Vector2f {
