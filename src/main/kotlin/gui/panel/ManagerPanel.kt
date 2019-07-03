@@ -45,8 +45,8 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
 
         val modes = ConfigGroup(
             Vector2f(6f, 41f), Vector2f(22f, 22f),
-            BufferedImage(SPRITE_PATH + "fill-cube.png"), BufferedImage(SPRITE_PATH + "line-cube.png"),
-            BufferedImage(SPRITE_PATH + "point-cube.png")
+            arrayOf(BufferedImage(SPRITE_PATH + "fill-cube.png"), BufferedImage(SPRITE_PATH + "line-cube.png"),
+            BufferedImage(SPRITE_PATH + "point-cube.png")), arrayOf("Fill", "Wireframe", "Vertices")
         )
         for ((i, button) in modes.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -64,8 +64,8 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
 
         val types = ConfigGroup(
             Vector2f(88f, 41f), Vector2f(22f, 22f),
-            BufferedImage(SPRITE_PATH + "smooth-shading.png"), BufferedImage(SPRITE_PATH + "flat-shading.png"),
-            BufferedImage(SPRITE_PATH + "no-shading.png")
+            arrayOf(BufferedImage(SPRITE_PATH + "smooth-shading.png"), BufferedImage(SPRITE_PATH + "flat-shading.png"),
+            BufferedImage(SPRITE_PATH + "no-shading.png")), arrayOf("Smooth shading", "Flat shading","No shading")
         )
         for ((i, button) in types.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->

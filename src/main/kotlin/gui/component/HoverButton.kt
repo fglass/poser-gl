@@ -5,7 +5,7 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.image.Image
 
-class HoverButton(position: Vector2f, border: Float, image: Image, hoveredImage: Image): Panel() {
+class HoverButton(position: Vector2f, border: Float, image: Image, hoveredImage: Image, action: String): Panel() {
 
     init {
         this.position = Vector2f(position.x - border, position.y)
@@ -13,7 +13,7 @@ class HoverButton(position: Vector2f, border: Float, image: Image, hoveredImage:
         style.border.isEnabled = false
         style.focusedStrokeColor = null
 
-        val imageView = ImageButton(position.sub(this.position), image)
+        val imageView = ImageButton(position.sub(this.position), image, action)
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             imageView.image = if (event.isEntered) hoveredImage else image
         }

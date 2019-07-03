@@ -56,8 +56,9 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         framePanel.add(frameLength)
 
         val icons = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f),
-                                KeyframeAction.ADD.getIcon(), KeyframeAction.COPY.getIcon(),
-                                KeyframeAction.PASTE.getIcon(), KeyframeAction.DELETE.getIcon())
+                                arrayOf(KeyframeAction.ADD.getIcon(), KeyframeAction.COPY.getIcon(),
+                                KeyframeAction.PASTE.getIcon(), KeyframeAction.DELETE.getIcon()),
+                                arrayOf("Add", "Copy" ,"Paste", "Delete"))
 
         for ((i, button) in icons.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -85,8 +86,9 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         nodePanel.add(selectedNode)
 
         transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
-            BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
-            BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png"))
+            arrayOf(BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
+            BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
+            arrayOf("Reference", "Translation", "Rotation", "Scale"))
 
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->

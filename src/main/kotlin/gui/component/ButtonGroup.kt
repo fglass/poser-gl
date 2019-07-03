@@ -4,7 +4,7 @@ import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.image.Image
 
-open class ButtonGroup(position: Vector2f, iconSize: Vector2f, vararg images: Image): Panel() {
+open class ButtonGroup(position: Vector2f, iconSize: Vector2f, images: Array<Image>, actions: Array<String>): Panel() {
 
     val buttons = ArrayList<ImageButton>()
 
@@ -12,8 +12,8 @@ open class ButtonGroup(position: Vector2f, iconSize: Vector2f, vararg images: Im
         var containerX = 3f
         val offset = 3f
 
-        for (image in images) {
-            val button = ImageButton(Vector2f(containerX, offset), image)
+        for (i in 0 until images.size) {
+            val button = ImageButton(Vector2f(containerX, offset), images[i], actions[i])
             button.size = iconSize
             containerX += button.size.x + 2
 

@@ -6,7 +6,8 @@ import org.liquidengine.legui.image.Image
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 
-class ToggleButton(position: Vector2f, size: Vector2f, image: Image, toggled: Boolean) : ImageButton(position, image) {
+class ToggleButton(position: Vector2f, size: Vector2f, image: Image, action: String, toggled: Boolean):
+      ImageButton(position, image, action) {
 
     init {
         this.size = size
