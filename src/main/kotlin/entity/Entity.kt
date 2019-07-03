@@ -1,9 +1,7 @@
 package entity
 
 import model.Model
-import model.EntityHandler
 import net.runelite.cache.definitions.ItemDefinition
-import net.runelite.cache.definitions.NpcDefinition
 import org.joml.Vector3f
 
 val ENTITY_POS = Vector3f(0f, 0f, 0f)

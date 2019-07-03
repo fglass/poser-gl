@@ -10,6 +10,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length) {
+        modified = keyframe.modified
         keyframe.transformations.forEach {
             if (it is Reference) {
                 val newReference = Reference(it)
@@ -24,7 +25,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         }
     }
 
-    var modified = true // TODO
+    var modified = false
     val transformations = ArrayList<Transformation>()
 
     fun add(transformation: Transformation, id: Int) {

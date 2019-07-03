@@ -2,10 +2,10 @@ import animation.AnimationHandler
 import cache.CacheService
 import render.NodeRenderer
 import entity.Entity
+import entity.EntityHandler
 import gui.GuiManager
 import io.MouseHandler
 import model.ModelParser
-import model.EntityHandler
 import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector4f
@@ -29,10 +29,10 @@ import org.lwjgl.system.MemoryUtil
 import render.Framebuffer
 import render.Loader
 import shader.StaticShader
-import utils.VSyncTimer
+import util.VSyncTimer
 
 const val TITLE = "PoserGL"
-const val CACHE_PATH = "./repository/cache317/"
+const val CACHE_PATH = "./repository/cache/"
 const val RESOURCES_PATH = "src/main/resources/"
 const val SPRITE_PATH = "src/main/resources/sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)

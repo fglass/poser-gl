@@ -24,8 +24,8 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         val library = CacheLibrary(CACHE_PATH)
         osrs = library.isOSRS
         println("OSRS cache: $osrs")
-        loadNpcDefinitions(library)
         addPlayer()
+        loadNpcDefinitions(library)
         println("Loaded ${entities.size} entities")
         loadItemDefinitions(library)
         println("Loaded ${items.size} items")
@@ -82,7 +82,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
     }
 
     private fun addPlayer() {
-        val player = NpcDefinition(0)
+        val player = NpcDefinition(-1)
         player.name = "Player"
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player

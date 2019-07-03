@@ -24,7 +24,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     private var textureWidth = 0
     private var textureHeight = 0
 
-    lateinit var glRenderer: GlRenderer
+    lateinit var entityRenderer: EntityRenderer
     private val camera = Camera(mouse)
 
     var polygonMode = PolygonMode.FILL
@@ -51,7 +51,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     }
 
     fun lateInit() {
-        glRenderer = GlRenderer(context, shader)
+        entityRenderer = EntityRenderer(context, shader)
     }
 
     private fun createTexture(): FBOImage {
@@ -116,7 +116,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         shader.start()
         shader.loadViewMatrix(camera)
         shader.loadShadingToggle(shadingType != ShadingType.NONE)
-        glRenderer.render(context.entity, shader)
+        entityRenderer.render(context.entity, shader)
         shader.stop()
     }
 
@@ -126,8 +126,8 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         textureHeight = (size.y * scaleFactor).toInt()
         image = createTexture()
 
-        if (::glRenderer.isInitialized) {
-            glRenderer.reloadProjectionMatrix()
+        if (::entityRenderer.isInitialized) {
+            entityRenderer.reloadProjectionMatrix()
         }
     }
 

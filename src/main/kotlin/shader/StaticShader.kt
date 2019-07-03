@@ -2,7 +2,7 @@ package shader
 
 import RESOURCES_PATH
 import org.joml.Matrix4f
-import utils.Maths
+import util.Maths
 import entity.Camera
 import entity.Light
 

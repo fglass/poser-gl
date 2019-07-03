@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import shader.StaticShader
-import utils.Maths
+import util.Maths
 import Processor
 import kotlin.math.tan
 
@@ -16,7 +16,7 @@ const val FOV = 70f
 const val NEAR_PLANE = 1f
 const val FAR_PLANE = 10000f
 
-class GlRenderer(private val context: Processor, private val shader: StaticShader) {
+class EntityRenderer(private val context: Processor, private val shader: StaticShader) {
 
     lateinit var projectionMatrix: Matrix4f
 

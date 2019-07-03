@@ -12,7 +12,7 @@ import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
-import utils.Maths
+import util.Maths
 
 class NodeRenderer(private val context: Processor, private val framebuffer: Framebuffer) {
 
@@ -115,7 +115,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
 
         val origin = Vector3f()
         val dir = Vector3f()
-        Matrix4f(framebuffer.glRenderer.projectionMatrix).mul(viewMatrix).unprojectRay(mousePosition.x, mousePosition.y,
+        Matrix4f(framebuffer.entityRenderer.projectionMatrix).mul(viewMatrix).unprojectRay(mousePosition.x, mousePosition.y,
             intArrayOf(0, 0, framebuffer.size.x.toInt(), framebuffer.size.y.toInt()), origin, dir
         )
         return Rayf(origin, dir)
@@ -167,7 +167,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         modelMatrix.m22(viewMatrix.m22())
         modelMatrix.scale(node.scale)
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
-        shader.loadProjectionMatrix(framebuffer.glRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(framebuffer.entityRenderer.projectionMatrix)
     }
 
     private fun finish() {
