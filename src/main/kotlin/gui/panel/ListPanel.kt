@@ -9,6 +9,7 @@ import org.joml.Vector2f
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput
+import org.liquidengine.legui.component.optional.align.VerticalAlign
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.color.ColorConstants
@@ -57,6 +58,8 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
         for ((i, name) in names.withIndex()) {
             val tab = Button(name, 5f + i * offset, 27f, offset - 1, 17f)
             tab.style.focusedStrokeColor = null
+            tab.style.setBorderRadius(1f)
+
             tab.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                     changeList(tab)
@@ -96,6 +99,6 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y)
+        return Vector2f(170f, gui.size.y - 100)
     }
 }

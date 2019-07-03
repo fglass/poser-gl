@@ -85,8 +85,10 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
         }
         add(types)
 
-        modelPanel = ScrollablePanel(6f, 78f, 160f, size.y - 83)
+        modelPanel = ScrollablePanel(6f, 79f, 160f, size.y - 90)
         modelPanel.remove(modelPanel.horizontalScrollBar)
+        modelPanel.viewport.style.bottom = 0f
+        modelPanel.verticalScrollBar.style.bottom = 0f
 
         val colour = 71 / 255f
         var components = arrayOf(modelPanel.viewport, modelPanel.container)
@@ -106,11 +108,11 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
 
     fun update(entity: Entity) {
         modelPanel.container.removeAll(modelPanel.container.childComponents)
-        val name = if (entity.name.length < 20) entity.name else entity.name.split(" ").first()
+        val name = if (entity.name.length < 20) entity.name else entity.name.split(" ").first() // Trim if necessary
         selectedEntity.textState.text = "Selected: $name"
 
         val offset = 17f
-        modelPanel.container.size.y = max(3 + entity.composition.size * offset, modelPanel.size.y - 7)
+        modelPanel.container.size.y = max(3 + entity.composition.size * offset, modelPanel.size.y + 1)
 
         for ((i, component) in entity.composition.withIndex()) {
             val y = 3 + i * offset
@@ -140,7 +142,8 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
     fun resize() {
         position = getPanelPosition()
         size = getPanelSize()
-        modelPanel.size.y = size.y - 83
+        modelPanel.size.y = size.y - 90
+        modelPanel.container.size.y = modelPanel.size.y + 1 // To avoid horizontal scroll removal bug
     }
 
     private fun getPanelPosition(): Vector2f {

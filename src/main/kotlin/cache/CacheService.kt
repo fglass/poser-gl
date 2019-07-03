@@ -35,8 +35,8 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             val library = CacheLibrary(CACHE_PATH)
             osrs = library.isOSRS
 
-            val cache = if (osrs) "OSRS" else "317"
-            logger.info { "Loaded $cache cache" }
+            val revision = if (osrs) "OSRS" else "317"
+            logger.info { "Loaded $revision cache" }
 
             addPlayer()
             loadNpcDefinitions(library)

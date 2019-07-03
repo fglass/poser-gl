@@ -12,7 +12,7 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
     init {
         var index = 0
         for (item in items.values) {
-            val element = ItemElement(item, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
+            val element = ItemElement(item, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)
             element.addClickListener()
             elements[item.id] = element
             container.add(element)

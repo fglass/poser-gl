@@ -11,7 +11,7 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
     init {
         var index = 0
         for (animation in context.cacheService.animations.values) {
-            val element = AnimationElement(animation, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
+            val element = AnimationElement(animation, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)
             element.addClickListener()
             elements[animation.sequence.id] = element
             container.add(element)
@@ -21,7 +21,7 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
 
     fun addElement(animation: Animation) {
         search("") // Reset search
-        val element = AnimationElement(animation, context, listX, container.size.y, containerX - 6, 14f)
+        val element = AnimationElement(animation, context, listX, container.size.y, containerX - 6, 15f)
         element.addClickListener()
         elements[animation.sequence.id] = element
         container.add(element)

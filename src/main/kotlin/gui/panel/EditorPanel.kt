@@ -52,7 +52,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         framePanel.add(length)
 
         frameLength = TextSlider({ context.animationHandler.getAnimation(false)?.changeKeyframeLength(it) },
-                                 Pair(1, 99), 82f, 40f, 50f, 15f)
+                                 Pair(1, 99), 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
         val icons = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f),
@@ -165,6 +165,6 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, 254f)
+        return Vector2f(170f, 255f)
     }
 }

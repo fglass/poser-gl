@@ -21,6 +21,7 @@ class GuiManager(position: Vector2f, size: Vector2f, context: Processor): Panel(
     val editorPanel = EditorPanel(this, context)
 
     fun createElements() {
+        style.setBorderRadius(0f)
         add(listPanel)
         add(managerPanel)
         add(editorPanel)

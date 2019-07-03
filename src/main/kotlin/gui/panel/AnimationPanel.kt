@@ -214,11 +214,11 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(5f, gui.size.y - 117)
+        return Vector2f(5f, gui.size.y - 116)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(gui.size.x - 10, 112f)
+        return Vector2f(gui.size.x - 10, 111f)
     }
 
     private fun getTimelineWidth(): Float {

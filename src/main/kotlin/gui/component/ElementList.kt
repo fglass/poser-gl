@@ -12,19 +12,22 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
 
     var searchText = "Search"
     protected val listX = 2f
-    protected val listY = 2f
-    protected val listYOffset = 17
+    protected val listY = 3f
+    protected val listYOffset = 18f
     protected val containerX = 157f
 
     init {
         position.x = x
         position.y = y
         size = getListSize()
+
         this.remove(horizontalScrollBar)
-        //this.style.background.color = BG_COLOUR
+        this.style.background.color = BG_COLOUR
+
         this.container.style.border.isEnabled = false
         this.viewport.style.border.isEnabled = false
-
+        this.viewport.style.bottom = 0f
+        this.verticalScrollBar.style.bottom = 0f
     }
 
     fun resize() {
@@ -32,7 +35,7 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
     }
 
     private fun getListSize(): Vector2f {
-        return Vector2f(164f, gui.size.y - 166)
+        return Vector2f(164f, gui.size.y - 165) //166 173
     }
 
     fun search(input: String) {

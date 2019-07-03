@@ -12,7 +12,7 @@ class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): Eleme
     init {
         var index = 0
         for (entity in entities.values) {
-            val element = EntityElement(entity, context, listX, listY + index++ * listYOffset, containerX - 6, 14f)
+            val element = EntityElement(entity, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)
             element.addClickListener()
             elements[entity.id] = element
             container.add(element)
