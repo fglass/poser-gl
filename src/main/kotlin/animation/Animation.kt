@@ -1,6 +1,7 @@
 package animation
 
 import Processor
+import gui.component.Popup
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
@@ -110,6 +111,8 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             val index = context.animationHandler.getFrameIndex(this)
             keyframes.remove(keyframes[index])
             updateKeyframes()
+        } else {
+            Popup("Invalid Operation", "Unable to delete the last keyframe", 260f, 70f).show(context.frame)
         }
     }
 

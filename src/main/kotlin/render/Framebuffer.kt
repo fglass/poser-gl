@@ -83,6 +83,10 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     }
 
     fun render() {
+        if (!context.cacheService.loaded) {
+            return
+        }
+
         glBindFramebuffer(GL_FRAMEBUFFER, id)
         glViewport(0, 0, textureWidth, textureHeight)
 

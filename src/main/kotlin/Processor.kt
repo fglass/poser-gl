@@ -4,6 +4,7 @@ import render.NodeRenderer
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
+import gui.component.Popup
 import io.MouseHandler
 import model.ModelParser
 import org.joml.Vector2f
@@ -35,7 +36,7 @@ import util.VSyncTimer
 const val TITLE = "PoserGL"
 const val CACHE_PATH = "./repository/cache/"
 const val RESOURCES_PATH = "src/main/resources/"
-const val SPRITE_PATH = "src/main/resources/sprite/"
+const val SPRITE_PATH = "$RESOURCES_PATH/sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
 
 fun main() {
@@ -47,12 +48,13 @@ const val HEIGHT = 600
 
 class Processor {
 
-    private var running = true
+    val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
     lateinit var nodeRenderer: NodeRenderer
     lateinit var planeRenderer: PlaneRenderer
 
+    private var running = true
     val cacheService = CacheService(this)
     val loader = Loader()
     val modelParser = ModelParser(loader)
@@ -82,7 +84,6 @@ class Processor {
         val context = Context(window)
         context.updateGlfwWindow()
 
-        val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
 
@@ -118,9 +119,13 @@ class Processor {
 
         nodeRenderer = NodeRenderer(this, framebuffer)
         planeRenderer = PlaneRenderer(framebuffer)
-
-        entityHandler.loadPlayer()
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
+
+        if (cacheService.loaded) {
+            entityHandler.loadPlayer()
+        } else {
+            Popup("Cache Error", "Unable to locate valid cache", 260f, 70f).show(frame)
+        }
 
         // Render loop
         while (running) {
@@ -157,7 +162,7 @@ class Processor {
                 println("Layout error")
             }
 
-            // Run legui animations
+            // Run gui animations
             AnimatorProvider.getAnimator().runAnimations()
 
             // Control fps

@@ -5,33 +5,43 @@ import Processor
 import animation.Animation
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
+import gui.component.Popup
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
+import java.io.FileNotFoundException
 
 class CacheService(private val context: Processor) { // TODO: Clean-up this, loader & buffer
 
-    private val osrs: Boolean
+    var loaded = false
+    private var osrs = false
     val entities = HashMap<Int, NpcDefinition>()
     val items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
     init {
-        val library = CacheLibrary(CACHE_PATH)
-        osrs = library.isOSRS
-        println("OSRS cache: $osrs")
-        addPlayer()
-        loadNpcDefinitions(library)
-        println("Loaded ${entities.size} entities")
-        loadItemDefinitions(library)
-        println("Loaded ${items.size} items")
-        loadSequences(library)
-        println("Loaded ${animations.size} sequences")
-        library.close()
+        try {
+            val library = CacheLibrary(CACHE_PATH)
+            osrs = library.isOSRS
+            println("OSRS cache: $osrs")
+
+            addPlayer()
+            loadNpcDefinitions(library)
+            println("Loaded ${entities.size} entities")
+            loadItemDefinitions(library)
+            println("Loaded ${items.size} items")
+            loadSequences(library)
+            println("Loaded ${animations.size} sequences")
+
+            loaded = true
+            library.close()
+        } catch (e: FileNotFoundException) {
+            println("Cache error")
+        }
     }
 
     private fun loadNpcDefinitions(library: CacheLibrary) {
@@ -217,6 +227,8 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
     fun pack(animation: Animation) {
         if (animation.modified) {
             if (osrs) packAnimation(animation) else packAnimation317(animation)
+        } else {
+            Popup("Invalid Operation", "This animation has not been modified", 260f, 70f).show(context.frame)
         }
     }
 
