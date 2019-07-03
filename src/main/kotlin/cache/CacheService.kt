@@ -238,7 +238,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
                 progress.finish(animation.sequence.id)
             }
         } else {
-            Popup("Invalid Operation", "This animation has not been modified", 260f, 70f).show(context.frame)
+            Popup("Invalid Operation", "This animation has not been modified yet", 260f, 70f).show(context.frame)
         }
     }
 
@@ -250,9 +250,10 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         val newArchiveId = maxArchiveId + 1
         library.getIndex(frameIndex).addArchive(newArchiveId)
 
+        var modified = 0 // To decrement keyframe id's if necessary
         animation.keyframes.forEach {
             if (it.modified) {
-                library.getIndex(frameIndex).getArchive(newArchiveId).addFile(it.id, it.encode(osrs))
+                library.getIndex(frameIndex).getArchive(newArchiveId).addFile(modified++, it.encode())
             }
         }
 
@@ -271,7 +272,6 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             .addFile(sequence.id, data)
 
         library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update(listener)
-        println("Packed sequence definition ${animation.sequence.id}")
     }
 
     private fun packAnimation317(animation: Animation, listener: ProgressListener) {

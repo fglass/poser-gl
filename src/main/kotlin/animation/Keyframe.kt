@@ -56,7 +56,11 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
-    fun encode(osrs: Boolean): ByteArray {
+    fun encode(): ByteArray {
+        return encode(-1, true) // Not for 317
+    }
+
+    fun encode(id: Int, osrs: Boolean): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 

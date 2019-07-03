@@ -34,7 +34,7 @@ import shader.StaticShader
 import util.VSyncTimer
 
 const val TITLE = "PoserGL"
-const val CACHE_PATH = "./repository/cache317/"
+const val CACHE_PATH = "./repository/cache/"
 const val RESOURCES_PATH = "src/main/resources/"
 const val SPRITE_PATH = "$RESOURCES_PATH/sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)

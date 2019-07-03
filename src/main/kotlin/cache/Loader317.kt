@@ -9,11 +9,9 @@ class Loader317 {
     fun loadSequences(context: Processor, data: ByteArray): HashMap<Int, Animation> {
         val stream = InputStream317(data)
         val length = stream.readUShort()
-        //println(length)
         val sequences = HashMap<Int, Animation>()
 
         for (i in 0 until length) {
-            //println(i)
             sequences[i] = Animation(context, decodeSequence(SequenceDefinition(i), stream))
         }
         return sequences
@@ -68,11 +66,10 @@ class Loader317 {
         val scratchTranslatorZ = IntArray(500)
 
         for (frameFileId in 0 until fileLength) {
-            val frameMapArchiveIndex = stream.readUShort()
-            frameMap.id = frameMapArchiveIndex
-
+            val frameIndex = stream.readUShort()
             val def = FrameDefinition()
-            def.id = frameFileId
+            def.id = frameIndex
+            frameMap.id = frameIndex
             def.framemap = frameMap
 
             val length = stream.readUnsignedByte()

@@ -144,12 +144,16 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         sequence.frameLenghts = IntArray(keyframes.size)
         sequence.frameIDs = IntArray(keyframes.size)
 
+        var modified = 0 // To decrement keyframe id's if necessary
         for (i in 0 until keyframes.size) {
             val keyframe = keyframes[i]
             sequence.frameLenghts[i] = keyframe.length
 
-            val newFrameId = ((archiveId and 0xFFFF) shl 16) or (i and 0xFFFF)
-            sequence.frameIDs[i] = if (keyframe.modified) newFrameId else keyframe.frameId
+            sequence.frameIDs[i] = if (keyframe.modified) {
+                ((archiveId and 0xFFFF) shl 16) or (modified++ and 0xFFFF) // New frame id
+            } else {
+                keyframe.frameId // Original frame id
+            }
         }
         return sequence
     }
@@ -205,11 +209,11 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         val frameMap = this.frameMap?: return null // TODO issues with copy/pasting in 317
         os.write(encodeFrameMap317(frameMap))
 
-        os.writeShort(keyframes.size)
-        keyframes.forEach {
-            if (it.modified) {
-                os.write(it.encode(false))
-            }
+        val modified = keyframes.filter { it.modified }
+        os.writeShort(modified.size)
+
+        for ((i, keyframe) in modified.withIndex()) { // To decrement keyframe id
+            os.write(keyframe.encode(i, false))
         }
 
         os.close()
