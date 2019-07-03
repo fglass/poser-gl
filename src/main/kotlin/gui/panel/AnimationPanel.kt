@@ -87,7 +87,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         packButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 val anim = context.animationHandler.currentAnimation?: return@addListener
-                context.cacheService.packAnimation(anim)
+                context.cacheService.pack(anim)
             }
         }
         menu.add(packButton)
@@ -108,6 +108,8 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
     fun reset() {
         play.image = playIcon
         setTimeline()
+
+        // Set to default layout
         val placeholder = 50
         unitX = getUnitX(placeholder)
         addTimes(placeholder)

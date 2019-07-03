@@ -153,7 +153,6 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         sliders.forEach { it.setValue(0) }
     }
 
-
     fun resize() {
         position = getPanelPosition()
         size = getPanelSize()

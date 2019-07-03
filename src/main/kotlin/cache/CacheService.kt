@@ -36,8 +36,12 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
 
     private fun loadNpcDefinitions(library: CacheLibrary) {
         if (!osrs) {
-            val npcIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile("npc.idx")
-            val npcArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile("npc.dat")
+            val npcIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.NPC.getIndexId(osrs))
+                .getFile("npc.idx")
+            val npcArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.NPC.getIndexId(osrs))
+                .getFile("npc.dat")
 
             val idxStream = InputStream317(npcIdx.data)
             val total = idxStream.readUShort()
@@ -61,8 +65,15 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         }
 
         val npcLoader = NpcLoader()
-        for (i in 0..library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).lastFile.id) {
-            val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.NPC.getIndexId(osrs)).getFile(i)?: continue
+        val maxIndex = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+            .getArchive(IndexType.NPC.getIndexId(osrs))
+            .lastFile.id
+
+        for (i in 0..maxIndex) {
+            val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.NPC.getIndexId(osrs))
+                .getFile(i)?: continue
+
             val npc = npcLoader.load(file.id, file.data)
             if (npc.models != null && npc.name.toLowerCase() != "null" && npc.name != "") {
                 entities[npc.id] = npc
@@ -79,8 +90,12 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
 
     private fun loadItemDefinitions(library: CacheLibrary) {
         if (!osrs) {
-            val itemIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.ITEM.getIndexId(osrs)).getFile("obj.idx")
-            val itemArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.ITEM.getIndexId(osrs)).getFile("obj.dat")
+            val itemIdx = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.ITEM.getIndexId(osrs))
+                .getFile("obj.idx")
+            val itemArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.ITEM.getIndexId(osrs))
+                .getFile("obj.dat")
 
             val idxStream = InputStream317(itemIdx.data)
             val total = idxStream.readUShort()
@@ -104,8 +119,15 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         }
 
         val itemLoader = ItemLoader()
-        for (i in 0..library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.ITEM.getIndexId(osrs)).lastFile.id) {
-            val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.ITEM.getIndexId(osrs)).getFile(i)?: continue
+        val maxIndex = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+            .getArchive(IndexType.ITEM.getIndexId(osrs))
+            .lastFile.id
+
+        for (i in 0..maxIndex) {
+            val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.ITEM.getIndexId(osrs))
+                .getFile(i)?: continue
+
             val item = itemLoader.load(file.id, file.data)
             if (item.maleModel0 > 0 && item.name.toLowerCase() != "null") {
                 items[item.id] = item
@@ -128,7 +150,6 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
     }
 
     private fun loadSequences(library: CacheLibrary) {
-
         if (!osrs) {
             val sequenceArchive = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
                                          .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
@@ -136,9 +157,17 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             animations = Loader317().loadSequences(context, sequenceArchive.data)
             return
         }
+
         val sequenceLoader = SequenceLoader()
-        for (i in 0..library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.SEQUENCE.getIndexId(osrs)).lastFile.id) {
-            val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.SEQUENCE.getIndexId(osrs)).getFile(i) ?: continue
+        val maxIndex = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+            .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
+            .lastFile.id
+
+        for (i in 0..maxIndex) {
+            val file = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+                .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
+                .getFile(i) ?: continue
+
             val sequence = sequenceLoader.load(file.id, file.data)
             val animation = Animation(context, sequence)
             animations[file.id] = animation
@@ -159,6 +188,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         if (!osrs) {
             val loader = Loader317()
             val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
+
             if (file.data.isNotEmpty()) {
                 loader.loadFrameFile(archiveId, file.data, this)
             }
@@ -184,37 +214,88 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         library.close()
     }
 
-    fun getMaxFrameArchive(): Int {
-        val library = CacheLibrary(CACHE_PATH)
-        val frameIndex = IndexType.FRAME.getIndexId(osrs)
-        val max = library.getIndex(frameIndex).lastArchive.id
-        library.close()
-        return max
+    fun pack(animation: Animation) {
+        if (animation.modified) {
+            if (osrs) packAnimation(animation) else packAnimation317(animation)
+        }
     }
 
-    fun packAnimation(animation: Animation) {
-        println("Packing ${animation.sequence.id}")
+    private fun packAnimation(animation: Animation) {
+        println("Packing sequence ${animation.sequence.id}")
         val library = CacheLibrary(CACHE_PATH)
         val frameIndex = IndexType.FRAME.getIndexId(osrs)
 
-        val maxArchiveId = getMaxFrameArchive()
+        val maxArchiveId = getMaxFrameArchive(library)
         val newArchiveId = maxArchiveId + 1
 
         library.getIndex(frameIndex).addArchive(newArchiveId)
 
-        for (keyframe in animation.keyframes) {
-            val bytes = keyframe.encode()
-            println("Packed frame ${keyframe.id} to archive $newArchiveId")
-            library.getIndex(frameIndex).getArchive(newArchiveId).addFile(keyframe.id, bytes)
+        animation.keyframes.forEach {
+            if (it.modified) {
+                library.getIndex(frameIndex).getArchive(newArchiveId).addFile(it.id, it.encode(osrs))
+            }
         }
         library.getIndex(frameIndex).update()
+        println("Packed frames to archive $newArchiveId")
 
-        val sequence = animation.toSequence()
-        val data = animation.encode(sequence)
-
-        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).getArchive(IndexType.SEQUENCE.getIndexId(osrs)).addFile(sequence.id, data)
-        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update()
+        packSequence(animation, newArchiveId, library)
         library.close()
-        println("Packed ${animation.sequence.id}")
+    }
+
+    private fun packSequence(animation: Animation, archiveId: Int, library: CacheLibrary) {
+        val sequence = animation.toSequence(archiveId)
+        val data = animation.encodeSequence(sequence)
+
+        library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+            .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
+            .addFile(sequence.id, data)
+
+        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update()
+        println("Packed sequence definition ${animation.sequence.id}")
+    }
+
+    private fun packAnimation317(animation: Animation) {
+        println("Packing sequence ${animation.sequence.id}")
+        val library = CacheLibrary(CACHE_PATH)
+
+        val frameIndex = IndexType.FRAME.getIndexId(osrs)
+        val newArchiveId = getMaxFrameArchive(library) + 1
+        library.getIndex(frameIndex).addArchive(newArchiveId)
+
+        val frames = animation.getFile317()?: return
+        library.getIndex(frameIndex).getArchive(newArchiveId).addFile(0, frames)
+        library.getIndex(frameIndex).update()
+        println("Packed frames to archive $newArchiveId")
+
+        packSequence317(animation, newArchiveId, library)
+        library.close()
+    }
+
+    private fun packSequence317(animation: Animation, archiveId: Int, library: CacheLibrary) {
+        val existingData = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+            .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
+            .getFile("seq.dat").data
+
+        val length = animations.size
+
+        // Adjust length
+        existingData[0] = ((length ushr 8) and 0xFF).toByte()
+        existingData[1] = ((length ushr 0) and 0xFF).toByte()
+
+        val sequence = animation.toSequence(archiveId)
+        val newData = animation.encodeSequence317(sequence)
+
+        // Combine data
+        library.getIndex(IndexType.CONFIG.getIndexId(osrs))
+            .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
+            .addFile("seq.dat", existingData + newData)
+
+        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update()
+        println("Packed sequence definition ${animation.sequence.id}")
+    }
+
+    private fun getMaxFrameArchive(library: CacheLibrary): Int {
+        val frameIndex = IndexType.FRAME.getIndexId(osrs)
+        return library.getIndex(frameIndex).lastArchive.id
     }
 }

@@ -13,7 +13,7 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPosition;
 
 void main(void) {
-    vec4 worldPosition = transformationMatrix * vec4(position.xyz, 1.0f);
+    vec4 worldPosition = transformationMatrix * vec4(-position.x, position.y, position.z, 1.0f); // Flip x coordinate
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
     gl_PointSize = 3.0f;
 

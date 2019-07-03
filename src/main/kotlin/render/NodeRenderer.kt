@@ -58,6 +58,8 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         if (index > 0) {
             offset.div(index)
         }
+
+        offset.x = -offset.x // Flip
         nodes.add(ReferenceNode(reference, offset))
     }
 

@@ -2,13 +2,12 @@ package animation
 
 import Processor
 import net.runelite.cache.definitions.FrameDefinition
+import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
-import net.runelite.cache.definitions.loaders.SequenceLoader
 import org.joml.Vector3i
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.*
-import kotlin.NoSuchElementException
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
@@ -19,18 +18,18 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         animation.keyframes.forEach {
             keyframes.add(Keyframe(it.id, it))
         }
-        loaded = true
         modified = true
+        frameMap = animation.frameMap
         length = calculateLength()
     }
 
-    private var loaded = false
     var modified = false
+    var frameMap: FramemapDefinition? = null
     val keyframes = ArrayList<Keyframe>()
     var length = 0
 
     fun load() {
-        if (loaded) {
+        if (keyframes.isNotEmpty()) { // Already loaded
             return
         }
 
@@ -40,7 +39,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
             val frame = frameArchive.stream().filter { f -> f.id == frameFileId }.findFirst().get()
             val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index])
+
             val frameMap = frame.framemap
+            this.frameMap = frameMap // Same for each frame
+
             val references = ArrayDeque<Reference>()
             val maxId = frame.indexFrameIds.max()?: continue
 
@@ -68,9 +70,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             }
             keyframes.add(keyframe)
         }
-
         length = calculateLength()
-        loaded = true
     }
 
     private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -115,7 +115,9 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun changeKeyframeLength(newLength: Int) {
         val index = context.animationHandler.getFrameIndex(this)
-        keyframes[index].length = newLength
+        val keyframe = keyframes[index]
+        keyframe.length = newLength
+        keyframe.modified = true
         length = calculateLength()
 
         context.animationHandler.setFrame(context.animationHandler.frameCount, 0) // Restart frame
@@ -134,51 +136,26 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         context.gui.animationPanel.setTimeline()
     }
 
-    fun toSequence(): SequenceDefinition {
-        // If (!modified) TODO
+    fun toSequence(archiveId: Int): SequenceDefinition {
         val sequence = SequenceDefinition(sequence.id)
         sequence.frameLenghts = IntArray(keyframes.size)
         sequence.frameIDs = IntArray(keyframes.size)
-
-        //var maxOffset = 0
-
-        val maxArchiveId = context.cacheService.getMaxFrameArchive()
-        val newArchiveId = maxArchiveId + 1
 
         for (i in 0 until keyframes.size) {
             val keyframe = keyframes[i]
             sequence.frameLenghts[i] = keyframe.length
 
-            val frameId = keyframe.frameId
-            //val archiveId = frameId ushr 16
-
-           /* val frames = context.animationHandler.frames.get(archiveId)
-            val frameFileId = frameId and 0xFFFF
-            val frame = frames.stream().filter { frame -> frame.id == frameFileId }.findFirst().get()*/
-
-            //val maxFileId = frames.maxBy { it.id }!!.id
-            //val newFileId = maxFileId + ++maxOffset
-
-            // Use new archive file with reset file ids or same archive and maxFileId?
-            // Solution: Put in new archive file, but any unmodified keyframe has an untouched frameId
-            val newFrameId = ((newArchiveId and 0xFFFF) shl 16) or (i and 0xFFFF)
-
-            //val id1 = newFrameId ushr 16
-            //val id2 = newFrameId and 0xFFFF
-
-            //println("Original frame $newFrameId archive $newArchiveId file $i new $id1 $id2")
-            sequence.frameIDs[i] = if (keyframe.modified) newFrameId else frameId
+            val newFrameId = ((archiveId and 0xFFFF) shl 16) or (i and 0xFFFF)
+            sequence.frameIDs[i] = if (keyframe.modified) newFrameId else keyframe.frameId
         }
         return sequence
     }
 
-    //val buf = encode(sequence)
-    //val test2 = SequenceLoader().loadFrameFile(-1, buf)
-    fun encode(sequence: SequenceDefinition): ByteArray {
+    fun encodeSequence(sequence: SequenceDefinition): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        os.writeByte(1) // Opcode 1
+        os.writeByte(1) // Opcode 1: Starting frames
         os.writeShort(keyframes.size)
 
         for (keyframe in keyframes) {
@@ -193,7 +170,69 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             os.writeShort(frameId ushr 16)
         }
 
-        os.writeByte(0) // Opcode 0
+        os.writeByte(0) // Opcode 0: End of definition
+        os.close()
+        return out.toByteArray()
+    }
+
+    fun encodeSequence317(sequence: SequenceDefinition): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeByte(1)
+        os.writeShort(keyframes.size)
+
+        for (frameId in sequence.frameIDs) {
+            os.writeInt(frameId)
+        }
+
+        for (keyframe in keyframes) {
+            os.writeByte(keyframe.length)
+        }
+
+        os.writeByte(0)
+        os.close()
+        return out.toByteArray()
+    }
+
+    fun getFile317(): ByteArray? {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        val frameMap = this.frameMap?: return null // TODO issues with copy/pasting in 317
+        os.write(encodeFrameMap317(frameMap))
+
+        os.writeShort(keyframes.size)
+        keyframes.forEach {
+            if (it.modified) {
+                os.write(it.encode(false))
+            }
+        }
+
+        os.close()
+        return out.toByteArray()
+    }
+
+    private fun encodeFrameMap317(def: FramemapDefinition): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeShort(def.length)
+
+        for (i in 0 until def.length) {
+            os.writeShort(def.types[i])
+        }
+
+        for (i in 0 until def.length) {
+            os.writeShort(def.frameMaps[i].size)
+        }
+
+        for (i in 0 until def.length) {
+            for (j in 0 until def.frameMaps[i].size) {
+                os.writeShort(def.frameMaps[i][j])
+            }
+        }
+
         os.close()
         return out.toByteArray()
     }

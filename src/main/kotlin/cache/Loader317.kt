@@ -9,9 +9,11 @@ class Loader317 {
     fun loadSequences(context: Processor, data: ByteArray): HashMap<Int, Animation> {
         val stream = InputStream317(data)
         val length = stream.readUShort()
+        //println(length)
         val sequences = HashMap<Int, Animation>()
 
         for (i in 0 until length) {
+            //println(i)
             sequences[i] = Animation(context, decodeSequence(SequenceDefinition(i), stream))
         }
         return sequences

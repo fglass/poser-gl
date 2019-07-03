@@ -8,8 +8,6 @@ import java.io.DataOutputStream
 
 class Keyframe(val id: Int, val frameId: Int, var length: Int) {
 
-    var modified = true // TODO
-
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length) {
         keyframe.transformations.forEach {
@@ -26,6 +24,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         }
     }
 
+    var modified = true // TODO
     val transformations = ArrayList<Transformation>()
 
     fun add(transformation: Transformation, id: Int) {
@@ -56,50 +55,52 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
-    //val test = FrameEncoder().encode(keyframe)
-    //val test2 = FrameLoader().loadFrameFile(frame.framemap, keyframe.id, test)
-    fun encode(): ByteArray {
+    fun encode(osrs: Boolean): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMapId = transformations.first().frameMapId
-        // (contents[0].toInt() and 0xff) shl 8 or (contents[1].toInt() and 0xff)
-        os.writeByte(frameMapId ushr 8)
-        os.writeByte(frameMapId and 0xFF)
-
-        //os.writeShort(1)
+        os.writeShort(if (osrs) transformations.first().frameMapId else id)
         os.writeByte(transformations.size)
 
-        // Write masks first
-        for (transformation in transformations) {
-            os.writeByte(getMask(transformation))
+        // Write masks first if necessary
+        if (osrs) {
+            for (transformation in transformations) {
+                os.writeByte(getMask(transformation))
+            }
         }
 
         // Write transformation values
         for (transformation in transformations) {
             val mask = getMask(transformation)
+            if (!osrs) {
+                os.writeByte(mask)
+            }
 
             if (mask == 0) {
                 continue
             }
 
             if (mask and 1 != 0) {
-                writeSmartShort(os, transformation.offset.x)
+                writeSmartShort(os, osrs, transformation.offset.x)
             }
 
             if (mask and 2 != 0) {
-                writeSmartShort(os, transformation.offset.y)
+                writeSmartShort(os, osrs, transformation.offset.y)
             }
 
             if (mask and 4 != 0) {
-                writeSmartShort(os, transformation.offset.z)
+                writeSmartShort(os, osrs, transformation.offset.z)
             }
         }
         os.close()
         return out.toByteArray()
     }
 
-    private fun writeSmartShort(os: DataOutputStream, value: Int) {
+    private fun writeSmartShort(os: DataOutputStream, osrs: Boolean, value: Int) {
+        if (!osrs) {
+            os.writeShort(value)
+            return
+        }
         if (value >= -64 && value < 64) {
             os.writeByte(value + 64)
         } else if (value >= -16384 && value < 16384) {
