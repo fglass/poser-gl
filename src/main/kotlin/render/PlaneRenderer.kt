@@ -18,18 +18,19 @@ class PlaneRenderer(private val framebuffer: Framebuffer) {
         val vertices = ArrayList<Float>()
 
         // Draw grid
-        for (i in 0..20) {
+        val offset = 2.5f
+        for (i in 0..20 step 2) {
             val x = (i - 10) / 4f
             vertices.add(x)
-            vertices.add(2.5f)
+            vertices.add(offset)
 
             vertices.add(x)
-            vertices.add(-2.5f)
+            vertices.add(-offset)
 
-            vertices.add(2.5f)
+            vertices.add(offset)
             vertices.add(x)
 
-            vertices.add(-2.5f)
+            vertices.add(-offset)
             vertices.add(x)
         }
         quad = loader.loadToVao(vertices.toFloatArray())
