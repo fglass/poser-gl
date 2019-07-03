@@ -4,13 +4,15 @@ import org.liquidengine.legui.component.Dialog
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
-class Popup(title: String, message: String, width: Float, height: Float): Dialog(title, width, height) {
+open class Popup(title: String, text: String, width: Float, height: Float): Dialog(title, width, height) {
+
+    val message = Label(text, 0f, 15f, size.x, 15f)
 
     init {
-        val label = Label(message, 0f, 15f, size.x, 15f)
-        label.textState.horizontalAlign = HorizontalAlign.CENTER
-        container.add(label)
+        message.textState.horizontalAlign = HorizontalAlign.CENTER
+        container.add(message)
         container.isFocusable = false
+        isFocusable = false
         isResizable = false
         titleTextState.horizontalAlign = HorizontalAlign.CENTER
     }

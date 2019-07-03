@@ -6,6 +6,9 @@ import animation.Animation
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import gui.component.Popup
+import gui.component.ProgressPopup
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.ModelDefinition
@@ -226,20 +229,25 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
 
     fun pack(animation: Animation) {
         if (animation.modified) {
-            if (osrs) packAnimation(animation) else packAnimation317(animation)
+            val progress = ProgressPopup("Packing Animation", "Packing sequence ${animation.sequence.id}...", 230f, 92f)
+            val listener = ProgressListener(progress)
+            progress.show(context.frame)
+
+            GlobalScope.launch { // Asynchronously pack animation
+                if (osrs) packAnimation(animation, listener) else packAnimation317(animation, listener)
+                progress.finish(animation.sequence.id)
+            }
         } else {
             Popup("Invalid Operation", "This animation has not been modified", 260f, 70f).show(context.frame)
         }
     }
 
-    private fun packAnimation(animation: Animation) {
-        println("Packing sequence ${animation.sequence.id}")
+    private fun packAnimation(animation: Animation, listener: ProgressListener) {
         val library = CacheLibrary(CACHE_PATH)
         val frameIndex = IndexType.FRAME.getIndexId(osrs)
 
         val maxArchiveId = getMaxFrameArchive(library)
         val newArchiveId = maxArchiveId + 1
-
         library.getIndex(frameIndex).addArchive(newArchiveId)
 
         animation.keyframes.forEach {
@@ -247,14 +255,14 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
                 library.getIndex(frameIndex).getArchive(newArchiveId).addFile(it.id, it.encode(osrs))
             }
         }
-        library.getIndex(frameIndex).update()
-        println("Packed frames to archive $newArchiveId")
 
-        packSequence(animation, newArchiveId, library)
+        library.getIndex(frameIndex).update(listener)
+        packSequence(animation, newArchiveId, listener, library)
         library.close()
     }
 
-    private fun packSequence(animation: Animation, archiveId: Int, library: CacheLibrary) {
+    private fun packSequence(animation: Animation, archiveId: Int, listener: ProgressListener, library: CacheLibrary) {
+        listener.change(0.0, "Packing sequence definition...")
         val sequence = animation.toSequence(archiveId)
         val data = animation.encodeSequence(sequence)
 
@@ -262,28 +270,27 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
             .addFile(sequence.id, data)
 
-        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update()
+        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update(listener)
         println("Packed sequence definition ${animation.sequence.id}")
     }
 
-    private fun packAnimation317(animation: Animation) {
-        println("Packing sequence ${animation.sequence.id}")
+    private fun packAnimation317(animation: Animation, listener: ProgressListener) {
         val library = CacheLibrary(CACHE_PATH)
-
         val frameIndex = IndexType.FRAME.getIndexId(osrs)
+
         val newArchiveId = getMaxFrameArchive(library) + 1
         library.getIndex(frameIndex).addArchive(newArchiveId)
 
         val frames = animation.getFile317()?: return
         library.getIndex(frameIndex).getArchive(newArchiveId).addFile(0, frames)
-        library.getIndex(frameIndex).update()
-        println("Packed frames to archive $newArchiveId")
+        library.getIndex(frameIndex).update(listener)
 
-        packSequence317(animation, newArchiveId, library)
+        packSequence317(animation, newArchiveId, listener, library)
         library.close()
     }
 
-    private fun packSequence317(animation: Animation, archiveId: Int, library: CacheLibrary) {
+    private fun packSequence317(animation: Animation, archiveId: Int, listener: ProgressListener, library: CacheLibrary) {
+        listener.change(0.0, "Packing sequence definition...")
         val existingData = library.getIndex(IndexType.CONFIG.getIndexId(osrs))
             .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
             .getFile("seq.dat").data
@@ -302,8 +309,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             .getArchive(IndexType.SEQUENCE.getIndexId(osrs))
             .addFile("seq.dat", existingData + newData)
 
-        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update()
-        println("Packed sequence definition ${animation.sequence.id}")
+        library.getIndex(IndexType.CONFIG.getIndexId(osrs)).update(listener)
     }
 
     private fun getMaxFrameArchive(library: CacheLibrary): Int {
