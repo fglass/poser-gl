@@ -37,7 +37,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         }
 
         var index = 0f
-        val offset = Vector3f(reference.offset)
+        val offset = Vector3f(reference.delta)
 
         for (i in reference.frameMap) {
             if (i < def.vertexGroups.size) {

@@ -79,7 +79,7 @@ class AnimationHandler(private val context: Processor) {
         val animation = getAnimation(false)?: return
         val keyframe = animation.keyframes[getFrameIndex(animation)]
         val transformation = keyframe.transformations.first { it.id == preCopy.id }
-        transformation.offset.setComponent(coordIndex, newValue)
+        transformation.delta.setComponent(coordIndex, newValue)
         keyframe.modified = true
     }
 

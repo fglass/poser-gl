@@ -88,15 +88,15 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
             }
 
             if (mask and 1 != 0) {
-                writeSmartShort(os, osrs, transformation.offset.x)
+                writeSmartShort(os, osrs, transformation.delta.x)
             }
 
             if (mask and 2 != 0) {
-                writeSmartShort(os, osrs, transformation.offset.y)
+                writeSmartShort(os, osrs, transformation.delta.y)
             }
 
             if (mask and 4 != 0) {
-                writeSmartShort(os, osrs, transformation.offset.z)
+                writeSmartShort(os, osrs, transformation.delta.z)
             }
         }
         os.close()
@@ -116,9 +116,9 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
     }
 
     private fun getMask(transformation: Transformation): Int {
-        val x = if (transformation.offset.x != 0) 1 else 0
-        val y = if (transformation.offset.y != 0) 2 else 0
-        val z = if (transformation.offset.z != 0) 4 else 0
+        val x = if (transformation.delta.x != 0) 1 else 0
+        val y = if (transformation.delta.y != 0) 2 else 0
+        val z = if (transformation.delta.z != 0) 4 else 0
         return x or y or z
     }
 }

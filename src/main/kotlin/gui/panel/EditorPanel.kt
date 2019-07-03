@@ -143,7 +143,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         val transformation = currentReference?.getTransformation(type)?: return
 
         for (i in 0 until sliders.size) {
-            sliders[i].setValue(transformation.offset.get(i))
+            sliders[i].setValue(transformation.delta.get(i))
         }
     }
 

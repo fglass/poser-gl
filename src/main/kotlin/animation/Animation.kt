@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 import kotlin.math.min
 
 class Animation(private val context: Processor, val sequence: SequenceDefinition) {
@@ -52,8 +51,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 }
 
                 val type = TransformationType.fromId(typeId)
-                val transformation = Transformation(id, type, frameMap.frameMaps[id],
-                                                    getOffset(frame, id, type))
+                val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame, id, type))
 
                 if (transformation.type == TransformationType.REFERENCE) {
                     references.add(Reference(transformation))
@@ -72,7 +70,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         length = calculateLength()
     }
 
-    private fun getOffset(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
+    private fun getDelta(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
         val index = frame.indexFrameIds.indexOf(id)
         return when {
                 index != -1 -> Vector3i(frame.translator_x[index], frame.translator_y[index], frame.translator_z[index])
