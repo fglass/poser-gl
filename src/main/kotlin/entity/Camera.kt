@@ -13,11 +13,11 @@ const val MAX_ZOOM = 1600f
 class Camera(private val mouse: MouseHandler) {
 
     val position = Vector3f(0f, 0f, 0f)
-    var pitch = -20f
+    var pitch = -25f
     var yaw = 0f
     var roll = 0f
 
-    private var distance = 300f
+    private var distance = 500f
     private var angle = 0f
 
     fun move() {

@@ -92,8 +92,10 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
 
         context.animationHandler.tick()
         camera.move()
+
         renderEntity()
         context.nodeRenderer.render(camera)
+        context.planeRenderer.render(camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

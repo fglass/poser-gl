@@ -28,6 +28,7 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import render.Framebuffer
 import render.Loader
+import render.PlaneRenderer
 import shader.StaticShader
 import util.VSyncTimer
 
@@ -50,6 +51,7 @@ class Processor {
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
     lateinit var nodeRenderer: NodeRenderer
+    lateinit var planeRenderer: PlaneRenderer
 
     val cacheService = CacheService(this)
     val loader = Loader()
@@ -115,6 +117,8 @@ class Processor {
         }
 
         nodeRenderer = NodeRenderer(this, framebuffer)
+        planeRenderer = PlaneRenderer(framebuffer)
+
         entityHandler.loadPlayer()
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
@@ -161,6 +165,7 @@ class Processor {
         }
 
         nodeRenderer.cleanUp()
+        planeRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()
         guiRenderer.destroy()

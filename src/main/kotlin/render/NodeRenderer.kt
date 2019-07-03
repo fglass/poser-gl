@@ -84,8 +84,6 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         shader.start()
         glBindVertexArray(quad.vaoId)
         glEnableVertexAttribArray(0)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         glDisable(GL_DEPTH_TEST)
     }
@@ -171,7 +169,6 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
     }
 
     private fun finish() {
-        glDisable(GL_BLEND)
         glEnable(GL_DEPTH_TEST)
         glDisableVertexAttribArray(0)
         glBindVertexArray(0)
