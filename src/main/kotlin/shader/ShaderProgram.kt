@@ -1,5 +1,6 @@
 package shader
 
+import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.BufferUtils
@@ -9,6 +10,8 @@ import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
 import kotlin.system.exitProcess
+
+private val logger = KotlinLogging.logger {}
 
 abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
 
@@ -89,7 +92,7 @@ abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
         GL20.glCompileShader(shaderId)
 
         if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            println(GL20.glGetShaderInfoLog(shaderId, 500))
+            logger.error { GL20.glGetShaderInfoLog(shaderId, 500) }
             exitProcess(-1)
         }
 

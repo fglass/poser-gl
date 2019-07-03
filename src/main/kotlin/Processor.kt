@@ -7,6 +7,7 @@ import gui.GuiManager
 import gui.component.Popup
 import io.MouseHandler
 import model.ModelParser
+import mu.KotlinLogging
 import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector4f
@@ -34,7 +35,7 @@ import shader.StaticShader
 import util.VSyncTimer
 
 const val TITLE = "PoserGL"
-const val CACHE_PATH = "./repository/cache/"
+const val CACHE_PATH = "./repository/cache317/"
 const val RESOURCES_PATH = "src/main/resources/"
 const val SPRITE_PATH = "$RESOURCES_PATH/sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
@@ -45,6 +46,7 @@ fun main() {
 
 const val WIDTH = 800
 const val HEIGHT = 600
+private val logger = KotlinLogging.logger {}
 
 class Processor {
 
@@ -140,8 +142,8 @@ class Processor {
             // Render gui
             try {
                 guiRenderer.render(frame, context)
-            } catch (ignored: NullPointerException) {
-                println("Render error")
+            } catch (e: NullPointerException) {
+                logger.error(e) { "GUI render error" }
             }
 
             // Render fbo
@@ -158,8 +160,8 @@ class Processor {
             // Relayout components
             try {
                 LayoutManager.getInstance().layout(frame)
-            } catch (ignored: NullPointerException) {
-                println("Layout error")
+            } catch (e: NullPointerException) {
+                logger.error(e) { "Layout error" }
             }
 
             // Run gui animations

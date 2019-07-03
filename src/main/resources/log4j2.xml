@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appenders>
+        <console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </console>
+        <file name="file" fileName="error.log" immediateFlush="false" append="false">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </file>
+    </appenders>
+
+
+    <loggers>
+        <root level="debug">
+            <appender-ref ref="console" level="info"/>
+            <appender-ref ref="file" level="error"/>
+        </root>
+    </loggers>
+</configuration>

@@ -9,6 +9,7 @@ import gui.component.Popup
 import gui.component.ProgressPopup
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.ModelDefinition
@@ -17,10 +18,13 @@ import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
 import java.io.FileNotFoundException
 
+private val logger = KotlinLogging.logger {}
+
 class CacheService(private val context: Processor) { // TODO: Clean-up this, loader & buffer
 
     var loaded = false
     private var osrs = false
+
     val entities = HashMap<Int, NpcDefinition>()
     val items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
@@ -30,20 +34,24 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
         try {
             val library = CacheLibrary(CACHE_PATH)
             osrs = library.isOSRS
-            println("OSRS cache: $osrs")
+
+            val cache = if (osrs) "OSRS" else "317"
+            logger.info { "Loaded $cache cache" }
 
             addPlayer()
             loadNpcDefinitions(library)
-            println("Loaded ${entities.size} entities")
+            logger.info { "Loaded ${entities.size} entities" }
+
             loadItemDefinitions(library)
-            println("Loaded ${items.size} items")
+            logger.info { "Loaded ${items.size} items" }
+
             loadSequences(library)
-            println("Loaded ${animations.size} sequences")
+            logger.info { "Loaded ${animations.size} sequences" }
 
             loaded = true
             library.close()
         } catch (e: FileNotFoundException) {
-            println("Cache error")
+            logger.error(e) { "Failed to load cache" }
         }
     }
 
