@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 import kotlin.math.min
 
 class Animation(private val context: Processor, val sequence: SequenceDefinition) {
@@ -20,12 +21,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             keyframes.add(Keyframe(it.id, it))
         }
         modified = true
-        frameMap = animation.frameMap
         length = calculateLength()
     }
 
     var modified = false
-    var frameMap: FramemapDefinition? = null
     val keyframes = ArrayList<Keyframe>()
     var length = 0
 
@@ -35,14 +34,13 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
 
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
-            val frameArchive = context.cacheService.getFrameArchive(frameId ushr 16)
+            val archiveId = frameId ushr 16
+            val frameArchive = context.cacheService.getFrameArchive(archiveId)
             val frameFileId = frameId and 0xFFFF
 
             val frame = frameArchive.stream().filter { f -> f.id == frameFileId }.findFirst().get()
-            val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index])
-
             val frameMap = frame.framemap
-            this.frameMap = frameMap // Same for each frame
+            val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index], frameMap)
 
             val references = ArrayDeque<Reference>()
             val maxId = frame.indexFrameIds.max()?: continue
@@ -54,7 +52,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 }
 
                 val type = TransformationType.fromId(typeId)
-                val transformation = Transformation(id, type, frameMap.id, frameMap.frameMaps[id],
+                val transformation = Transformation(id, type, frameMap.frameMaps[id],
                                                     getOffset(frame, id, type))
 
                 if (transformation.type == TransformationType.REFERENCE) {
@@ -206,7 +204,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMap = this.frameMap?: return null // TODO issues with copy/pasting in 317
+        val frameMap = keyframes.first().frameMap // Potential issue with differing frame maps?
         os.write(encodeFrameMap317(frameMap))
 
         val modified = keyframes.filter { it.modified }

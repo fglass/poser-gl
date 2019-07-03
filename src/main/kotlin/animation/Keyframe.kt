@@ -1,15 +1,17 @@
 package animation
 
 import Processor
+import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.ModelDefinition.*
 import shader.ShadingType
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
-class Keyframe(val id: Int, val frameId: Int, var length: Int) {
+class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: FramemapDefinition) {
+
 
     // Copy constructor
-    constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length) {
+    constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {
         modified = keyframe.modified
         keyframe.transformations.forEach {
             if (it is Reference) {
@@ -64,7 +66,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int) {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        os.writeShort(if (osrs) transformations.first().frameMapId else id)
+        os.writeShort(if (osrs) frameMap.id else id)
         os.writeByte(transformations.size)
 
         // Write masks first if necessary

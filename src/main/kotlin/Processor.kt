@@ -41,7 +41,11 @@ const val SPRITE_PATH = "$RESOURCES_PATH/sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
 
 fun main() {
-    Processor().run()
+    try {
+        Processor().run()
+    } catch (e: Exception) {
+        logger.error(e) { "Main exception encountered" }
+    }
 }
 
 const val WIDTH = 800

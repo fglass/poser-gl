@@ -3,6 +3,7 @@ package cache
 import CACHE_PATH
 import Processor
 import animation.Animation
+import animation.Keyframe
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import gui.component.Popup
@@ -10,12 +11,11 @@ import gui.component.ProgressPopup
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
-import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.ItemDefinition
-import net.runelite.cache.definitions.ModelDefinition
-import net.runelite.cache.definitions.NpcDefinition
+import net.runelite.cache.definitions.*
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import java.io.FileNotFoundException
 
 private val logger = KotlinLogging.logger {}
@@ -241,9 +241,14 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             val listener = ProgressListener(progress)
             progress.show(context.frame)
 
-            GlobalScope.launch { // Asynchronously pack animation
-                if (osrs) packAnimation(animation, listener) else packAnimation317(animation, listener)
-                progress.finish(animation.sequence.id)
+            // Asynchronously pack animation
+            GlobalScope.launch {
+                try {
+                    if (osrs) packAnimation(animation, listener) else packAnimation317(animation, listener)
+                    progress.finish(animation.sequence.id)
+                } catch (e: Exception) {
+                    logger.error(e) { "Pack exception encountered" }
+                }
             }
         } else {
             Popup("Invalid Operation", "This animation has not been modified yet", 260f, 70f).show(context.frame)
@@ -284,13 +289,12 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
 
     private fun packAnimation317(animation: Animation, listener: ProgressListener) {
         val library = CacheLibrary(CACHE_PATH)
-        val frameIndex = IndexType.FRAME.getIndexId(osrs)
+        val file = animation.getFile317()?: return
 
+        val frameIndex = IndexType.FRAME.getIndexId(osrs)
         val newArchiveId = getMaxFrameArchive(library) + 1
         library.getIndex(frameIndex).addArchive(newArchiveId)
-
-        val frames = animation.getFile317()?: return
-        library.getIndex(frameIndex).getArchive(newArchiveId).addFile(0, frames)
+        library.getIndex(frameIndex).getArchive(newArchiveId).addFile(0, file)
         library.getIndex(frameIndex).update(listener)
 
         packSequence317(animation, newArchiveId, listener, library)
@@ -304,8 +308,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
             .getFile("seq.dat").data
 
         val length = animations.size
-
-        // Adjust length
+        // Change length
         existingData[0] = ((length ushr 8) and 0xFF).toByte()
         existingData[1] = ((length ushr 0) and 0xFF).toByte()
 

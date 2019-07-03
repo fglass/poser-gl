@@ -1,16 +1,15 @@
 package animation
 
 import Processor
-import com.google.common.collect.HashMultimap
-import net.runelite.cache.definitions.FrameDefinition
+import net.runelite.cache.definitions.FramemapDefinition
 
 const val MAX_LENGTH = 999
 
 class AnimationHandler(private val context: Processor) {
 
     var currentAnimation: Animation? = null
-    var previousFrame = Keyframe(-1, -1, -1)
-    var copiedFrame = Keyframe(-1, -1, -1)
+    var previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
+    var copiedFrame = Keyframe(-1, -1, -1, FramemapDefinition())
     var frameCount = 0
     private var frameLength = 0
 
@@ -133,7 +132,7 @@ class AnimationHandler(private val context: Processor) {
             timer = 0
             frameCount = 0
             frameLength = 0
-            previousFrame = Keyframe(-1, -1, -1)
+            previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
             context.nodeRenderer.reset()
             context.gui.editorPanel.reset()
             context.gui.animationPanel.reset()
