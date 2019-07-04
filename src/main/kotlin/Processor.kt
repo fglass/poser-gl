@@ -35,7 +35,8 @@ import shader.StaticShader
 import util.VSyncTimer
 
 const val TITLE = "PoserGL"
-const val CACHE_PATH = "./repository/cache317/"
+const val VERSION = 1.0
+const val CACHE_PATH = "./repository/cache/"
 const val RESOURCES_PATH = "src/main/resources/"
 const val SPRITE_PATH = "$RESOURCES_PATH/sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
@@ -81,7 +82,7 @@ class Processor {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
 
-        val window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
+        val window = glfwCreateWindow(WIDTH, HEIGHT, "$TITLE v$VERSION", MemoryUtil.NULL, MemoryUtil.NULL)
         glfwShowWindow(window)
 
         glfwMakeContextCurrent(window)
@@ -130,7 +131,7 @@ class Processor {
         if (cacheService.loaded) {
             entityHandler.loadPlayer()
         } else {
-            Popup("Cache Error", "Unable to locate valid cache", 260f, 70f).show(frame)
+            Popup("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
         }
 
         // Render loop

@@ -50,7 +50,7 @@ class CacheService(private val context: Processor) { // TODO: Clean-up this, loa
 
             loaded = true
             library.close()
-        } catch (e: FileNotFoundException) {
+        } catch (e: Exception) {
             logger.error(e) { "Failed to load cache" }
         }
     }
