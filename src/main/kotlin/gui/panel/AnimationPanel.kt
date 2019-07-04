@@ -9,7 +9,6 @@ import gui.component.HoverButton
 import gui.component.ImageButton
 import gui.component.ToggleButton
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -77,17 +76,17 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         play.size = Vector2f(10f, 10f)
         menu.add(play)
 
-        val animation = Label("Sequence:", x + 14, 5f, 50f, 15f)
+        val sequence = Label("Sequence:", x + 14, 5f, 50f, 15f)
         sequenceId = Label("N/A", x + 73, 5f, 50f, 15f)
-        menu.add(animation)
+        menu.add(sequence)
         menu.add(sequenceId)
 
-        packButton = ImageButton(Vector2f(size.x - 60, 0f), BufferedImage(SPRITE_PATH + "pack.png"), "Pack animation")
+        packButton = ImageButton(Vector2f(size.x - 60, 0f), BufferedImage(SPRITE_PATH + "pack.png"), "Pack")
         packButton.size = Vector2f(26f, 26f)
         packButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val anim = context.animationHandler.currentAnimation?: return@addListener
-                context.cacheService.pack(anim)
+                val animation = context.animationHandler.currentAnimation?: return@addListener
+                context.cacheService.pack(animation)
             }
         }
         menu.add(packButton)

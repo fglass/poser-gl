@@ -39,8 +39,10 @@ open class ImageButton(position: Vector2f, image: Image, action: String): ImageV
         tooltip.textState.textColor = ColorConstants.white()
         tooltip.style.shadow = null
 
-        val charWidth = 7.2f
-        tooltip.size = Vector2f(tooltip.textState.length() * charWidth, 15f)
+        val charWidth = 8f
+        val y = 15f
+        tooltip.size = Vector2f(tooltip.textState.length() * charWidth, y)
+        tooltip.position.y -= y
 
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             if (event.isEntered) {
@@ -55,7 +57,7 @@ open class ImageButton(position: Vector2f, image: Image, action: String): ImageV
 
                 // Delay displaying
                 GlobalScope.launch {
-                    delay(500)
+                    delay(900)
                     tooltip.style.display = Style.DisplayType.FLEX
                 }
             }

@@ -65,7 +65,7 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
         val types = ConfigGroup(
             Vector2f(88f, 41f), Vector2f(22f, 22f),
             arrayOf(BufferedImage(SPRITE_PATH + "smooth-shading.png"), BufferedImage(SPRITE_PATH + "flat-shading.png"),
-            BufferedImage(SPRITE_PATH + "no-shading.png")), arrayOf("Smooth shading", "Flat shading","No shading")
+            BufferedImage(SPRITE_PATH + "no-shading.png")), arrayOf("Smooth", "Flat", "None")
         )
         for ((i, button) in types.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
