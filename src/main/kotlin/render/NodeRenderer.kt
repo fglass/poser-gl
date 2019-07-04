@@ -37,7 +37,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         }
 
         var index = 0f
-        val offset = Vector3f(reference.delta)
+        val delta = Vector3f(reference.delta)
 
         for (i in reference.frameMap) {
             if (i < def.vertexGroups.size) {
@@ -50,17 +50,17 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
                         def.vertexPositionsY[j].toFloat(),
                         def.vertexPositionsZ[j].toFloat()
                     )
-                    offset.add(position)
+                    delta.add(position)
                 }
             }
         }
 
         if (index > 0) {
-            offset.div(index)
+            delta.div(index)
         }
 
-        offset.x = -offset.x // Flip
-        nodes.add(ReferenceNode(reference, offset))
+        delta.x = -delta.x // Flip
+        nodes.add(ReferenceNode(reference, delta))
     }
 
     fun render(camera: Camera) {
