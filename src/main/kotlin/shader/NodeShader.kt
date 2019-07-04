@@ -1,10 +1,9 @@
 package shader
 
-import RESOURCES_PATH
 import org.joml.Matrix4f
 
-private const val VERTEX_FILE = RESOURCES_PATH + "shader/node-vs.glsl"
-private const val FRAGMENT_FILE = RESOURCES_PATH + "shader/node-fs.glsl"
+private const val VERTEX_FILE =  "shader/node-vs.glsl"
+private const val FRAGMENT_FILE = "shader/node-fs.glsl"
 
 class NodeShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
 

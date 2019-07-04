@@ -3,7 +3,6 @@ package cache
 import CACHE_PATH
 import Processor
 import animation.Animation
-import animation.Keyframe
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import gui.component.Popup
@@ -14,9 +13,6 @@ import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
-import java.io.FileNotFoundException
 
 private val logger = KotlinLogging.logger {}
 

@@ -1,12 +1,11 @@
 package shader
 
-import RESOURCES_PATH
 import entity.Camera
 import org.joml.Matrix4f
 import util.Maths
 
-private const val VERTEX_FILE = RESOURCES_PATH + "shader/plane-vs.glsl"
-private const val FRAGMENT_FILE = RESOURCES_PATH + "shader/plane-fs.glsl"
+private const val VERTEX_FILE = "shader/plane-vs.glsl"
+private const val FRAGMENT_FILE = "shader/plane-fs.glsl"
 
 class PlaneShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
 

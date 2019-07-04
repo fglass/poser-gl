@@ -3,6 +3,7 @@ package shader
 import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.liquidengine.leutil.io.IOUtil
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
@@ -77,25 +78,15 @@ abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
         GL20.glUniformMatrix4fv(location, false, matrix.get(matrixBuffer))
     }
 
-    private fun loadShader(file: String, type: Int): Int {
-        val shaderSource = StringBuilder()
-        try {
-            val reader = BufferedReader(FileReader(file))
-            reader.lines().forEach { shaderSource.append(it).append("\n") }
-            reader.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
+    private fun loadShader(name: String, type: Int): Int {
         val shaderId = GL20.glCreateShader(type)
-        GL20.glShaderSource(shaderId, shaderSource)
+        GL20.glShaderSource(shaderId, IOUtil.resourceToString(name))
         GL20.glCompileShader(shaderId)
 
         if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             logger.error { GL20.glGetShaderInfoLog(shaderId, 500) }
             exitProcess(-1)
         }
-
         return shaderId
     }
 }

@@ -33,25 +33,34 @@ import render.Loader
 import render.PlaneRenderer
 import shader.StaticShader
 import util.VSyncTimer
+import jdk.nashorn.internal.runtime.ScriptingFunctions.readLine
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.ArrayList
+import java.lang.management.ManagementFactory
+
+
 
 const val TITLE = "PoserGL"
 const val VERSION = 1.0
 const val CACHE_PATH = "./repository/cache/"
-const val RESOURCES_PATH = "src/main/resources/"
-const val SPRITE_PATH = "$RESOURCES_PATH/sprite/"
+const val SPRITE_PATH = "sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
+
+const val WIDTH = 800
+const val HEIGHT = 600
+private val logger = KotlinLogging.logger {}
 
 fun main() {
     try {
+        if (restartJVM()) {
+            return
+        }
         Processor().run()
     } catch (e: Exception) {
         logger.error(e) { "Main exception encountered" }
     }
 }
-
-const val WIDTH = 800
-const val HEIGHT = 600
-private val logger = KotlinLogging.logger {}
 
 class Processor {
 
@@ -188,4 +197,45 @@ class Processor {
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
         return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
     }
+}
+
+fun restartJVM(): Boolean {
+    val osName = System.getProperty("os.name")
+
+    // If not a mac return false
+    if (!osName.startsWith("Mac") && !osName.startsWith("Darwin")) {
+        return false
+    }
+
+    // Get current jvm process pid
+    val pid =
+        ManagementFactory.getRuntimeMXBean().name.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+    //Get environment variable on whether XstartOnFirstThread is enabled
+    val env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_$pid")
+
+    // If environment variable is "1" then XstartOnFirstThread is enabled
+    if (env != null && env == "1") {
+        return false
+    }
+
+    // Restart jvm with -XstartOnFirstThread
+    val separator = System.getProperty("file.separator")
+    val classpath = System.getProperty("java.class.path")
+    val mainClass = System.getenv("JAVA_MAIN_CLASS_$pid")
+    val jvmPath = System.getProperty("java.home") + separator + "bin" + separator + "java"
+
+    val inputArguments = ManagementFactory.getRuntimeMXBean().inputArguments
+
+    val jvmArgs = ArrayList<String>()
+
+    jvmArgs.add(jvmPath)
+    jvmArgs.add("-XstartOnFirstThread")
+    jvmArgs.addAll(inputArguments)
+    jvmArgs.add("-cp")
+    jvmArgs.add(classpath)
+    jvmArgs.add(mainClass)
+
+    val processBuilder = ProcessBuilder(jvmArgs)
+    processBuilder.start()
+    return true
 }
