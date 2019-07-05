@@ -22,12 +22,21 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
         size = getListSize()
 
         this.remove(horizontalScrollBar)
-        this.style.background.color = BG_COLOUR
+        style.background.color = BG_COLOUR
 
-        this.container.style.border.isEnabled = false
-        this.viewport.style.border.isEnabled = false
-        this.viewport.style.bottom = 0f
-        this.verticalScrollBar.style.bottom = 0f
+        container.style.border.isEnabled = false
+        viewport.style.border.isEnabled = false
+        viewport.style.bottom = 0f
+
+        verticalScrollBar.style.bottom = 0f
+        verticalScrollBar.scrollStep = 0.3f
+        verticalScrollBar.style.focusedStrokeColor = null
+        verticalScrollBar.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                val offset = event.position.y / size.y
+                verticalScrollBar.curValue = verticalScrollBar.maxValue * offset
+            }
+        }
     }
 
     fun resize() {
@@ -35,7 +44,7 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
     }
 
     private fun getListSize(): Vector2f {
-        return Vector2f(164f, gui.size.y - 165) //166 173
+        return Vector2f(164f, gui.size.y - 165)
     }
 
     fun search(input: String) {
