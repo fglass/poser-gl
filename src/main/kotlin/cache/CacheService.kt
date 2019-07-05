@@ -67,7 +67,9 @@ class CacheService(private val context: Processor) {
 
     fun loadModelDefinition(component: EntityComponent): ModelDefinition {
         val library = CacheLibrary(CACHE_PATH)
-        val model = library.getIndex(IndexType.MODEL.getIndexId(library.isOSRS)).getArchive(component.id).getFile(0)
+        val modelIndex = if (osrs) IndexType.MODEL.idOsrs else IndexType.MODEL.id317
+
+        val model = library.getIndex(modelIndex).getArchive(component.id).getFile(0)
         val def = ModelLoader().load(component.id, model.data)
 
         if (component.originalColours != null && component.newColours != null) {
@@ -87,7 +89,7 @@ class CacheService(private val context: Processor) {
     }
 
     fun getMaxFrameArchive(library: CacheLibrary): Int {
-        val frameIndex = IndexType.FRAME.getIndexId(osrs)
+        val frameIndex = if (osrs) IndexType.FRAME.idOsrs else IndexType.FRAME.id317
         return library.getIndex(frameIndex).lastArchive.id
     }
 

@@ -13,13 +13,13 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
 
     override fun loadSequences(library: CacheLibrary) {
         val sequenceLoader = SequenceLoader()
-        val maxIndex = library.getIndex(IndexType.CONFIG.getIndexId(true))
-            .getArchive(IndexType.SEQUENCE.getIndexId(true))
+        val maxIndex = library.getIndex(IndexType.CONFIG.idOsrs)
+            .getArchive(IndexType.SEQUENCE.idOsrs)
             .lastFile.id
 
         for (i in 0..maxIndex) {
-            val file = library.getIndex(IndexType.CONFIG.getIndexId(true))
-                .getArchive(IndexType.SEQUENCE.getIndexId(true))
+            val file = library.getIndex(IndexType.CONFIG.idOsrs)
+                .getArchive(IndexType.SEQUENCE.idOsrs)
                 .getFile(i) ?: continue
 
             val sequence = sequenceLoader.load(file.id, file.data)
@@ -30,12 +30,12 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
 
     override fun loadFrameArchive(archiveId: Int) {
         val library = CacheLibrary(CACHE_PATH)
-        val frameIndex = IndexType.FRAME.getIndexId(true)
+        val frameIndex = IndexType.FRAME.idOsrs
 
         val archive = library.getIndex(frameIndex).getArchive(archiveId)?: return
         val frameLoader = FrameLoader()
         val frameMapLoader = FramemapLoader()
-        val frameMapIndex = IndexType.FRAME_MAP.getIndexId(true)
+        val frameMapIndex = IndexType.FRAME_MAP.idOsrs
 
         for (j in 0..library.getIndex(frameIndex).getArchive(archiveId).lastFile.id) {
             val frameFile = library.getIndex(frameIndex).getArchive(archiveId).getFile(j)?: continue
@@ -53,13 +53,13 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
 
     override fun loadNpcDefintions(library: CacheLibrary) {
         val npcLoader = NpcLoader()
-        val maxIndex = library.getIndex(IndexType.CONFIG.getIndexId(true))
-            .getArchive(IndexType.NPC.getIndexId(true))
+        val maxIndex = library.getIndex(IndexType.CONFIG.idOsrs)
+            .getArchive(IndexType.NPC.idOsrs)
             .lastFile.id
 
         for (i in 0..maxIndex) {
-            val file = library.getIndex(IndexType.CONFIG.getIndexId(true))
-                .getArchive(IndexType.NPC.getIndexId(true))
+            val file = library.getIndex(IndexType.CONFIG.idOsrs)
+                .getArchive(IndexType.NPC.idOsrs)
                 .getFile(i)?: continue
 
             val npc = npcLoader.load(file.id, file.data)
@@ -71,13 +71,13 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
 
     override fun loadItemDefinitions(library: CacheLibrary) {
         val itemLoader = ItemLoader()
-        val maxIndex = library.getIndex(IndexType.CONFIG.getIndexId(true))
-            .getArchive(IndexType.ITEM.getIndexId(true))
+        val maxIndex = library.getIndex(IndexType.CONFIG.idOsrs)
+            .getArchive(IndexType.ITEM.idOsrs)
             .lastFile.id
 
         for (i in 0..maxIndex) {
-            val file = library.getIndex(IndexType.CONFIG.getIndexId(true))
-                .getArchive(IndexType.ITEM.getIndexId(true))
+            val file = library.getIndex(IndexType.CONFIG.idOsrs)
+                .getArchive(IndexType.ITEM.idOsrs)
                 .getFile(i)?: continue
 
             val item = itemLoader.load(file.id, file.data)

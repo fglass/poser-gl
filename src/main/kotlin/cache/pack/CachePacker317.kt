@@ -13,7 +13,7 @@ class CachePacker317(private val service: CacheService): CachePacker {
         val library = CacheLibrary(CACHE_PATH)
         val file = animation.getFile317()?: return
 
-        val frameIndex = IndexType.FRAME.getIndexId(false)
+        val frameIndex = IndexType.FRAME.id317
         val newArchiveId = service.getMaxFrameArchive(library) + 1
 
         library.getIndex(frameIndex).addArchive(newArchiveId)
@@ -26,8 +26,8 @@ class CachePacker317(private val service: CacheService): CachePacker {
 
     private fun packSequence(animation: Animation, archiveId: Int, listener: ProgressListener, library: CacheLibrary) {
         listener.change(0.0, "Packing sequence definition...")
-        val existingData = library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.SEQUENCE.getIndexId(false))
+        val existingData = library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat").data
 
         val length = service.animations.size
@@ -39,10 +39,10 @@ class CachePacker317(private val service: CacheService): CachePacker {
         val newData = animation.encodeSequence317(sequence)
 
         // Combine data
-        library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.SEQUENCE.getIndexId(false))
+        library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.SEQUENCE.id317)
             .addFile("seq.dat", existingData + newData)
 
-        library.getIndex(IndexType.CONFIG.getIndexId(false)).update(listener)
+        library.getIndex(IndexType.CONFIG.id317).update(listener)
     }
 }

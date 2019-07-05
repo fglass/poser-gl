@@ -1,4 +1,4 @@
-package cache;
+package cache.load;
 
 public final class InputStream317 {
 
@@ -355,6 +355,5 @@ public final class InputStream317 {
         for (int index = (length + offset) - 1; index >= length; index--) {
             data[index] = payload[currentPosition++];
         }
-
     }
 }

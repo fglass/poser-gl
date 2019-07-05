@@ -5,7 +5,6 @@ import Processor
 import animation.Animation
 import cache.CacheService
 import cache.IndexType
-import cache.InputStream317
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 
@@ -13,8 +12,8 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
     CacheLoader {
 
     override fun loadSequences(library: CacheLibrary) {
-        val archive = library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.SEQUENCE.getIndexId(false))
+        val archive = library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat")
 
         val stream = InputStream317(archive.data)
@@ -67,7 +66,7 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
 
     override fun loadFrameArchive(archiveId: Int) {
         val library = CacheLibrary(CACHE_PATH)
-        val frameIndex = IndexType.FRAME.getIndexId(false)
+        val frameIndex = IndexType.FRAME.id317
 
         val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
 
@@ -176,11 +175,11 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
     }
 
     override fun loadNpcDefintions(library: CacheLibrary) {
-        val npcIdx = library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.NPC.getIndexId(false))
+        val npcIdx = library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.NPC.id317)
             .getFile("npc.idx")
-        val npcArchive = library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.NPC.getIndexId(false))
+        val npcArchive = library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.NPC.id317)
             .getFile("npc.dat")
 
         val idxStream = InputStream317(npcIdx.data)
@@ -295,11 +294,11 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
     }
 
     override fun loadItemDefinitions(library: CacheLibrary) {
-        val itemIdx = library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.ITEM.getIndexId(false))
+        val itemIdx = library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.ITEM.id317)
             .getFile("obj.idx")
-        val itemArchive = library.getIndex(IndexType.CONFIG.getIndexId(false))
-            .getArchive(IndexType.ITEM.getIndexId(false))
+        val itemArchive = library.getIndex(IndexType.CONFIG.id317)
+            .getArchive(IndexType.ITEM.id317)
             .getFile("obj.dat")
 
         val idxStream = InputStream317(itemIdx.data)

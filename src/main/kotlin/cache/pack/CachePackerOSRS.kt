@@ -11,7 +11,7 @@ class CachePackerOSRS(private val service: CacheService): CachePacker {
 
     override fun packAnimation(animation: Animation, listener: ProgressListener) {
         val library = CacheLibrary(CACHE_PATH)
-        val frameIndex = IndexType.FRAME.getIndexId(true)
+        val frameIndex = IndexType.FRAME.idOsrs
         val newArchiveId = service.getMaxFrameArchive(library) + 1
         library.getIndex(frameIndex).addArchive(newArchiveId)
 
@@ -32,10 +32,10 @@ class CachePackerOSRS(private val service: CacheService): CachePacker {
         val sequence = animation.toSequence(archiveId)
         val data = animation.encodeSequence(sequence)
 
-        library.getIndex(IndexType.CONFIG.getIndexId(true))
-            .getArchive(IndexType.SEQUENCE.getIndexId(true))
+        library.getIndex(IndexType.CONFIG.idOsrs)
+            .getArchive(IndexType.SEQUENCE.idOsrs)
             .addFile(sequence.id, data)
 
-        library.getIndex(IndexType.CONFIG.getIndexId(true)).update(listener)
+        library.getIndex(IndexType.CONFIG.idOsrs).update(listener)
     }
 }
