@@ -5,6 +5,8 @@ import animation.Animation
 import cache.CacheService
 import cache.IndexType
 import cache.ProgressListener
+import cache.load.AltCacheLoader317
+import cache.load.CacheLoader317
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
@@ -76,13 +78,17 @@ class CachePacker317(private val service: CacheService): CachePacker {
             .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat").data
 
-        val length = service.animations.size
+        val length = service.animations.keys.max()!! + 1
         // Change length
         existingData[0] = ((length ushr 8) and 0xFF).toByte()
         existingData[1] = ((length ushr 0) and 0xFF).toByte()
 
         val sequence = animation.toSequence(archiveId)
-        val newData = encodeSequence(sequence)
+        val newData = if (service.loader is AltCacheLoader317) {
+            CachePackerOSRS(service).encodeSequence(sequence)
+        } else {
+            encodeSequence(sequence)
+        }
 
         // Combine data
         library.getIndex(IndexType.CONFIG.id317)
@@ -105,6 +111,30 @@ class CachePacker317(private val service: CacheService): CachePacker {
 
         for (length in sequence.frameLenghts) {
             os.writeByte(length)
+        }
+
+        os.writeByte(0)
+        os.close()
+        return out.toByteArray()
+    }
+
+    private fun encodeSequence2(sequence: SequenceDefinition): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeByte(1)
+        os.writeShort(sequence.frameIDs.size)
+
+        for (length in sequence.frameLenghts) {
+            os.writeShort(length)
+        }
+
+        for (frameId in sequence.frameIDs) {
+            os.writeShort(frameId and 0xFFFF)
+        }
+
+        for (frameId in sequence.frameIDs) {
+            os.writeShort(frameId ushr 16)
         }
 
         os.writeByte(0)

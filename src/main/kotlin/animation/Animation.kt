@@ -2,15 +2,15 @@ package animation
 
 import Processor
 import gui.component.Popup
+import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3i
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
+
+private val logger = KotlinLogging.logger {}
 
 class Animation(private val context: Processor, val sequence: SequenceDefinition) {
 
@@ -38,7 +38,14 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             val frameArchive = context.cacheService.getFrameArchive(archiveId)
             val frameFileId = frameId and 0xFFFF
 
-            val frame = frameArchive.stream().filter { f -> f.id == frameFileId }.findFirst().get()
+            val frame: FrameDefinition
+            try {
+                frame = frameArchive.stream().filter { f -> f.id == frameFileId }.findFirst().get()
+            } catch (e: NoSuchElementException) {
+                logger.info { "Failed to load frame $frameFileId in archive $archiveId" }
+                continue
+            }
+
             val frameMap = frame.framemap
             val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index], frameMap)
 

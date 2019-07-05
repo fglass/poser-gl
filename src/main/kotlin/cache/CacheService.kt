@@ -3,10 +3,7 @@ package cache
 import CACHE_PATH
 import Processor
 import animation.Animation
-import cache.load.CacheLoader
-import cache.load.CacheLoader317
-import cache.load.CacheLoaderOSRS
-import cache.load.ModelLoader
+import cache.load.*
 import cache.pack.CachePacker317
 import cache.pack.CachePackerOSRS
 import com.google.common.collect.HashMultimap
@@ -23,7 +20,7 @@ private val logger = KotlinLogging.logger {}
 
 class CacheService(private val context: Processor) {
 
-    private val loader: CacheLoader
+    lateinit var loader: CacheLoader
     private var osrs = false
     var loaded = false
 
@@ -33,29 +30,37 @@ class CacheService(private val context: Processor) {
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
     init {
-        val library = CacheLibrary(CACHE_PATH)
-        osrs = library.isOSRS
-        loader = if (osrs) CacheLoaderOSRS(context, this) else CacheLoader317(context, this)
-
         try {
+            val library = CacheLibrary(CACHE_PATH)
+            osrs = library.isOSRS
+
             val revision = if (osrs) "OSRS" else "317"
             logger.info { "Loaded $revision cache" }
-
-            addPlayer()
-            loader.loadNpcDefintions(library)
-            logger.info { "Loaded ${entities.size} entities" }
-
-            loader.loadItemDefinitions(library)
-            logger.info { "Loaded ${items.size} items" }
-
-            loader.loadSequences(library)
-            logger.info { "Loaded ${animations.size} sequences" }
-            loaded = true
+            loader = if (osrs) CacheLoaderOSRS(context, this) else CacheLoader317(context, this)
+            init(library)
         } catch (e: Exception) {
-            logger.error(e) { "Failed to load cache" }
-        } finally {
-            library.close()
+            if (!osrs && loader is CacheLoader317) {
+                logger.info { "Failed to load cache. Switching to alternate 317 cache loader" }
+                loader = AltCacheLoader317(context, this)
+                init(CacheLibrary(CACHE_PATH))
+            } else {
+                logger.error(e) { "Failed to load cache" }
+            }
         }
+    }
+
+    fun init(library: CacheLibrary) {
+        addPlayer()
+        loader.loadNpcDefintions(library)
+        logger.info { "Loaded ${entities.size} entities" }
+
+        loader.loadItemDefinitions(library)
+        logger.info { "Loaded ${items.size} items" }
+
+        loader.loadSequences(library)
+        logger.info { "Loaded ${animations.size} sequences" }
+        loaded = true
+        library.close()
     }
 
     private fun addPlayer() {

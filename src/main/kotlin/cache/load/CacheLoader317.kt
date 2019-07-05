@@ -5,11 +5,13 @@ import Processor
 import animation.Animation
 import cache.CacheService
 import cache.IndexType
+import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 
-class CacheLoader317(private val context: Processor, private val service: CacheService):
-    CacheLoader {
+private val logger = KotlinLogging.logger {}
+
+class CacheLoader317(private val context: Processor, private val service: CacheService): CacheLoader {
 
     override fun loadSequences(library: CacheLibrary) {
         val archive = library.getIndex(IndexType.CONFIG.id317)
@@ -21,7 +23,12 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
         val sequences = HashMap<Int, Animation>()
 
         for (i in 0 until length) {
-            sequences[i] = Animation(context, decodeSequence(SequenceDefinition(i), stream))
+            val animation = Animation(context, decodeSequence(SequenceDefinition(i), stream))
+            if (animation.sequence.frameIDs != null) {
+                sequences[i] = animation
+            } else {
+                logger.info { "Sequence $i contains no frames" }
+            }
         }
         service.animations = sequences
     }
