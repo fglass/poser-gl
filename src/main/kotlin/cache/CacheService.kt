@@ -21,7 +21,7 @@ private val logger = KotlinLogging.logger {}
 class CacheService(private val context: Processor) {
 
     lateinit var loader: CacheLoader
-    private var osrs = false
+    private var osrs = true
     var loaded = false
 
     val entities = HashMap<Int, NpcDefinition>()

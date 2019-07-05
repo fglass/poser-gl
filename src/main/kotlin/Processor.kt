@@ -152,7 +152,7 @@ class Processor {
             try {
                 guiRenderer.render(frame, context)
             } catch (e: NullPointerException) {
-                logger.error(e) { "GUI render error" }
+                logger.error(e) { "UI render error" }
             }
 
             // Render fbo
