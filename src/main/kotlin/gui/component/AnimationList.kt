@@ -3,6 +3,7 @@ package gui.component
 import Processor
 import animation.Animation
 import gui.GuiManager
+import org.liquidengine.legui.style.color.ColorConstants
 
 class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Processor): ElementList(x, y, gui) {
 
@@ -27,6 +28,10 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
         container.add(element)
         container.size.y += listYOffset
         verticalScrollBar.curValue = container.size.y // Scroll to bottom
+    }
+
+    fun updateElement(animation: Animation) {
+        elements[animation.sequence.id]?.updateText()
     }
 
     override fun getFiltered(input: String): List<Int> {
@@ -54,8 +59,13 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
         }
 
         override fun updateText() {
-            val prefix = if (animation.modified) "*" else ""
-            textState.text = "$prefix${animation.sequence.id}"
+            textState.text = animation.sequence.id.toString()
+            textState.textColor =
+                when {
+                    animation.saved -> ColorConstants.lightGreen()
+                    animation.modified -> ColorConstants.lightRed()
+                    else -> ColorConstants.white()
+                }
             isEnabled = true
         }
 

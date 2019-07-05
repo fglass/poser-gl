@@ -24,6 +24,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     var modified = false
+    var saved = false
     val keyframes = ArrayList<Keyframe>()
     var length = 0
 

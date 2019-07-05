@@ -105,6 +105,8 @@ class CacheService(private val context: Processor) {
                 try {
                     packer.packAnimation(animation, listener)
                     progress.finish(animation.sequence.id)
+                    animation.saved = true
+                    context.gui.listPanel.animationList.updateElement(animation)
                 } catch (e: Exception) {
                     logger.error(e) { "Pack exception encountered" }
                 }

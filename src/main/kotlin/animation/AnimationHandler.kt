@@ -8,10 +8,10 @@ const val MAX_LENGTH = 999
 class AnimationHandler(private val context: Processor) {
 
     var currentAnimation: Animation? = null
-    var previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
     var copiedFrame = Keyframe(-1, -1, -1, FramemapDefinition())
-    var frameCount = 0
+    private var previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
     private var frameLength = 0
+    var frameCount = 0
 
     private var playing = false
     private var timer = 0
@@ -85,7 +85,11 @@ class AnimationHandler(private val context: Processor) {
 
     fun getAnimation(useCurrent: Boolean): Animation? {
         val current = currentAnimation?: return null
+
+        // Not original animation so no need to copy
         if (current.modified || useCurrent) {
+            current.saved = false
+            context.gui.listPanel.animationList.updateElement(current)
             return current
         }
 
