@@ -59,7 +59,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
     }
 
     fun encode(): ByteArray {
-        return encode(-1, true) // Not for 317
+        return encode(-1, true) // OSRS only
     }
 
     fun encode(id: Int, osrs: Boolean): ByteArray {
@@ -69,7 +69,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
         os.writeShort(if (osrs) frameMap.id else id)
         os.writeByte(transformations.size)
 
-        // Write masks first if necessary
+        // Write masks first if OSRS
         if (osrs) {
             for (transformation in transformations) {
                 os.writeByte(getMask(transformation))

@@ -5,7 +5,10 @@ import animation.Animation
 import cache.CacheService
 import cache.IndexType
 import cache.ProgressListener
+import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 
 class CachePackerOSRS(private val service: CacheService): CachePacker {
 
@@ -30,12 +33,36 @@ class CachePackerOSRS(private val service: CacheService): CachePacker {
     private fun packSequence(animation: Animation, archiveId: Int, listener: ProgressListener, library: CacheLibrary) {
         listener.change(0.0, "Packing sequence definition...")
         val sequence = animation.toSequence(archiveId)
-        val data = animation.encodeSequence(sequence)
+        val data = encodeSequence(sequence)
 
         library.getIndex(IndexType.CONFIG.idOsrs)
             .getArchive(IndexType.SEQUENCE.idOsrs)
             .addFile(sequence.id, data)
 
         library.getIndex(IndexType.CONFIG.idOsrs).update(listener)
+    }
+
+    private fun encodeSequence(sequence: SequenceDefinition): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeByte(1) // Opcode 1: Starting frames
+        os.writeShort(sequence.frameIDs.size)
+
+        for (length in sequence.frameLenghts) {
+            os.writeShort(length)
+        }
+
+        for (frameId in sequence.frameIDs) {
+            os.writeShort(frameId and 0xFFFF)
+        }
+
+        for (frameId in sequence.frameIDs) {
+            os.writeShort(frameId ushr 16)
+        }
+
+        os.writeByte(0) // Opcode 0: End of definition
+        os.close()
+        return out.toByteArray()
     }
 }
