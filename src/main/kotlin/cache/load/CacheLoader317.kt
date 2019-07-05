@@ -1,20 +1,30 @@
-package cache
+package cache.load
 
+import CACHE_PATH
 import Processor
 import animation.Animation
+import cache.CacheService
+import cache.IndexType
+import cache.InputStream317
 import net.runelite.cache.definitions.*
+import org.displee.CacheLibrary
 
-class Loader317 {
+class CacheLoader317(private val context: Processor, private val service: CacheService):
+    CacheLoader {
 
-    fun loadSequences(context: Processor, data: ByteArray): HashMap<Int, Animation> {
-        val stream = InputStream317(data)
+    override fun loadSequences(library: CacheLibrary) {
+        val archive = library.getIndex(IndexType.CONFIG.getIndexId(false))
+            .getArchive(IndexType.SEQUENCE.getIndexId(false))
+            .getFile("seq.dat")
+
+        val stream = InputStream317(archive.data)
         val length = stream.readUShort()
         val sequences = HashMap<Int, Animation>()
 
         for (i in 0 until length) {
             sequences[i] = Animation(context, decodeSequence(SequenceDefinition(i), stream))
         }
-        return sequences
+        service.animations = sequences
     }
 
     private fun decodeSequence(def: SequenceDefinition, stream: InputStream317): SequenceDefinition {
@@ -55,9 +65,21 @@ class Loader317 {
         }
     }
 
-    fun loadFrameFile(archive: Int, data: ByteArray, service: CacheService) {
+    override fun loadFrameArchive(archiveId: Int) {
+        val library = CacheLibrary(CACHE_PATH)
+        val frameIndex = IndexType.FRAME.getIndexId(false)
+
+        val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
+
+        if (file.data.isNotEmpty()) {
+            decodeFrameArchive(archiveId, file.data)
+        }
+        library.close()
+    }
+
+    private fun decodeFrameArchive(archive: Int, data: ByteArray) {
         val stream = InputStream317(data)
-        val frameMap = getFrameMap(stream)
+        val frameMap = decodeFrameMap(stream)
 
         val fileLength = stream.readUShort()
         val indexFrameIds = IntArray(500)
@@ -119,6 +141,7 @@ class Loader317 {
             def.translator_x = IntArray(index)
             def.translator_y = IntArray(index)
             def.translator_z = IntArray(index)
+
             for (i in 0 until index) {
                 def.indexFrameIds[i] = indexFrameIds[i]
                 def.translator_x[i] = scratchTranslatorX[i]
@@ -129,9 +152,9 @@ class Loader317 {
         }
     }
 
-    private fun getFrameMap(stream: InputStream317): FramemapDefinition {
+    private fun decodeFrameMap(stream: InputStream317): FramemapDefinition {
         val def = FramemapDefinition()
-        def.id = -1
+        def.id = -1 // Unused
         def.length = stream.readUShort()
         def.types = IntArray(def.length)
         def.frameMaps = arrayOfNulls(def.length)
@@ -152,7 +175,154 @@ class Loader317 {
         return def
     }
 
-    fun loadItemDefinition(id: Int, stream: InputStream317): ItemDefinition {
+    override fun loadNpcDefintions(library: CacheLibrary) {
+        val npcIdx = library.getIndex(IndexType.CONFIG.getIndexId(false))
+            .getArchive(IndexType.NPC.getIndexId(false))
+            .getFile("npc.idx")
+        val npcArchive = library.getIndex(IndexType.CONFIG.getIndexId(false))
+            .getArchive(IndexType.NPC.getIndexId(false))
+            .getFile("npc.dat")
+
+        val idxStream = InputStream317(npcIdx.data)
+        val total = idxStream.readUShort()
+
+        val streamIndices = IntArray(total)
+        var offset = 2
+        for (i in 0 until total) {
+            streamIndices[i] = offset
+            offset += idxStream.readUShort()
+        }
+
+        val stream = InputStream317(npcArchive.data)
+        for (i in 0 until total) {
+            stream.currentPosition = streamIndices[i]
+            val npc = decodeNpcDefinition(i, stream)
+            if (npc.models != null && npc.name.toLowerCase() != "null" && npc.name != "") {
+                service.entities[npc.id] = npc
+            }
+        }
+    }
+
+    private fun decodeNpcDefinition(id: Int, stream: InputStream317): NpcDefinition {
+        val def = NpcDefinition(id)
+        while (true) {
+            val opCode = stream.readUnsignedByte()
+            if (opCode == 0)
+                return def
+            if (opCode == 1) {
+                val j = stream.readUnsignedByte()
+                def.models = IntArray(j)
+                for (j1 in 0 until j)
+                    def.models[j1] = stream.readUShort()
+
+            } else if (opCode == 2)
+                def.name = stream.readString()
+            else if (opCode == 3) {
+                stream.readBytes()
+            } else if (opCode == 12)
+                def.tileSpacesOccupied = stream.readSignedByte().toInt()
+            else if (opCode == 13)
+                def.stanceAnimation = stream.readUShort()
+            else if (opCode == 14)
+                def.walkAnimation = stream.readUShort()
+            else if (opCode == 17) {
+                def.walkAnimation = stream.readUShort()
+                def.rotate180Animation = stream.readUShort()
+                def.rotate90RightAnimation = stream.readUShort()
+                def.rotate90LeftAnimation = stream.readUShort()
+            } else if (opCode in 30..39) {
+                if (def.options == null)
+                    def.options = arrayOfNulls<String>(5)
+                def.options[opCode - 30] = stream.readString()
+                if (def.options[opCode - 30].equals("hidden", ignoreCase = true))
+                    def.options[opCode - 30] = null
+            } else if (opCode == 40) {
+                val colours = stream.readUnsignedByte()
+                def.recolorToFind = ShortArray(colours)
+                def.recolorToReplace = ShortArray(colours)
+                for (k1 in 0 until colours) {
+                    def.recolorToFind[k1] = stream.readUShort().toShort()
+                    def.recolorToReplace[k1] = stream.readUShort().toShort()
+                }
+
+            } else if (opCode == 60) {
+                val additionalModelLen = stream.readUnsignedByte()
+                def.models_2 = IntArray(additionalModelLen)
+                for (l1 in 0 until additionalModelLen)
+                    def.models_2[l1] = stream.readUShort()
+
+            } else if (opCode == 90)
+                stream.readUShort()
+            else if (opCode == 91)
+                stream.readUShort()
+            else if (opCode == 92)
+                stream.readUShort()
+            else if (opCode == 93)
+                def.renderOnMinimap = false
+            else if (opCode == 95)
+                def.combatLevel = stream.readUShort()
+            else if (opCode == 97)
+                def.resizeX = stream.readUShort()
+            else if (opCode == 98)
+                def.resizeY = stream.readUShort()
+            else if (opCode == 99)
+                def.hasRenderPriority = true
+            else if (opCode == 100)
+                def.ambient = stream.readSignedByte().toInt()
+            else if (opCode == 101)
+                def.contrast = stream.readSignedByte() * 5
+            else if (opCode == 102)
+                def.headIcon = stream.readUShort()
+            else if (opCode == 103)
+                def.rotation = stream.readUShort()
+            else if (opCode == 106) {
+                def.varbitIndex = stream.readUShort()
+                if (def.varbitIndex == 65535)
+                    def.varbitIndex = -1
+                def.varpIndex = stream.readUShort()
+                if (def.varpIndex == 65535)
+                    def.varpIndex = -1
+                val childCount = stream.readUnsignedByte()
+                def.configs = IntArray(childCount + 1)
+                for (i2 in 0..childCount) {
+                    def.configs[i2] = stream.readUShort()
+                    if (def.configs[i2] == 65535)
+                        def.configs[i2] = -1
+                }
+            } else if (opCode == 107)
+                def.isClickable = false
+        }
+    }
+
+    override fun loadItemDefinitions(library: CacheLibrary) {
+        val itemIdx = library.getIndex(IndexType.CONFIG.getIndexId(false))
+            .getArchive(IndexType.ITEM.getIndexId(false))
+            .getFile("obj.idx")
+        val itemArchive = library.getIndex(IndexType.CONFIG.getIndexId(false))
+            .getArchive(IndexType.ITEM.getIndexId(false))
+            .getFile("obj.dat")
+
+        val idxStream = InputStream317(itemIdx.data)
+        val total = idxStream.readUShort()
+
+        val streamIndices = IntArray(total)
+        var offset = 2
+        for (i in 0 until total) {
+            streamIndices[i] = offset
+            offset += idxStream.readUShort()
+        }
+
+        val stream = InputStream317(itemArchive.data)
+        for (i in 0 until total) {
+            stream.currentPosition = streamIndices[i]
+            val item = decodeItemDefinition(i, stream)
+            if (item.maleModel0 > 0 && item.name.toLowerCase() != "null") {
+                service.items[item.id] = item
+            }
+        }
+    }
+
+    private fun decodeItemDefinition(id: Int, stream: InputStream317): ItemDefinition {
         val def = ItemDefinition(id)
         while (true) {
             val opCode = stream.readUnsignedByte()
@@ -251,97 +421,6 @@ class Loader317 {
                 def.contrast = stream.readSignedByte() * 5
             else if (opCode == 115)
                 def.team = stream.readUnsignedByte()
-        }
-    }
-
-    fun loadEntityDefinition(id: Int, stream: InputStream317): NpcDefinition {
-        val def = NpcDefinition(id)
-        while (true) {
-            val opCode = stream.readUnsignedByte()
-            if (opCode == 0)
-                return def
-            if (opCode == 1) {
-                val j = stream.readUnsignedByte()
-                def.models = IntArray(j)
-                for (j1 in 0 until j)
-                    def.models[j1] = stream.readUShort()
-
-            } else if (opCode == 2)
-                def.name = stream.readString()
-            else if (opCode == 3) {
-                stream.readBytes()
-            } else if (opCode == 12)
-                def.tileSpacesOccupied = stream.readSignedByte().toInt()
-            else if (opCode == 13)
-                def.stanceAnimation = stream.readUShort()
-            else if (opCode == 14)
-                def.walkAnimation = stream.readUShort()
-            else if (opCode == 17) {
-                def.walkAnimation = stream.readUShort()
-                def.rotate180Animation = stream.readUShort()
-                def.rotate90RightAnimation = stream.readUShort()
-                def.rotate90LeftAnimation = stream.readUShort()
-            } else if (opCode in 30..39) {
-                if (def.options == null)
-                    def.options = arrayOfNulls<String>(5)
-                def.options[opCode - 30] = stream.readString()
-                if (def.options[opCode - 30].equals("hidden", ignoreCase = true))
-                    def.options[opCode - 30] = null
-            } else if (opCode == 40) {
-                val colours = stream.readUnsignedByte()
-                def.recolorToFind = ShortArray(colours)
-                def.recolorToReplace = ShortArray(colours)
-                for (k1 in 0 until colours) {
-                    def.recolorToFind[k1] = stream.readUShort().toShort()
-                    def.recolorToReplace[k1] = stream.readUShort().toShort()
-                }
-
-            } else if (opCode == 60) {
-                val additionalModelLen = stream.readUnsignedByte()
-                def.models_2 = IntArray(additionalModelLen)
-                for (l1 in 0 until additionalModelLen)
-                    def.models_2[l1] = stream.readUShort()
-
-            } else if (opCode == 90)
-                stream.readUShort()
-            else if (opCode == 91)
-                stream.readUShort()
-            else if (opCode == 92)
-                stream.readUShort()
-            else if (opCode == 93)
-                def.renderOnMinimap = false
-            else if (opCode == 95)
-                def.combatLevel = stream.readUShort()
-            else if (opCode == 97)
-                def.resizeX = stream.readUShort()
-            else if (opCode == 98)
-                def.resizeY = stream.readUShort()
-            else if (opCode == 99)
-                def.hasRenderPriority = true
-            else if (opCode == 100)
-                def.ambient = stream.readSignedByte().toInt()
-            else if (opCode == 101)
-                def.contrast = stream.readSignedByte() * 5
-            else if (opCode == 102)
-                def.headIcon = stream.readUShort()
-            else if (opCode == 103)
-                def.rotation = stream.readUShort()
-            else if (opCode == 106) {
-                def.varbitIndex = stream.readUShort()
-                if (def.varbitIndex == 65535)
-                    def.varbitIndex = -1
-                def.varpIndex = stream.readUShort()
-                if (def.varpIndex == 65535)
-                    def.varpIndex = -1
-                val childCount = stream.readUnsignedByte()
-                def.configs = IntArray(childCount + 1)
-                for (i2 in 0..childCount) {
-                    def.configs[i2] = stream.readUShort()
-                    if (def.configs[i2] == 65535)
-                        def.configs[i2] = -1
-                }
-            } else if (opCode == 107)
-                def.isClickable = false
         }
     }
 }

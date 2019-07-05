@@ -1,4 +1,4 @@
-package cache;
+package cache.load;
 
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.io.InputStream;
@@ -652,6 +652,5 @@ public class ModelLoader {
         if (!var2) {
             model.faceRenderTypes = null;
         }
-
     }
 }

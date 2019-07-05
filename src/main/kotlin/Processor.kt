@@ -205,6 +205,7 @@ fun restartJVM(): Boolean {
     // Get current jvm process pid
     val pid =
         ManagementFactory.getRuntimeMXBean().name.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+
     //Get environment variable on whether XstartOnFirstThread is enabled
     val env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_$pid")
 
@@ -220,7 +221,6 @@ fun restartJVM(): Boolean {
     val jvmPath = System.getProperty("java.home") + separator + "bin" + separator + "java"
 
     val inputArguments = ManagementFactory.getRuntimeMXBean().inputArguments
-
     val jvmArgs = ArrayList<String>()
 
     jvmArgs.add(jvmPath)
