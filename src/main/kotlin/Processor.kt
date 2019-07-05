@@ -1,6 +1,5 @@
 import animation.AnimationHandler
 import cache.CacheService
-import render.NodeRenderer
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
@@ -30,16 +29,12 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import render.Framebuffer
 import render.Loader
+import render.NodeRenderer
 import render.PlaneRenderer
 import shader.StaticShader
 import util.VSyncTimer
-import jdk.nashorn.internal.runtime.ScriptingFunctions.readLine
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.ArrayList
 import java.lang.management.ManagementFactory
-
-
+import java.util.*
 
 const val TITLE = "PoserGL"
 const val VERSION = 1.0

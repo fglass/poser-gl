@@ -34,7 +34,7 @@ data/saves/
 
 ## Plugin-specific files:
 /repository/
-error.log
+app.log
 
 # IntelliJ
 /out/

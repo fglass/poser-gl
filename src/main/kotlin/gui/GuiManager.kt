@@ -12,7 +12,7 @@ import org.liquidengine.legui.component.Panel
 class GuiManager(position: Vector2f, size: Vector2f, context: Processor): Panel(position, size) {
 
     companion object {
-        var width = WIDTH.toFloat()
+        var width = WIDTH.toFloat() // TODO use processor width var
     }
 
     val listPanel = ListPanel(this, context)
