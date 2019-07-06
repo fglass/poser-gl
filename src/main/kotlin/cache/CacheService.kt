@@ -98,7 +98,8 @@ class CacheService(private val context: Processor) {
         return library.getIndex(frameIndex).lastArchive.id
     }
 
-    fun pack(animation: Animation) {
+    fun pack() {
+        val animation = context.animationHandler.currentAnimation?: return
         if (animation.modified) {
             val progress = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...", 230f, 92f)
             val listener = ProgressListener(progress)

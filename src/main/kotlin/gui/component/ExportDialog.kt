@@ -31,8 +31,8 @@ class ExportDialog(manager: ExportManager, title: String, width: Float, height: 
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val file = FileDialogs.saveFile(if (pack.isChecked) "pack" else "dat", "")?: return@addListener
-                if (pack.isChecked) manager.exportPack(file) else manager.exportDat(file)
+                val name = FileDialogs.saveFile(if (pack.isChecked) "pack" else "dat", "")?: return@addListener
+                if (pack.isChecked) manager.exportPack(name) else manager.exportDat(name)
             }
         }
         container.add(export)
