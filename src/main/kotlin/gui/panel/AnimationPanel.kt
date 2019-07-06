@@ -24,8 +24,10 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
     val sequenceId: Label
     private val play: ImageButton
     private val menu: Panel
-    private val nodeToggle: ToggleButton
+    private val importButton: ImageButton
+    private val exportButton: ImageButton
     private val packButton: ImageButton
+    private val nodeToggle: ToggleButton
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
@@ -80,6 +82,26 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         sequenceId = Label("N/A", x + 73, 5f, 50f, 15f)
         menu.add(sequence)
         menu.add(sequenceId)
+
+        importButton = ImageButton(Vector2f(size.x - 110, 0f), BufferedImage(SPRITE_PATH + "import.png"), "Import")
+        importButton.size = Vector2f(26f, 26f)
+        importButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                val animation = context.animationHandler.currentAnimation?: return@addListener
+                context.cacheService.pack(animation)
+            }
+        }
+        menu.add(importButton)
+
+        exportButton = ImageButton(Vector2f(size.x - 85, 0f), BufferedImage(SPRITE_PATH + "export.png"), "Export")
+        exportButton.size = Vector2f(26f, 26f)
+        exportButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                val animation = context.animationHandler.currentAnimation?: return@addListener
+                context.cacheService.pack(animation)
+            }
+        }
+        menu.add(exportButton)
 
         packButton = ImageButton(Vector2f(size.x - 60, 0f), BufferedImage(SPRITE_PATH + "pack.png"), "Pack")
         packButton.size = Vector2f(26f, 26f)
@@ -201,7 +223,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         }
         menu.size.x = size.x
         nodeToggle.position.x = size.x - 32
-        packButton.position.x = size.x - 60
+        packButton.position.x = size.x - 60 // TODO
 
         val animation = context.animationHandler.currentAnimation
         if (animation == null) {
