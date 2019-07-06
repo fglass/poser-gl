@@ -5,7 +5,7 @@ import org.lwjgl.util.nfd.NativeFileDialog
 
 object FileDialogs {
 
-    fun openFile(filters: List<String>, defaultPath: String): String? { // listOf("*.pack", "*.dat"), "."
+    fun openFile(filters: List<String>, defaultPath: String): String? {
         val filter = filters.joinToString(",") { it.replace("*.", "") }
         val outPath = MemoryUtil.memAllocPointer(1)
 

@@ -87,7 +87,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         importButton.size = Vector2f(26f, 26f)
         importButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                //context.exportManager.openDialog() TODO
+                context.importManager.import()
             }
         }
         menu.add(importButton)

@@ -33,6 +33,7 @@ import render.NodeRenderer
 import render.PlaneRenderer
 import shader.StaticShader
 import transfer.ExportManager
+import transfer.ImportManager
 import util.VSyncTimer
 import java.lang.management.ManagementFactory
 import java.util.*
@@ -71,6 +72,7 @@ class Processor {
 
     val cacheService = CacheService(this)
     val exportManager = ExportManager(this)
+    val importManager = ImportManager(this)
 
     val loader = Loader()
     val modelParser = ModelParser(loader)
@@ -199,13 +201,11 @@ class Processor {
 
 fun restartJVM(): Boolean {
     val osName = System.getProperty("os.name")
-
-    // If not a mac return false
     if (!osName.startsWith("Mac") && !osName.startsWith("Darwin")) {
         return false
     }
 
-    // Get current jvm process pid
+    // Get current JVM process pid
     val pid =
         ManagementFactory.getRuntimeMXBean().name.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
 
@@ -217,7 +217,7 @@ fun restartJVM(): Boolean {
         return false
     }
 
-    // Restart jvm with -XstartOnFirstThread
+    // Restart JVM with -XstartOnFirstThread
     val separator = System.getProperty("file.separator")
     val classpath = System.getProperty("java.class.path")
     val mainClass = System.getenv("JAVA_MAIN_CLASS_$pid")

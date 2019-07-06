@@ -15,15 +15,15 @@ class ExportDialog(manager: ExportManager, title: String, width: Float, height: 
     init {
         this.remove(message)
         val group = RadioButtonGroup()
-        val pack = RadioButton(".pack", 68f, 15f, 45f, 15f)
+        val pgl = RadioButton(".pgl", 68f, 15f, 37f, 15f)
         val dat = RadioButton(".dat", 120f, 15f, 37f, 15f)
 
-        val buttons = arrayOf(pack, dat)
+        val buttons = arrayOf(pgl, dat)
         buttons.forEach {
             it.style.focusedStrokeColor = null
             it.textState.horizontalAlign = HorizontalAlign.RIGHT
             it.radioButtonGroup = group
-            it.isChecked = it == pack
+            it.isChecked = it == pgl
             container.add(it)
         }
 
@@ -31,8 +31,8 @@ class ExportDialog(manager: ExportManager, title: String, width: Float, height: 
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val name = FileDialogs.saveFile(if (pack.isChecked) "pack" else "dat", "")?: return@addListener
-                if (pack.isChecked) manager.exportPack(name) else manager.exportDat(name)
+                val name = FileDialogs.saveFile(if (pgl.isChecked) "pgl" else "dat", ".")?: return@addListener
+                if (pgl.isChecked) manager.exportPgl(name) else manager.exportDat(name)
             }
         }
         container.add(export)

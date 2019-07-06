@@ -85,7 +85,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
     }
 
-    private fun calculateLength(): Int {
+    fun calculateLength(): Int {
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
     }
 

@@ -2,7 +2,11 @@ package transfer
 
 import Processor
 import animation.Animation
+import animation.Keyframe
+import animation.Reference
+import cache.pack.CachePacker317
 import gui.component.ExportDialog
+import net.runelite.cache.definitions.FramemapDefinition
 import org.liquidengine.legui.component.Dialog
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -18,43 +22,78 @@ class ExportManager(private val context: Processor) {
         dialog.show(context.frame)
     }
 
-    fun exportPack(name: String) {
-        val animation = context.animationHandler.currentAnimation?: return
-        val pack = encodePack(animation)
+    fun exportPgl(name: String) {
+        val animation = context.animationHandler.currentAnimation ?: return
+        val pack = encodePgl(animation)
 
         File(name).writeBytes(pack)
         dialog.close()
     }
 
-    fun exportDat(name: String) {
-        // TODO
-    }
-
-    private fun encodePack(animation: Animation): ByteArray {
+    private fun encodePgl(animation: Animation): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        /* Sequence */
-        os.writeByte(1)
+        os.writeByte(if (context.cacheService.osrs) 1 else 0) // Revision byte
         os.writeShort(animation.keyframes.size)
 
-        /*for (frameId in sequence.frameIDs) { // Need?
-            os.writeInt(frameId)
-        }*/
-        animation.keyframes.forEach {
-            os.writeShort(it.length)
-        }
-        os.writeByte(0)
-
-        /* Frames */
-        var modified = 0
-        animation.keyframes.forEach {
-            if (it.modified) {
-                os.write(it.encode(modified++, true))
-            }
+        for (keyframe in animation.keyframes) {
+            os.writeShort(keyframe.length)
+            keyframe.frameMap.encode(os)
+            keyframe.encode(os)
         }
 
         os.close()
         return out.toByteArray()
+    }
+
+    private fun FramemapDefinition.encode(stream: DataOutputStream) {
+        stream.writeByte(length)
+
+        for (i in 0 until length) {
+            stream.writeByte(types[i])
+        }
+
+        for (i in 0 until length) {
+            stream.writeByte(frameMaps[i].size)
+        }
+
+        for (i in 0 until length) {
+            for (j in 0 until frameMaps[i].size) {
+                stream.writeByte(frameMaps[i][j])
+            }
+        }
+    }
+
+    private fun Keyframe.encode(stream: DataOutputStream) {
+        stream.writeShort(frameMap.id)
+
+        val n = transformations.filterIsInstance<Reference>().size
+        stream.writeByte(n)
+
+        for (transformation in transformations) {
+
+            if (transformation is Reference) {
+                stream.writeShort(transformation.id)
+                stream.writeShort(transformation.delta.x)
+                stream.writeShort(transformation.delta.y)
+                stream.writeShort(transformation.delta.z)
+                stream.writeByte(transformation.children.size)
+
+                transformation.children.forEach {
+                    val child = it.value
+                    stream.writeShort(child.id)
+                    stream.writeByte(child.type.id)
+
+                    stream.writeShort(child.delta.x)
+                    stream.writeShort(child.delta.y)
+                    stream.writeShort(child.delta.z)
+                }
+            }
+        }
+    }
+
+    fun exportDat(name: String) {
+        // TODO
     }
 }
