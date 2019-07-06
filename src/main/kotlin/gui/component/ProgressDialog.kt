@@ -2,7 +2,7 @@ package gui.component
 
 import org.liquidengine.legui.component.ProgressBar
 
-class ProgressPopup(title: String, message: String, width: Float, height: Float): Popup(title, message, width, height) {
+class ProgressDialog(title: String, message: String, width: Float, height: Float): Dialog(title, message, width, height) {
 
     private val progressBar = ProgressBar(size.x / 2 - 50, 43f, 100f, 10f)
 

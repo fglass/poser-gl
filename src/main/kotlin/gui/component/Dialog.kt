@@ -4,7 +4,7 @@ import org.liquidengine.legui.component.Dialog
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
-open class Popup(title: String, text: String, width: Float, height: Float): Dialog(title, width, height) {
+open class Dialog(title: String, text: String, width: Float, height: Float): Dialog(title, width, height) {
 
     val message = Label(text, 0f, 15f, size.x, 15f)
 

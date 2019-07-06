@@ -3,7 +3,7 @@ import cache.CacheService
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
-import gui.component.Popup
+import gui.component.Dialog
 import io.MouseHandler
 import model.ModelParser
 import mu.KotlinLogging
@@ -134,7 +134,7 @@ class Processor {
         if (cacheService.loaded) {
             entityHandler.loadPlayer()
         } else {
-            Popup("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
+            Dialog("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
         }
 
         // Render loop

@@ -8,8 +8,8 @@ import cache.pack.CachePacker317
 import cache.pack.CachePackerOSRS
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
-import gui.component.Popup
-import gui.component.ProgressPopup
+import gui.component.Dialog
+import gui.component.ProgressDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
@@ -100,7 +100,7 @@ class CacheService(private val context: Processor) {
 
     fun pack(animation: Animation) {
         if (animation.modified) {
-            val progress = ProgressPopup("Packing Animation", "Packing sequence ${animation.sequence.id}...", 230f, 92f)
+            val progress = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...", 230f, 92f)
             val listener = ProgressListener(progress)
             progress.show(context.frame)
 
@@ -117,7 +117,7 @@ class CacheService(private val context: Processor) {
                 }
             }
         } else {
-            Popup("Invalid Operation", "This animation has not been modified yet", 260f, 70f).show(context.frame)
+            Dialog("Invalid Operation", "This animation has not been modified yet", 260f, 70f).show(context.frame)
         }
     }
 }
