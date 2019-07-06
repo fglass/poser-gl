@@ -14,6 +14,5 @@ open class Dialog(title: String, text: String, width: Float, height: Float): Dia
         container.isFocusable = false
         isFocusable = false
         isResizable = false
-        titleTextState.horizontalAlign = HorizontalAlign.CENTER
     }
 }

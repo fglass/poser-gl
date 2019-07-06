@@ -87,8 +87,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         importButton.size = Vector2f(26f, 26f)
         importButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val animation = context.animationHandler.currentAnimation?: return@addListener
-                context.cacheService.pack(animation)
+                //context.exportManager.export()
             }
         }
         menu.add(importButton)
@@ -97,8 +96,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         exportButton.size = Vector2f(26f, 26f)
         exportButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val animation = context.animationHandler.currentAnimation?: return@addListener
-                context.cacheService.pack(animation)
+                context.exportManager.export()
             }
         }
         menu.add(exportButton)

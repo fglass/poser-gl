@@ -32,6 +32,7 @@ import render.Loader
 import render.NodeRenderer
 import render.PlaneRenderer
 import shader.StaticShader
+import transfer.ExportManager
 import util.VSyncTimer
 import java.lang.management.ManagementFactory
 import java.util.*
@@ -65,13 +66,16 @@ class Processor {
     lateinit var nodeRenderer: NodeRenderer
     lateinit var planeRenderer: PlaneRenderer
 
+    var entity: Entity? = null
     private var running = true
+
     val cacheService = CacheService(this)
+    val exportManager = ExportManager(this)
+
     val loader = Loader()
     val modelParser = ModelParser(loader)
     val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
-    var entity: Entity? = null
 
     fun run() {
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())

@@ -20,11 +20,9 @@ object FileDialogs {
         return path
     }
 
-    fun saveFile(filters: List<String>, defaultPath: String): String? { // default: "id.dat"
-        val filter = filters.joinToString(",") { it.replace("*.", "") }
+    fun saveFile(suffix: String, defaultPath: String): String? {
         val outPath = MemoryUtil.memAllocPointer(1)
-
-        val res = NativeFileDialog.NFD_SaveDialog(filter, defaultPath, outPath)
+        val res = NativeFileDialog.NFD_SaveDialog(suffix, defaultPath, outPath)
         var path: String? = null
 
         if (res == NativeFileDialog.NFD_OKAY) {
