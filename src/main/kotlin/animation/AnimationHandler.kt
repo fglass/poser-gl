@@ -88,8 +88,6 @@ class AnimationHandler(private val context: Processor) {
 
         // Not original animation so no need to copy
         if (current.modified || useCurrent) {
-            current.saved = false
-            context.gui.listPanel.animationList.updateElement(current)
             return current
         }
 

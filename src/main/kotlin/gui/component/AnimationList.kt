@@ -60,12 +60,7 @@ class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Pr
 
         override fun updateText() {
             textState.text = animation.sequence.id.toString()
-            textState.textColor =
-                when {
-                    animation.saved -> ColorConstants.lightGreen()
-                    animation.modified -> ColorConstants.lightRed()
-                    else -> ColorConstants.white()
-                }
+            textState.textColor = if (animation.modified) ColorConstants.lightRed() else ColorConstants.white()
             isEnabled = true
         }
 
