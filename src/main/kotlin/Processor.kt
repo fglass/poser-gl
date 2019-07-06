@@ -32,12 +32,13 @@ import render.Loader
 import render.NodeRenderer
 import render.PlaneRenderer
 import shader.StaticShader
+import util.FileDialogs
 import util.VSyncTimer
 import java.lang.management.ManagementFactory
 import java.util.*
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.0.2"
+const val VERSION = "1.1"
 const val CACHE_PATH = "./repository/cache317/"
 const val SPRITE_PATH = "sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
@@ -94,7 +95,6 @@ class Processor {
 
         val context = Context(window)
         context.updateGlfwWindow()
-
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
 

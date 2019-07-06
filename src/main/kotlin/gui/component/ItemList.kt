@@ -10,7 +10,6 @@ class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): Element
     private val elements = HashMap<Int, Element>()
 
     init {
-        val i = 2
         var index = 0
         for (item in items.values) {
             val element = ItemElement(item, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)

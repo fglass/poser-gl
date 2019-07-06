@@ -31,6 +31,8 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
         verticalScrollBar.style.bottom = 0f
         verticalScrollBar.scrollStep = 0.3f
         verticalScrollBar.style.focusedStrokeColor = null
+
+        // Click to move proportionally
         verticalScrollBar.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 val offset = event.position.y / size.y
