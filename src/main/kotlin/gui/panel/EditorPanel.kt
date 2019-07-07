@@ -4,7 +4,6 @@ import SPRITE_PATH
 import BG_COLOUR
 import Processor
 import animation.*
-import animation.ReferenceNode
 import gui.GuiManager
 import gui.component.ButtonGroup
 import gui.component.ConfigGroup
@@ -22,7 +21,7 @@ import org.liquidengine.legui.style.color.ColorConstants
 class EditorPanel(private val gui: GuiManager, private val context: Processor): Panel() { // TODO: Clean-up
 
     private val sliders = ArrayList<TextSlider>()
-    private var currentReference: Reference? = null
+    private var currentReference: ReferenceNode? = null
     private val selectedFrame: Label
     private val frameLength: TextSlider
     private val selectedNode: Label
@@ -88,7 +87,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
             arrayOf(BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
             BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
-            arrayOf("Reference", "Translation", "Rotation", "Scale"))
+            arrayOf("ReferenceNode", "Translation", "Rotation", "Scale"))
 
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -129,12 +128,12 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
         for ((i, button) in transformations.buttons.withIndex()) {
             val type = TransformationType.fromId(i)
-            button.isFocusable = node.reference.getTransformation(type) != null
+            button.isFocusable = node.getTransformation(type) != null
         }
         transformations.updateConfigs(transformations.buttons[selectedType.id])
 
-        currentReference = node.reference
-        selectedNode.textState.text = "Selected: ${node.reference.id}"
+        currentReference = node
+        selectedNode.textState.text = "Selected: ${node.id}"
         updateType(selectedType)
     }
 

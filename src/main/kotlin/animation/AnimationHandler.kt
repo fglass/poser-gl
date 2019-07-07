@@ -67,14 +67,14 @@ class AnimationHandler(private val context: Processor) {
         previousFrame = keyframe
     }
 
-    fun transformNode(coordIndex: Int, newValue: Int) {
+    fun transformNode(coordIndex: Int, newValue: Int) { // TODO selecting disappeard node
         if (!context.nodeRenderer.enabled) {
             return
         }
 
         val selected = context.nodeRenderer.selectedNode?: return
         val type = context.nodeRenderer.selectedType
-        val preCopy = selected.reference.getTransformation(type)?: return
+        val preCopy = selected.getTransformation(type)?: return
 
         val animation = getAnimation(false)?: return
         val keyframe = animation.keyframes[getFrameIndex(animation)]

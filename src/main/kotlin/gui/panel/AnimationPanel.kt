@@ -110,7 +110,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         }
         menu.add(packButton)
 
-        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, "Toggle nodes", false)
+        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, "Skeleton", false)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.nodeRenderer.enabled = !context.nodeRenderer.enabled

@@ -27,10 +27,7 @@ import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
-import render.Framebuffer
-import render.Loader
-import render.NodeRenderer
-import render.PlaneRenderer
+import render.*
 import shader.StaticShader
 import transfer.ExportManager
 import transfer.ImportManager
@@ -40,7 +37,7 @@ import java.util.*
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.1"
-const val CACHE_PATH = "./repository/cache317/"
+const val CACHE_PATH = "./repository/cache/"
 const val SPRITE_PATH = "sprite/"
 val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
 
@@ -65,6 +62,7 @@ class Processor {
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
     lateinit var nodeRenderer: NodeRenderer
+    lateinit var lineRenderer: LineRenderer
     lateinit var planeRenderer: PlaneRenderer
 
     var entity: Entity? = null
@@ -134,6 +132,7 @@ class Processor {
         }
 
         nodeRenderer = NodeRenderer(this, framebuffer)
+        lineRenderer = LineRenderer(framebuffer)
         planeRenderer = PlaneRenderer(framebuffer)
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
@@ -186,6 +185,7 @@ class Processor {
         }
 
         nodeRenderer.cleanUp()
+        lineRenderer.cleanUp()
         planeRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()

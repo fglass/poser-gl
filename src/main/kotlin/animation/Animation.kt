@@ -48,9 +48,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             val frameMap = frame.framemap
             val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index], frameMap)
 
-            val references = ArrayDeque<Reference>()
+            val references = ArrayDeque<ReferenceNode>()
             val maxId = frame.indexFrameIds.max()?: continue
 
+            //for (id in frame.indexFrameIds) {
             for (id in 0..maxId) {
                 val typeId = frameMap.types[id]
                 if (typeId > TransformationType.SCALE.id) { // Alpha transformations unsupported
@@ -61,18 +62,18 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame, id, type))
 
                 if (transformation.type == TransformationType.REFERENCE) {
-                    references.add(Reference(transformation))
+                    references.add(ReferenceNode(transformation))
                 } else if (references.size > 0) {
                     references.peekLast().children[transformation.type] = transformation
                 }
             }
 
-            var newId = 0
             for (reference in references) {
-                keyframe.add(reference, newId++)
-                reference.children.forEach { keyframe.add(it.value, newId++) }
+                keyframe.transformations.add(reference)
+                reference.children.forEach { keyframe.transformations.add(it.value) }
             }
             keyframes.add(keyframe)
+            constructSkeleton(references)
         }
         length = calculateLength()
     }
@@ -82,6 +83,23 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         return when {
                 index != -1 -> Vector3i(frame.translator_x[index], frame.translator_y[index], frame.translator_z[index])
                 else -> type.getDefaultOffset()
+        }
+    }
+
+    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
+        for (reference in references) {
+            val frameMap = reference.frameMap.toSet()
+            for (node in references) {
+                if (reference == node) {
+                    continue
+                }
+
+                val rotation = node.children[TransformationType.ROTATION]?: continue
+                // Parent if frame map is superset
+                if (rotation.frameMap.toSet().containsAll(frameMap)) {
+                    reference.parentNode = node
+                }
+            }
         }
     }
 

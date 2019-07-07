@@ -33,6 +33,13 @@ class EntityHandler(private val context: Processor) {
                 merged
             }
         }
+
+        /*for (vertexSkin in def.vertexSkins) {
+            println(vertexSkin)
+        }
+
+        println("--------")*/
+
         def.computeAnimationTables()
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
         context.entity = Entity(name, model, composition)

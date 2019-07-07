@@ -1,9 +1,8 @@
 package render
 
 import Processor
-import animation.Reference
-import animation.TransformationType
 import animation.ReferenceNode
+import animation.TransformationType
 import entity.Camera
 import model.Model
 import shader.NodeShader
@@ -14,53 +13,40 @@ import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
 import util.Maths
 
+const val NODE_SCALE = 2.5f
+
 class NodeRenderer(private val context: Processor, private val framebuffer: Framebuffer) {
 
     private val quad: Model
     private val loader = Loader()
+
     private val shader = NodeShader()
     private var viewMatrix = Matrix4f()
 
-    val nodes = HashSet<ReferenceNode>()
+    val nodes = ArrayList<ReferenceNode>()
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
     var enabled = false
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
-        quad = loader.loadToVao(vertices)
+        quad = loader.loadToVao(vertices, 2)
     }
 
-    fun addNode(def: ModelDefinition, reference: Reference) {
+    fun addNode(node: ReferenceNode, def: ModelDefinition) {
         if (!enabled) {
             return
         }
+        node.position = node.getPosition(def)
+        node.highlighted = false
 
-        var index = 0f
-        val delta = Vector3f(reference.delta)
-
-        for (i in reference.frameMap) {
-            if (i < def.vertexGroups.size) {
-                val vertexGroup = def.vertexGroups[i]
-                index += vertexGroup.size
-
-                for (j in vertexGroup) {
-                    val position = Vector3f(
-                        def.vertexPositionsX[j].toFloat(),
-                        def.vertexPositionsY[j].toFloat(),
-                        def.vertexPositionsZ[j].toFloat()
-                    )
-                    delta.add(position)
-                }
-            }
+        if (node.position != Vector3f(-0f, 0f, 0f)) {
+            nodes.add(node)
         }
 
-        if (index > 0) {
-            delta.div(index)
-        }
-
-        delta.x = -delta.x // Flip
-        nodes.add(ReferenceNode(reference, delta))
+        // Update parent too
+        val parent = node.parentNode?: return
+        parent.position = parent.getPosition(def)
     }
 
     fun render(camera: Camera) {
@@ -78,6 +64,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
+        context.lineRenderer.render(nodes, camera)
     }
 
     private fun prepare() {
@@ -94,9 +81,8 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         var closest: ReferenceNode? = null
 
         for (node in nodes) {
-            val scale = node.scale
-            val min = Vector3f(node.position).sub(scale, scale, scale)
-            val max = Vector3f(node.position).add(scale, scale, scale)
+            val min = Vector3f(node.position).sub(NODE_SCALE, NODE_SCALE, NODE_SCALE)
+            val max = Vector3f(node.position).add(NODE_SCALE, NODE_SCALE, NODE_SCALE)
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
@@ -135,7 +121,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
 
     private fun selectNode(node: ReferenceNode) {
         selectedNode = node
-        if (!node.reference.hasType(selectedType)) {
+        if (!node.hasType(selectedType)) {
             selectedType = TransformationType.REFERENCE
         }
         context.gui.editorPanel.setNode(node, selectedType)
@@ -153,7 +139,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
 
     private fun loadMatrices(node: ReferenceNode) {
         val modelMatrix = Matrix4f()
-        modelMatrix.translate(node.position)
+        modelMatrix.translate(node.position) // TODO
         modelMatrix.m00(viewMatrix.m00())
         modelMatrix.m01(viewMatrix.m10())
         modelMatrix.m02(viewMatrix.m20())
@@ -163,7 +149,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         modelMatrix.m20(viewMatrix.m02())
         modelMatrix.m21(viewMatrix.m12())
         modelMatrix.m22(viewMatrix.m22())
-        modelMatrix.scale(node.scale)
+        modelMatrix.scale(NODE_SCALE)
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
         shader.loadProjectionMatrix(framebuffer.entityRenderer.projectionMatrix)
     }

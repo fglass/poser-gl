@@ -4,10 +4,7 @@ import entity.Camera
 import org.joml.Matrix4f
 import util.Maths
 
-private const val VERTEX_FILE = "shader/plane-vs.glsl"
-private const val FRAGMENT_FILE = "shader/plane-fs.glsl"
-
-class PlaneShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
+class PlaneShader(vertexFile: String, fragmentFile: String): ShaderProgram(vertexFile, fragmentFile) {
 
     private var locationTransformationMatrix = 0
     private var locationProjectionMatrix = 0

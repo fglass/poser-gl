@@ -9,31 +9,20 @@ import java.io.DataOutputStream
 
 class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: FramemapDefinition) {
 
-
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {
         modified = keyframe.modified
         keyframe.transformations.forEach {
-            if (it is Reference) {
-                val newReference = Reference(it)
+            if (it is ReferenceNode) {
+                val newReference = ReferenceNode(it)
                 transformations.add(newReference)
-
-                for (transformation in it.children.values) {
-                    val newTransformation = Transformation(transformation)
-                    newReference.children[transformation.type] = newTransformation
-                    transformations.add(newTransformation)
-                }
+                newReference.children.forEach { child -> transformations.add(child.value) }
             }
         }
     }
 
     var modified = false
     val transformations = ArrayList<Transformation>()
-
-    fun add(transformation: Transformation, id: Int) {
-        transformation.id = id
-        transformations.add(transformation)
-    }
 
     fun apply(context: Processor) {
         // Reset from last frame
@@ -47,8 +36,8 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
         def.resetAnim()
 
         for (transformation in transformations) {
-            if (transformation is Reference) {
-                context.nodeRenderer.addNode(def, transformation)
+            if (transformation is ReferenceNode) {
+                context.nodeRenderer.addNode(transformation, def)
             }
             transformation.apply(def)
         }

@@ -85,7 +85,7 @@ class ImportManager(private val context: Processor) {
             val z = stream.readShort().toInt()
 
             val tf = Transformation(id, TransformationType.REFERENCE, frameMap.frameMaps[id], Vector3i(x, y, z))
-            val reference = Reference(tf)
+            val reference = ReferenceNode(tf)
             transformations.add(reference)
 
             val children = stream.readUnsignedByte()

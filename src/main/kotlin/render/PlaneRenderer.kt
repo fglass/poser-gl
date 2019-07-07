@@ -8,11 +8,14 @@ import org.lwjgl.opengl.GL30.*
 import shader.PlaneShader
 import util.Maths
 
+private const val VERTEX_FILE = "shader/plane-vs.glsl"
+private const val FRAGMENT_FILE = "shader/plane-fs.glsl"
+
 class PlaneRenderer(private val framebuffer: Framebuffer) {
 
     private val quad: Model
     private val loader = Loader()
-    private val shader = PlaneShader()
+    private val shader = PlaneShader(VERTEX_FILE, FRAGMENT_FILE)
 
     init {
         val vertices = ArrayList<Float>()
@@ -33,7 +36,7 @@ class PlaneRenderer(private val framebuffer: Framebuffer) {
             vertices.add(-offset)
             vertices.add(x)
         }
-        quad = loader.loadToVao(vertices.toFloatArray())
+        quad = loader.loadToVao(vertices.toFloatArray(), 2)
     }
 
     fun render(camera: Camera) {

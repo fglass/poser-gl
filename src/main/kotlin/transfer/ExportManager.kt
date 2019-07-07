@@ -3,8 +3,7 @@ package transfer
 import Processor
 import animation.Animation
 import animation.Keyframe
-import animation.Reference
-import cache.pack.CachePacker317
+import animation.ReferenceNode
 import gui.component.ExportDialog
 import net.runelite.cache.definitions.FramemapDefinition
 import org.liquidengine.legui.component.Dialog
@@ -68,12 +67,12 @@ class ExportManager(private val context: Processor) {
     private fun Keyframe.encode(stream: DataOutputStream) {
         stream.writeShort(frameMap.id)
 
-        val n = transformations.filterIsInstance<Reference>().size
+        val n = transformations.filterIsInstance<ReferenceNode>().size
         stream.writeByte(n)
 
         for (transformation in transformations) {
 
-            if (transformation is Reference) {
+            if (transformation is ReferenceNode) {
                 stream.writeShort(transformation.id)
                 stream.writeShort(transformation.delta.x)
                 stream.writeShort(transformation.delta.y)
