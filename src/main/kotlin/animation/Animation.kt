@@ -5,6 +5,7 @@ import gui.component.Dialog
 import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.SequenceDefinition
+import org.joml.Vector3f
 import org.joml.Vector3i
 import java.util.*
 import kotlin.collections.ArrayList
@@ -127,6 +128,20 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
     }
 
+    fun interpolateKeyframes() {
+        val index = context.animationHandler.getFrameIndex(this)
+        val first = keyframes[index]
+        val second = keyframes[index + 1]
+
+        val interpolated = Keyframe(keyframes.size, first) // TODO different size transformations
+
+        for ((i, transformation) in interpolated.transformations.withIndex()) {
+            val delta = Vector3f(first.transformations[i].delta).lerp(Vector3f(second.transformations[i].delta), 0.5f)
+            transformation.delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
+        }
+        insertKeyframe(index + 1, interpolated)
+    }
+
     fun deleteKeyframe() {
         if (keyframes.size > 1) {
             val index = context.animationHandler.getFrameIndex(this)
@@ -158,12 +173,6 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         context.animationHandler.setPlay(false)
         length = calculateLength()
         context.gui.animationPanel.setTimeline()
-    }
-
-    private fun interpolate() {
-        val index = context.animationHandler.getFrameIndex(this)
-        val first = keyframes[index]
-        val second = keyframes[index + 1] // TODO range check
     }
 
     fun toSequence(archiveId: Int): SequenceDefinition {

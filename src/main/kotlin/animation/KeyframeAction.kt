@@ -10,6 +10,7 @@ enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, priva
     ADD(Animation::addKeyframe, "add-keyframe.png"),
     COPY(Animation::copyKeyframe, "copy.png"),
     PASTE(Animation::pasteKeyframe, "paste.png"),
+    INTERPOLATE(Animation::interpolateKeyframes, "interpolate.png"),
     DELETE(Animation::deleteKeyframe, "delete-keyframe.png");
 
     fun apply(context: Processor) {

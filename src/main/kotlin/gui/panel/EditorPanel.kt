@@ -54,10 +54,10 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
                                  Pair(1, 99), 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
-        val icons = ButtonGroup(Vector2f(31f, 59f), Vector2f(24f, 24f),
-                                arrayOf(KeyframeAction.ADD.getIcon(), KeyframeAction.COPY.getIcon(),
-                                KeyframeAction.PASTE.getIcon(), KeyframeAction.DELETE.getIcon()),
-                                arrayOf("Add", "Copy" ,"Paste", "Delete"))
+        val icons = ButtonGroup(Vector2f(19f, 59f), Vector2f(24f, 24f), arrayOf(KeyframeAction.ADD.getIcon(),
+                                KeyframeAction.COPY.getIcon(), KeyframeAction.PASTE.getIcon(),
+                                KeyframeAction.INTERPOLATE.getIcon(), KeyframeAction.DELETE.getIcon()),
+                                arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete"))
 
         for ((i, button) in icons.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
