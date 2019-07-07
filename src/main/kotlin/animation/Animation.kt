@@ -98,7 +98,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 val rotation = node.children[TransformationType.ROTATION]?: continue
                 // Parent if frame map is superset
                 if (rotation.frameMap.toSet().containsAll(frameMap)) {
-                    reference.parentNode = node
+                    reference.parent = node
                 }
             }
         }

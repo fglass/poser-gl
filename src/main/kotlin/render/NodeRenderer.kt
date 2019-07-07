@@ -45,7 +45,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         }
 
         // Update parent too
-        val parent = node.parentNode?: return
+        val parent = node.parent?: return
         parent.position = parent.getPosition(def)
     }
 

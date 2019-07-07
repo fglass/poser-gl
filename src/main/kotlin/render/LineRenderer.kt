@@ -21,7 +21,7 @@ class LineRenderer(private val framebuffer: Framebuffer) {
     fun render(nodes: List<ReferenceNode>, camera: Camera) {
         loader.cleanUp()
         for (node in nodes) {
-            val parent = node.parentNode?: continue
+            val parent = node.parent?: continue
 
             val vertices = floatArrayOf(
                 node.position.x, node.position.y, node.position.z,

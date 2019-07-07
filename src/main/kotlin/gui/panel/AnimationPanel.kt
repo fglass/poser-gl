@@ -220,7 +220,9 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         }
         menu.size.x = size.x
         nodeToggle.position.x = size.x - 32
-        packButton.position.x = size.x - 60 // TODO
+        packButton.position.x = size.x - 60
+        exportButton.position.x = size.x - 85
+        importButton.position.x = size.x - 110
 
         val animation = context.animationHandler.currentAnimation
         if (animation == null) {

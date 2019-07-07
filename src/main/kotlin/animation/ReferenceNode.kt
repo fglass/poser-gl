@@ -6,14 +6,14 @@ import java.util.*
 
 class ReferenceNode(transformation: Transformation): Transformation(transformation) {
 
-    var parentNode: ReferenceNode? = null
+    var parent: ReferenceNode? = null
     var children = LinkedHashMap<TransformationType, Transformation>()
     var position = Vector3f(0f, 0f, 0f)
     var highlighted = false
 
     init {
         if (transformation is ReferenceNode) {
-            parentNode = transformation.parentNode
+            parent = transformation.parent
             position = transformation.position
             highlighted = transformation.highlighted
 
