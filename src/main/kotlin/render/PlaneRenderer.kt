@@ -5,7 +5,7 @@ import entity.ENTITY_POS
 import entity.ENTITY_ROT
 import model.Model
 import org.lwjgl.opengl.GL30.*
-import shader.PlaneShader
+import shader.LineShader
 import util.Maths
 
 private const val VERTEX_FILE = "shader/plane-vs.glsl"
@@ -15,7 +15,7 @@ class PlaneRenderer(private val framebuffer: Framebuffer) {
 
     private val quad: Model
     private val loader = Loader()
-    private val shader = PlaneShader(VERTEX_FILE, FRAGMENT_FILE)
+    private val shader = LineShader(VERTEX_FILE, FRAGMENT_FILE)
 
     init {
         val vertices = ArrayList<Float>()

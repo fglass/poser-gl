@@ -1,9 +1,12 @@
 package animation
 
 import Processor
+import gui.component.Dialog
+import mu.KotlinLogging
 import net.runelite.cache.definitions.FramemapDefinition
 
 const val MAX_LENGTH = 999
+private val logger = KotlinLogging.logger {}
 
 class AnimationHandler(private val context: Processor) {
 
@@ -67,7 +70,7 @@ class AnimationHandler(private val context: Processor) {
         previousFrame = keyframe
     }
 
-    fun transformNode(coordIndex: Int, newValue: Int) { // TODO selecting disappeard node
+    fun transformNode(coordIndex: Int, newValue: Int) {
         if (!context.nodeRenderer.enabled) {
             return
         }
@@ -78,9 +81,14 @@ class AnimationHandler(private val context: Processor) {
 
         val animation = getAnimation(false)?: return
         val keyframe = animation.keyframes[getFrameIndex(animation)]
-        val transformation = keyframe.transformations.first { it.id == preCopy.id }
-        transformation.delta.setComponent(coordIndex, newValue)
-        keyframe.modified = true
+
+        try {
+            val transformation = keyframe.transformations.first { it.id == preCopy.id }
+            transformation.delta.setComponent(coordIndex, newValue)
+            keyframe.modified = true
+        } catch (e: NoSuchElementException) {
+            logger.error(e) { "Node ${preCopy.id} does not exist" }
+        }
     }
 
     fun getAnimation(useCurrent: Boolean): Animation? {

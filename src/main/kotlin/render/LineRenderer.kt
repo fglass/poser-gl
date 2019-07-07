@@ -6,7 +6,7 @@ import entity.ENTITY_POS
 import entity.ENTITY_ROT
 import entity.ENTITY_SCALE
 import model.Model
-import shader.PlaneShader
+import shader.LineShader
 import org.lwjgl.opengl.GL30.*
 import util.Maths
 
@@ -16,7 +16,7 @@ private const val FRAGMENT_FILE = "shader/line-fs.glsl"
 class LineRenderer(private val framebuffer: Framebuffer) {
 
     private val loader = Loader()
-    private val shader = PlaneShader(VERTEX_FILE, FRAGMENT_FILE)
+    private val shader = LineShader(VERTEX_FILE, FRAGMENT_FILE)
 
     fun render(nodes: List<ReferenceNode>, camera: Camera) {
         loader.cleanUp()

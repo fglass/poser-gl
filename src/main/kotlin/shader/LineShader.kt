@@ -4,7 +4,7 @@ import entity.Camera
 import org.joml.Matrix4f
 import util.Maths
 
-class PlaneShader(vertexFile: String, fragmentFile: String): ShaderProgram(vertexFile, fragmentFile) {
+class LineShader(vertexFile: String, fragmentFile: String): ShaderProgram(vertexFile, fragmentFile) {
 
     private var locationTransformationMatrix = 0
     private var locationProjectionMatrix = 0

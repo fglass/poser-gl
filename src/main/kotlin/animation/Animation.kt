@@ -160,6 +160,12 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         context.gui.animationPanel.setTimeline()
     }
 
+    private fun interpolate() {
+        val index = context.animationHandler.getFrameIndex(this)
+        val first = keyframes[index]
+        val second = keyframes[index + 1] // TODO range check
+    }
+
     fun toSequence(archiveId: Int): SequenceDefinition {
         val sequence = SequenceDefinition(sequence.id)
         sequence.frameLenghts = IntArray(keyframes.size)
