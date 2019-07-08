@@ -8,4 +8,18 @@
     <artifactId>plugin-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.Displee</groupId>
+            <artifactId>RS-Cache-Library</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

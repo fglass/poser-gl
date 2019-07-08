@@ -38,8 +38,8 @@ data/saves/
 app.log
 
 # IntelliJ
-/out/
-/target/
+out/
+target/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
