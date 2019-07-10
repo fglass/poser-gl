@@ -84,6 +84,6 @@ void main(void) {
     }
 
     faceColour = vec4(r, g, b, 1.0f - a);
-    vertexNormal = (transformationMatrix * vec4(normal, 0.0f)).xyz;
+    vertexNormal = (transformationMatrix * vec4(normal, 1.0f)).xyz;
     toLightVector = lightPosition - worldPosition.xyz;
 }

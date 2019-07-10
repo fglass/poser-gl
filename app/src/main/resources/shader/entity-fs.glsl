@@ -15,7 +15,7 @@ void main() {
         vec3 unitLightVector = normalize(toLightVector);
 
         float product = dot(unitNormal, unitLightVector);
-        float brightness = max(product, 0.5);
+        float brightness = max(product, 0.65);
         vec3 diffuse = brightness * lightColour;
 
         outColour = vec4(diffuse, 1.0) * faceColour;
