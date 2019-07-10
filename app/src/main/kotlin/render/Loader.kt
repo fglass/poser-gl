@@ -76,11 +76,9 @@ class Loader {
     }
 
     fun cleanUp() {
-        for (vao in vaos) {
-            GL30.glDeleteVertexArrays(vao)
-        }
-        for (vbo in vbos) {
-            GL15.glDeleteBuffers(vbo)
-        }
+        vaos.forEach { GL30.glDeleteVertexArrays(it) }
+        vbos.forEach { GL30.glDeleteBuffers(it) }
+        vaos.clear()
+        vbos.clear()
     }
 }
