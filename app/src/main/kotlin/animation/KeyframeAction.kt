@@ -7,11 +7,11 @@ import kotlin.reflect.KFunction1
 
 enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, private val iconPath: String) {
 
-    ADD(Animation::addKeyframe, "add-keyframe.png"),
+    ADD(Animation::addKeyframe, "add.png"),
     COPY(Animation::copyKeyframe, "copy.png"),
     PASTE(Animation::pasteKeyframe, "paste.png"),
     INTERPOLATE(Animation::interpolateKeyframes, "interpolate.png"),
-    DELETE(Animation::deleteKeyframe, "delete-keyframe.png");
+    DELETE(Animation::deleteKeyframe, "trash.png");
 
     fun apply(context: Processor) {
         val current = context.animationHandler.currentAnimation?: return

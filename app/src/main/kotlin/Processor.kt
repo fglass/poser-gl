@@ -1,6 +1,5 @@
 import animation.AnimationHandler
 import cache.CacheService
-import cache.PluginLoader
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
@@ -142,8 +141,6 @@ class Processor {
         } else {
             Dialog("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
         }
-
-        PluginLoader.run()
 
         // Render loop
         while (running) {

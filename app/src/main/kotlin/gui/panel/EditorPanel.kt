@@ -54,7 +54,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
                                  Pair(1, 99), 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
-        val icons = ButtonGroup(Vector2f(19f, 59f), Vector2f(24f, 24f), arrayOf(KeyframeAction.ADD.getIcon(),
+        val icons = ButtonGroup(Vector2f(21f, 59f), Vector2f(24f, 24f), arrayOf(KeyframeAction.ADD.getIcon(),
                                 KeyframeAction.COPY.getIcon(), KeyframeAction.PASTE.getIcon(),
                                 KeyframeAction.INTERPOLATE.getIcon(), KeyframeAction.DELETE.getIcon()),
                                 arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete"))
@@ -87,7 +87,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
             arrayOf(BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
             BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
-            arrayOf("ReferenceNode", "Translation", "Rotation", "Scale"))
+            arrayOf("Reference", "Translation", "Rotation", "Scale"))
 
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -108,7 +108,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         var y = 7f
         val coords = arrayOf("X", "Y", "Z")
 
-        for ((i, coord) in coords.withIndex()){
+        for ((i, coord) in coords.withIndex()) {
             val label = Label(coord, 12f, y, 50f, 15f)
             transformPanel.add(label)
 
