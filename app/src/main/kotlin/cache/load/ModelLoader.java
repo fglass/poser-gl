@@ -19,8 +19,8 @@ public class ModelLoader {
             this.load2(def, b);
         }
 
-        def.computeNormals();
-        def.computeTextureUVCoordinates();
+        //def.computeNormals();
+        //def.computeTextureUVCoordinates();
         //def.computeAnimationTables();
         return def;
     }

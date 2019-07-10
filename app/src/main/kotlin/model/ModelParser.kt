@@ -2,6 +2,7 @@ package model
 
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Vector3f
+import org.joml.Vector3i
 import render.Loader
 
 class ModelParser(private val loader: Loader) {
@@ -19,6 +20,7 @@ class ModelParser(private val loader: Loader) {
         var vIndex = 0
         var nIndex = 0
 
+        val vertexNormals = computeNormals(def)
         //for (priority in maxPriority downTo 0) {
             for (i in 0 until def.faceCount) {
 
@@ -38,13 +40,9 @@ class ModelParser(private val loader: Loader) {
                 for (point in points) {
                     setVertex(positions, vIndex, vertexX[point], vertexY[point], vertexZ[point], alpha or faceColour)
 
-                    if (flatShading) {
-                        val normal = getFaceNormal(points, vertexX, vertexY, vertexZ)
-                        setNormal(normals, nIndex, normal.x.toInt(), normal.y.toInt(), normal.z.toInt())
-                    } else {
-                        val normal = def.vertexNormals[point]
-                        setNormal(normals, nIndex, normal.x, normal.y, normal.z)
-                    }
+                    val normal = if (flatShading) getFaceNormal(points, vertexX, vertexY, vertexZ)
+                                 else vertexNormals[point]
+                    setNormal(normals, nIndex, normal.x.toInt(), normal.y.toInt(), normal.z.toInt())
 
                     vIndex += nPosition
                     nIndex += nNormal
@@ -61,6 +59,29 @@ class ModelParser(private val loader: Loader) {
         } else {
             priority == maxPriority
         }
+    }
+
+    private fun computeNormals(def: ModelDefinition): Array<Vector3f> { // TODO weighted
+        val normals = Array(def.vertexCount) { Vector3f(0f, 0f, 0f) }
+        for (i in 0 until def.vertexCount) {
+            val vertex = Vector3i(def.vertexPositionsX[i], def.vertexPositionsY[i], def.vertexPositionsZ[i])
+
+            for (j in 0 until def.faceCount) {
+                val points = intArrayOf(def.faceVertexIndices1[j], def.faceVertexIndices2[j], def.faceVertexIndices3[j])
+
+                for (point in points) {
+                    val faceVertex =
+                        Vector3i(def.vertexPositionsX[point], def.vertexPositionsY[point], def.vertexPositionsZ[point])
+
+                    if (faceVertex == vertex) { // Face contains vertex
+                        val faceNormal =
+                            getFaceNormal(points, def.vertexPositionsX, def.vertexPositionsY, def.vertexPositionsZ)
+                        normals[i].add(faceNormal)
+                    }
+                }
+            }
+        }
+        return normals
     }
 
     private fun getFaceNormal(points: IntArray, vertexX: IntArray, vertexY: IntArray, vertexZ: IntArray): Vector3f {

@@ -28,17 +28,9 @@ class EntityHandler(private val context: Processor) {
             } else -> {
                 val defs = ArrayList<ModelDefinition>()
                 composition.forEach { defs.add(context.cacheService.loadModelDefinition(it)) }
-                val merged = merge(defs)
-                merged.computeNormals()
-                merged
+                merge(defs)
             }
         }
-
-        /*for (vertexSkin in def.vertexSkins) {
-            println(vertexSkin)
-        }
-
-        println("--------")*/
 
         def.computeAnimationTables()
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
