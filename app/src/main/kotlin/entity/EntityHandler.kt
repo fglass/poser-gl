@@ -39,8 +39,8 @@ class EntityHandler(private val context: Processor) {
     }
 
     private fun clear() {
-        context.animationHandler.resetAnimation()
         context.entity = null
+        context.animationHandler.resetAnimation()
         context.loader.cleanUp()
     }
 }

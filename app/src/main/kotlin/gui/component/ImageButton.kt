@@ -24,7 +24,7 @@ open class ImageButton(position: Vector2f, image: Image, action: String): ImageV
         style.border.isEnabled = false
         style.background.color = ColorConstants.transparent()
 
-        if (action != "") {
+        if (action.isNotEmpty()) {
             addTooltip(action)
         }
     }

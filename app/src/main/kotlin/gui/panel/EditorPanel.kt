@@ -13,6 +13,7 @@ import org.joml.Vector4f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
@@ -54,17 +55,23 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
                                  Pair(1, 99), 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
-        val icons = ButtonGroup(Vector2f(21f, 59f), Vector2f(24f, 24f), arrayOf(KeyframeAction.ADD.getIcon(),
-                                KeyframeAction.COPY.getIcon(), KeyframeAction.PASTE.getIcon(),
-                                KeyframeAction.INTERPOLATE.getIcon(), KeyframeAction.DELETE.getIcon()),
-                                arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete"))
+        val icons = ButtonGroup(
+            Vector2f(21f, 59f), Vector2f(24f, 24f), arrayOf(KeyframeAction.ADD.getIcon(false),
+            KeyframeAction.COPY.getIcon(false), KeyframeAction.PASTE.getIcon(false),
+            KeyframeAction.INTERPOLATE.getIcon(false), KeyframeAction.DELETE.getIcon(false)),
+            arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete")
+        )
 
         for ((i, button) in icons.buttons.withIndex()) {
+            val action = KeyframeAction.values()[i]
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                     event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    KeyframeAction.values()[i].apply(context)
+                    action.apply(context)
                 }
+            }
+            button.listenerMap.addListener(CursorEnterEvent::class.java) { event ->
+                button.image = if (event.isEntered) action.getIcon(true) else action.getIcon(false)
             }
         }
         icons.style.background.color = ColorConstants.transparent()

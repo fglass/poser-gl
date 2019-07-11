@@ -27,7 +27,7 @@ class EntityRenderer(private val context: Processor, private val shader: StaticS
     private fun init(loadLight: Boolean) {
         shader.start()
         if (loadLight) {
-            shader.loadLight(Light(Vector3f(0f, -500f, -2000f), Vector3f(1f, 1f, 1f)))
+            shader.loadLight(Light(Vector3f(0f, -500f, -1000f), Vector3f(1f, 1f, 1f)))
         }
         projectionMatrix = createProjectionMatrix()
         shader.loadProjectionMatrix(projectionMatrix)
