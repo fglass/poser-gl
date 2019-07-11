@@ -5,13 +5,13 @@ import BG_COLOUR
 import Processor
 import animation.Keyframe
 import gui.GuiManager
-import gui.component.HoverButton
 import gui.component.ImageButton
 import gui.component.ToggleButton
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.color.ColorConstants
@@ -90,6 +90,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
                 context.importManager.import()
             }
         }
+        importButton.addHover(BufferedImage(SPRITE_PATH + "import-hovered.png"))
         menu.add(importButton)
 
         exportButton = ImageButton(Vector2f(size.x - 85, 0f), BufferedImage(SPRITE_PATH + "export.png"), "Export")
@@ -99,6 +100,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
                 context.exportManager.openDialog()
             }
         }
+        exportButton.addHover(BufferedImage(SPRITE_PATH + "export-hovered.png"))
         menu.add(exportButton)
 
         packButton = ImageButton(Vector2f(size.x - 60, 0f), BufferedImage(SPRITE_PATH + "pack.png"), "Pack")
@@ -108,6 +110,7 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
                 context.cacheService.pack()
             }
         }
+        packButton.addHover(BufferedImage(SPRITE_PATH + "pack-hovered.png"))
         menu.add(packButton)
 
         nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, "Skeleton", false)
@@ -181,7 +184,20 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
             cumulative += previous
 
             val x = cumulative * unitX
-            val keyframe = HoverButton(Vector2f(x, 0f), 2f, yellowLine, pinkLine, "")
+            val border = 2f
+            val position = Vector2f(x - border, 0f)
+            val keyframe = Panel(position, Vector2f(yellowLine.width + 2 * border, yellowLine.height.toFloat()))
+
+            keyframe.style.background.color = ColorConstants.transparent()
+            keyframe.style.border.isEnabled = false
+            keyframe.style.focusedStrokeColor = null
+
+            val line = ImageButton(Vector2f(border, 0f), yellowLine, "")
+            keyframe.listenerMap.addListener(CursorEnterEvent::class.java) { event ->
+                line.image = if (event.isEntered) pinkLine else yellowLine
+            }
+            keyframe.add(line)
+
             keyframe.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                     adjustTime(x)

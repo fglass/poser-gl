@@ -13,7 +13,6 @@ import org.joml.Vector4f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
@@ -56,7 +55,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         framePanel.add(frameLength)
 
         val icons = ButtonGroup(
-            Vector2f(21f, 59f), Vector2f(24f, 24f), arrayOf(KeyframeAction.ADD.getIcon(false),
+            Vector2f(23f, 59f), Vector2f(23f, 23f), arrayOf(KeyframeAction.ADD.getIcon(false),
             KeyframeAction.COPY.getIcon(false), KeyframeAction.PASTE.getIcon(false),
             KeyframeAction.INTERPOLATE.getIcon(false), KeyframeAction.DELETE.getIcon(false)),
             arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete")
@@ -70,9 +69,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
                     action.apply(context)
                 }
             }
-            button.listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-                button.image = if (event.isEntered) action.getIcon(true) else action.getIcon(false)
-            }
+            button.addHover(action.getIcon(true))
         }
         icons.style.background.color = ColorConstants.transparent()
         framePanel.add(icons)

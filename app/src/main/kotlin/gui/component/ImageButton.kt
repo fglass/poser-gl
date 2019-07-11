@@ -1,7 +1,6 @@
 package gui.component
 
 import WIDTH
-import gui.GuiManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,7 +14,7 @@ import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.border.SimpleLineBorder
 import org.liquidengine.legui.style.color.ColorConstants
 
-open class ImageButton(position: Vector2f, image: Image, action: String): ImageView(image) {
+open class ImageButton(position: Vector2f, private val icon: Image, action: String): ImageView(icon) {
 
     init {
         this.position = position
@@ -62,6 +61,12 @@ open class ImageButton(position: Vector2f, image: Image, action: String): ImageV
                     tooltip.style.display = Style.DisplayType.FLEX
                 }
             }
+        }
+    }
+
+    fun addHover(hoveredImage: Image) {
+        listenerMap.addListener(CursorEnterEvent::class.java) { event ->
+            image = if (event.isEntered) hoveredImage else icon
         }
     }
 }
