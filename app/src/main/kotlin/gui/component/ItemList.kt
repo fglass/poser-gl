@@ -4,7 +4,7 @@ import Processor
 import gui.GuiManager
 import net.runelite.cache.definitions.ItemDefinition
 
-class ItemList(x: Float, y: Float, gui: GuiManager, context: Processor): ElementList(x, y, gui) {
+class ItemList(context: Processor): ElementList() {
 
     private val items = context.cacheService.items
     private val elements = HashMap<Int, Element>()

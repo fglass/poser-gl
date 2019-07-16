@@ -147,10 +147,10 @@ class ManagerPanel(private val gui: GuiManager, private val context: Processor):
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(gui.size.x - 175, 5f)
+        return Vector2f(gui.container.size.x - 175, 5f)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 387)
+        return Vector2f(170f, gui.container.size.y - 387)
     }
 }

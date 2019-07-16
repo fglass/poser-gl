@@ -5,7 +5,7 @@ import animation.Animation
 import gui.GuiManager
 import org.liquidengine.legui.style.color.ColorConstants
 
-class AnimationList(x: Float, y: Float, gui: GuiManager, private val context: Processor): ElementList(x, y, gui) {
+class AnimationList(private val context: Processor): ElementList() {
 
     private val elements = HashMap<Int, Element>()
 

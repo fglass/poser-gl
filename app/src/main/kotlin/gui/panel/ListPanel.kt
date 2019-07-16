@@ -11,21 +11,32 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
+import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.flex.FlexStyle
 import org.lwjgl.glfw.GLFW
+import util.setSizeLimits
 
-class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
+class ListPanel(context: Processor): Panel() {
 
-    private val search = TextInput("Search", 5f, 5f, 164f, 15f)
+    private val search = TextInput("Search")
     private val tabs = LinkedHashSet<Button>()
-    private val entityList = EntityList(5f, 43f, gui, context)
-    val animationList = AnimationList(5f, 43f, gui, context)
-    private val itemList = ItemList(5f, 43f, gui, context)
+    private val entityList = EntityList(context)
+    val animationList = AnimationList(context)
+    private val itemList = ItemList(context)
     private val lists = arrayOf(entityList, animationList, itemList)
 
     init {
-        position = Vector2f(0f, 0f)
-        size = getPanelSize()
+        style.display = Style.DisplayType.FLEX
+        style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
+
+        style.setMargin(0f, 0f, 117f, 0f)
+        style.position = Style.PositionType.RELATIVE
+
+        val width = 175f
+        style.setMinimumSize(width, 482f)
+        style.maxWidth = width
+        style.flexStyle.flexGrow = 1
         style.border.isEnabled = false
 
         addSearch()
@@ -46,6 +57,9 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
                 lists.first { contains(it) }.search(search.textState.text)
             }
         }
+
+        search.setSizeLimits(164f, 15f)
+        search.style.setMargin(5f, 0f, 0f, 5f)
         search.style.focusedStrokeColor = null
         add(search)
     }
@@ -55,7 +69,9 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
         val offset = 55f
 
         for ((i, name) in names.withIndex()) {
-            val tab = Button(name, 5f + i * offset, 27f, offset - 1, 17f)
+            val tab = Button(name)
+            tab.setSizeLimits(offset - 1, 17f)
+            tab.style.setMargin(27f, 0f, 0f, 5f + i * offset)
             tab.style.focusedStrokeColor = null
             tab.style.setBorderRadius(1f)
 
@@ -90,14 +106,5 @@ class ListPanel(private val gui: GuiManager, context: Processor): Panel() {
     private fun setSearchText(text: String) {
         search.textState.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
         search.textState.text = text
-    }
-
-    fun resize() {
-        size = getPanelSize()
-        lists.forEach { it.resize() }
-    }
-
-    private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, gui.size.y - 100)
     }
 }

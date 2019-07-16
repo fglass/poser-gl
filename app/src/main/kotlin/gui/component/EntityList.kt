@@ -4,7 +4,7 @@ import Processor
 import gui.GuiManager
 import net.runelite.cache.definitions.NpcDefinition
 
-class EntityList(x: Float, y: Float, gui: GuiManager, context: Processor): ElementList(x, y, gui) {
+class EntityList(context: Processor): ElementList() {
 
     private val entities = context.cacheService.entities
     private val elements = HashMap<Int, Element>()

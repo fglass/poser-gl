@@ -6,9 +6,11 @@ import org.joml.Vector2f
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.event.MouseClickEvent
+import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import util.setSizeLimits
 
-abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollablePanel() {
+abstract class ElementList: ScrollablePanel() {
 
     var searchText = "Search"
     protected val listX = 2f
@@ -17,9 +19,13 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
     protected val containerX = 157f
 
     init {
-        position.x = x
-        position.y = y
-        size = getListSize()
+        style.setMargin(43f, 0f, 5f, 5f)
+        style.position = Style.PositionType.RELATIVE
+
+        val width = 164f
+        style.setMinimumSize(width, 435f)
+        style.maxWidth = width
+        style.flexStyle.flexGrow = 1
 
         this.remove(horizontalScrollBar)
         style.background.color = BG_COLOUR
@@ -39,14 +45,6 @@ abstract class ElementList(x: Float, y: Float, val gui: GuiManager): ScrollableP
                 verticalScrollBar.curValue = verticalScrollBar.maxValue * offset
             }
         }
-    }
-
-    fun resize() {
-        size = getListSize()
-    }
-
-    private fun getListSize(): Vector2f {
-        return Vector2f(164f, gui.size.y - 165)
     }
 
     fun search(input: String) {

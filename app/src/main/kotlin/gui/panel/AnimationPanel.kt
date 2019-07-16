@@ -1,12 +1,12 @@
 package gui.panel
 
-import SPRITE_PATH
 import BG_COLOUR
 import Processor
+import SPRITE_PATH
 import animation.Keyframe
 import gui.GuiManager
+import gui.component.AnimationMenu
 import gui.component.ImageButton
-import gui.component.ToggleButton
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
@@ -21,24 +21,15 @@ import kotlin.math.sqrt
 
 class AnimationPanel(private val gui: GuiManager, private val context: Processor): Panel() {
 
-    val sequenceId: Label
-    private val play: ImageButton
-    private val menu: Panel
-    private val importButton: ImageButton
-    private val exportButton: ImageButton
-    private val packButton: ImageButton
-    private val nodeToggle: ToggleButton
+    val menu: AnimationMenu
     private val timeline: Panel
     private val times: Panel
     private var unitX = 0f
 
-    private val playIcon = BufferedImage(SPRITE_PATH + "play.png")
-    private val pauseIcon = BufferedImage(SPRITE_PATH + "pause.png")
     private val greyLine = BufferedImage(SPRITE_PATH + "grey-line.png")
     private val yellowLine = BufferedImage(SPRITE_PATH + "yellow-line.png")
     private val pinkLine = BufferedImage(SPRITE_PATH + "pink-line.png")
     private val greenLine = BufferedImage(SPRITE_PATH + "green-line.png")
-    private val nodeIcon = BufferedImage(SPRITE_PATH + "nodes.png")
     private val cursor = ImageButton(Vector2f(0f, 0f), greenLine, "")
 
     init {
@@ -63,71 +54,13 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         isFocusable = false
         resize()
 
-        menu = Panel(0f, 0f, size.x, 23f)
-        menu.style.background.color = ColorConstants.darkGray()
-        menu.style.setBorderRadius(0f)
-        menu.style.border.isEnabled = false
+        menu = AnimationMenu(context, size.x)
         add(menu)
-
-        play = ImageButton(Vector2f(x, 8f), playIcon, "")
-        play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                context.animationHandler.togglePlay()
-            }
-        }
-        play.size = Vector2f(10f, 10f)
-        menu.add(play)
-
-        val sequence = Label("Sequence:", x + 14, 5f, 50f, 15f)
-        sequenceId = Label("N/A", x + 73, 5f, 50f, 15f)
-        menu.add(sequence)
-        menu.add(sequenceId)
-
-        importButton = ImageButton(Vector2f(size.x - 110, 0f), BufferedImage(SPRITE_PATH + "import.png"), "Import")
-        importButton.size = Vector2f(26f, 26f)
-        importButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                context.importManager.import()
-            }
-        }
-        importButton.addHover(BufferedImage(SPRITE_PATH + "import-hovered.png"))
-        menu.add(importButton)
-
-        exportButton = ImageButton(Vector2f(size.x - 85, 0f), BufferedImage(SPRITE_PATH + "export.png"), "Export")
-        exportButton.size = Vector2f(26f, 26f)
-        exportButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                context.exportManager.openDialog()
-            }
-        }
-        exportButton.addHover(BufferedImage(SPRITE_PATH + "export-hovered.png"))
-        menu.add(exportButton)
-
-        packButton = ImageButton(Vector2f(size.x - 60, 0f), BufferedImage(SPRITE_PATH + "pack.png"), "Pack")
-        packButton.size = Vector2f(26f, 26f)
-        packButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                context.cacheService.pack()
-            }
-        }
-        packButton.addHover(BufferedImage(SPRITE_PATH + "pack-hovered.png"))
-        menu.add(packButton)
-
-        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, "Skeleton", false)
-        nodeToggle.style.setBorderRadius(1f)
-        nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
-            context.nodeRenderer.enabled = !context.nodeRenderer.enabled
-        }
-        menu.add(nodeToggle)
         reset()
     }
 
-    fun updatePlayIcon(playing: Boolean) {
-        play.image = if (playing) pauseIcon else playIcon
-    }
-
     fun reset() {
-        play.image = playIcon
+        menu.updatePlayIcon(false)
         setTimeline()
 
         // Set to default layout
@@ -142,11 +75,11 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
 
         val animation = context.animationHandler.currentAnimation
         if (animation == null) {
-            sequenceId.textState.text = "N/A"
+            menu.sequenceId.textState.text = "N/A"
             return
         }
 
-        sequenceId.textState.text = animation.sequence.id.toString()
+        menu.sequenceId.textState.text = animation.sequence.id.toString()
         unitX = getUnitX(animation.length)
         addTimes(animation.length)
         addKeyframes(animation.keyframes)
@@ -234,11 +167,10 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
         if (menu == null) { // Not initialised at the start
             return
         }
-        menu.size.x = size.x
-        nodeToggle.position.x = size.x - 32
-        packButton.position.x = size.x - 60
-        exportButton.position.x = size.x - 85
-        importButton.position.x = size.x - 110
+        //nodeToggle.position.x = size.x - 32
+        //packButton.position.x = size.x - 60
+        //exportButton.position.x = size.x - 85
+        //importButton.position.x = size.x - 110
 
         val animation = context.animationHandler.currentAnimation
         if (animation == null) {
@@ -250,11 +182,11 @@ class AnimationPanel(private val gui: GuiManager, private val context: Processor
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(5f, gui.size.y - 116)
+        return Vector2f(5f, gui.container.size.y - 116)
     }
 
     private fun getPanelSize(): Vector2f {
-        return Vector2f(gui.size.x - 10, 111f)
+        return Vector2f(gui.container.size.x - 10, 111f)
     }
 
     private fun getTimelineWidth(): Float {

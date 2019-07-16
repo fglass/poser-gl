@@ -104,7 +104,7 @@ class AnimationHandler(private val context: Processor) {
         currentAnimation = copied
         context.cacheService.animations[newIndex] = copied
         context.gui.listPanel.animationList.addElement(copied)
-        context.gui.animationPanel.sequenceId.textState.text = newIndex.toString()
+        context.gui.animationPanel.menu.sequenceId.textState.text = newIndex.toString()
         return copied
     }
 
@@ -117,7 +117,7 @@ class AnimationHandler(private val context: Processor) {
             return
         }
         this.playing = playing
-        context.gui.animationPanel.updatePlayIcon(playing)
+        context.gui.animationPanel.menu.updatePlayIcon(playing)
     }
 
     fun setFrame(frame: Int, offset: Int) {

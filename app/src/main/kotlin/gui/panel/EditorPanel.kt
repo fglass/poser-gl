@@ -164,7 +164,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     }
 
     private fun getPanelPosition(): Vector2f {
-        return Vector2f(gui.size.x - 175, gui.size.y - 377)
+        return Vector2f(gui.container.size.x - 175, gui.container.size.y - 377)
     }
 
     private fun getPanelSize(): Vector2f {

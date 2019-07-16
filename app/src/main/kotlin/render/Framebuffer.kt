@@ -139,6 +139,6 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     }
 
     private fun getFboSize(): Vector2f {
-        return Vector2f(context.gui.size.x - 354, context.gui.size.y - 127)
+        return Vector2f(context.gui.container.size.x - 354, context.gui.container.size.y - 127)
     }
 }

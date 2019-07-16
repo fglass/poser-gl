@@ -58,7 +58,7 @@ open class ImageButton(position: Vector2f, private val icon: Image, action: Stri
                 // Delay displaying
                 GlobalScope.launch {
                     delay(900)
-                    tooltip.style.display = Style.DisplayType.FLEX
+                    tooltip.style.display = Style.DisplayType.MANUAL
                 }
             }
         }
