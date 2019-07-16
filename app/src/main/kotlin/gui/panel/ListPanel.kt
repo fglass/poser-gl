@@ -32,10 +32,7 @@ class ListPanel(context: Processor): Panel() {
 
         style.setMargin(0f, 0f, 117f, 0f)
         style.position = Style.PositionType.RELATIVE
-
-        val width = 175f
-        style.setMinimumSize(width, 482f)
-        style.maxWidth = width
+        style.maxWidth = 175f
         style.flexStyle.flexGrow = 1
         style.border.isEnabled = false
 

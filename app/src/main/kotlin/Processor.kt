@@ -107,12 +107,7 @@ class Processor {
         context.updateGlfwWindow()
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
-
-        val frameSize = frame.container.size // TODO
         gui = GuiManager(frame, this)
-        //frame.container.add(gui)
-        //val menu = AnimationMenu(this, 590f)
-        //container.add(menu)
 
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
@@ -129,7 +124,7 @@ class Processor {
 
         val vSync = VSyncTimer()
         val shader = StaticShader()
-        val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frameSize)) 2 else 1
+        val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
 
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
         framebuffer.lateInit()

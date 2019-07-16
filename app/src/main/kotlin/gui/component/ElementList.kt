@@ -21,10 +21,7 @@ abstract class ElementList: ScrollablePanel() {
     init {
         style.setMargin(43f, 0f, 5f, 5f)
         style.position = Style.PositionType.RELATIVE
-
-        val width = 164f
-        style.setMinimumSize(width, 435f)
-        style.maxWidth = width
+        style.maxWidth = 164f
         style.flexStyle.flexGrow = 1
 
         this.remove(horizontalScrollBar)
