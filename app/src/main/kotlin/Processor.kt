@@ -4,7 +4,6 @@ import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
 import gui.component.Dialog
-import gui.component.AnimationMenu
 import io.MouseHandler
 import model.ModelParser
 import mu.KotlinLogging
@@ -35,12 +34,6 @@ import transfer.ImportManager
 import util.VSyncTimer
 import java.lang.management.ManagementFactory
 import java.util.*
-import org.liquidengine.legui.style.Style.DisplayType
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
-import org.liquidengine.legui.style.flex.FlexStyle.JustifyContent
-import org.liquidengine.legui.style.flex.FlexStyle.FlexDirection
-import org.liquidengine.legui.style.flex.FlexStyle.AlignItems
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.1"
@@ -107,7 +100,6 @@ class Processor {
         context.updateGlfwWindow()
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)
-        gui = GuiManager(frame, this)
 
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
@@ -127,12 +119,7 @@ class Processor {
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
 
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
-        framebuffer.lateInit()
-        //frame.container.add(framebuffer) TODO
-        gui.container.listenerMap.addListener(WindowSizeEvent::class.java) { event ->
-            //gui.resize(Vector2f(event.width.toFloat(), event.height.toFloat()))
-            framebuffer.resize()
-        }
+        gui = GuiManager(this)
 
         nodeRenderer = NodeRenderer(this, framebuffer)
         lineRenderer = LineRenderer(framebuffer)

@@ -6,11 +6,9 @@ import entity.Camera
 import io.MouseHandler
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.event.CursorEnterEvent
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.event.MouseDragEvent
-import org.liquidengine.legui.event.ScrollEvent
+import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
+import org.liquidengine.legui.style.Style
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
@@ -24,15 +22,19 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     private var textureWidth = 0
     private var textureHeight = 0
 
-    lateinit var entityRenderer: EntityRenderer
-    private val camera = Camera(mouse)
-
+    val entityRenderer = EntityRenderer(shader)
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
+    private val camera = Camera(mouse)
 
     init {
-        position = Vector2f(174f, 5f)
-        resize()
+        style.setMargin(5f, 5f, 122f, 0f)
+        style.position = Style.PositionType.RELATIVE
+        style.flexStyle.flexGrow = 1
+        style.focusedStrokeColor = null
+
+        val size = context.frame.componentLayer.container.size
+        resize(size.x.toInt(), size.y.toInt(), true)
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
@@ -47,11 +49,9 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             mouse.handleCursorEvent(event.isEntered)
         }
-        style.focusedStrokeColor = null
-    }
-
-    fun lateInit() {
-        entityRenderer = EntityRenderer(context, shader)
+        listenerMap.addListener(WindowSizeEvent::class.java) { event ->
+            resize(event.width, event.height, false)
+        }
     }
 
     private fun createTexture(): FBOImage {
@@ -127,18 +127,16 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         shader.stop()
     }
 
-    fun resize() {
-        size = getFboSize()
-        textureWidth = (size.x * scaleFactor).toInt()
-        textureHeight = (size.y * scaleFactor).toInt()
-        image = createTexture()
-
-        if (::entityRenderer.isInitialized) {
-            entityRenderer.reloadProjectionMatrix()
-        }
+    private fun resize(width: Int, height: Int, loadLight: Boolean) {
+        val textureWidth = width - 354
+        val textureHeight = height - 127
+        setTexture(textureWidth, textureHeight)
+        entityRenderer.init(Vector2f(textureWidth.toFloat(), textureHeight.toFloat()), loadLight)
     }
 
-    private fun getFboSize(): Vector2f {
-        return Vector2f(context.gui.container.size.x - 354, context.gui.container.size.y - 127)
+    private fun setTexture(width: Int, height: Int) {
+        textureWidth = width * scaleFactor
+        textureHeight = height * scaleFactor
+        image = createTexture()
     }
 }

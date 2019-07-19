@@ -16,7 +16,9 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
+import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.flex.FlexStyle
 
 class EditorPanel(private val gui: GuiManager, private val context: Processor): Panel() { // TODO: Clean-up
 
@@ -28,6 +30,14 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
     private val transformations: ConfigGroup
 
     init {
+        style.display = Style.DisplayType.FLEX
+        style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
+
+        style.setMargin(377f, 175f, 0f, 0f) // TODO
+        style.position = Style.PositionType.RELATIVE
+        style.maxWidth = 175f
+        style.flexStyle.flexGrow = 1
+
         position = getPanelPosition()
         size = getPanelSize()
         style.background.color = ColorConstants.darkGray()

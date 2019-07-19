@@ -9,34 +9,29 @@ import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import shader.StaticShader
 import util.Maths
-import Processor
+import org.joml.Vector2f
 import kotlin.math.tan
 
 const val FOV = 70f
 const val NEAR_PLANE = 1f
 const val FAR_PLANE = 10000f
 
-class EntityRenderer(private val context: Processor, private val shader: StaticShader) {
+class EntityRenderer(private val shader: StaticShader) {
 
     lateinit var projectionMatrix: Matrix4f
 
-    init {
-        init(true)
-    }
-
-    private fun init(loadLight: Boolean) {
+    fun init(fboSize: Vector2f, loadLight: Boolean) {
         shader.start()
         if (loadLight) {
             shader.loadLight(Light(Vector3f(0f, -500f, -1000f), Vector3f(1f, 1f, 1f)))
         }
-        projectionMatrix = createProjectionMatrix()
+        projectionMatrix = createProjectionMatrix(fboSize)
         shader.loadProjectionMatrix(projectionMatrix)
         shader.stop()
     }
 
-    private fun createProjectionMatrix(): Matrix4f {
-        val screenSize = context.framebuffer.size
-        val aspectRatio = screenSize.x / screenSize.y
+    private fun createProjectionMatrix(fboSize: Vector2f): Matrix4f {
+        val aspectRatio = fboSize.x / fboSize.y
         val yScale = ((1f / tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
         val xScale = yScale / aspectRatio
         val frustumLength = FAR_PLANE - NEAR_PLANE
@@ -49,10 +44,6 @@ class EntityRenderer(private val context: Processor, private val shader: StaticS
         projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustumLength))
         projectionMatrix.m33(0f)
         return projectionMatrix
-    }
-
-    fun reloadProjectionMatrix() {
-        init(false)
     }
 
     fun render(entity: Entity?, shader: StaticShader) {

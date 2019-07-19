@@ -236,16 +236,6 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>PoserGL</groupId>
-            <artifactId>plugin-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>PoserGL</groupId>
-            <artifactId>plugin-osrs</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.Displee</groupId>
             <artifactId>RS-Cache-Library</artifactId>
             <version>master-SNAPSHOT</version>
