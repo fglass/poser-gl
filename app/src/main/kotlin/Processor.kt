@@ -92,12 +92,12 @@ class Processor {
 
         val window = glfwCreateWindow(WIDTH, HEIGHT, "$TITLE v$VERSION", MemoryUtil.NULL, MemoryUtil.NULL)
         glfwShowWindow(window)
+        glfwSetWindowSizeLimits(window, WIDTH, HEIGHT, Int.MAX_VALUE, Int.MAX_VALUE)
 
         glfwMakeContextCurrent(window)
         GL.createCapabilities()
 
         val context = Context(window)
-        //context.isDebugEnabled = true
         context.updateGlfwWindow()
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)

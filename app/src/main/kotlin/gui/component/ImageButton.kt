@@ -50,7 +50,7 @@ open class ImageButton(position: Vector2f, private val icon: Image, action: Stri
 
                 // Shift if off screen
                 val offset = 6f
-                val delta = tooltip.absolutePosition.x + tooltip.size.x + offset - WIDTH
+                val delta = tooltip.absolutePosition.x + tooltip.size.x + offset - WIDTH // TODO: rework
                 if (delta > 0) {
                     tooltip.position.x -= delta
                 }
