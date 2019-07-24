@@ -13,8 +13,8 @@ open class ButtonGroup(position: Vector2f, iconSize: Vector2f, images: Array<Ima
         var containerX = 3f
         val offset = 3f
 
-        for (i in 0 until images.size) {
-            val button = ImageButton(Vector2f(containerX, offset), images[i], actions[i])
+        repeat(images.size) {
+            val button = ImageButton(Vector2f(containerX, offset), images[it], actions[it])
             button.size = iconSize
             containerX += button.size.x + 2
 
@@ -24,6 +24,8 @@ open class ButtonGroup(position: Vector2f, iconSize: Vector2f, images: Array<Ima
         }
 
         setSizeLimits(containerX + 1, iconSize.y + 2 * offset)
+        size.x = style.minWidth.get() as Float
+        size.y = style.minHeight.get() as Float
         style.setMargin(position.y, 0f, 0f, position.x)
         style.border.isEnabled = false
     }

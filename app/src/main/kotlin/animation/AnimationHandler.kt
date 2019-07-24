@@ -126,8 +126,8 @@ class AnimationHandler(private val context: Processor) {
 
         var cumulative = 0
         val frameIndex = getFrameIndex(animation)
-        for (i in 0 until frameIndex) {
-            cumulative += animation.keyframes[i].length
+        repeat(frameIndex) {
+            cumulative += animation.keyframes[it].length
         }
 
         timer = cumulative + offset

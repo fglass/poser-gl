@@ -21,7 +21,7 @@ abstract class ElementList: ScrollablePanel() {
     init {
         style.setMargin(43f, 0f, 5f, 5f)
         style.position = Style.PositionType.RELATIVE
-        style.maxWidth = 164f
+        style.setMaxWidth(164f)
         style.flexStyle.flexGrow = 1
 
         this.remove(horizontalScrollBar)
@@ -29,9 +29,9 @@ abstract class ElementList: ScrollablePanel() {
 
         container.style.border.isEnabled = false
         viewport.style.border.isEnabled = false
-        viewport.style.bottom = 0f
+        viewport.style.setBottom(0f)
 
-        verticalScrollBar.style.bottom = 0f
+        verticalScrollBar.style.setBottom(0f)
         verticalScrollBar.scrollStep = 0.3f
         verticalScrollBar.style.focusedStrokeColor = null
 

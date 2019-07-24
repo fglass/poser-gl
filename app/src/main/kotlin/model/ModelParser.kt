@@ -7,8 +7,6 @@ import render.Loader
 
 class ModelParser(private val loader: Loader) {
 
-    private val maxPriority = 255
-
     fun parse(def: ModelDefinition, flatShading: Boolean): Model {
         val nPosition = 4
         val nNormal = 3
@@ -23,16 +21,16 @@ class ModelParser(private val loader: Loader) {
         var vIndex = 0
         var nIndex = 0
 
-        for (i in 0 until def.faceCount) {
+        repeat(def.faceCount) {
 
             var alpha = 0
             if (def.faceAlphas != null) {
-                alpha = (def.faceAlphas[i].toInt() and 0xFFFF) shl 16
+                alpha = (def.faceAlphas[it].toInt() and 0xFFFF) shl 16
             }
 
             // 16-bit value in HSB format. First 6 bits hue, next 3 bits saturation, last 7 bits brightness
-            val faceColour = def.faceColors[i].toInt() and 0xFFFF
-            val points = intArrayOf(def.faceVertexIndices1[i], def.faceVertexIndices2[i], def.faceVertexIndices3[i])
+            val faceColour = def.faceColors[it].toInt() and 0xFFFF
+            val points = intArrayOf(def.faceVertexIndices1[it], def.faceVertexIndices2[it], def.faceVertexIndices3[it])
 
             for (point in points) {
                 setVertex(positions, vIndex, vertexX[point], vertexY[point], vertexZ[point], alpha or faceColour)

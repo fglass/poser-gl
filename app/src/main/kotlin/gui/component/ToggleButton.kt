@@ -6,11 +6,10 @@ import org.liquidengine.legui.image.Image
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 
-class ToggleButton(position: Vector2f, size: Vector2f, image: Image, action: String, toggled: Boolean):
-      ImageButton(position, image, action) {
+class ToggleButton(image: Image, action: String, toggled: Boolean):
+      ImageButton(Vector2f(), image, action) {
 
     init {
-        this.size = size
         if (toggled) {
             style.background.color = ColorConstants.gray()
         }

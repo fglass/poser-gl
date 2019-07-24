@@ -97,6 +97,7 @@ class Processor {
         GL.createCapabilities()
 
         val context = Context(window)
+        //context.isDebugEnabled = true
         context.updateGlfwWindow()
         Themes.setDefaultTheme(Themes.FLAT_DARK)
         Themes.getDefaultTheme().applyAll(frame)

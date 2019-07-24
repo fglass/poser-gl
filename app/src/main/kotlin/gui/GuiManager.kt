@@ -7,38 +7,61 @@ import gui.panel.AnimationPanel
 import gui.panel.EditorPanel
 import gui.panel.ListPanel
 import gui.panel.ManagerPanel
+import kotlinx.coroutines.processNextEventInCurrentThread
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.component.LayerContainer
+import org.liquidengine.legui.component.Panel
+import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.style.Style
+import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
-import render.Framebuffer
 
 class GuiManager(context: Processor) {
 
     val container: LayerContainer = context.frame.componentLayer.container
     val listPanel = ListPanel(context)
     val managerPanel = ManagerPanel(context)
-    val editorPanel = EditorPanel(this, context)
-    val animationPanel = AnimationPanel(this, context)
+    val editorPanel = EditorPanel(context)
+    val animationPanel = AnimationPanel(context)
 
     init {
         container.style.display = Style.DisplayType.FLEX
-        container.style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
-
+        container.style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
         container.style.setBorderRadius(0f)
         container.style.focusedStrokeColor = null
-        container.size = Vector2f(800f, 600f) // TODO remove
 
-        container.add(listPanel)
-        container.add(context.framebuffer)
-        container.add(managerPanel)
-        //container.add(editorPanel)
-        //container.add(animationPanel)
-    }
+        val topPanel = Panel()
+        topPanel.style.display = Style.DisplayType.FLEX
+        topPanel.style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
+        topPanel.style.setBorderRadius(0f)
+        topPanel.style.focusedStrokeColor = null
+        topPanel.style.border.isEnabled = false
+        topPanel.style.position = Style.PositionType.RELATIVE
+        topPanel.style.flexStyle.flexGrow = 1
 
-    fun resize(size: Vector2f) {
-        WIDTH = size.x.toInt()
-        HEIGHT = size.y.toInt()
+        topPanel.add(listPanel)
+        topPanel.add(context.framebuffer)
+
+        val rightPanel = Panel()
+        rightPanel.style.display = Style.DisplayType.FLEX
+        rightPanel.style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
+
+        rightPanel.style.position = Style.PositionType.RELATIVE
+        rightPanel.style.setMaxWidth(180f)
+        rightPanel.style.flexStyle.flexGrow = 1
+        rightPanel.style.border.isEnabled = false
+        rightPanel.style.background.color = ColorConstants.transparent()
+
+        rightPanel.add(managerPanel)
+        rightPanel.add(editorPanel)
+        topPanel.add(rightPanel)
+
+        container.add(topPanel)
+        container.add(animationPanel)
+
+        container.listenerMap.addListener(WindowSizeEvent::class.java) { event ->
+            WIDTH = event.width
+            HEIGHT = event.height
+        }
     }
 }

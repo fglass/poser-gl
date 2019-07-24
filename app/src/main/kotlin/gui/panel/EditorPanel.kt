@@ -19,13 +19,15 @@ import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import org.liquidengine.legui.style.length.LengthType.PIXEL
+import util.setSizeLimits
 
-class EditorPanel(private val gui: GuiManager, private val context: Processor): Panel() { // TODO: Clean-up
+class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
 
     private val sliders = ArrayList<TextSlider>()
     private var currentReference: ReferenceNode? = null
-    private val selectedFrame: Label
-    private val frameLength: TextSlider
+    private lateinit var selectedFrame: Label
+    private lateinit var frameLength: TextSlider
     private val selectedNode: Label
     private val transformations: ConfigGroup
 
@@ -33,68 +35,29 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         style.display = Style.DisplayType.FLEX
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
 
-        style.setMargin(377f, 175f, 0f, 0f) // TODO
-        style.position = Style.PositionType.RELATIVE
-        style.maxWidth = 175f
-        style.flexStyle.flexGrow = 1
+        val sizeX = 170f
+        setSizeLimits(sizeX, 255f)
 
-        position = getPanelPosition()
-        size = getPanelSize()
+        style.setMargin(5f, 5f, 5f, 5f)
+        style.position = Style.PositionType.RELATIVE
         style.background.color = ColorConstants.darkGray()
         isFocusable = false
 
-        val framePanel = Panel(0f, 0f, size.x, 90f)
-        framePanel.style.background.color = ColorConstants.darkGray()
-        framePanel.style.border.isEnabled = false
-        add(framePanel)
+        addFramePanel(sizeX)
 
-        val frameTitle = Label("Keyframe Editor", 0f, 0f, size.x, 16f)
-        frameTitle.style.background.color = BG_COLOUR
-        frameTitle.textState.horizontalAlign = HorizontalAlign.CENTER
-        framePanel.add(frameTitle)
-
-        selectedFrame = Label("Selected: N/A", 0f, 20f, size.x, 15f)
-        selectedFrame.textState.horizontalAlign = HorizontalAlign.CENTER
-        framePanel.add(selectedFrame)
-
-        val length = Label("Length:", 35f, 40f, 50f, 15f)
-        framePanel.add(length)
-
-        frameLength = TextSlider({ context.animationHandler.getAnimation(false)?.changeKeyframeLength(it) },
-                                 Pair(1, 99), 81f, 40f, 51f, 15f)
-        framePanel.add(frameLength)
-
-        val icons = ButtonGroup(
-            Vector2f(23f, 59f), Vector2f(23f, 23f), arrayOf(KeyframeAction.ADD.getIcon(false),
-            KeyframeAction.COPY.getIcon(false), KeyframeAction.PASTE.getIcon(false),
-            KeyframeAction.INTERPOLATE.getIcon(false), KeyframeAction.DELETE.getIcon(false)),
-            arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete")
-        )
-
-        for ((i, button) in icons.buttons.withIndex()) {
-            val action = KeyframeAction.values()[i]
-            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
-                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    action.apply(context)
-                }
-            }
-            button.addHover(action.getIcon(true))
-        }
-        icons.style.background.color = ColorConstants.transparent()
-        framePanel.add(icons)
-
-        val nodePanel = Panel(0f, 95f, size.x, 155f)
+        val nodePanel = Panel()
+        nodePanel.setSizeLimits(sizeX, 155f)
+        nodePanel.style.marginTop = PIXEL.length(95f)
         nodePanel.style.background.color = ColorConstants.darkGray()
         nodePanel.style.border.isEnabled = false
         add(nodePanel)
 
-        val nodeTitle = Label("Node Transformer", 0f, 0f, size.x, 16f)
+        val nodeTitle = Label("Node Transformer", 0f, 0f, sizeX, 16f)
         nodeTitle.style.background.color = BG_COLOUR
         nodeTitle.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(nodeTitle)
 
-        selectedNode = Label("Selected: N/A", 0f, 20f, size.x, 15f)
+        selectedNode = Label("Selected: N/A", 0f, 20f, sizeX, 15f)
         selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(selectedNode)
 
@@ -103,6 +66,7 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
             BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
             arrayOf("Reference", "Translation", "Rotation", "Scale"))
 
+        transformations.position = Vector2f(31f, 41f)
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
@@ -132,6 +96,51 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
             transformPanel.add(slider)
             y += 20
         }
+    }
+
+    private fun addFramePanel(sizeX: Float) {
+        val framePanel = Panel()
+        framePanel.setSizeLimits(sizeX, 90f)
+        framePanel.style.background.color = ColorConstants.darkGray()
+        framePanel.style.border.isEnabled = false
+        add(framePanel)
+
+        val frameTitle = Label("Keyframe Editor", 0f, 0f, sizeX, 16f)
+        frameTitle.style.background.color = BG_COLOUR
+        frameTitle.textState.horizontalAlign = HorizontalAlign.CENTER
+        framePanel.add(frameTitle)
+
+        selectedFrame = Label("Selected: N/A", 0f, 20f, sizeX, 15f)
+        selectedFrame.textState.horizontalAlign = HorizontalAlign.CENTER
+        framePanel.add(selectedFrame)
+
+        val length = Label("Length:", 35f, 40f, 50f, 15f)
+        framePanel.add(length)
+
+        frameLength = TextSlider({ context.animationHandler.getAnimation(false)?.changeKeyframeLength(it) },
+            Pair(1, 99), 81f, 40f, 51f, 15f)
+        framePanel.add(frameLength)
+
+        val actions = ButtonGroup(
+            Vector2f(23f, 59f), Vector2f(23f, 23f), arrayOf(KeyframeAction.ADD.getIcon(false),
+                KeyframeAction.COPY.getIcon(false), KeyframeAction.PASTE.getIcon(false),
+                KeyframeAction.INTERPOLATE.getIcon(false), KeyframeAction.DELETE.getIcon(false)),
+            arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete")
+        )
+
+        for ((i, button) in actions.buttons.withIndex()) {
+            val action = KeyframeAction.values()[i]
+            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    action.apply(context)
+                }
+            }
+            button.addHover(action.getIcon(true))
+        }
+        actions.style.background.color = ColorConstants.transparent()
+        actions.position = Vector2f(23f, 59f)
+        framePanel.add(actions)
     }
 
     fun setKeyframe(keyframe: Keyframe) {
@@ -166,18 +175,5 @@ class EditorPanel(private val gui: GuiManager, private val context: Processor): 
         selectedNode.textState.text = unselected
         frameLength.setValue(0)
         sliders.forEach { it.setValue(0) }
-    }
-
-    fun resize() {
-        position = getPanelPosition()
-        size = getPanelSize()
-    }
-
-    private fun getPanelPosition(): Vector2f {
-        return Vector2f(gui.container.size.x - 175, gui.container.size.y - 377)
-    }
-
-    private fun getPanelSize(): Vector2f {
-        return Vector2f(170f, 255f)
     }
 }

@@ -9,6 +9,7 @@ import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
 import org.liquidengine.legui.style.Style
+import org.liquidengine.legui.style.color.ColorConstants
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
@@ -28,7 +29,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     private val camera = Camera(mouse)
 
     init {
-        style.setMargin(5f, 5f, 122f, 0f)
+        style.setMargin(5f, 0f, 5f, 0f)
         style.position = Style.PositionType.RELATIVE
         style.flexStyle.flexGrow = 1
         style.focusedStrokeColor = null

@@ -20,6 +20,7 @@ import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import org.liquidengine.legui.style.length.LengthType.PIXEL
 import render.PolygonMode
 import shader.ShadingType
 import util.setSizeLimits
@@ -36,23 +37,24 @@ class ManagerPanel(private val context: Processor): Panel() {
     init {
         style.display = Style.DisplayType.FLEX
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
-
-        style.setMargin(5f, 5f, 387f, 0f)
+        style.setMargin(5f, 5f, 0f, 5f)
         style.position = Style.PositionType.RELATIVE
-        style.maxWidth = 175f
+
+        val maxWidth = 175f
+        style.setMaxWidth(maxWidth)
         style.flexStyle.flexGrow = 1
 
         style.background.color = ColorConstants.darkGray()
         isFocusable = false
 
         val title = Label("Entity Manager")
-        title.setSizeLimits(style.maxWidth, 15f)
+        title.setSizeLimits(maxWidth, 15f)
         title.style.background.color = BG_COLOUR
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
-        selectedEntity.setSizeLimits(style.maxWidth, 15f)
-        selectedEntity.style.marginTop = 20f
+        selectedEntity.setSizeLimits(maxWidth, 15f)
+        selectedEntity.style.marginTop = PIXEL.length(20f)
         selectedEntity.textState.horizontalAlign = HorizontalAlign.CENTER
         add(selectedEntity)
 
@@ -112,7 +114,7 @@ class ManagerPanel(private val context: Processor): Panel() {
         modelPanel = ScrollablePanel()
 
         val width = 160f
-        modelPanel.style.maxWidth = width
+        modelPanel.style.setMaxWidth(width)
         modelPanel.container.size.x = width
 
         modelPanel.style.setMargin(79f, 0f, 6f, 6f)
@@ -120,8 +122,8 @@ class ManagerPanel(private val context: Processor): Panel() {
         modelPanel.style.flexStyle.flexGrow = 1
 
         modelPanel.remove(modelPanel.horizontalScrollBar)
-        modelPanel.viewport.style.bottom = 0f
-        modelPanel.verticalScrollBar.style.bottom = 0f
+        modelPanel.viewport.style.setBottom(0f)
+        modelPanel.verticalScrollBar.style.setBottom(0f)
 
         val colour = 71 / 255f
         val containers = arrayOf(modelPanel.viewport, modelPanel.container)
@@ -136,7 +138,7 @@ class ManagerPanel(private val context: Processor): Panel() {
             it.style.background.color = ColorConstants.darkGray()
         }
 
-        modelPanel.verticalScrollBar.style.width = 9f
+        modelPanel.verticalScrollBar.style.setWidth(9f)
         add(modelPanel)
     }
 

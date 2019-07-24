@@ -10,65 +10,60 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import org.liquidengine.legui.style.length.Auto
+import org.liquidengine.legui.style.length.LengthType.PIXEL
+import util.setSizeLimits
 
-class AnimationMenu(context: Processor, width: Float): Panel() {
+class AnimationMenu(context: Processor): Panel() {
 
     val sequenceId: Label
     private val play: ImageButton
-    //private val importButton: ImageButton
-    //private val exportButton: ImageButton
-    val packButton: ImageButton
-    private val nodeToggle: ToggleButton
-
     private val playIcon = BufferedImage(SPRITE_PATH + "play.png")
     private val pauseIcon = BufferedImage(SPRITE_PATH + "pause.png")
     private val nodeIcon = BufferedImage(SPRITE_PATH + "nodes.png")
 
     init {
-        val x = 12f
-        position = Vector2f(0f, 0f)
-        size = Vector2f(width, 23f)
+        style.display = Style.DisplayType.FLEX
+        style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
+        style.flexStyle.flexGrow = 1
+        style.position = Style.PositionType.RELATIVE
+        style.setMaxHeight(23f)
 
         style.background.color = ColorConstants.darkGray()
+        style.border.isEnabled = false
         style.setBorderRadius(0f)
-        //style.border.isEnabled = false
 
-        play = ImageButton(Vector2f(x, 8f), playIcon, "")
+        play = ImageButton(Vector2f(), playIcon, "")
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 context.animationHandler.togglePlay()
             }
         }
-        play.size = Vector2f(10f, 10f)
+        play.style.setMargin(8f, 0f, 0f, 12f)
+        play.setSizeLimits(10f, 10f)
         add(play)
 
-        val sequence = Label("Sequence:", x + 14, 5f, 50f, 15f)
-        sequenceId = Label("N/A", x + 73, 5f, 50f, 15f)
+        val sequence = Label("Sequence:")
+        sequence.style.setMargin(5f, 0f, 0f, 26f)
+        sequence.setSizeLimits(50f, 15f)
         add(sequence)
+
+        sequenceId = Label("N/A")
+        sequenceId.style.setMargin(5f, 0f, 0f, 85f)
+        sequenceId.setSizeLimits(50f, 15f)
         add(sequenceId)
 
-        style.display = Style.DisplayType.FLEX
-        style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
-        style.flexStyle.flexGrow = 1
-        style.flexStyle.flexShrink = 1
-        style.flexStyle.justifyContent = FlexStyle.JustifyContent.CENTER
-        style.flexStyle.alignItems = FlexStyle.AlignItems.CENTER
-        style.position = Style.PositionType.RELATIVE
-        style.maxHeight = 23f
+        val importButton = addMenuButton("import", context.importManager::import)
+        importButton.style.marginLeft = Auto.AUTO
 
-        //importButton = addMenuButton("import", 110, context.importManager::import)
-        //exportButton = addMenuButton("export", 85, context.exportManager::openDialog)
-        packButton = addMenuButton("pack", 60, context.cacheService::pack)
+        addMenuButton("export", context.exportManager::openDialog)
+        addMenuButton("pack", context.cacheService::pack)
 
-        packButton.style.setMinimumSize(26f, 26f)
-        packButton.style.setMaximumSize(26f, 26f)
+        val nodeToggle = ToggleButton(nodeIcon, "Skeleton", false)
+        nodeToggle.style.position = Style.PositionType.RELATIVE
+        nodeToggle.style.setMargin(PIXEL.length(3f), PIXEL.length(13f), PIXEL.length(0f), PIXEL.length(0f))
+        nodeToggle.setSizeLimits(20f, 20f)
 
-        packButton.style.setMargin(0f, 0f, 0f, 5f)
-        packButton.style.flexStyle.flexGrow = 1
-        packButton.style.position = Style.PositionType.RELATIVE
-        add(packButton)
-
-        nodeToggle = ToggleButton(Vector2f(size.x - 32, 3f), Vector2f(20f, 20f), nodeIcon, "Skeleton", false)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.nodeRenderer.enabled = !context.nodeRenderer.enabled
@@ -76,15 +71,18 @@ class AnimationMenu(context: Processor, width: Float): Panel() {
         add(nodeToggle)
     }
 
-    private fun addMenuButton(name: String, xOffset: Int, action: () -> Unit): ImageButton {
-        val button = ImageButton(Vector2f(size.x - xOffset, 0f), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
-        button.size = Vector2f(26f, 26f)
+    private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
+        val button = ImageButton(Vector2f(), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
+        button.addHover(BufferedImage("$SPRITE_PATH$name-hovered.png"))
+
         button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 action.invoke()
             }
         }
-        button.addHover(BufferedImage("$SPRITE_PATH$name-hovered.png"))
+
+        button.setSizeLimits(26f, 26f)
+        button.style.position = Style.PositionType.RELATIVE
         add(button)
         return button
     }

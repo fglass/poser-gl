@@ -139,7 +139,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
 
     private fun loadMatrices(node: ReferenceNode) {
         val modelMatrix = Matrix4f()
-        modelMatrix.translate(node.position) // TODO
+        modelMatrix.translate(node.position)
         modelMatrix.m00(viewMatrix.m00())
         modelMatrix.m01(viewMatrix.m10())
         modelMatrix.m02(viewMatrix.m20())
