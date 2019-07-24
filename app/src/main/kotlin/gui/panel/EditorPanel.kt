@@ -28,8 +28,8 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
     private var currentReference: ReferenceNode? = null
     private lateinit var selectedFrame: Label
     private lateinit var frameLength: TextSlider
-    private val selectedNode: Label
-    private val transformations: ConfigGroup
+    private lateinit var selectedNode: Label
+    private lateinit var transformations: ConfigGroup
 
     init {
         style.display = Style.DisplayType.FLEX
@@ -44,58 +44,7 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
         isFocusable = false
 
         addFramePanel(sizeX)
-        
-        val nodePanel = Panel()
-        nodePanel.setSizeLimits(sizeX, 155f)
-        nodePanel.style.marginTop = PIXEL.length(95f)
-        nodePanel.style.background.color = ColorConstants.darkGray()
-        nodePanel.style.border.isEnabled = false
-        add(nodePanel)
-
-        val nodeTitle = Label("Node Transformer", 0f, 0f, sizeX, 16f)
-        nodeTitle.style.background.color = BG_COLOUR
-        nodeTitle.textState.horizontalAlign = HorizontalAlign.CENTER
-        nodePanel.add(nodeTitle)
-
-        selectedNode = Label("Selected: N/A", 0f, 20f, sizeX, 15f)
-        selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
-        nodePanel.add(selectedNode)
-
-        transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
-            arrayOf(BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
-            BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
-            arrayOf("Reference", "Translation", "Rotation", "Scale"))
-
-        transformations.position = Vector2f(31f, 41f)
-        for ((i, button) in transformations.buttons.withIndex()) {
-            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
-                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    updateType(TransformationType.fromId(i))
-                }
-            }
-        }
-        nodePanel.add(transformations)
-
-        val transformPanel = Panel(32f, 80f, 106f, 70f)
-        val colour = 71 / 255f
-        transformPanel.style.background.color = Vector4f(colour, colour, colour, 1f)
-        transformPanel.style.border.isEnabled = false
-        nodePanel.add(transformPanel)
-
-        var y = 7f
-        val coords = arrayOf("X", "Y", "Z")
-
-        for ((i, coord) in coords.withIndex()) {
-            val label = Label(coord, 12f, y, 50f, 15f)
-            transformPanel.add(label)
-
-            val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
-                                    Pair(-255, 255), 35f, y, 60f, 15f)
-            sliders.add(slider)
-            transformPanel.add(slider)
-            y += 20
-        }
+        addNodePanel(sizeX)
     }
 
     private fun addFramePanel(sizeX: Float) {
@@ -141,6 +90,60 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
         actions.style.background.color = ColorConstants.transparent()
         actions.position = Vector2f(23f, 59f)
         framePanel.add(actions)
+    }
+
+    private fun addNodePanel(sizeX: Float) {
+        val nodePanel = Panel()
+        nodePanel.setSizeLimits(sizeX, 155f)
+        nodePanel.style.marginTop = PIXEL.length(95f)
+        nodePanel.style.background.color = ColorConstants.darkGray()
+        nodePanel.style.border.isEnabled = false
+        add(nodePanel)
+
+        val nodeTitle = Label("Node Transformer", 0f, 0f, sizeX, 16f)
+        nodeTitle.style.background.color = BG_COLOUR
+        nodeTitle.textState.horizontalAlign = HorizontalAlign.CENTER
+        nodePanel.add(nodeTitle)
+
+        selectedNode = Label("Selected: N/A", 0f, 20f, sizeX, 15f)
+        selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
+        nodePanel.add(selectedNode)
+
+        transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
+            arrayOf(BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
+                BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
+            arrayOf("Reference", "Translation", "Rotation", "Scale"))
+
+        transformations.position = Vector2f(31f, 41f)
+        for ((i, button) in transformations.buttons.withIndex()) {
+            button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+                if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                    event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                    updateType(TransformationType.fromId(i))
+                }
+            }
+        }
+        nodePanel.add(transformations)
+
+        val transformPanel = Panel(32f, 80f, 106f, 70f)
+        val colour = 71 / 255f
+        transformPanel.style.background.color = Vector4f(colour, colour, colour, 1f)
+        transformPanel.style.border.isEnabled = false
+        nodePanel.add(transformPanel)
+
+        var y = 7f
+        val coords = arrayOf("X", "Y", "Z")
+
+        for ((i, coord) in coords.withIndex()) {
+            val label = Label(coord, 12f, y, 50f, 15f)
+            transformPanel.add(label)
+
+            val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
+                Pair(-255, 255), 35f, y, 60f, 15f)
+            sliders.add(slider)
+            transformPanel.add(slider)
+            y += 20
+        }
     }
 
     fun setKeyframe(keyframe: Keyframe) {
