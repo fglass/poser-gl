@@ -1,10 +1,8 @@
 package gui.panel
 
-import BG_COLOUR
 import Processor
 import SPRITE_PATH
 import animation.Keyframe
-import gui.GuiManager
 import gui.component.AnimationMenu
 import gui.component.AnimationTimeline
 import gui.component.ImageButton
@@ -14,9 +12,7 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.image.BufferedImage
-import org.liquidengine.legui.listener.WindowSizeEventListener
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
@@ -48,7 +44,7 @@ class AnimationPanel(private val context: Processor): Panel() {
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
         style.setMargin(0f, 5f, 5f, 5f)
         style.position = Style.PositionType.RELATIVE
-        setHeightLimit(111f)
+        setHeightLimit(112f)
         style.flexStyle.flexGrow = 1
 
         menu = AnimationMenu(context)

@@ -115,7 +115,7 @@ class ManagerPanel(private val context: Processor): Panel() {
 
         val width = 160f
         modelPanel.style.setMaxWidth(width)
-        modelPanel.container.size.x = width
+        modelPanel.container.size.x = width - 8f
 
         modelPanel.style.setMargin(79f, 0f, 6f, 6f)
         modelPanel.style.position = Style.PositionType.RELATIVE

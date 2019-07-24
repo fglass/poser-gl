@@ -31,8 +31,7 @@ class ListPanel(context: Processor): Panel() {
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
 
         style.position = Style.PositionType.RELATIVE
-        style.setMinWidth(175f)
-        style.setMaxWidth(175f)
+        style.setMaxWidth(174f)
         style.flexStyle.flexGrow = 1
         style.border.isEnabled = false
 

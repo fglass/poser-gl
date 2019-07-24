@@ -9,7 +9,6 @@ import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
 import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
@@ -34,9 +33,6 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         style.flexStyle.flexGrow = 1
         style.focusedStrokeColor = null
 
-        val size = context.frame.componentLayer.container.size
-        resize(size.x.toInt(), size.y.toInt(), true)
-
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
             context.nodeRenderer.handleClick(event.button, event.action)
@@ -49,9 +45,6 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         }
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             mouse.handleCursorEvent(event.isEntered)
-        }
-        listenerMap.addListener(WindowSizeEvent::class.java) { event ->
-            resize(event.width, event.height, false)
         }
     }
 
@@ -84,7 +77,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     }
 
     fun render() {
-        if (!context.cacheService.loaded) {
+        if (id == 0 || !context.cacheService.loaded) {
             return
         }
 
@@ -128,11 +121,17 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
         shader.stop()
     }
 
-    private fun resize(width: Int, height: Int, loadLight: Boolean) {
-        val textureWidth = width - 354
-        val textureHeight = height - 127
-        setTexture(textureWidth, textureHeight)
-        entityRenderer.init(Vector2f(textureWidth.toFloat(), textureHeight.toFloat()), loadLight)
+    override fun setSize(width: Float, height: Float) {
+        val previous = size.x
+        super.setSize(width, height)
+        if (previous != width) {
+            resize(width.toInt(), height.toInt())
+        }
+    }
+
+    private fun resize(width: Int, height: Int) {
+        setTexture(width, height)
+        entityRenderer.init(width, height)
     }
 
     private fun setTexture(width: Int, height: Int) {

@@ -13,6 +13,7 @@ import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import org.liquidengine.legui.style.length.LengthType.PIXEL
 
 class GuiManager(context: Processor) {
 

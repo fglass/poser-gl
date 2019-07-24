@@ -36,7 +36,7 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
 
         val sizeX = 170f
-        setSizeLimits(sizeX, 255f)
+        setSizeLimits(sizeX, 260f)
 
         style.setMargin(5f, 5f, 5f, 5f)
         style.position = Style.PositionType.RELATIVE
@@ -44,7 +44,7 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
         isFocusable = false
 
         addFramePanel(sizeX)
-
+        
         val nodePanel = Panel()
         nodePanel.setSizeLimits(sizeX, 155f)
         nodePanel.style.marginTop = PIXEL.length(95f)

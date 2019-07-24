@@ -1,14 +1,11 @@
 package gui.component
 
 import BG_COLOUR
-import gui.GuiManager
-import org.joml.Vector2f
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
-import util.setSizeLimits
 
 abstract class ElementList: ScrollablePanel() {
 
@@ -16,7 +13,7 @@ abstract class ElementList: ScrollablePanel() {
     protected val listX = 2f
     protected val listY = 3f
     protected val listYOffset = 18f
-    protected val containerX = 157f
+    protected val containerX = 156f
 
     init {
         style.setMargin(43f, 0f, 5f, 5f)

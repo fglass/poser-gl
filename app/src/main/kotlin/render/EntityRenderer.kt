@@ -20,18 +20,16 @@ class EntityRenderer(private val shader: StaticShader) {
 
     lateinit var projectionMatrix: Matrix4f
 
-    fun init(fboSize: Vector2f, loadLight: Boolean) {
+    fun init(width: Int, height: Int) {
         shader.start()
-        if (loadLight) {
             shader.loadLight(Light(Vector3f(0f, -500f, -1000f), Vector3f(1f, 1f, 1f)))
-        }
-        projectionMatrix = createProjectionMatrix(fboSize)
+        projectionMatrix = createProjectionMatrix(width, height)
         shader.loadProjectionMatrix(projectionMatrix)
         shader.stop()
     }
 
-    private fun createProjectionMatrix(fboSize: Vector2f): Matrix4f {
-        val aspectRatio = fboSize.x / fboSize.y
+    private fun createProjectionMatrix(width: Int, height: Int): Matrix4f {
+        val aspectRatio = width.toFloat() / height
         val yScale = ((1f / tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
         val xScale = yScale / aspectRatio
         val frustumLength = FAR_PLANE - NEAR_PLANE
