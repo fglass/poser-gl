@@ -33,7 +33,7 @@ class AnimationMenu(context: Processor): Panel() {
         style.border.isEnabled = false
         style.setBorderRadius(0f)
 
-        play = ImageButton(Vector2f(), playIcon, "")
+        play = ImageButton(Vector2f(), playIcon)
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 context.animationHandler.togglePlay()

@@ -91,9 +91,8 @@ class Processor {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
 
         val window = glfwCreateWindow(WIDTH, HEIGHT, "$TITLE v$VERSION", MemoryUtil.NULL, MemoryUtil.NULL)
-        glfwShowWindow(window)
         glfwSetWindowSizeLimits(window, WIDTH, HEIGHT, Int.MAX_VALUE, Int.MAX_VALUE)
-
+        glfwShowWindow(window)
         glfwMakeContextCurrent(window)
         GL.createCapabilities()
 
@@ -200,7 +199,7 @@ fun restartJVM(): Boolean {
     val pid =
         ManagementFactory.getRuntimeMXBean().name.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
 
-    //Get environment variable on whether XstartOnFirstThread is enabled
+    // Get environment variable on whether XstartOnFirstThread is enabled
     val env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_$pid")
 
     // If environment variable is "1" then XstartOnFirstThread is enabled

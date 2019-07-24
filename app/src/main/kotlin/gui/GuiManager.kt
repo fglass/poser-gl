@@ -7,8 +7,6 @@ import gui.panel.AnimationPanel
 import gui.panel.EditorPanel
 import gui.panel.ListPanel
 import gui.panel.ManagerPanel
-import kotlinx.coroutines.processNextEventInCurrentThread
-import org.joml.Vector2f
 import org.liquidengine.legui.component.LayerContainer
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.WindowSizeEvent

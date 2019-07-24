@@ -38,7 +38,7 @@ class AnimationPanel(private val context: Processor): Panel() {
     private val yellowLine = BufferedImage(SPRITE_PATH + "yellow-line.png")
     private val pinkLine = BufferedImage(SPRITE_PATH + "pink-line.png")
     private val greenLine = BufferedImage(SPRITE_PATH + "green-line.png")
-    private val cursor = ImageButton(Vector2f(0f, 0f), greenLine, "")
+    private val cursor = ImageButton(Vector2f(0f, 0f), greenLine)
 
     init {
         style.background.color = ColorConstants.darkGray()
@@ -119,7 +119,7 @@ class AnimationPanel(private val context: Processor): Panel() {
         times.add(time)
 
         if (i != 0) {
-            val marker = ImageButton(Vector2f(x, 0f), greyLine, "")
+            val marker = ImageButton(Vector2f(x, 0f), greyLine)
             timeline.add(marker)
         }
     }
@@ -139,7 +139,7 @@ class AnimationPanel(private val context: Processor): Panel() {
             keyframe.style.border.isEnabled = false
             keyframe.style.focusedStrokeColor = null
 
-            val line = ImageButton(Vector2f(border, 0f), yellowLine, "")
+            val line = ImageButton(Vector2f(border, 0f), yellowLine)
             keyframe.listenerMap.addListener(CursorEnterEvent::class.java) { event ->
                 line.image = if (event.isEntered) pinkLine else yellowLine
             }

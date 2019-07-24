@@ -16,6 +16,8 @@ import org.liquidengine.legui.style.color.ColorConstants
 
 open class ImageButton(position: Vector2f, private val icon: Image, action: String): ImageView(icon) {
 
+    constructor(position: Vector2f, icon: Image): this(position, icon, "")
+
     init {
         this.position = position
         size = Vector2f(image.width.toFloat(), image.height.toFloat())

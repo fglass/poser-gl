@@ -46,8 +46,8 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         setValue(limitValue(0))
         add(value)
 
-        val right = ImageButton(Vector2f(width - 10, 3f), rightArrow, "")
-        val left = ImageButton(Vector2f(0f, 3f), leftArrow, "")
+        val right = ImageButton(Vector2f(width - 10, 3f), rightArrow)
+        val left = ImageButton(Vector2f(0f, 3f), leftArrow)
         val arrows = arrayOf(left, right)
 
         arrows.forEach {
