@@ -13,6 +13,7 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
+import org.liquidengine.legui.listener.CursorEnterEventListener
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
@@ -136,11 +137,12 @@ class AnimationPanel(private val context: Processor): Panel() {
             keyframe.style.focusedStrokeColor = null
 
             val line = ImageButton(Vector2f(border, 0f), yellowLine)
+            line.isFocusable = false
+            keyframe.add(line)
+
             keyframe.listenerMap.addListener(CursorEnterEvent::class.java) { event ->
                 line.image = if (event.isEntered) pinkLine else yellowLine
             }
-            keyframe.add(line)
-
             keyframe.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                     adjustTime(x)
