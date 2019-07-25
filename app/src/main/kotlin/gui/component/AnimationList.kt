@@ -30,8 +30,14 @@ class AnimationList(private val context: Processor): ElementList() {
         verticalScrollBar.curValue = container.size.y // Scroll to bottom
     }
 
-    fun updateElement(animation: Animation) {
-        elements[animation.sequence.id]?.updateText()
+    fun updateElement(animation: Animation?) {
+        if (animation != null) {
+            elements[animation.sequence.id]?.updateText()
+        }
+    }
+
+    fun updateElement(index: Int?) {
+        elements[index]?.updateText()
     }
 
     override fun getFiltered(input: String): List<Int> {
@@ -59,6 +65,11 @@ class AnimationList(private val context: Processor): ElementList() {
         }
 
         override fun updateText() {
+            style.background.color = if (context.animationHandler.currentAnimation == animation) {
+                hoveredStyle.background.color
+            } else {
+                ColorConstants.darkGray()
+            }
             textState.text = animation.sequence.id.toString()
             textState.textColor = if (animation.modified) ColorConstants.lightRed() else ColorConstants.white()
             isEnabled = true

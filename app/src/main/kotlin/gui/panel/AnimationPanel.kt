@@ -13,7 +13,6 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
-import org.liquidengine.legui.listener.CursorEnterEventListener
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
@@ -28,7 +27,6 @@ class AnimationPanel(private val context: Processor): Panel() {
     val menu: AnimationMenu
     private val timeline: AnimationTimeline
     private val times: Panel
-
     private var unitX = 0f
 
     private val greyLine = BufferedImage(SPRITE_PATH + "grey-line.png")

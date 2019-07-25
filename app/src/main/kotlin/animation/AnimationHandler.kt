@@ -19,6 +19,7 @@ class AnimationHandler(private val context: Processor) {
     private var timer = 0
 
     fun load(animation: Animation) {
+        val previous = currentAnimation
         resetAnimation()
         animation.load()
 
@@ -28,8 +29,11 @@ class AnimationHandler(private val context: Processor) {
 
         frameLength = animation.keyframes.first().length
         currentAnimation = animation
+
         setPlay(true)
         context.gui.animationPanel.setTimeline()
+        context.gui.listPanel.animationList.updateElement(previous)
+        context.gui.listPanel.animationList.updateElement(animation)
     }
 
     fun tick() {
