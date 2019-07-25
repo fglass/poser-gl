@@ -5,7 +5,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joml.Vector2f
-import org.joml.Vector4f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.component.Tooltip
 import org.liquidengine.legui.event.CursorEnterEvent
@@ -19,7 +18,7 @@ open class ImageButton(position: Vector2f, var icon: Image, action: String): Ima
 
     constructor(position: Vector2f, icon: Image): this(position, icon, "")
 
-    var hoveredIcon = icon
+    var hoveredIcon: Image? = null
 
     init {
         this.position = position
@@ -33,8 +32,13 @@ open class ImageButton(position: Vector2f, var icon: Image, action: String): Ima
         }
 
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-            image = if (event.isEntered) hoveredIcon else icon
+            image = if (event.isEntered && hoveredIcon != null) hoveredIcon else icon
         }
+    }
+
+    fun setIconImage(icon: Image) {
+        this.icon = icon
+        image = icon
     }
 
     private fun addTooltip(action: String) {

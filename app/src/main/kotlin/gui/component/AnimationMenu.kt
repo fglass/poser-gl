@@ -6,6 +6,7 @@ import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
+import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
@@ -20,7 +21,8 @@ class AnimationMenu(context: Processor): Panel() {
     private val playHoveredIcon = BufferedImage(SPRITE_PATH + "play-hovered.png")
     private val pauseIcon = BufferedImage(SPRITE_PATH + "pause.png")
     private val pauseHoveredIcon = BufferedImage(SPRITE_PATH + "pause-hovered.png")
-    private val nodeIcon = BufferedImage(SPRITE_PATH + "nodes.png")
+    private val nodeIcon = BufferedImage(SPRITE_PATH + "node.png")
+    private val nodeToggledIcon = BufferedImage(SPRITE_PATH + "node-toggled.png")
 
     init {
         style.display = Style.DisplayType.FLEX
@@ -39,16 +41,20 @@ class AnimationMenu(context: Processor): Panel() {
                 context.animationHandler.togglePlay()
             }
         }
-        play.style.setMargin(6f, 0f, 0f, 11f)
-        play.setSizeLimits(14f, 14f)
+        play.style.setMargin(4f, 0f, 0f, 11f)
+        play.setSizeLimits(17f, 17f)
         add(play)
 
-        val nodeToggle = ToggleButton(nodeIcon, "Skeleton", false)
-        nodeToggle.style.setMargin(4f, 0f, 0f, 27f)
-        nodeToggle.setSizeLimits(17f, 17f)
+        val nodeToggle = ImageButton(Vector2f(), nodeIcon, "Skeleton")
+        nodeToggle.style.setMargin(2f, 0f, 0f, 29f)
+        nodeToggle.setSizeLimits(20f, 20f)
         nodeToggle.style.setBorderRadius(1f)
-        nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
-            context.nodeRenderer.enabled = !context.nodeRenderer.enabled
+        nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                nodeToggle.setIconImage(if (nodeToggle.image == nodeToggledIcon) nodeIcon else nodeToggledIcon)
+                context.nodeRenderer.enabled = !context.nodeRenderer.enabled
+            }
         }
         add(nodeToggle)
 
@@ -78,12 +84,10 @@ class AnimationMenu(context: Processor): Panel() {
 
     fun updatePlayIcon(playing: Boolean) {
         if (playing) {
-            play.image = pauseIcon
-            play.icon = pauseIcon
+            play.setIconImage(pauseIcon)
             play.hoveredIcon = pauseHoveredIcon
         } else {
-            play.image = playIcon
-            play.icon = playIcon
+            play.setIconImage(playIcon)
             play.hoveredIcon = playHoveredIcon
         }
     }
