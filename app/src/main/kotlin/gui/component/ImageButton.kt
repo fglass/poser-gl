@@ -14,9 +14,11 @@ import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.border.SimpleLineBorder
 import org.liquidengine.legui.style.color.ColorConstants
 
-open class ImageButton(position: Vector2f, private val icon: Image, action: String): ImageView(icon) {
+open class ImageButton(position: Vector2f, var icon: Image, action: String): ImageView(icon) {
 
     constructor(position: Vector2f, icon: Image): this(position, icon, "")
+
+    var hoveredIcon = icon
 
     init {
         this.position = position
@@ -27,6 +29,10 @@ open class ImageButton(position: Vector2f, private val icon: Image, action: Stri
 
         if (action.isNotEmpty()) {
             addTooltip(action)
+        }
+
+        listenerMap.addListener(CursorEnterEvent::class.java) { event ->
+            image = if (event.isEntered) hoveredIcon else icon
         }
     }
 
@@ -63,12 +69,6 @@ open class ImageButton(position: Vector2f, private val icon: Image, action: Stri
                     tooltip.style.display = Style.DisplayType.MANUAL
                 }
             }
-        }
-    }
-
-    fun addHover(hoveredImage: Image) {
-        listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-            image = if (event.isEntered) hoveredImage else icon
         }
     }
 }

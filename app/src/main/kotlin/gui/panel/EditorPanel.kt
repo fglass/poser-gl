@@ -1,10 +1,12 @@
 package gui.panel
 
-import SPRITE_PATH
 import BG_COLOUR
 import Processor
-import animation.*
-import gui.GuiManager
+import SPRITE_PATH
+import animation.Keyframe
+import animation.KeyframeAction
+import animation.ReferenceNode
+import animation.TransformationType
 import gui.component.ButtonGroup
 import gui.component.ConfigGroup
 import gui.component.TextSlider
@@ -22,7 +24,7 @@ import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.LengthType.PIXEL
 import util.setSizeLimits
 
-class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
+class EditorPanel(private val context: Processor): Panel() {
 
     private val sliders = ArrayList<TextSlider>()
     private var currentReference: ReferenceNode? = null
@@ -35,13 +37,13 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
         style.display = Style.DisplayType.FLEX
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
 
-        val sizeX = 170f
-        setSizeLimits(sizeX, 260f)
-
         style.setMargin(5f, 5f, 5f, 5f)
         style.position = Style.PositionType.RELATIVE
         style.background.color = ColorConstants.darkGray()
         isFocusable = false
+
+        val sizeX = 170f
+        setSizeLimits(sizeX, 260f)
 
         addFramePanel(sizeX)
         addNodePanel(sizeX)
@@ -85,7 +87,7 @@ class EditorPanel(private val context: Processor): Panel() { // TODO: Clean-up
                     action.apply(context)
                 }
             }
-            button.addHover(action.getIcon(true))
+            button.hoveredIcon = action.getIcon(true)
         }
         actions.style.background.color = ColorConstants.transparent()
         actions.position = Vector2f(23f, 59f)

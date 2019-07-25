@@ -1,11 +1,9 @@
 package gui.panel
 
 import Processor
-import gui.GuiManager
 import gui.component.AnimationList
 import gui.component.EntityList
 import gui.component.ItemList
-import org.joml.Vector2f
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput

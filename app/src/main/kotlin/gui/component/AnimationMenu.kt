@@ -19,7 +19,9 @@ class AnimationMenu(context: Processor): Panel() {
     val sequenceId: Label
     private val play: ImageButton
     private val playIcon = BufferedImage(SPRITE_PATH + "play.png")
+    private val playHoveredIcon = BufferedImage(SPRITE_PATH + "play-hovered.png")
     private val pauseIcon = BufferedImage(SPRITE_PATH + "pause.png")
+    private val pauseHoveredIcon = BufferedImage(SPRITE_PATH + "pause-hovered.png")
     private val nodeIcon = BufferedImage(SPRITE_PATH + "nodes.png")
 
     init {
@@ -39,17 +41,17 @@ class AnimationMenu(context: Processor): Panel() {
                 context.animationHandler.togglePlay()
             }
         }
-        play.style.setMargin(8f, 0f, 0f, 12f)
-        play.setSizeLimits(10f, 10f)
+        play.style.setMargin(6f, 0f, 0f, 11f)
+        play.setSizeLimits(14f, 14f)
         add(play)
 
         val sequence = Label("Sequence:")
-        sequence.style.setMargin(5f, 0f, 0f, 26f)
+        sequence.style.setMargin(5f, 0f, 0f, 27f)
         sequence.setSizeLimits(50f, 15f)
         add(sequence)
 
         sequenceId = Label("N/A")
-        sequenceId.style.setMargin(5f, 0f, 0f, 85f)
+        sequenceId.style.setMargin(5f, 0f, 0f, 86f)
         sequenceId.setSizeLimits(50f, 15f)
         add(sequenceId)
 
@@ -73,7 +75,7 @@ class AnimationMenu(context: Processor): Panel() {
 
     private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
         val button = ImageButton(Vector2f(), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
-        button.addHover(BufferedImage("$SPRITE_PATH$name-hovered.png"))
+        button.hoveredIcon = BufferedImage("$SPRITE_PATH$name-hovered.png")
 
         button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
@@ -88,6 +90,14 @@ class AnimationMenu(context: Processor): Panel() {
     }
 
     fun updatePlayIcon(playing: Boolean) {
-        play.image = if (playing) pauseIcon else playIcon
+        if (playing) {
+            play.image = pauseIcon
+            play.icon = pauseIcon
+            play.hoveredIcon = pauseHoveredIcon
+        } else {
+            play.image = playIcon
+            play.icon = playIcon
+            play.hoveredIcon = playHoveredIcon
+        }
     }
 }
