@@ -82,14 +82,11 @@ class AnimationPanel(private val context: Processor): Panel() {
 
         val animation = context.animationHandler.currentAnimation
         if (animation == null) {
-            menu.sequenceId.textState.text = "N/A"
             setDefaultLayout()
             return
         }
 
-        menu.sequenceId.textState.text = animation.sequence.id.toString()
         unitX = timeline.getUnitX(animation.length)
-
         addTimes(animation.length)
         addKeyframes(animation.keyframes)
         timeline.add(cursor)

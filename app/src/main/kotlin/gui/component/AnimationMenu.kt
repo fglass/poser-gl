@@ -3,7 +3,6 @@ package gui.component
 import SPRITE_PATH
 import Processor
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
@@ -16,7 +15,6 @@ import util.setSizeLimits
 
 class AnimationMenu(context: Processor): Panel() {
 
-    val sequenceId: Label
     private val play: ImageButton
     private val playIcon = BufferedImage(SPRITE_PATH + "play.png")
     private val playHoveredIcon = BufferedImage(SPRITE_PATH + "play-hovered.png")
@@ -44,16 +42,6 @@ class AnimationMenu(context: Processor): Panel() {
         play.style.setMargin(6f, 0f, 0f, 11f)
         play.setSizeLimits(14f, 14f)
         add(play)
-
-        val sequence = Label("Sequence:")
-        sequence.style.setMargin(5f, 0f, 0f, 27f)
-        sequence.setSizeLimits(50f, 15f)
-        add(sequence)
-
-        sequenceId = Label("N/A")
-        sequenceId.style.setMargin(5f, 0f, 0f, 86f)
-        sequenceId.setSizeLimits(50f, 15f)
-        add(sequenceId)
 
         val importButton = addMenuButton("import", context.importManager::import)
         importButton.style.marginLeft = Auto.AUTO
