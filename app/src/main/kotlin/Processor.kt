@@ -14,6 +14,7 @@ import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.listener.processor.EventProcessor
+import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
 import org.liquidengine.legui.system.context.Context
 import org.liquidengine.legui.system.context.DefaultCallbackKeeper
@@ -39,7 +40,7 @@ const val TITLE = "PoserGL"
 const val VERSION = "1.1"
 const val CACHE_PATH = "../repository/cache/"
 const val SPRITE_PATH = "sprite/"
-val BG_COLOUR = Vector4f(33 / 255f, 33 / 255f, 33 / 255f, 1f)
+val BG_COLOUR: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
 
 var WIDTH = 800
 var HEIGHT = 600

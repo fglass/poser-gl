@@ -20,6 +20,7 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.LengthType.PIXEL
 import util.setSizeLimits
@@ -128,8 +129,7 @@ class EditorPanel(private val context: Processor): Panel() {
         nodePanel.add(transformations)
 
         val transformPanel = Panel(32f, 80f, 106f, 70f)
-        val colour = 71 / 255f
-        transformPanel.style.background.color = Vector4f(colour, colour, colour, 1f)
+        transformPanel.style.background.color = ColorUtil.fromInt(71, 71, 71, 1f)
         transformPanel.style.border.isEnabled = false
         nodePanel.add(transformPanel)
 

@@ -19,6 +19,7 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.LengthType.PIXEL
 import render.PolygonMode
@@ -125,11 +126,10 @@ class ManagerPanel(private val context: Processor): Panel() {
         modelPanel.viewport.style.setBottom(0f)
         modelPanel.verticalScrollBar.style.setBottom(0f)
 
-        val colour = 71 / 255f
         val containers = arrayOf(modelPanel.viewport, modelPanel.container)
         containers.forEach {
             it.style.border.isEnabled = false
-            it.style.background.color = Vector4f(colour, colour, colour, 1f)
+            it.style.background.color = ColorUtil.fromInt(71, 71, 71, 1f)
         }
 
         val components = arrayOf(modelPanel, modelPanel.verticalScrollBar)

@@ -13,6 +13,7 @@ import org.liquidengine.legui.image.Image
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.border.SimpleLineBorder
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
 
 open class ImageButton(position: Vector2f, var icon: Image, action: String): ImageView(icon) {
 
@@ -38,10 +39,7 @@ open class ImageButton(position: Vector2f, var icon: Image, action: String): Ima
 
     private fun addTooltip(action: String) {
         tooltip = Tooltip(action)
-
-        val colour = 35 / 255f
-        tooltip.style.border = SimpleLineBorder(Vector4f(colour, colour, colour, 1f), 1f)
-
+        tooltip.style.border = SimpleLineBorder(ColorUtil.fromInt(35, 35, 35, 1f), 1f)
         tooltip.style.setBorderRadius(0f)
         tooltip.style.background.color = ColorConstants.darkGray()
         tooltip.textState.textColor = ColorConstants.white()

@@ -11,7 +11,7 @@ import util.Maths
 private const val VERTEX_FILE = "shader/plane-vs.glsl"
 private const val FRAGMENT_FILE = "shader/plane-fs.glsl"
 
-class PlaneRenderer(private val framebuffer: Framebuffer) {
+class PlaneRenderer(private val framebuffer: Framebuffer) { // TODO: merge with line renderer
 
     private val quad: Model
     private val loader = Loader()
