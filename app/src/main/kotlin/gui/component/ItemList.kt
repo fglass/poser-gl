@@ -1,7 +1,6 @@
 package gui.component
 
 import Processor
-import gui.GuiManager
 import net.runelite.cache.definitions.ItemDefinition
 
 class ItemList(context: Processor): ElementList() {
@@ -12,7 +11,7 @@ class ItemList(context: Processor): ElementList() {
     init {
         var index = 0
         for (item in items.values) {
-            val element = ItemElement(item, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)
+            val element = ItemElement(item, context, listX, listY + index++ * listYOffset)
             element.addClickListener()
             elements[item.id] = element
             container.add(element)
@@ -39,8 +38,7 @@ class ItemList(context: Processor): ElementList() {
         }
     }
 
-    class ItemElement(var item: ItemDefinition, private val context: Processor, x: Float, y: Float,
-                           width: Float, height: Float): Element(x, y, width, height) {
+    class ItemElement(var item: ItemDefinition, private val context: Processor, x: Float, y: Float): Element(x, y) {
         init {
             updateText()
         }

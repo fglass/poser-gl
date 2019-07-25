@@ -68,7 +68,7 @@ abstract class ElementList: ScrollablePanel() {
         container.size.y = listY + filteredSize * listYOffset // Adjust scroll size
     }
 
-    abstract class Element(x: Float, y: Float, width: Float, height: Float): Button(x, y, width, height) {
+    abstract class Element(x: Float, y: Float): Button(x, y, 151f, 15f) {
 
         init {
             style.background.color = ColorConstants.darkGray()

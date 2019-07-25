@@ -2,7 +2,6 @@ package gui.component
 
 import Processor
 import animation.Animation
-import gui.GuiManager
 import org.liquidengine.legui.style.color.ColorConstants
 
 class AnimationList(private val context: Processor): ElementList() {
@@ -12,7 +11,7 @@ class AnimationList(private val context: Processor): ElementList() {
     init {
         var index = 0
         for (animation in context.cacheService.animations.values) {
-            val element = AnimationElement(animation, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)
+            val element = AnimationElement(animation, context, listX, listY + index++ * listYOffset)
             element.addClickListener()
             elements[animation.sequence.id] = element
             container.add(element)
@@ -22,7 +21,7 @@ class AnimationList(private val context: Processor): ElementList() {
 
     fun addElement(animation: Animation) {
         search("") // Reset search
-        val element = AnimationElement(animation, context, listX, container.size.y, containerX - 6, 15f)
+        val element = AnimationElement(animation, context, listX, container.size.y)
         element.addClickListener()
         elements[animation.sequence.id] = element
         container.add(element)
@@ -54,8 +53,8 @@ class AnimationList(private val context: Processor): ElementList() {
         }
     }
 
-    class AnimationElement(var animation: Animation, private val context: Processor, x: Float, y: Float,
-                           width: Float, height: Float): Element(x, y, width, height) {
+    class AnimationElement(var animation: Animation, private val context: Processor, x: Float, y: Float):
+                           Element(x, y) {
         init {
             updateText()
         }

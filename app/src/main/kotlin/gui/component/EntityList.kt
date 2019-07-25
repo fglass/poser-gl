@@ -1,7 +1,6 @@
 package gui.component
 
 import Processor
-import gui.GuiManager
 import net.runelite.cache.definitions.NpcDefinition
 
 class EntityList(context: Processor): ElementList() {
@@ -12,7 +11,7 @@ class EntityList(context: Processor): ElementList() {
     init {
         var index = 0
         for (entity in entities.values) {
-            val element = EntityElement(entity, context, listX, listY + index++ * listYOffset, containerX - 6, 15f)
+            val element = EntityElement(entity, context, listX, listY + index++ * listYOffset)
             element.addClickListener()
             elements[entity.id] = element
             container.add(element)
@@ -39,8 +38,7 @@ class EntityList(context: Processor): ElementList() {
         }
     }
 
-    class EntityElement(var entity: NpcDefinition, private val context: Processor, x: Float, y: Float,
-                        width: Float, height: Float): Element(x, y, width, height) {
+    class EntityElement(var entity: NpcDefinition, private val context: Processor, x: Float, y: Float): Element(x, y) {
         init {
             updateText()
         }
