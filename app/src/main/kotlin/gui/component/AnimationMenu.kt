@@ -43,22 +43,21 @@ class AnimationMenu(context: Processor): Panel() {
         play.setSizeLimits(14f, 14f)
         add(play)
 
-        val importButton = addMenuButton("import", context.importManager::import)
-        importButton.style.marginLeft = Auto.AUTO
-
-        addMenuButton("export", context.exportManager::openDialog)
-        addMenuButton("pack", context.cacheService::pack)
-
         val nodeToggle = ToggleButton(nodeIcon, "Skeleton", false)
-        nodeToggle.style.position = Style.PositionType.RELATIVE
-        nodeToggle.style.setMargin(PIXEL.length(3f), PIXEL.length(13f), PIXEL.length(0f), PIXEL.length(0f))
-        nodeToggle.setSizeLimits(20f, 20f)
-
+        nodeToggle.style.setMargin(4f, 0f, 0f, 27f)
+        nodeToggle.setSizeLimits(17f, 17f)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) {
             context.nodeRenderer.enabled = !context.nodeRenderer.enabled
         }
         add(nodeToggle)
+
+        val importButton = addMenuButton("import", context.importManager::import)
+        importButton.style.marginLeft = Auto.AUTO
+        addMenuButton("export", context.exportManager::openDialog)
+        
+        val packButton = addMenuButton("pack", context.cacheService::pack)
+        packButton.style.marginRight = PIXEL.length(10f)
     }
 
     private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
