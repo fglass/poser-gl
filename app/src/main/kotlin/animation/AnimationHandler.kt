@@ -139,15 +139,21 @@ class AnimationHandler(private val context: Processor) {
     }
 
     fun resetAnimation() {
-        if (currentAnimation != null) {
-            currentAnimation = null
-            timer = 0
-            frameCount = 0
-            frameLength = 0
-            previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
-            context.nodeRenderer.reset()
-            context.gui.editorPanel.reset()
-            context.gui.animationPanel.reset()
+        if (currentAnimation == null) {
+            return
         }
+
+        val previous = currentAnimation
+        currentAnimation = null
+        context.gui.listPanel.animationList.updateElement(previous)
+
+        timer = 0
+        frameCount = 0
+        frameLength = 0
+        previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
+
+        context.nodeRenderer.reset()
+        context.gui.editorPanel.reset()
+        context.gui.animationPanel.reset()
     }
 }

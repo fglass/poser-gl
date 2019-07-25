@@ -36,10 +36,6 @@ class AnimationList(private val context: Processor): ElementList() {
         }
     }
 
-    fun updateElement(index: Int?) {
-        elements[index]?.updateText()
-    }
-
     override fun getFiltered(input: String): List<Int> {
         return elements.keys.filter {
             it.toString().contains(input)
