@@ -128,6 +128,11 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     fun interpolateKeyframes() {
+        if (keyframes.size < 2) {
+            Dialog("Invalid Operation", "Insufficient number of keyframes", 260f, 70f).show(context.frame)
+            return
+        }
+
         val index = context.animationHandler.getFrameIndex(this)
         val first = keyframes[index]
         val second = keyframes[index + 1]

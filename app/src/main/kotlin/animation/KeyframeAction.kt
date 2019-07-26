@@ -17,7 +17,9 @@ enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, priva
     fun apply(context: Processor) {
         val current = context.animationHandler.currentAnimation?: return
         val useCurrent = this == COPY || this == DELETE && current.keyframes.size <= 1 ||
-                         this == PASTE && context.animationHandler.copiedFrame.id == -1
+                         this == PASTE && context.animationHandler.copiedFrame.id == -1 ||
+                         this == INTERPOLATE && current.keyframes.size < 2
+
         val animation = context.animationHandler.getAnimation(useCurrent)?: return
         action.invoke(animation)
     }
