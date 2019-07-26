@@ -115,7 +115,9 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun copyKeyframe() {
         val index = context.animationHandler.getFrameIndex(this)
-        context.animationHandler.copiedFrame = keyframes[index]
+        val keyframe = keyframes[index]
+        context.animationHandler.copiedFrame = keyframe
+        Dialog("Keyframe Action", "Successfully copied keyframe ${keyframe.id}", 260f, 70f).show(context.frame)
     }
 
     fun pasteKeyframe() {
