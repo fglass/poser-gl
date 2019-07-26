@@ -7,12 +7,14 @@ import org.liquidengine.legui.style.color.ColorConstants
 class AnimationList(private val context: Processor): ElementList() {
 
     private val elements = HashMap<Int, Element>()
+    private var selected: AnimationElement? = null
 
     init {
         var index = 0
         for (animation in context.cacheService.animations.values) {
             val element = AnimationElement(animation, context, listX, listY + index++ * listYOffset)
             element.addClickListener()
+
             elements[animation.sequence.id] = element
             container.add(element)
         }
@@ -23,8 +25,10 @@ class AnimationList(private val context: Processor): ElementList() {
         search("") // Reset search
         val element = AnimationElement(animation, context, listX, container.size.y)
         element.addClickListener()
+
         elements[animation.sequence.id] = element
         container.add(element)
+
         container.size.y += listYOffset
         verticalScrollBar.curValue = container.size.y // Scroll to bottom
     }
@@ -59,6 +63,7 @@ class AnimationList(private val context: Processor): ElementList() {
             updateText()
         }
 
+
         override fun updateText() {
             style.background.color = if (context.animationHandler.currentAnimation == animation) {
                 hoveredStyle.background.color
@@ -72,6 +77,9 @@ class AnimationList(private val context: Processor): ElementList() {
 
         override fun onClickEvent() {
             context.animationHandler.load(animation)
+            updateText()
+            context.gui.listPanel.animationList.selected?.updateText() // Unselect previous
+            context.gui.listPanel.animationList.selected = this
         }
     }
 }

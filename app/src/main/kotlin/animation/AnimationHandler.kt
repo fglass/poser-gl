@@ -32,8 +32,8 @@ class AnimationHandler(private val context: Processor) {
 
         setPlay(true)
         context.gui.animationPanel.setTimeline()
-        context.gui.listPanel.animationList.updateElement(previous)
-        context.gui.listPanel.animationList.updateElement(animation)
+        //context.gui.listPanel.animationList.updateElement(previous)
+        //context.gui.listPanel.animationList.updateElement(animation)
     }
 
     fun tick() {
