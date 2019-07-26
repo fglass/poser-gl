@@ -13,7 +13,7 @@ class EntityHandler(private val context: Processor) {
     }
 
     fun load(def: NpcDefinition) {
-        val composition = ArrayList<EntityComponent>()
+        val composition = HashSet<EntityComponent>()
         def.models.forEach {
             composition.add(EntityComponent(it, def.recolorToFind, def.recolorToReplace))
         }
@@ -21,7 +21,8 @@ class EntityHandler(private val context: Processor) {
         process(def.name, composition)
     }
 
-    fun process(name: String, composition: ArrayList<EntityComponent>) {
+    fun process(name: String, composition: HashSet<EntityComponent>) {
+        println("test")
         val def = when {
             composition.size == 1 -> {
                 context.cacheService.loadModelDefinition(composition.first())
