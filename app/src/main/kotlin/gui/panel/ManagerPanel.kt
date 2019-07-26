@@ -150,7 +150,7 @@ class ManagerPanel(private val context: Processor): Panel() {
 
         val init = 3
         val offset = 17f
-        modelPanel.container.size.y = max(init + entity.composition.size * offset, modelPanel.size.y + 1)
+        modelPanel.container.size.y = max(init + entity.composition.size * offset + 1, modelPanel.size.y + 1)
 
         for ((i, component) in entity.composition.withIndex()) {
             val y = init + i * offset

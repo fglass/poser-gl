@@ -37,13 +37,13 @@ class ImportManager(private val context: Processor) {
         val revision = stream.readUnsignedByte()
         val n = stream.readUnsignedShort()
 
-        for (i in 0 until n) {
+        repeat(n) {
             val length = stream.readUnsignedShort()
 
             val frameMap = FramemapDefinition()
             frameMap.decode(stream)
 
-            val keyframe = Keyframe(i, -1, length, frameMap)
+            val keyframe = Keyframe(it, -1, length, frameMap)
             keyframe.decode(stream)
 
             keyframe.modified = true
@@ -61,17 +61,17 @@ class ImportManager(private val context: Processor) {
         types = IntArray(length)
         frameMaps = arrayOfNulls<IntArray>(length)
 
-        for (i in 0 until length) {
-            types[i] = stream.readUnsignedByte()
+        repeat(length) {
+            types[it] = stream.readUnsignedByte()
         }
 
-        for (i in 0 until length) {
-            frameMaps[i] = IntArray(stream.readUnsignedByte())
+        repeat(length) {
+            frameMaps[it] = IntArray(stream.readUnsignedByte())
         }
 
-        for (i in 0 until length) {
-            for (j in 0 until frameMaps[i].size) {
-                frameMaps[i][j] = stream.readUnsignedByte()
+        repeat(length) {
+            repeat (frameMaps[it].size) { index ->
+                frameMaps[it][index] = stream.readUnsignedByte()
             }
         }
     }
@@ -80,7 +80,7 @@ class ImportManager(private val context: Processor) {
         frameMap.id = stream.readShort().toInt()
         val n = stream.readUnsignedByte()
 
-        for (i in 0 until n) {
+        repeat(n) {
             val id = stream.readShort().toInt()
             val x = stream.readShort().toInt()
             val y = stream.readShort().toInt()

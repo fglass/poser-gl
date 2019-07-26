@@ -53,17 +53,17 @@ class ExportManager(private val context: Processor) {
     private fun FramemapDefinition.encode(stream: DataOutputStream) {
         stream.writeByte(length)
 
-        for (i in 0 until length) {
-            stream.writeByte(types[i])
+        repeat(length) {
+            stream.writeByte(types[it])
         }
 
-        for (i in 0 until length) {
-            stream.writeByte(frameMaps[i].size)
+        repeat(length) {
+            stream.writeByte(frameMaps[it].size)
         }
 
-        for (i in 0 until length) {
-            for (j in 0 until frameMaps[i].size) {
-                stream.writeByte(frameMaps[i][j])
+        repeat(length) {
+            repeat(frameMaps[it].size) { index ->
+                stream.writeByte(frameMaps[it][index])
             }
         }
     }
@@ -87,10 +87,9 @@ class ExportManager(private val context: Processor) {
                     val child = it.value
                     stream.writeShort(child.id)
                     stream.writeByte(child.type.id)
-
-                    stream.writeShort(child.delta.x)
-                    stream.writeShort(child.delta.y)
-                    stream.writeShort(child.delta.z)
+                    repeat(3) { i ->
+                        stream.writeShort(child.delta[i])
+                    }
                 }
             }
         }
