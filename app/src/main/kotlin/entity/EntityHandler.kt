@@ -22,7 +22,6 @@ class EntityHandler(private val context: Processor) {
     }
 
     fun process(name: String, composition: HashSet<EntityComponent>) {
-        println("test")
         val def = when {
             composition.size == 1 -> {
                 context.cacheService.loadModelDefinition(composition.first())

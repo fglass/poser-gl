@@ -78,9 +78,9 @@ class ExportManager(private val context: Processor) {
 
             if (transformation is ReferenceNode) {
                 stream.writeShort(transformation.id)
-                stream.writeShort(transformation.delta.x)
-                stream.writeShort(transformation.delta.y)
-                stream.writeShort(transformation.delta.z)
+                repeat(3) { i ->
+                    stream.writeShort(transformation.delta[i])
+                }
                 stream.writeByte(transformation.children.size)
 
                 transformation.children.forEach {
@@ -96,6 +96,6 @@ class ExportManager(private val context: Processor) {
     }
 
     fun exportDat(name: String) {
-        // TODO
+        // TODO reverse decodeFrameArchive()
     }
 }
