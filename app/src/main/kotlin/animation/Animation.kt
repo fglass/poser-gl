@@ -4,6 +4,7 @@ import Processor
 import gui.component.Dialog
 import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
+import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3f
 import org.joml.Vector3i
@@ -33,6 +34,14 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             return
         }
 
+        parseSequence()
+        length = calculateLength()
+
+        equipItem(sequence.leftHandItem)
+        equipItem(sequence.rightHandItem)
+    }
+
+    private fun parseSequence() {
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
             val archiveId = frameId ushr 16
             val frameArchive = context.cacheService.getFrameArchive(archiveId)
@@ -75,7 +84,6 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             keyframes.add(keyframe)
             constructSkeleton(references)
         }
-        length = calculateLength()
     }
 
     private fun getDelta(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -86,7 +94,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
     }
 
-    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
+    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) { // TODO: improve parent assigning
         for (reference in references) {
             val frameMap = reference.frameMap.toSet()
             for (node in references) {
@@ -105,6 +113,14 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun calculateLength(): Int {
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
+    }
+
+    private fun equipItem(id: Int) {
+        val offset = 512
+        if (id >= offset) {
+            val item = context.cacheService.items[id - offset]?: return
+            context.entity?.addItem(item, context.entityHandler)
+        }
     }
 
     fun addKeyframe() {
