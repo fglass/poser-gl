@@ -36,8 +36,6 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         parseSequence()
         length = calculateLength()
-        equipItem(sequence.leftHandItem)
-        equipItem(sequence.rightHandItem)
     }
 
     private fun parseSequence() {
@@ -113,6 +111,11 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun calculateLength(): Int {
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
+    }
+
+    fun equipItems() {
+        equipItem(sequence.leftHandItem)
+        equipItem(sequence.rightHandItem)
     }
 
     private fun equipItem(id: Int) {

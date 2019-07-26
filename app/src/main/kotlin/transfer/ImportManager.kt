@@ -50,6 +50,8 @@ class ImportManager(private val context: Processor) {
             animation.keyframes.add(keyframe)
         }
 
+        animation.sequence.leftHandItem = stream.readUnsignedShort()
+        animation.sequence.rightHandItem = stream.readUnsignedShort()
         return animation
     }
 

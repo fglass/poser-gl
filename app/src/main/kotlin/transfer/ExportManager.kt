@@ -42,6 +42,10 @@ class ExportManager(private val context: Processor) {
             keyframe.encode(os)
         }
 
+        // Other sequence attributes
+        os.writeShort(animation.sequence.leftHandItem)
+        os.writeShort(animation.sequence.rightHandItem)
+
         os.close()
         return out.toByteArray()
     }

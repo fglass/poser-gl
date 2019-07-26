@@ -26,6 +26,7 @@ class AnimationHandler(private val context: Processor) {
             return
         }
 
+        animation.equipItems()
         frameLength = animation.keyframes.first().length
         currentAnimation = animation
 
