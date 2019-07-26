@@ -132,11 +132,13 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         val first = keyframes[index]
         val second = keyframes[index + 1]
 
-        val interpolated = Keyframe(keyframes.size, first) // TODO different size transformations
+        val largest = if (first.transformations.size > second.transformations.size) first else second
+        val smallest = if (largest == first) second else first
+        val interpolated = Keyframe(keyframes.size, largest)
 
-        for ((i, transformation) in interpolated.transformations.withIndex()) {
-            val delta = Vector3f(first.transformations[i].delta).lerp(Vector3f(second.transformations[i].delta), 0.5f)
-            transformation.delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
+        repeat(smallest.transformations.size) {
+            val delta = Vector3f(first.transformations[it].delta).lerp(Vector3f(second.transformations[it].delta), 0.5f)
+            interpolated.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
         }
         insertKeyframe(index + 1, interpolated)
     }

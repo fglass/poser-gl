@@ -63,10 +63,9 @@ class AnimationList(private val context: Processor): ElementList() {
             updateText()
         }
 
-
         override fun updateText() {
             style.background.color = if (context.animationHandler.currentAnimation == animation) {
-                hoveredStyle.background.color
+                hoveredStyle.background.color // Selected
             } else {
                 ColorConstants.darkGray()
             }
