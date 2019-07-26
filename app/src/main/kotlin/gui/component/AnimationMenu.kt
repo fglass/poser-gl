@@ -41,13 +41,13 @@ class AnimationMenu(context: Processor): Panel() {
                 context.animationHandler.togglePlay()
             }
         }
-        play.style.setMargin(4f, 0f, 0f, 11f)
+        play.style.setMargin(4f, 0f, 0f, 10f)
         play.setSizeLimits(17f, 17f)
         add(play)
 
         val nodeToggle = ImageButton(Vector2f(), nodeIcon, "Skeleton")
-        nodeToggle.style.setMargin(2f, 0f, 0f, 29f)
         nodeToggle.setSizeLimits(20f, 20f)
+        nodeToggle.style.setMargin(2f, 0f, 0f, 28f)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
@@ -76,7 +76,7 @@ class AnimationMenu(context: Processor): Panel() {
             }
         }
 
-        button.setSizeLimits(26f, 26f)
+        button.setSizeLimits(25f, 25f)
         button.style.position = Style.PositionType.RELATIVE
         add(button)
         return button

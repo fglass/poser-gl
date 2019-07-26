@@ -128,7 +128,7 @@ class EditorPanel(private val context: Processor): Panel() {
         }
         nodePanel.add(transformations)
 
-        val transformPanel = Panel(32f, 80f, 106f, 70f)
+        val transformPanel = Panel(32f, 82f, 106f, 70f)
         transformPanel.style.background.color = ColorUtil.fromInt(71, 71, 71, 1f)
         transformPanel.style.border.isEnabled = false
         nodePanel.add(transformPanel)
@@ -141,7 +141,7 @@ class EditorPanel(private val context: Processor): Panel() {
             transformPanel.add(label)
 
             val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
-                Pair(-255, 255), 35f, y, 60f, 15f)
+                                    Pair(-255, 255), 35f, y, 60f, 15f)
             sliders.add(slider)
             transformPanel.add(slider)
             y += 20
