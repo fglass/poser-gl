@@ -36,7 +36,6 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
         parseSequence()
         length = calculateLength()
-
         equipItem(sequence.leftHandItem)
         equipItem(sequence.rightHandItem)
     }
@@ -81,6 +80,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 keyframe.transformations.add(reference)
                 reference.children.forEach { keyframe.transformations.add(it.value) }
             }
+
             keyframes.add(keyframe)
             constructSkeleton(references)
         }

@@ -5,8 +5,10 @@ import gui.component.AnimationList
 import gui.component.EntityList
 import gui.component.ItemList
 import org.liquidengine.legui.component.Button
+import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput
+import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
@@ -63,9 +65,9 @@ class ListPanel(context: Processor): Panel() {
         val offset = 55f
 
         for ((i, name) in names.withIndex()) {
-            val tab = Button(name)
-            tab.setSizeLimits(offset - 1, 17f)
-            tab.style.setMargin(27f, 0f, 0f, 5f + i * offset)
+            val tab = Button("")
+            tab.setSizeLimits(offset - 1, 18f)
+            tab.style.setMargin(26f, 0f, 0f, 5f + i * offset)
             tab.style.focusedStrokeColor = null
             tab.style.setBorderRadius(1f)
 
@@ -77,6 +79,13 @@ class ListPanel(context: Processor): Panel() {
             }
             tabs.add(tab)
             add(tab)
+
+            val label = Label(name) // For more flexible aligning
+            label.setSizeLimits(30f, 15f)
+            label.style.setMargin(26f, 0f, 0f, 17f + i * offset)
+            label.textState.horizontalAlign = HorizontalAlign.CENTER
+            label.isFocusable = false
+            add(label)
         }
         selectTab(tabs.first())
     }
