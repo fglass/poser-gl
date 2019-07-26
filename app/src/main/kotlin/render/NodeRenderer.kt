@@ -23,7 +23,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
     private val shader = NodeShader()
     private var viewMatrix = Matrix4f()
 
-    val nodes = ArrayList<ReferenceNode>()
+    val nodes = HashSet<ReferenceNode>()
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
     var enabled = false
@@ -44,7 +44,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
             nodes.add(node)
         }
 
-        // Update parent too
+        // Update parent
         val parent = node.parent?: return
         parent.position = parent.getPosition(def)
     }

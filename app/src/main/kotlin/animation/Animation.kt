@@ -123,8 +123,8 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     fun pasteKeyframe() {
         val copied = context.animationHandler.copiedFrame
         if (copied.id != -1) {
-            val newIndex = context.animationHandler.getFrameIndex(this) + 1
             val keyframe = Keyframe(keyframes.size, copied) // Copy after to avoid shared references
+            val newIndex = context.animationHandler.getFrameIndex(this) + 1
             insertKeyframe(newIndex, keyframe)
         }
     }

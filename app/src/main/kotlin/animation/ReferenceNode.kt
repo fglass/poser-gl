@@ -67,4 +67,13 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         }
         return selected.id == id
     }
+
+    override fun equals(other: Any?): Boolean {
+        other as ReferenceNode
+        return position == other.position
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hashCode(position)
+    }
 }
