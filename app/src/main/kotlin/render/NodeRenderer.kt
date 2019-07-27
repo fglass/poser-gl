@@ -37,12 +37,10 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         if (!enabled) {
             return
         }
+        
         node.position = node.getPosition(def)
         node.highlighted = false
-
-        if (node.position != Vector3f(-0f, 0f, 0f)) {
-            nodes.add(node)
-        }
+        nodes.add(node)
 
         // Update parent
         val parent = node.parent?: return
