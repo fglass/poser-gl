@@ -4,6 +4,7 @@ import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
 import gui.component.Dialog
+import gui.component.LoadDialog
 import io.MouseHandler
 import model.ModelParser
 import mu.KotlinLogging
@@ -12,7 +13,6 @@ import org.joml.Vector2i
 import org.joml.Vector4f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
-import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.listener.processor.EventProcessor
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
@@ -128,7 +128,8 @@ class Processor {
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
         if (cacheService.loaded) {
-            entityHandler.loadPlayer()
+            //entityHandler.loadPlayer()
+            LoadDialog().show(frame)
         } else {
             Dialog("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
         }

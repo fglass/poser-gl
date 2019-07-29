@@ -37,7 +37,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         if (!enabled) {
             return
         }
-        
+
         node.position = node.getPosition(def)
         node.highlighted = false
         nodes.add(node)

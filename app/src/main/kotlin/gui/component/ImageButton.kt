@@ -14,7 +14,7 @@ import org.liquidengine.legui.style.border.SimpleLineBorder
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 
-open class ImageButton(position: Vector2f, var icon: Image, action: String): ImageView(icon) {
+open class ImageButton(position: Vector2f, private var icon: Image, action: String): ImageView(icon) {
 
     constructor(position: Vector2f, icon: Image): this(position, icon, "")
 

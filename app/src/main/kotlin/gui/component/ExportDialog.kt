@@ -8,12 +8,11 @@ import org.liquidengine.legui.event.MouseClickEvent
 import transfer.ExportManager
 import util.FileDialogs
 
-
 class ExportDialog(manager: ExportManager, title: String, width: Float, height: Float):
                    Dialog(title, "", width, height) {
 
     init {
-        this.remove(message)
+        container.remove(message)
         val group = RadioButtonGroup()
         val pgl = RadioButton(".pgl", 68f, 15f, 37f, 15f)
         val dat = RadioButton(".dat", 120f, 15f, 37f, 15f)
