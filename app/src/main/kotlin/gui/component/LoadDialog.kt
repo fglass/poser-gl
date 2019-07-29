@@ -58,11 +58,4 @@ class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f,
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         container.add(plugins)
     }
-
-    fun display(frame: Frame) {
-        show(frame)
-        // Align with grid
-        position.x -= 3
-        position.y -= 2
-    }
 }

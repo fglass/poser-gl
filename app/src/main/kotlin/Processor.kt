@@ -122,14 +122,14 @@ class Processor {
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
         gui = GuiManager(this)
 
-        nodeRenderer = NodeRenderer(this, framebuffer)
+        nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(framebuffer)
-        planeRenderer = PlaneRenderer(framebuffer)
+        planeRenderer = PlaneRenderer(this)
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
         if (cacheService.loaded) {
             //entityHandler.loadPlayer()
-            LoadDialog().display(frame)
+            LoadDialog().show(frame)
         } else {
             Dialog("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
         }

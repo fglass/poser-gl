@@ -1,5 +1,6 @@
 package render
 
+import Processor
 import entity.Camera
 import entity.ENTITY_POS
 import entity.ENTITY_ROT
@@ -11,7 +12,7 @@ import util.Maths
 private const val VERTEX_FILE = "shader/plane-vs.glsl"
 private const val FRAGMENT_FILE = "shader/plane-fs.glsl"
 
-class PlaneRenderer(private val framebuffer: Framebuffer) { // TODO: merge with line renderer
+class PlaneRenderer(private val context: Processor) { // TODO: merge with line renderer
 
     private val quad: Model
     private val loader = Loader()
@@ -40,6 +41,7 @@ class PlaneRenderer(private val framebuffer: Framebuffer) { // TODO: merge with 
     }
 
     fun render(camera: Camera) {
+        context.entity?: return // TODO display load dialog entirely separately
         prepare()
         loadMatrices(camera)
         glDrawArrays(GL_LINES, 0, quad.vertexCount)
@@ -54,7 +56,7 @@ class PlaneRenderer(private val framebuffer: Framebuffer) { // TODO: merge with 
 
     private fun loadMatrices(camera: Camera) {
         shader.loadTransformationMatrix(Maths.createTransformationMatrix(ENTITY_POS, ENTITY_ROT, 75f))
-        shader.loadProjectionMatrix(framebuffer.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.framebuffer.entityRenderer.projectionMatrix)
         shader.loadViewMatrix(camera)
     }
 

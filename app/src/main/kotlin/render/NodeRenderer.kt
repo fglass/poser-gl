@@ -15,7 +15,7 @@ import util.Maths
 
 const val NODE_SCALE = 2.5f
 
-class NodeRenderer(private val context: Processor, private val framebuffer: Framebuffer) {
+class NodeRenderer(private val context: Processor) {
 
     private val quad: Model
     private val loader = Loader()
@@ -93,12 +93,14 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
 
     private fun calculateRay(): Rayf {
         val mousePosition = Mouse.getCursorPosition()
-        mousePosition.sub(framebuffer.position)
+        mousePosition.sub(context.framebuffer.position)
 
         val origin = Vector3f()
         val dir = Vector3f()
-        Matrix4f(framebuffer.entityRenderer.projectionMatrix).mul(viewMatrix).unprojectRay(mousePosition.x, mousePosition.y,
-            intArrayOf(0, 0, framebuffer.size.x.toInt(), framebuffer.size.y.toInt()), origin, dir
+        Matrix4f(context.framebuffer.entityRenderer.projectionMatrix)
+            .mul(viewMatrix)
+            .unprojectRay(mousePosition.x, mousePosition.y, intArrayOf(0, 0,
+                context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir
         )
         return Rayf(origin, dir)
     }
@@ -108,7 +110,6 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
             action == MouseClickEvent.MouseClickAction.CLICK) {
             clickNode()
         }
-
     }
 
     private fun clickNode() {
@@ -149,7 +150,7 @@ class NodeRenderer(private val context: Processor, private val framebuffer: Fram
         modelMatrix.m22(viewMatrix.m22())
         modelMatrix.scale(NODE_SCALE)
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
-        shader.loadProjectionMatrix(framebuffer.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.framebuffer.entityRenderer.projectionMatrix)
     }
 
     private fun finish() {
