@@ -2,14 +2,11 @@ package gui.component
 
 import SPRITE_PATH
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.SelectBox
-import org.liquidengine.legui.component.TextInput
+import org.liquidengine.legui.component.*
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.image.BufferedImage
 
-class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f, 115f)  {
+class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f, 118f)  {
 
     private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
     private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
@@ -60,5 +57,12 @@ class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f,
         }
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         container.add(plugins)
+    }
+
+    fun display(frame: Frame) {
+        show(frame)
+        // Align with grid
+        position.x -= 3
+        position.y -= 2
     }
 }

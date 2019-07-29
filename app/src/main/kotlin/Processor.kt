@@ -129,7 +129,7 @@ class Processor {
 
         if (cacheService.loaded) {
             //entityHandler.loadPlayer()
-            LoadDialog().show(frame)
+            LoadDialog().display(frame)
         } else {
             Dialog("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
         }
