@@ -60,6 +60,12 @@ class CachePackerOSRS(private val service: CacheService): CachePacker {
             os.writeShort(frameId ushr 16)
         }
 
+        os.writeByte(6)
+        os.writeShort(sequence.leftHandItem)
+
+        os.writeByte(7)
+        os.writeShort(sequence.rightHandItem)
+
         os.writeByte(0) // Opcode 0: End of definition
         os.close()
         return out.toByteArray()

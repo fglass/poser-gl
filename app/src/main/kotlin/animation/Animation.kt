@@ -204,6 +204,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun toSequence(archiveId: Int): SequenceDefinition {
         val sequence = SequenceDefinition(sequence.id)
+
+        sequence.leftHandItem = this.sequence.leftHandItem
+        sequence.rightHandItem = this.sequence.rightHandItem
+
         sequence.frameLenghts = IntArray(keyframes.size)
         sequence.frameIDs = IntArray(keyframes.size)
 
