@@ -29,24 +29,22 @@ class CacheService(private val context: Processor) {
     var animations = HashMap<Int, Animation>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
-    fun init(cachePath: String) {
+    fun init(cachePath: String, pluginName: String) {
         this.cachePath = cachePath
+        loader = when(pluginName) {
+            "OSRS" -> CacheLoaderOSRS(context, this)
+            "317" -> AltCacheLoader317(context, this)
+            else -> CacheLoader317(context, this)
+        }
+
         try {
             val library = CacheLibrary(cachePath)
             osrs = library.isOSRS
-
-            val revision = if (osrs) "OSRS" else "317"
-            logger.info { "Loaded $revision cache" }
-            loader = if (osrs) CacheLoaderOSRS(context, this) else CacheLoader317(context, this)
             load(library)
+            library.close()
+            logger.info { "Loaded cache $cachePath with $pluginName plugin" }
         } catch (e: Exception) {
-            if (!osrs && loader is CacheLoader317) {
-                logger.info { "Failed to load cache. Switching to alternate 317 cache loader" }
-                loader = AltCacheLoader317(context, this)
-                load(CacheLibrary(cachePath))
-            } else {
-                logger.error(e) { "Failed to load cache" }
-            }
+            logger.error(e) { "Failed to load cache $cachePath with $pluginName plugin" }
         }
     }
 
@@ -60,8 +58,11 @@ class CacheService(private val context: Processor) {
 
         loader.loadSequences(library)
         logger.info { "Loaded ${animations.size} sequences" }
+
+        if (entities.size <= 1) {
+            throw Exception("Cache loaded incorrectly")
+        }
         loaded = true
-        library.close()
     }
 
     private fun addPlayer() {

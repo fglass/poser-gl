@@ -3,7 +3,6 @@ import cache.CacheService
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
-import gui.component.Dialog
 import gui.component.LoadDialog
 import io.MouseHandler
 import model.ModelParser

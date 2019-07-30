@@ -16,6 +16,7 @@ class LoadDialog(private val context: Processor):
       Dialog("Cache Loader", "Please backup your cache first", 260f, 109f)  {
 
     private lateinit var path: TextInput
+    private lateinit var plugins: SelectBox<String>
     private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
     private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
     private val loadIcon = BufferedImage(SPRITE_PATH + "load.png")
@@ -62,7 +63,7 @@ class LoadDialog(private val context: Processor):
         pluginLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(pluginLabel)
 
-        val plugins = SelectBox<String>(76f, 63f, 112f, 15f)
+        plugins = SelectBox(76f, 63f, 112f, 15f)
         plugins.addElement("OSRS")
         plugins.addElement("317")
         plugins.addElement("Alternate 317")
@@ -89,8 +90,14 @@ class LoadDialog(private val context: Processor):
     }
 
     private fun loadCache() {
-        context.cacheService.init(path.textState.text)
-        
+        if (path.textState.text.isEmpty()) {
+            message.textState.text = "Please select a cache first"
+            return
+        }
+
+        // Try to load selected cache
+        context.cacheService.init(path.textState.text, plugins.selection)
+
         if (context.cacheService.loaded) {
             context.gui = GuiManager(context)
             context.entityHandler.loadPlayer()
