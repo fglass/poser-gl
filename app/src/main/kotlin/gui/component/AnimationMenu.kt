@@ -79,6 +79,7 @@ class AnimationMenu(context: Processor): Panel() {
         
         val packButton = addMenuButton("pack", context.cacheService::pack)
         packButton.style.marginRight = PIXEL.length(10f)
+
     }
 
     private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
@@ -91,7 +92,8 @@ class AnimationMenu(context: Processor): Panel() {
             }
         }
 
-        button.setSizeLimits(25f, 25f)
+        button.setSizeLimits(23f, 23f)
+        button.style.marginTop = PIXEL.length(1f)
         button.style.position = Style.PositionType.RELATIVE
         add(button)
         return button
