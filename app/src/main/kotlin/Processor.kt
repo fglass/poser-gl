@@ -38,24 +38,13 @@ import java.util.*
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.1"
-const val CACHE_PATH = "../repository/cache/"
+const val CACHE_PATH = "../repository/cache/" // TODO: remove
 const val SPRITE_PATH = "sprite/"
-val BG_COLOUR: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
 
+val BG_COLOUR: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
 var WIDTH = 800
 var HEIGHT = 600
 private val logger = KotlinLogging.logger {}
-
-fun main() {
-    try {
-        if (restartJVM()) {
-            return
-        }
-        Processor().run()
-    } catch (e: Exception) {
-        logger.error(e) { "Main exception encountered" }
-    }
-}
 
 class Processor {
 
@@ -120,7 +109,7 @@ class Processor {
 
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
-        
+
         nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(framebuffer)
         planeRenderer = PlaneRenderer(this)
@@ -182,6 +171,17 @@ class Processor {
 
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
         return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
+    }
+}
+
+fun main() {
+    try {
+        if (restartJVM()) {
+            return
+        }
+        Processor().run()
+    } catch (e: Exception) {
+        logger.error(e) { "Main exception encountered" }
     }
 }
 

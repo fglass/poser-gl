@@ -13,11 +13,13 @@ import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialogs
 
 class LoadDialog(private val context: Processor):
-      Dialog("Cache Loader", "Please backup your cache first", 260f, 136f)  {
+      Dialog("Cache Loader", "Please backup your cache first", 260f, 109f)  {
 
     private lateinit var path: TextInput
     private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
     private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
+    private val loadIcon = BufferedImage(SPRITE_PATH + "load.png")
+    private val loadHoveredIcon = BufferedImage(SPRITE_PATH + "load-hovered.png")
 
     init {
         isDraggable = false
@@ -41,9 +43,9 @@ class LoadDialog(private val context: Processor):
         path.style.focusedStrokeColor = null
         container.add(path)
 
-        val open = ImageButton(Vector2f(174f, 35f), openIcon)
+        val open = ImageButton(Vector2f(175f, 35f), openIcon)
         open.hoveredIcon = openHoveredIcon
-        open.size = Vector2f(14f, 15f)
+        open.size = Vector2f(13f, 14f)
 
         open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
@@ -73,8 +75,9 @@ class LoadDialog(private val context: Processor):
     }
 
     private fun addLoadButton() {
-        val load = Button("Load", 107f, 90f, 45f, 15f)
-        load.style.focusedStrokeColor = null
+        val load = ImageButton(Vector2f(235f, 63f), loadIcon)
+        load.hoveredIcon = loadHoveredIcon
+        load.size = Vector2f(16f, 16f)
 
         load.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
@@ -87,7 +90,7 @@ class LoadDialog(private val context: Processor):
 
     private fun loadCache() {
         context.cacheService.init(path.textState.text)
-
+        
         if (context.cacheService.loaded) {
             context.gui = GuiManager(context)
             context.entityHandler.loadPlayer()
