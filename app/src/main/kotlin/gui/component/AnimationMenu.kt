@@ -23,6 +23,8 @@ class AnimationMenu(context: Processor): Panel() {
     private val pauseHoveredIcon = BufferedImage(SPRITE_PATH + "pause-hovered.png")
     private val nodeIcon = BufferedImage(SPRITE_PATH + "node.png")
     private val nodeToggledIcon = BufferedImage(SPRITE_PATH + "node-toggled.png")
+    private val infoIcon = BufferedImage(SPRITE_PATH + "info.png")
+    private val infoHoveredIcon = BufferedImage(SPRITE_PATH + "info-hovered.png")
 
     init {
         style.display = Style.DisplayType.FLEX
@@ -45,9 +47,15 @@ class AnimationMenu(context: Processor): Panel() {
         play.setSizeLimits(17f, 17f)
         add(play)
 
+        val infoButton = ImageButton(Vector2f(), infoIcon, "Information")
+        infoButton.hoveredIcon = infoHoveredIcon
+        infoButton.setSizeLimits(22f, 21f)
+        infoButton.style.setMargin(3f, 0f, 0f, 28f)
+        add(infoButton)
+
         val nodeToggle = ImageButton(Vector2f(), nodeIcon, "Skeleton")
-        nodeToggle.setSizeLimits(20f, 20f)
-        nodeToggle.style.setMargin(2f, 0f, 0f, 28f)
+        nodeToggle.setSizeLimits(19f, 18f)
+        nodeToggle.style.setMargin(3f, 0f, 0f, 51f)
         nodeToggle.style.setBorderRadius(1f)
         nodeToggle.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&

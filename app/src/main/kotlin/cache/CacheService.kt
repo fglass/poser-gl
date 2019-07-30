@@ -31,7 +31,7 @@ class CacheService(private val context: Processor) {
 
     fun init(cachePath: String, pluginName: String) {
         this.cachePath = cachePath
-        loader = when(pluginName) {
+        loader = when (pluginName) {
             "OSRS" -> CacheLoaderOSRS(context, this)
             "317" -> AltCacheLoader317(context, this)
             else -> CacheLoader317(context, this)
