@@ -51,6 +51,13 @@ class AnimationMenu(context: Processor): Panel() {
         infoButton.hoveredIcon = infoHoveredIcon
         infoButton.setSizeLimits(22f, 21f)
         infoButton.style.setMargin(3f, 0f, 0f, 28f)
+        infoButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                val animation = context.animationHandler.currentAnimation?: return@addListener
+                SequenceDialog(animation.sequence).show(context.frame)
+            }
+        }
         add(infoButton)
 
         val nodeToggle = ImageButton(Vector2f(), nodeIcon, "Skeleton")
