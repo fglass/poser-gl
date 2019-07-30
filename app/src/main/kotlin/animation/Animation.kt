@@ -21,6 +21,8 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         animation.keyframes.forEach {
             keyframes.add(Keyframe(it.id, it))
         }
+        sequence.leftHandItem = animation.sequence.leftHandItem
+        sequence.rightHandItem = animation.sequence.rightHandItem
         modified = true
         length = calculateLength()
     }

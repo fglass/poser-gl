@@ -7,7 +7,8 @@ import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.component.event.widget.WidgetCloseEvent
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
-class SequenceDialog(private val context: Processor, private val animation: Animation): Dialog("Sequence ${animation.sequence.id}", "", 260f, 69f) {
+class SequenceDialog(private val context: Processor, private val animation: Animation):
+      Dialog("Sequence ${animation.sequence.id}", "", 260f, 69f) {
 
     init {
         isDraggable = false
@@ -35,15 +36,15 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
 
         listenerMap.addListener(WidgetCloseEvent::class.java) {
             val mainHand = mainHandId.textState.text.toIntOrNull()?: -1
-            if (validItem(mainHand)) {
-                animation.sequence.leftHandItem = mainHand
-            }
-
             val offHand = offHandId.textState.text.toIntOrNull()?: -1
-            if (validItem(offHand)) {
+
+            if ((mainHand != animation.sequence.leftHandItem || offHand != animation.sequence.rightHandItem)
+                && validItem(mainHand) && validItem(offHand)) {
+                val animation = context.animationHandler.getAnimation()?: return@addListener // Animation modified
+                animation.sequence.leftHandItem = mainHand
                 animation.sequence.rightHandItem = offHand
+                animation.equipItems()
             }
-            animation.equipItems()
         }
     }
 

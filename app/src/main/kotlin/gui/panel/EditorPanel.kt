@@ -69,7 +69,7 @@ class EditorPanel(private val context: Processor): Panel() {
         val length = Label("Length:", 35f, 40f, 50f, 15f)
         framePanel.add(length)
 
-        frameLength = TextSlider({ context.animationHandler.getAnimation(false)?.changeKeyframeLength(it) },
+        frameLength = TextSlider({ context.animationHandler.getAnimation()?.changeKeyframeLength(it) },
             Pair(1, 99), 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
