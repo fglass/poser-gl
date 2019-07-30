@@ -1,30 +1,31 @@
 package gui.component
 
 import SPRITE_PATH
+import Processor
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
+import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialogs
 
-class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f, 118f)  {
+class LoadDialog(private val context: Processor):
+      Dialog("Cache Loader", "Please backup your cache first", 260f, 136f)  {
 
+    private lateinit var path: TextInput
     private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
     private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
 
     init {
         isDraggable = false
         isCloseable = false
-        container.remove(message)
-
-        val backup = Label("Please backup your cache first", 0f, 8f, size.x, 15f)
-        backup.textState.horizontalAlign = HorizontalAlign.CENTER
-        container.add(backup)
+        message.position.y -= 7f
 
         addPath()
         addPlugin()
+        addLoadButton()
     }
 
     private fun addPath() {
@@ -35,11 +36,11 @@ class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f,
         val box = Panel(172f, 35f, 16f, 15f)
         container.add(box)
 
-        val path = TextInput(76f, 35f, 97f, 15f)
+        path = TextInput(76f, 35f, 97f, 15f)
         path.style.focusedStrokeColor = null
         container.add(path)
 
-        val open = ImageButton(Vector2f(174f, 35f), openIcon, "Open")
+        val open = ImageButton(Vector2f(174f, 35f), openIcon)
         open.hoveredIcon = openHoveredIcon
         open.size = Vector2f(14f, 15f)
 
@@ -68,5 +69,30 @@ class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f,
         }
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         container.add(plugins)
+    }
+
+    private fun addLoadButton() {
+        val load = Button("Load", 107f, 90f, 45f, 15f)
+        load.style.focusedStrokeColor = null
+
+        load.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                loadCache()
+            }
+        }
+        container.add(load)
+    }
+
+    private fun loadCache() {
+        context.cacheService.init(path.textState.text)
+
+        if (context.cacheService.loaded) {
+            context.entityHandler.loadPlayer()
+            close()
+        } else {
+            message.textState.text = "Unable to load a valid cache"
+            message.textState.textColor = ColorConstants.lightRed()
+        }
     }
 }

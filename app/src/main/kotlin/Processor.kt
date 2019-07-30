@@ -127,12 +127,8 @@ class Processor {
         planeRenderer = PlaneRenderer(this)
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
 
-        if (cacheService.loaded) {
-            //entityHandler.loadPlayer()
-            LoadDialog().show(frame)
-        } else {
-            Dialog("Cache Error", "Unable to load a valid cache", 260f, 70f).show(frame)
-        }
+        LoadDialog(this).show(frame)
+
 
         // Render loop
         while (running) {

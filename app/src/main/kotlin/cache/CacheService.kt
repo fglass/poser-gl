@@ -1,6 +1,5 @@
 package cache
 
-import CACHE_PATH
 import Processor
 import animation.Animation
 import cache.load.*
@@ -20,6 +19,7 @@ private val logger = KotlinLogging.logger {}
 
 class CacheService(private val context: Processor) {
 
+    private var cachePath = ""
     lateinit var loader: CacheLoader
     var osrs = true
     var loaded = false
@@ -29,27 +29,28 @@ class CacheService(private val context: Processor) {
     var animations = HashMap<Int, Animation>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
-    init {
+    fun init(cachePath: String) {
+        this.cachePath = cachePath
         try {
-            val library = CacheLibrary(CACHE_PATH)
+            val library = CacheLibrary(cachePath)
             osrs = library.isOSRS
 
             val revision = if (osrs) "OSRS" else "317"
             logger.info { "Loaded $revision cache" }
             loader = if (osrs) CacheLoaderOSRS(context, this) else CacheLoader317(context, this)
-            init(library)
+            load(library)
         } catch (e: Exception) {
             if (!osrs && loader is CacheLoader317) {
                 logger.info { "Failed to load cache. Switching to alternate 317 cache loader" }
                 loader = AltCacheLoader317(context, this)
-                init(CacheLibrary(CACHE_PATH))
+                load(CacheLibrary(cachePath))
             } else {
                 logger.error(e) { "Failed to load cache" }
             }
         }
     }
 
-    fun init(library: CacheLibrary) {
+    private fun load(library: CacheLibrary) {
         addPlayer()
         loader.loadNpcDefintions(library)
         logger.info { "Loaded ${entities.size} entities" }
@@ -71,7 +72,7 @@ class CacheService(private val context: Processor) {
     }
 
     fun loadModelDefinition(component: EntityComponent): ModelDefinition {
-        val library = CacheLibrary(CACHE_PATH)
+        val library = CacheLibrary(cachePath)
         val modelIndex = if (osrs) IndexType.MODEL.idOsrs else IndexType.MODEL.id317
 
         val model = library.getIndex(modelIndex).getArchive(component.id).getFile(0)

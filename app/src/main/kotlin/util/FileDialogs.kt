@@ -11,8 +11,8 @@ object FileDialogs {
 
         val res = if (!folder) NativeFileDialog.NFD_OpenDialog(filter, defaultPath, outPath)
                   else NativeFileDialog.NFD_PickFolder(defaultPath, outPath)
-        var path: String? = null
 
+        var path: String? = null
         if (res == NativeFileDialog.NFD_OKAY) {
             path = outPath.stringUTF8
             NativeFileDialog.nNFD_Free(outPath.get(0))
@@ -32,7 +32,6 @@ object FileDialogs {
         }
 
         MemoryUtil.memFree(outPath)
-
         return path
     }
 
