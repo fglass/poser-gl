@@ -1,11 +1,13 @@
 package gui.component
 
-import net.runelite.cache.definitions.SequenceDefinition
+import Processor
+import animation.Animation
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.TextInput
+import org.liquidengine.legui.component.event.widget.WidgetCloseEvent
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
-class SequenceDialog(private val sequence: SequenceDefinition): Dialog("Sequence ${sequence.id}", "", 260f, 69f) {
+class SequenceDialog(private val context: Processor, private val animation: Animation): Dialog("Sequence ${animation.sequence.id}", "", 260f, 69f) {
 
     init {
         isDraggable = false
@@ -13,22 +15,40 @@ class SequenceDialog(private val sequence: SequenceDefinition): Dialog("Sequence
     }
 
     private fun addAttributes() {
-        val leftLabel = Label("Left Hand:", 24f, 7f, 45f, 15f)
-        leftLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
-        leftLabel.style.focusedStrokeColor = null
-        container.add(leftLabel)
+        val mainHandLabel = Label("Main Hand:", 24f, 7f, 45f, 15f)
+        mainHandLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        mainHandLabel.style.focusedStrokeColor = null
+        container.add(mainHandLabel)
 
-        val leftHandItem = TextInput(sequence.leftHandItem.toString(), 76f, 7f, 65f, 15f)
-        leftHandItem.style.focusedStrokeColor = null
-        container.add(leftHandItem)
+        val mainHandId = TextInput(animation.sequence.leftHandItem.toString(), 76f, 7f, 65f, 15f)
+        mainHandId.style.focusedStrokeColor = null
+        container.add(mainHandId)
 
-        val rightLabel = Label("Right Hand:", 24f, 27f, 45f, 15f)
-        rightLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
-        rightLabel.style.focusedStrokeColor = null
-        container.add(rightLabel)
+        val offHandLabel = Label("Off Hand:", 24f, 27f, 45f, 15f)
+        offHandLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        offHandLabel.style.focusedStrokeColor = null
+        container.add(offHandLabel)
 
-        val rightHandItem = TextInput(sequence.rightHandItem.toString(), 76f, 27f, 65f, 15f)
-        rightHandItem.style.focusedStrokeColor = null
-        container.add(rightHandItem)
+        val offHandId = TextInput(animation.sequence.rightHandItem.toString(), 76f, 27f, 65f, 15f)
+        offHandId.style.focusedStrokeColor = null
+        container.add(offHandId)
+
+        listenerMap.addListener(WidgetCloseEvent::class.java) {
+            val mainHand = mainHandId.textState.text.toIntOrNull()?: -1
+            if (validItem(mainHand)) {
+                animation.sequence.leftHandItem = mainHand
+            }
+
+            val offHand = offHandId.textState.text.toIntOrNull()?: -1
+            if (validItem(offHand)) {
+                animation.sequence.rightHandItem = offHand
+            }
+            animation.equipItems()
+        }
+    }
+
+    private fun validItem(id: Int): Boolean {
+        val offset = 512
+        return id == -1 || context.cacheService.items[id - offset] != null
     }
 }
