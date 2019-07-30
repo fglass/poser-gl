@@ -4,7 +4,10 @@ import SPRITE_PATH
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
+import org.liquidengine.legui.input.Mouse
+import util.FileDialogs
 
 class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f, 118f)  {
 
@@ -39,6 +42,14 @@ class LoadDialog: Dialog("Cache Loader", "Please backup your cache first", 260f,
         val open = ImageButton(Vector2f(174f, 35f), openIcon, "Open")
         open.hoveredIcon = openHoveredIcon
         open.size = Vector2f(14f, 15f)
+
+        open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
+                event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                path.textState.text = FileDialogs.openFile(listOf(), ".", true)?: return@addListener
+            }
+        }
+
         container.add(open)
     }
 

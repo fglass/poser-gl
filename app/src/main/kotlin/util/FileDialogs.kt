@@ -5,11 +5,12 @@ import org.lwjgl.util.nfd.NativeFileDialog
 
 object FileDialogs {
 
-    fun openFile(filters: List<String>, defaultPath: String): String? {
+    fun openFile(filters: List<String>, defaultPath: String, folder: Boolean = false): String? {
         val filter = filters.joinToString(",") { it.replace("*.", "") }
         val outPath = MemoryUtil.memAllocPointer(1)
 
-        val res = NativeFileDialog.NFD_OpenDialog(filter, defaultPath, outPath)
+        val res = if (!folder) NativeFileDialog.NFD_OpenDialog(filter, defaultPath, outPath)
+                  else NativeFileDialog.NFD_PickFolder(defaultPath, outPath)
         var path: String? = null
 
         if (res == NativeFileDialog.NFD_OKAY) {
