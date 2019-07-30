@@ -55,7 +55,7 @@ class AnimationMenu(context: Processor): Panel() {
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 val animation = context.animationHandler.currentAnimation?: return@addListener
-                SequenceDialog(animation.sequence).show(context.frame)
+                SequenceDialog(context, animation).show(context.frame)
             }
         }
         add(infoButton)
