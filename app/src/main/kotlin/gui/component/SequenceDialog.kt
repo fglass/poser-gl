@@ -12,6 +12,8 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 class SequenceDialog(private val context: Processor, private val animation: Animation):
       Dialog("Sequence ${animation.sequence.id}", "", 260f, 117f)  {
 
+    private lateinit var framePanel: ScrollablePanel
+
     init {
         isDraggable = false
         addItems()
@@ -43,7 +45,7 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
         archiveLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(archiveLabel)
 
-        val id = if (animation.modified) {
+        val archiveId = if (animation.modified) {
             val library = CacheLibrary(context.cacheService.cachePath)
             val newId = context.cacheService.getMaxFrameArchive(library) + 1
             library.close()
@@ -52,27 +54,34 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
             animation.sequence.frameIDs.first() ushr 16
         }
 
-        val archiveId = TextSlider({ }, Pair(0, 9999), 75f, 45f, 65f, 15f)
-        archiveId.setValue(id)
-        container.add(archiveId)
+        val archiveSlider = TextSlider({ setFrames(it) }, Pair(0, 9999), 75f, 45f, 65f, 15f)
+        archiveSlider.setValue(archiveId)
+        container.add(archiveSlider)
 
         val frameLabel = Label("Frame Ids:", 22f, 65f, 45f, 15f)
         frameLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(frameLabel)
 
-        val framePanel = ScrollablePanel(75f, 65f, 177f, 26f)
+        framePanel = ScrollablePanel(75f, 65f, 177f, 26f)
         framePanel.remove(framePanel.verticalScrollBar)
         framePanel.horizontalScrollBar.style.focusedStrokeColor = null
         framePanel.horizontalScrollBar.style.setRight(0f)
         framePanel.viewport.style.setRight(0f)
+        framePanel.container.style.focusedStrokeColor = null
         framePanel.style.background.color = BG_COLOUR
         container.add(framePanel)
+        setFrames(archiveId)
+    }
 
-        val sequence = if (animation.modified) animation.toSequence(id) else animation.sequence
+    private fun setFrames(archiveId: Int) {
+        val sequence = animation.toSequence(archiveId)
         val list = sequence.frameIDs.joinToString()
         val width = list.length * 6.5f
+
         val frameList = Label(list, 2f, 1f, width, 15f)
+
         framePanel.container.size.x = width
+        framePanel.container.clearChildComponents()
         framePanel.container.add(frameList)
     }
 }

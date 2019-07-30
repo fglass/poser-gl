@@ -50,7 +50,7 @@ class Processor {
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
     lateinit var nodeRenderer: NodeRenderer
-    lateinit var lineRenderer: LineRenderer
+    private lateinit var lineRenderer: LineRenderer
     lateinit var planeRenderer: PlaneRenderer
 
     var entity: Entity? = null
