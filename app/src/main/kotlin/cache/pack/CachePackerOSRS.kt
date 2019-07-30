@@ -1,6 +1,5 @@
 package cache.pack
 
-import CACHE_PATH
 import animation.Animation
 import cache.CacheService
 import cache.IndexType
@@ -13,7 +12,7 @@ import java.io.DataOutputStream
 class CachePackerOSRS(private val service: CacheService): CachePacker {
 
     override fun packAnimation(animation: Animation, listener: ProgressListener) {
-        val library = CacheLibrary(CACHE_PATH)
+        val library = CacheLibrary(service.cachePath)
         val frameIndex = IndexType.FRAME.idOsrs
         val newArchiveId = service.getMaxFrameArchive(library) + 1
         library.getIndex(frameIndex).addArchive(newArchiveId)

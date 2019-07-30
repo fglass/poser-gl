@@ -37,7 +37,6 @@ import java.util.*
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.1"
-const val CACHE_PATH = "../repository/cache/" // TODO: remove
 const val SPRITE_PATH = "sprite/"
 
 val BG_COLOUR: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)

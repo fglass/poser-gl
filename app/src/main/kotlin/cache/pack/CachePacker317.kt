@@ -1,12 +1,10 @@
 package cache.pack
 
-import CACHE_PATH
 import animation.Animation
 import cache.CacheService
 import cache.IndexType
 import cache.ProgressListener
 import cache.load.AltCacheLoader317
-import cache.load.CacheLoader317
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
@@ -16,7 +14,7 @@ import java.io.DataOutputStream
 class CachePacker317(private val service: CacheService): CachePacker {
 
     override fun packAnimation(animation: Animation, listener: ProgressListener) {
-        val library = CacheLibrary(CACHE_PATH)
+        val library = CacheLibrary(service.cachePath)
         val file = encodeAnimation(animation)?: return
 
         val frameIndex = IndexType.FRAME.id317
@@ -111,30 +109,6 @@ class CachePacker317(private val service: CacheService): CachePacker {
 
         for (length in sequence.frameLenghts) {
             os.writeByte(length)
-        }
-
-        os.writeByte(0)
-        os.close()
-        return out.toByteArray()
-    }
-
-    private fun encodeSequence2(sequence: SequenceDefinition): ByteArray {
-        val out = ByteArrayOutputStream()
-        val os = DataOutputStream(out)
-
-        os.writeByte(1)
-        os.writeShort(sequence.frameIDs.size)
-
-        for (length in sequence.frameLenghts) {
-            os.writeShort(length)
-        }
-
-        for (frameId in sequence.frameIDs) {
-            os.writeShort(frameId and 0xFFFF)
-        }
-
-        for (frameId in sequence.frameIDs) {
-            os.writeShort(frameId ushr 16)
         }
 
         os.writeByte(0)

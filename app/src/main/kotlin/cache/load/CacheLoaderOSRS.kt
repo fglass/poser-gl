@@ -1,6 +1,5 @@
 package cache.load
 
-import CACHE_PATH
 import Processor
 import animation.Animation
 import cache.CacheService
@@ -29,7 +28,7 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
     }
 
     override fun loadFrameArchive(archiveId: Int) {
-        val library = CacheLibrary(CACHE_PATH)
+        val library = CacheLibrary(service.cachePath)
         val frameIndex = IndexType.FRAME.idOsrs
 
         val archive = library.getIndex(frameIndex).getArchive(archiveId)?: return

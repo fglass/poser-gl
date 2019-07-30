@@ -19,8 +19,8 @@ private val logger = KotlinLogging.logger {}
 
 class CacheService(private val context: Processor) {
 
-    private var cachePath = ""
     lateinit var loader: CacheLoader
+    var cachePath = ""
     var osrs = true
     var loaded = false
 
