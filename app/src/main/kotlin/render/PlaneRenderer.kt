@@ -41,7 +41,6 @@ class PlaneRenderer(private val context: Processor) { // TODO: merge with line r
     }
 
     fun render(camera: Camera) {
-        context.entity?: return // TODO display load dialog entirely separately
         prepare()
         loadMatrices(camera)
         glDrawArrays(GL_LINES, 0, quad.vertexCount)

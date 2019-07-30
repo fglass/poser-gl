@@ -2,6 +2,7 @@ package gui.component
 
 import SPRITE_PATH
 import Processor
+import gui.GuiManager
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -88,6 +89,7 @@ class LoadDialog(private val context: Processor):
         context.cacheService.init(path.textState.text)
 
         if (context.cacheService.loaded) {
+            context.gui = GuiManager(context)
             context.entityHandler.loadPlayer()
             close()
         } else {

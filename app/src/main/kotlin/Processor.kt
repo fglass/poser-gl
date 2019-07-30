@@ -117,18 +117,16 @@ class Processor {
 
         val vSync = VSyncTimer()
         val shader = StaticShader()
+
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
-
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
-        gui = GuiManager(this)
-
+        
         nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(framebuffer)
         planeRenderer = PlaneRenderer(this)
+
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-
         LoadDialog(this).show(frame)
-
 
         // Render loop
         while (running) {
