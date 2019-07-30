@@ -4,6 +4,7 @@ import Processor
 import animation.Animation
 import animation.Keyframe
 import animation.ReferenceNode
+import gui.component.DatDialog
 import gui.component.ExportDialog
 import net.runelite.cache.definitions.FramemapDefinition
 import org.liquidengine.legui.component.Dialog
@@ -97,5 +98,6 @@ class ExportManager(private val context: Processor) {
 
     fun exportDat(name: String) {
         // TODO reverse decodeFrameArchive()
+        //DatDialog(context, animation).show(context.frame)
     }
 }
