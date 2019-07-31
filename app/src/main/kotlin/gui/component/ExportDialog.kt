@@ -8,15 +8,15 @@ import org.liquidengine.legui.event.MouseClickEvent
 import transfer.ExportManager
 import util.FileDialogs
 
-class ExportDialog(manager: ExportManager): Dialog("Export Manager", "", 230f, 92f) {
+class ExportDialog(manager: ExportManager): Dialog("Export Manager", "", 230f, 80f) {
 
     init {
         isDraggable = false
         container.remove(message)
 
         val group = RadioButtonGroup()
-        val pgl = RadioButton(".pgl", 68f, 15f, 37f, 15f)
-        val dat = RadioButton(".dat", 120f, 15f, 37f, 15f)
+        val pgl = RadioButton(".pgl", 68f, 7f, 37f, 15f)
+        val dat = RadioButton(".dat", 120f, 7f, 37f, 15f)
 
         val buttons = arrayOf(pgl, dat)
         buttons.forEach {
@@ -27,7 +27,7 @@ class ExportDialog(manager: ExportManager): Dialog("Export Manager", "", 230f, 9
             container.add(it)
         }
 
-        val export = Button("Export", 90f, 43f, 46f, 15f)
+        val export = Button("Export", 90f, 33f, 46f, 15f)
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
