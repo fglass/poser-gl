@@ -9,7 +9,7 @@ import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
 class DatDialog(private val context: Processor, private val animation: Animation):
-      Dialog("Sequence ${animation.sequence.id}", "", 260f, 80f) {
+      Dialog("Sequence Information", "", 260f, 80f) {
 
     private lateinit var framePanel: ScrollablePanel
 
@@ -19,7 +19,7 @@ class DatDialog(private val context: Processor, private val animation: Animation
     }
 
     private fun addFrames() {
-        val archiveLabel = Label("Archive Id:", 22f, 7f, 45f, 15f)
+        val archiveLabel = Label("Archive:", 10f, 7f, 45f, 15f)
         archiveLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(archiveLabel)
 
@@ -32,15 +32,15 @@ class DatDialog(private val context: Processor, private val animation: Animation
             animation.sequence.frameIDs.first() ushr 16
         }
 
-        val archiveSlider = TextSlider({ setFrames(it) }, Pair(0, 9999), 76f, 7f, 65f, 15f)
+        val archiveSlider = TextSlider({ setFrames(it) }, Pair(0, 9999), 66f, 7f, 65f, 15f)
         archiveSlider.setValue(archiveId)
         container.add(archiveSlider)
 
-        val frameLabel = Label("Frame Ids:", 22f, 27f, 45f, 15f)
+        val frameLabel = Label("Frames:", 10f, 27f, 45f, 15f)
         frameLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(frameLabel)
 
-        framePanel = ScrollablePanel(76f, 27f, 177f, 26f)
+        framePanel = ScrollablePanel(66f, 27f, 177f, 26f)
         framePanel.remove(framePanel.verticalScrollBar)
         framePanel.horizontalScrollBar.style.focusedStrokeColor = null
         framePanel.horizontalScrollBar.style.setRight(0f)

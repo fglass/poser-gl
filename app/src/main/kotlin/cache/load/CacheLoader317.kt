@@ -75,7 +75,6 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
         val frameIndex = IndexType.FRAME.id317
 
         val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
-
         if (file.data.isNotEmpty()) {
             decodeFrameArchive(archiveId, file.data)
         }
@@ -92,7 +91,7 @@ class CacheLoader317(private val context: Processor, private val service: CacheS
         val scratchTranslatorY = IntArray(500)
         val scratchTranslatorZ = IntArray(500)
 
-        for (frameFileId in 0 until fileLength) {
+        repeat(fileLength) {
             val frameIndex = stream.readUShort()
             val def = FrameDefinition()
             def.id = frameIndex

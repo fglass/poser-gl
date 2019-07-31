@@ -26,7 +26,6 @@ class LoadDialog(private val context: Processor):
         isDraggable = false
         isCloseable = false
         message.position.y -= 7f
-
         addPath()
         addPlugin()
         addLoadButton()

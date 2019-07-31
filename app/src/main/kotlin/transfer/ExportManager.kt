@@ -4,8 +4,10 @@ import Processor
 import animation.Animation
 import animation.Keyframe
 import animation.ReferenceNode
+import cache.pack.CachePacker317
 import gui.component.DatDialog
 import gui.component.ExportDialog
+import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.FramemapDefinition
 import org.liquidengine.legui.component.Dialog
 import java.io.ByteArrayOutputStream
@@ -18,15 +20,14 @@ class ExportManager(private val context: Processor) {
 
     fun openDialog() {
         context.animationHandler.currentAnimation?: return
-        dialog = ExportDialog(this, "Export Animation", 230f, 92f)
+        dialog = ExportDialog(this)
         dialog.show(context.frame)
     }
 
     fun exportPgl(name: String) {
         val animation = context.animationHandler.currentAnimation ?: return
-        val pack = encodePgl(animation)
-
-        File(name).writeBytes(pack)
+        val data = encodePgl(animation)
+        File(name).writeBytes(data)
         dialog.close()
     }
 
@@ -39,8 +40,8 @@ class ExportManager(private val context: Processor) {
 
         for (keyframe in animation.keyframes) {
             os.writeShort(keyframe.length)
-            keyframe.frameMap.encode(os)
-            keyframe.encode(os)
+            encodeFrameMap(keyframe.frameMap, os)
+            encodeKeyframe(keyframe, os)
         }
 
         // Other sequence attributes
@@ -51,31 +52,30 @@ class ExportManager(private val context: Processor) {
         return out.toByteArray()
     }
 
-    private fun FramemapDefinition.encode(stream: DataOutputStream) {
-        stream.writeByte(length)
+    private fun encodeFrameMap(frameMap: FramemapDefinition, stream: DataOutputStream) {
+        stream.writeByte(frameMap.length)
 
-        repeat(length) {
-            stream.writeByte(types[it])
+        repeat(frameMap.length) {
+            stream.writeByte(frameMap.types[it])
         }
 
-        repeat(length) {
-            stream.writeByte(frameMaps[it].size)
+        repeat(frameMap.length) {
+            stream.writeByte(frameMap.frameMaps[it].size)
         }
 
-        repeat(length) {
-            repeat(frameMaps[it].size) { index ->
-                stream.writeByte(frameMaps[it][index])
+        repeat(frameMap.length) {
+            repeat(frameMap.frameMaps[it].size) { index ->
+                stream.writeByte(frameMap.frameMaps[it][index])
             }
         }
     }
 
-    private fun Keyframe.encode(stream: DataOutputStream) {
-        stream.writeShort(frameMap.id)
-
-        val n = transformations.filterIsInstance<ReferenceNode>().size
+    private fun encodeKeyframe(keyframe: Keyframe, stream: DataOutputStream) {
+        stream.writeShort(keyframe.frameMap.id)
+        val n = keyframe.transformations.filterIsInstance<ReferenceNode>().size
         stream.writeByte(n)
 
-        for (transformation in transformations) {
+        for (transformation in keyframe.transformations) {
 
             if (transformation is ReferenceNode) {
                 stream.writeShort(transformation.id)
@@ -97,7 +97,10 @@ class ExportManager(private val context: Processor) {
     }
 
     fun exportDat(name: String) {
-        // TODO: reverse decodeFrameArchive()
-        //DatDialog(context, animation).show(context.frame)
+        val animation = context.animationHandler.currentAnimation ?: return
+        val data = CachePacker317(context.cacheService).encodeAnimation(animation)
+        File(name).writeBytes(data)
+        dialog.close()
+        DatDialog(context, animation).show(context.frame)
     }
 }

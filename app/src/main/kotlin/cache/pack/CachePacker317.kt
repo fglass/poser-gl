@@ -15,7 +15,7 @@ class CachePacker317(private val service: CacheService): CachePacker {
 
     override fun packAnimation(animation: Animation, listener: ProgressListener) {
         val library = CacheLibrary(service.cachePath)
-        val file = encodeAnimation(animation)?: return
+        val file = encodeAnimation(animation)
 
         val frameIndex = IndexType.FRAME.id317
         val newArchiveId = service.getMaxFrameArchive(library) + 1
@@ -28,11 +28,11 @@ class CachePacker317(private val service: CacheService): CachePacker {
         library.close()
     }
 
-    private fun encodeAnimation(animation: Animation): ByteArray? {
+    fun encodeAnimation(animation: Animation): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMap = animation.keyframes.first().frameMap // Potential issue with differing frame maps?
+        val frameMap = animation.keyframes.first().frameMap // TODO: Potential issue with differing frame maps?
         os.write(encodeFrameMap(frameMap))
 
         val modified = animation.keyframes.filter { it.modified }
