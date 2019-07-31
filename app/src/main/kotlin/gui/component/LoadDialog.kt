@@ -12,8 +12,7 @@ import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialogs
 
-class LoadDialog(private val context: Processor):
-      Dialog("Cache Loader", "Please backup your cache first", 260f, 109f)  {
+class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please backup your cache first", 260f, 109f) {
 
     private lateinit var path: TextInput
     private lateinit var plugins: SelectBox<String>
@@ -37,6 +36,7 @@ class LoadDialog(private val context: Processor):
         container.add(pathLabel)
 
         val box = Panel(172f, 35f, 16f, 15f)
+        box.style.focusedStrokeColor = null
         container.add(box)
 
         path = TextInput(76f, 35f, 97f, 15f)
@@ -53,7 +53,6 @@ class LoadDialog(private val context: Processor):
                 path.textState.text = FileDialogs.openFile(listOf(), ".", true)?: return@addListener
             }
         }
-
         container.add(open)
     }
 
