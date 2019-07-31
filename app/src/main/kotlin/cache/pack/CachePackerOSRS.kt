@@ -61,10 +61,14 @@ class CachePackerOSRS(private val service: CacheService): CachePacker {
         }
 
         // Other sequence attributes
-        os.writeByte(6)
-        os.writeShort(sequence.leftHandItem)
-        os.writeByte(7)
-        os.writeShort(sequence.rightHandItem)
+        if (sequence.leftHandItem != -1) {
+            os.writeByte(6)
+            os.writeShort(sequence.leftHandItem)
+        }
+        if (sequence.rightHandItem != -1) {
+            os.writeByte(7)
+            os.writeShort(sequence.rightHandItem)
+        }
 
         os.writeByte(0) // Opcode 0: End of definition
         os.close()

@@ -34,24 +34,22 @@ class ImportManager(private val context: Processor) {
         val animation = Animation(context, sequence)
         animation.modified = true
 
-        val revision = stream.readUnsignedByte()
+        stream.readUnsignedByte() // Revision byte
         val n = stream.readUnsignedShort()
 
         repeat(n) {
             val length = stream.readUnsignedShort()
-
             val frameMap = FramemapDefinition()
             frameMap.decode(stream)
 
             val keyframe = Keyframe(it, -1, length, frameMap)
             keyframe.decode(stream)
-
             keyframe.modified = true
             animation.keyframes.add(keyframe)
         }
 
-        animation.sequence.leftHandItem = stream.readUnsignedShort()
-        animation.sequence.rightHandItem = stream.readUnsignedShort()
+        animation.sequence.leftHandItem = stream.readInt()
+        animation.sequence.rightHandItem = stream.readInt()
         return animation
     }
 
@@ -91,7 +89,7 @@ class ImportManager(private val context: Processor) {
             transformations.add(reference)
 
             val children = stream.readUnsignedByte()
-            for (j in 0 until children) {
+            repeat(children) {
                 val childId = stream.readShort().toInt()
                 val childType = stream.readUnsignedByte()
                 val childX = stream.readShort().toInt()

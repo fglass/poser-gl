@@ -32,7 +32,7 @@ class CachePacker317(private val service: CacheService): CachePacker {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMap = animation.keyframes.first().frameMap // TODO: Potential issue with differing frame maps?
+        val frameMap = animation.keyframes.first().frameMap // TODO: potential issue with differing frame maps
         os.write(encodeFrameMap(frameMap))
 
         val modified = animation.keyframes.filter { it.modified }
@@ -109,6 +109,15 @@ class CachePacker317(private val service: CacheService): CachePacker {
 
         for (length in sequence.frameLenghts) {
             os.writeByte(length)
+        }
+
+        if (sequence.leftHandItem != -1) {
+            os.writeByte(6)
+            os.writeShort(sequence.leftHandItem)
+        }
+        if (sequence.rightHandItem != -1) {
+            os.writeByte(7)
+            os.writeShort(sequence.rightHandItem)
         }
 
         os.writeByte(0)

@@ -45,8 +45,8 @@ class ExportManager(private val context: Processor) {
         }
 
         // Other sequence attributes
-        os.writeShort(animation.sequence.leftHandItem)
-        os.writeShort(animation.sequence.rightHandItem)
+        os.writeInt(animation.sequence.leftHandItem)
+        os.writeInt(animation.sequence.rightHandItem)
 
         os.close()
         return out.toByteArray()
