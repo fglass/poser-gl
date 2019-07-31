@@ -39,7 +39,7 @@ class LoadDialog(private val context: Processor):
         val box = Panel(172f, 35f, 16f, 15f)
         container.add(box)
 
-        path = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 35f, 97f, 15f) // TODO: remove placeholder
+        path = TextInput(76f, 35f, 97f, 15f)
         path.style.focusedStrokeColor = null
         container.add(path)
 
