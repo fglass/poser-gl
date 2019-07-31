@@ -40,7 +40,7 @@ class LoadDialog(private val context: Processor):
         val box = Panel(172f, 35f, 16f, 15f)
         container.add(box)
 
-        path = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 35f, 97f, 15f)
+        path = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 35f, 97f, 15f) // TODO: remove placeholder
         path.style.focusedStrokeColor = null
         container.add(path)
 
@@ -66,11 +66,7 @@ class LoadDialog(private val context: Processor):
         plugins = SelectBox(76f, 63f, 112f, 15f)
         plugins.addElement("OSRS")
         plugins.addElement("317")
-        plugins.addElement("Alternate 317")
-
-        plugins.addSelectBoxChangeSelectionEventListener {
-            // TODO
-        }
+        plugins.addElement("Legacy 317")
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         container.add(plugins)
     }

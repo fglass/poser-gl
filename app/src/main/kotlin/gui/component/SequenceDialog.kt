@@ -38,9 +38,10 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
             val mainHand = mainHandId.textState.text.toIntOrNull()?: -1
             val offHand = offHandId.textState.text.toIntOrNull()?: -1
 
+            // Only modify on valid change
             if ((mainHand != animation.sequence.leftHandItem || offHand != animation.sequence.rightHandItem)
                 && validItem(mainHand) && validItem(offHand)) {
-                val animation = context.animationHandler.getAnimation()?: return@addListener // Animation modified
+                val animation = context.animationHandler.getAnimation()?: return@addListener
                 animation.sequence.leftHandItem = mainHand
                 animation.sequence.rightHandItem = offHand
                 animation.equipItems()

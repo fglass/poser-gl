@@ -97,7 +97,7 @@ class ExportManager(private val context: Processor) {
     }
 
     fun exportDat(name: String) {
-        // TODO reverse decodeFrameArchive()
+        // TODO: reverse decodeFrameArchive()
         //DatDialog(context, animation).show(context.frame)
     }
 }
