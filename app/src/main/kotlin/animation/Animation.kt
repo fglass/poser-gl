@@ -14,6 +14,8 @@ import kotlin.math.min
 
 private val logger = KotlinLogging.logger {}
 
+const val ITEM_OFFSET = 512
+
 class Animation(private val context: Processor, val sequence: SequenceDefinition) {
 
     // Copy constructor
@@ -121,9 +123,8 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     private fun equipItem(id: Int) {
-        val offset = 512
-        if (id >= offset) {
-            val item = context.cacheService.items[id - offset]?: return
+        if (id >= ITEM_OFFSET) {
+            val item = context.cacheService.items[id - ITEM_OFFSET]?: return
             context.entity?.addItem(item, context.entityHandler)
         }
     }

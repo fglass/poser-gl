@@ -2,10 +2,12 @@ package gui.component
 
 import Processor
 import animation.Animation
+import animation.ITEM_OFFSET
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.component.event.widget.WidgetCloseEvent
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import kotlin.math.max
 
 class SequenceDialog(private val context: Processor, private val animation: Animation):
       Dialog("Sequence ${animation.sequence.id}", "", 260f, 69f) {
@@ -21,7 +23,7 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
         mainHandLabel.style.focusedStrokeColor = null
         container.add(mainHandLabel)
 
-        val mainHandId = TextInput(animation.sequence.leftHandItem.toString(), 76f, 7f, 65f, 15f)
+        val mainHandId = TextInput(getItemId(animation.sequence.leftHandItem).toString(), 76f, 7f, 65f, 15f)
         mainHandId.style.focusedStrokeColor = null
         container.add(mainHandId)
 
@@ -30,7 +32,7 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
         offHandLabel.style.focusedStrokeColor = null
         container.add(offHandLabel)
 
-        val offHandId = TextInput(animation.sequence.rightHandItem.toString(), 76f, 27f, 65f, 15f)
+        val offHandId = TextInput(getItemId(animation.sequence.rightHandItem).toString(), 76f, 27f, 65f, 15f)
         offHandId.style.focusedStrokeColor = null
         container.add(offHandId)
 
@@ -39,18 +41,23 @@ class SequenceDialog(private val context: Processor, private val animation: Anim
             val offHand = offHandId.textState.text.toIntOrNull()?: -1
 
             // Only modify on valid change
-            if ((mainHand != animation.sequence.leftHandItem || offHand != animation.sequence.rightHandItem)
+            if ((mainHand != getItemId(animation.sequence.leftHandItem) ||
+                offHand != getItemId(animation.sequence.rightHandItem))
                 && validItem(mainHand) && validItem(offHand)) {
+
                 val animation = context.animationHandler.getAnimation()?: return@addListener
-                animation.sequence.leftHandItem = mainHand
-                animation.sequence.rightHandItem = offHand
+                animation.sequence.leftHandItem = mainHand + ITEM_OFFSET
+                animation.sequence.rightHandItem = offHand + ITEM_OFFSET
                 animation.equipItems()
             }
         }
     }
 
+    private fun getItemId(id: Int): Int {
+        return max(id - ITEM_OFFSET, -1)
+    }
+
     private fun validItem(id: Int): Boolean {
-        val offset = 512
-        return id == -1 || context.cacheService.items[id - offset] != null
+        return id == -1 || context.cacheService.items[id] != null
     }
 }
