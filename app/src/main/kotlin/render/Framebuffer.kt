@@ -3,8 +3,8 @@ package render
 import BG_COLOUR
 import Processor
 import entity.Camera
+import gui.component.Dialog
 import io.MouseHandler
-import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
@@ -25,6 +25,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     val entityRenderer = EntityRenderer(shader)
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
+    var activeDialog: Dialog? = null
     private val camera = Camera(mouse)
 
     init {
@@ -131,6 +132,7 @@ class Framebuffer(private val context: Processor, private val shader: StaticShad
     private fun resize(width: Int, height: Int) {
         setTexture(width, height)
         entityRenderer.init(width, height)
+        activeDialog?.center(this)
     }
 
     private fun setTexture(width: Int, height: Int) {

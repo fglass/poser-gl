@@ -139,7 +139,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         val index = context.animationHandler.getFrameIndex(this)
         val keyframe = keyframes[index]
         context.animationHandler.copiedFrame = keyframe
-        Dialog("Keyframe Action", "Successfully copied keyframe ${keyframe.id}", 260f, 70f).show(context.frame)
+        Dialog("Keyframe Action", "Successfully copied keyframe ${keyframe.id}", context, 260f, 70f).display()
     }
 
     fun pasteKeyframe() {
@@ -153,7 +153,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun interpolateKeyframes() {
         if (keyframes.size < 2) {
-            Dialog("Invalid Operation", "Insufficient number of keyframes", 260f, 70f).show(context.frame)
+            Dialog("Invalid Operation", "Insufficient number of keyframes", context, 260f, 70f).display()
             return
         }
 
@@ -178,7 +178,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             keyframes.remove(keyframes[index])
             updateKeyframes()
         } else {
-            Dialog("Invalid Operation", "Unable to delete the last keyframe", 260f, 70f).show(context.frame)
+            Dialog("Invalid Operation", "Unable to delete the last keyframe", context, 260f, 70f).display()
         }
     }
 

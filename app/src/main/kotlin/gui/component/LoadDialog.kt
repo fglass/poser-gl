@@ -12,7 +12,8 @@ import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialogs
 
-class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please backup your cache first", 260f, 109f) {
+class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please backup your cache first", context,
+                 260f, 109f) {
 
     private lateinit var path: TextInput
     private lateinit var plugins: SelectBox<String>

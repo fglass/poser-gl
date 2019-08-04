@@ -1,14 +1,14 @@
 package gui.component
 
+import Processor
+import util.FileDialogs
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.RadioButton
 import org.liquidengine.legui.component.RadioButtonGroup
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
-import transfer.ExportManager
-import util.FileDialogs
 
-class ExportDialog(manager: ExportManager): Dialog("Export Manager", "", 230f, 80f) {
+class ExportDialog(private val context: Processor): Dialog("Export Manager", "", context, 230f, 80f) {
 
     init {
         isDraggable = false
@@ -32,7 +32,7 @@ class ExportDialog(manager: ExportManager): Dialog("Export Manager", "", 230f, 8
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 val name = FileDialogs.saveFile(if (pgl.isChecked) "pgl" else "dat", ".")?: return@addListener
-                if (pgl.isChecked) manager.exportPgl(name) else manager.exportDat(name)
+                if (pgl.isChecked) context.exportManager.exportPgl(name) else context.exportManager.exportDat(name)
             }
         }
         container.add(export)

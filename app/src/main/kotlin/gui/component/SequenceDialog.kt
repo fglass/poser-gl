@@ -10,7 +10,7 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import kotlin.math.max
 
 class SequenceDialog(private val context: Processor, private val animation: Animation):
-      Dialog("Sequence ${animation.sequence.id}", "", 260f, 69f) {
+      Dialog("Sequence ${animation.sequence.id}", "", context, 260f, 69f) {
 
     init {
         isDraggable = false

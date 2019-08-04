@@ -9,7 +9,7 @@ import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
 class DatDialog(private val context: Processor, private val animation: Animation):
-      Dialog("Sequence Information", "", 260f, 80f) {
+      Dialog("Sequence Information", "", context, 260f, 80f) {
 
     private lateinit var framePanel: ScrollablePanel
 

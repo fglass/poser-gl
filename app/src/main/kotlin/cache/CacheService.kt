@@ -103,9 +103,10 @@ class CacheService(private val context: Processor) {
     fun pack() {
         val animation = context.animationHandler.currentAnimation?: return
         if (animation.modified) {
-            val progress = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...", 230f, 92f)
+            val progress = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...",
+                                          context, 230f, 92f)
             val listener = ProgressListener(progress)
-            progress.show(context.frame)
+            progress.display()
 
             // Asynchronously pack animation
             val packer = if (osrs) CachePackerOSRS(this) else CachePacker317(this)
@@ -120,7 +121,7 @@ class CacheService(private val context: Processor) {
                 }
             }
         } else {
-            Dialog("Invalid Operation", "This animation has not been modified yet", 260f, 70f).show(context.frame)
+            Dialog("Invalid Operation", "This animation has not been modified yet", context, 260f, 70f).display()
         }
     }
 }

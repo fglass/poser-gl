@@ -16,12 +16,12 @@ import java.io.File
 
 class ExportManager(private val context: Processor) {
 
-    private lateinit var dialog: Dialog
+    private lateinit var dialog: ExportDialog
 
     fun openDialog() {
         context.animationHandler.currentAnimation?: return
-        dialog = ExportDialog(this)
-        dialog.show(context.frame)
+        dialog = ExportDialog(context)
+        dialog.display()
     }
 
     fun exportPgl(name: String) {
@@ -101,6 +101,6 @@ class ExportManager(private val context: Processor) {
         val data = CachePacker317(context.cacheService).encodeAnimation(animation)
         File(name).writeBytes(data)
         dialog.close()
-        DatDialog(context, animation).show(context.frame)
+        DatDialog(context, animation).display()
     }
 }
