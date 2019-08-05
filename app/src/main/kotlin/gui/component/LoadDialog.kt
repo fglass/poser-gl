@@ -15,7 +15,7 @@ import util.FileDialogs
 class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please backup your cache first", context,
                  260f, 109f) {
 
-    private lateinit var path: TextInput
+    private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<String>
     private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
     private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
@@ -32,17 +32,17 @@ class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please
     }
 
     private fun addPath() {
-        val pathLabel = Label("Path:", 9f, 35f, 40f, 15f)
-        pathLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
-        container.add(pathLabel)
+        val cacheLabel = Label("Cache:", 9f, 35f, 40f, 15f)
+        cacheLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        container.add(cacheLabel)
 
         val box = Panel(172f, 35f, 16f, 15f)
         box.style.focusedStrokeColor = null
         container.add(box)
 
-        path = TextInput(76f, 35f, 97f, 15f)
-        path.style.focusedStrokeColor = null
-        container.add(path)
+        cache = TextInput(75f, 35f, 97f, 15f)
+        cache.style.focusedStrokeColor = null
+        container.add(cache)
 
         val open = ImageButton(Vector2f(175f, 35f), openIcon)
         open.hoveredIcon = openHoveredIcon
@@ -51,7 +51,7 @@ class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please
         open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                path.textState.text = FileDialogs.openFile(listOf(), ".", true)?: return@addListener
+                cache.textState.text = FileDialogs.openFile(listOf(), ".", true)?: return@addListener
             }
         }
         container.add(open)
@@ -62,7 +62,7 @@ class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please
         pluginLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(pluginLabel)
 
-        plugins = SelectBox(76f, 63f, 112f, 15f)
+        plugins = SelectBox(75f, 63f, 112f, 15f)
         plugins.addElement("OSRS")
         plugins.addElement("317")
         plugins.addElement("Legacy 317")
@@ -85,13 +85,13 @@ class LoadDialog(private val context: Processor): Dialog("Cache Loader", "Please
     }
 
     private fun loadCache() {
-        if (path.textState.text.isEmpty()) {
+        if (cache.textState.text.isEmpty()) {
             message.textState.text = "Please select a cache first"
             return
         }
 
         // Try to load selected cache
-        context.cacheService.init(path.textState.text, plugins.selection)
+        context.cacheService.init(cache.textState.text, plugins.selection)
 
         if (context.cacheService.loaded) {
             context.gui = GuiManager(context)

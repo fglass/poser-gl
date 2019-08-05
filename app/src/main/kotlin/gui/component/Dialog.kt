@@ -21,7 +21,7 @@ open class Dialog(title: String, text: String, private val context: Processor, w
         isResizable = false
 
         listenerMap.addListener(WindowSizeEvent::class.java) { event ->
-            if (this is LoadDialog) {
+            if (this is LoadDialog) { // Center on overall frame instead
                 position = Vector2f((event.width - size.x) / 2f, (event.height - size.y) / 2f)
             }
         }
@@ -34,8 +34,8 @@ open class Dialog(title: String, text: String, private val context: Processor, w
     }
 
     fun center(framebuffer: Framebuffer) {
-        val x = framebuffer.size.x - size.x
-        val y = framebuffer.size.y - size.y
-        position = Vector2f(x / 2f + framebuffer.position.x, y / 2f + framebuffer.position.y)
+        val w = framebuffer.size.x - size.x
+        val h = framebuffer.size.y - size.y
+        position = Vector2f(w / 2f + framebuffer.position.x, h / 2f + framebuffer.position.y)
     }
 }
