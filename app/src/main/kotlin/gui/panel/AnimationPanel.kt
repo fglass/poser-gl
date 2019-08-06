@@ -77,8 +77,8 @@ class AnimationPanel(private val context: Processor): Panel() {
     }
 
     fun setTimeline() {
-        timeline.removeAll(timeline.childComponents)
-        times.removeAll(times.childComponents)
+        timeline.clearChildComponents()
+        times.clearChildComponents()
 
         val animation = context.animationHandler.currentAnimation
         if (animation == null) {
@@ -104,9 +104,9 @@ class AnimationPanel(private val context: Processor): Panel() {
     }
 
     private fun addTime(i: Int) {
-        val offsetX = 12f
+        val xOffset = 12f
         val x = i * unitX
-        val time = Label(i.toString(), x + offsetX, 0f, 1f, 15f)
+        val time = Label(i.toString(), x + xOffset, 0f, 1f, 15f)
         time.textState.horizontalAlign = HorizontalAlign.CENTER
         times.add(time)
 

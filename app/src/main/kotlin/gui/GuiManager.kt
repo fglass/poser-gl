@@ -23,6 +23,7 @@ class GuiManager(context: Processor) {
     val animationPanel = AnimationPanel(context)
 
     init {
+        container.clearChildComponents() // Clear start screen
         container.style.display = Style.DisplayType.FLEX
         container.style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
         container.style.setBorderRadius(0f)

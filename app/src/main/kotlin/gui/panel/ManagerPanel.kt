@@ -143,14 +143,13 @@ class ManagerPanel(private val context: Processor): Panel() {
     }
 
     fun update(entity: Entity) {
-        modelPanel.container.removeAll(modelPanel.container.childComponents)
-
         val name = if (entity.name.length < 20) entity.name else entity.name.split(" ").first() // Trim if necessary
         selectedEntity.textState.text = "Selected: $name"
 
         val init = 3
         val offset = 17f
         modelPanel.container.size.y = max(init + entity.composition.size * offset + 1, modelPanel.size.y + 1)
+        modelPanel.container.clearChildComponents()
 
         for ((i, component) in entity.composition.withIndex()) {
             val y = init + i * offset
