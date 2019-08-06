@@ -50,8 +50,7 @@ class Processor {
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
     lateinit var nodeRenderer: NodeRenderer
-    private lateinit var lineRenderer: LineRenderer
-    lateinit var planeRenderer: PlaneRenderer
+    lateinit var lineRenderer: LineRenderer
 
     var entity: Entity? = null
     private var running = true
@@ -110,7 +109,6 @@ class Processor {
 
         nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(framebuffer)
-        planeRenderer = PlaneRenderer(this)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         LoadDialog(this).show(frame)
@@ -159,9 +157,9 @@ class Processor {
 
         nodeRenderer.cleanUp()
         lineRenderer.cleanUp()
-        planeRenderer.cleanUp()
         shader.cleanUp()
         loader.cleanUp()
+
         guiRenderer.destroy()
         glfwDestroyWindow(window)
         glfwTerminate()

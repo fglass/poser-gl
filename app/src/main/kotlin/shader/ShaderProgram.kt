@@ -62,10 +62,6 @@ abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
 
     abstract fun bindAttributes()
 
-    fun loadFloat(location: Int, value: Float) {
-        GL20.glUniform1f(location, value)
-    }
-
     fun loadVector(location: Int, vector: Vector3f) {
         GL20.glUniform3f(location, vector.x, vector.y, vector.z)
     }

@@ -23,7 +23,7 @@ class Loader {
         return Model(vaoId, positions.size / 4, definition)
     }
 
-    fun loadToVao(positions: FloatArray, size: Int): Model {
+    fun loadToVao(positions: FloatArray, size: Int = 3): Model {
         val vaoId = createVao()
         storeFloatData(0, size, positions)
         unbindVao()

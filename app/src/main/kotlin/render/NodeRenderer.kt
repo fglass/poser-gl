@@ -62,7 +62,7 @@ class NodeRenderer(private val context: Processor) {
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
-        //context.lineRenderer.render(nodes, camera)
+        context.lineRenderer.renderSkeleton(nodes, camera)
     }
 
     private fun prepare() {

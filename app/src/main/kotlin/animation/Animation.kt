@@ -100,11 +100,12 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         for (reference in references) {
             val frameMap = reference.frameMap.toSet()
             for (node in references) {
-                if (reference == node) {
+
+                if (node.id == reference.id) {
                     continue
                 }
-
                 val rotation = node.children[TransformationType.ROTATION]?: continue
+
                 // Parent if frame map is superset
                 if (rotation.frameMap.toSet().containsAll(frameMap)) {
                     reference.parent = node

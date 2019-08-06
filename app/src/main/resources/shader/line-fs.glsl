@@ -1,7 +1,9 @@
 #version 400 core
 
+in vec4 passColour;
+
 out vec4 outColour;
 
 void main() {
-    outColour = vec4(221 / 255.0, 215 / 255.0, 0.0, 1.0);
+    outColour = passColour;
 }
