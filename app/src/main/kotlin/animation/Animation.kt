@@ -5,6 +5,7 @@ import gui.component.Dialog
 import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
+import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.joml.Vector3f
 import org.joml.Vector3i
@@ -126,6 +127,15 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
             val item = context.cacheService.items[id - ITEM_OFFSET]?: return
             context.entity?.addItem(item, context.entityHandler)
         }
+    }
+
+    fun findSiblings(): IntArray {
+        load()
+        val frameMap = keyframes.first().frameMap.id
+        val matching = context.cacheService.frameMaps[frameMap]?: return emptyArray<Int>().toIntArray()
+        val siblings = matching.toIntArray()
+        siblings.sort()
+        return siblings
     }
 
     fun addKeyframe() {

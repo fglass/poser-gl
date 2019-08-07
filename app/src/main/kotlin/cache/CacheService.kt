@@ -69,8 +69,9 @@ class CacheService(private val context: Processor) {
     }
 
     private fun addPlayer() {
-        val player = NpcDefinition(-1) // TODO: walk anim
+        val player = NpcDefinition(-1)
         player.name = "Player"
+        player.walkAnimation = 819
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
     }
@@ -91,7 +92,7 @@ class CacheService(private val context: Processor) {
         return def
     }
 
-    fun loadFrameArchives() {
+    fun loadFrameArchives() { // TODO: investigate performance
         val library = CacheLibrary(cachePath)
         GlobalScope.launch {
             for (animation in animations) {

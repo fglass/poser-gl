@@ -6,10 +6,12 @@ import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
 
 abstract class ElementList: ScrollablePanel() {
 
     var searchText = "Search"
+    var highlighted = emptyArray<Int>().toIntArray()
     protected val listX = 2f
     protected val listY = 3f
     protected val listYOffset = 18f
@@ -46,12 +48,33 @@ abstract class ElementList: ScrollablePanel() {
         val elements = getElements()
         adjustScroll(filtered.size)
 
+        if (filtered.size >= elements.size) { // No matches
+            reset()
+            return
+        }
+
         var index = 0
         for (element in elements) {
             when {
-                filtered.size >= elements.size -> handleElement(element.key, element.value) // Reset as no matches
                 index < filtered.size -> handleElement(filtered[index], element.value) // Shift matches up
                 else -> element.value.isEnabled = false // Hide filtered
+            }
+            index++
+        }
+    }
+
+    fun reset() {
+        var index = 0
+        val elements = getElements()
+        val regular = (0..elements.size).filter { !highlighted.contains(it) } // Exclude any highlighted elements
+
+        for (element in elements) {
+            when {
+                this is AnimationList && index < highlighted.size -> { // Only applies to animation list
+                    handleElement(highlighted[index], element.value)
+                    (element.value as AnimationList.AnimationElement).highlight()
+                }
+                else -> handleElement(regular[index - highlighted.size], element.value)
             }
             index++
         }

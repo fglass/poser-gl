@@ -3,6 +3,7 @@ package gui.component
 import Processor
 import animation.Animation
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
 
 class AnimationList(private val context: Processor): ElementList() {
 
@@ -53,6 +54,7 @@ class AnimationList(private val context: Processor): ElementList() {
         val animation = context.cacheService.animations[index]?: return
         if (element is AnimationElement) {
             element.animation = animation
+            element.highlighted = false
             element.updateText()
         }
     }
@@ -63,15 +65,26 @@ class AnimationList(private val context: Processor): ElementList() {
             updateText()
         }
 
+        var highlighted = false
+
         override fun updateText() {
-            style.background.color = if (context.animationHandler.currentAnimation == animation) {
-                hoveredStyle.background.color // Selected
-            } else {
-                ColorConstants.darkGray()
+            style.background.color = when (animation) {
+                context.animationHandler.currentAnimation -> hoveredStyle.background.color // Selected
+                else -> ColorConstants.darkGray()
             }
+
             textState.text = animation.sequence.id.toString()
-            textState.textColor = if (animation.modified) ColorConstants.lightRed() else ColorConstants.white()
+            textState.textColor = when {
+                highlighted -> ColorConstants.lightBlue()
+                animation.modified -> ColorConstants.lightRed()
+                else -> ColorConstants.white()
+            }
             isEnabled = true
+        }
+
+        fun highlight() {
+            highlighted = true
+            updateText()
         }
 
         override fun onClickEvent() {

@@ -13,21 +13,20 @@ class EntityHandler(private val context: Processor) {
     }
 
     fun load(def: NpcDefinition) {
-        val walk = context.cacheService.animations[def.walkAnimation] // TODO: show results in list
-        if (walk != null) {
-            walk.load()
-            val frameMap = walk.keyframes.first().frameMap.id
-            context.cacheService.frameMaps[frameMap]?.forEach {
-                println("Matching frame map for animation $it")
-            }
-        }
-
         val composition = HashSet<EntityComponent>()
         def.models.forEach {
             composition.add(EntityComponent(it, def.recolorToFind, def.recolorToReplace))
         }
         clear()
+        matchAnimations(def)
         process(def.name, composition)
+    }
+
+    private fun matchAnimations(def: NpcDefinition) {
+        val walk = context.cacheService.animations[def.walkAnimation]
+        val siblings = walk?.findSiblings()?: emptyArray<Int>().toIntArray()
+        context.gui.listPanel.animationList.highlighted = siblings
+        context.gui.listPanel.animationList.reset()
     }
 
     fun process(name: String, composition: HashSet<EntityComponent>) {
