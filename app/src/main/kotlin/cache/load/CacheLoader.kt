@@ -6,7 +6,7 @@ interface CacheLoader {
 
     fun loadSequences(library: CacheLibrary)
 
-    fun loadFrameArchive(archiveId: Int)
+    fun loadFrameArchive(archiveId: Int, library: CacheLibrary)
 
     fun loadNpcDefintions(library: CacheLibrary)
 

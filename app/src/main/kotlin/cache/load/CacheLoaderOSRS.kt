@@ -27,8 +27,7 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
         }
     }
 
-    override fun loadFrameArchive(archiveId: Int) {
-        val library = CacheLibrary(service.cachePath)
+    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary) {
         val frameIndex = IndexType.FRAME.idOsrs
 
         val archive = library.getIndex(frameIndex).getArchive(archiveId)?: return
@@ -47,7 +46,6 @@ class CacheLoaderOSRS(private val context: Processor, private val service: Cache
             val frame = frameLoader.load(frameMap, frameFile.id, frameData)
             service.frames.put(archive.id, frame)
         }
-        library.close()
     }
 
     override fun loadNpcDefintions(library: CacheLibrary) {

@@ -34,12 +34,10 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     var length = 0
 
     fun load() {
-        if (keyframes.isNotEmpty()) { // Already loaded
-            return
+        if (keyframes.isEmpty()) { // Check if already loaded
+            parseSequence()
+            length = calculateLength()
         }
-
-        parseSequence()
-        length = calculateLength()
     }
 
     private fun parseSequence() {

@@ -13,6 +13,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
+import net.runelite.cache.definitions.loaders.FrameLoader
+import net.runelite.cache.definitions.loaders.FramemapLoader
 import org.displee.CacheLibrary
 
 private val logger = KotlinLogging.logger {}
@@ -28,6 +30,7 @@ class CacheService(private val context: Processor) {
     val items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
+    var frameMaps = HashMap<Int, HashSet<Int>>()
 
     fun init(cachePath: String, pluginName: String) {
         this.cachePath = cachePath
@@ -39,9 +42,9 @@ class CacheService(private val context: Processor) {
 
         try {
             val library = CacheLibrary(cachePath)
-            osrs = library.isOSRS
             load(library)
             library.close()
+            osrs = library.isOSRS
             logger.info { "Loaded cache $cachePath with $pluginName plugin" }
         } catch (e: Exception) {
             logger.error(e) { "Failed to load cache $cachePath with $pluginName plugin" }
@@ -66,7 +69,7 @@ class CacheService(private val context: Processor) {
     }
 
     private fun addPlayer() {
-        val player = NpcDefinition(-1)
+        val player = NpcDefinition(-1) // TODO: walk anim
         player.name = "Player"
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
@@ -88,9 +91,29 @@ class CacheService(private val context: Processor) {
         return def
     }
 
+    fun loadFrameArchives() {
+        val library = CacheLibrary(cachePath)
+        GlobalScope.launch {
+            for (animation in animations) {
+                val archiveId = animation.value.sequence.frameIDs.first() ushr 16
+                if (archiveId !in frames.keySet()) {
+                    loader.loadFrameArchive(archiveId, library)
+                }
+
+                val frameMap = frames.get(archiveId).first().framemap.id
+                frameMaps.putIfAbsent(frameMap, HashSet())
+                frameMaps[frameMap]!!.add(animation.key)
+            }
+            library.close()
+            logger.info { "Asynchronously loaded ${frames.keys().size} frames" }
+        }
+    }
+
     fun getFrameArchive(archiveId: Int): MutableSet<FrameDefinition> {
         if (archiveId !in frames.keySet()) {
-            loader.loadFrameArchive(archiveId)
+            val library = CacheLibrary(cachePath)
+            loader.loadFrameArchive(archiveId, library)
+            library.close()
         }
         return frames.get(archiveId)
     }

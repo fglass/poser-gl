@@ -93,8 +93,8 @@ class AltCacheLoader317(private val context: Processor, private val service: Cac
         }
     }
 
-    override fun loadFrameArchive(archiveId: Int) {
-        originalLoader.loadFrameArchive(archiveId)
+    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary) {
+        originalLoader.loadFrameArchive(archiveId, library)
     }
 
     override fun loadNpcDefintions(library: CacheLibrary) {
