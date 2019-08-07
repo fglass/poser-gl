@@ -3,7 +3,6 @@ package gui.component
 import Processor
 import animation.Animation
 import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
 
 class AnimationList(private val context: Processor): ElementList() {
 

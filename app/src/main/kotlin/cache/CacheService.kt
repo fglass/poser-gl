@@ -68,7 +68,7 @@ class CacheService(private val context: Processor) {
         loaded = true
     }
 
-    private fun addPlayer() {
+    private fun addPlayer() { // TODO: disappears during searching
         val player = NpcDefinition(-1)
         player.name = "Player"
         player.walkAnimation = 819

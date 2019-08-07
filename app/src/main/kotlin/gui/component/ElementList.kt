@@ -6,7 +6,6 @@ import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
 
 abstract class ElementList: ScrollablePanel() {
 
@@ -66,7 +65,8 @@ abstract class ElementList: ScrollablePanel() {
     fun reset() {
         var index = 0
         val elements = getElements()
-        val regular = (0..elements.size).filter { !highlighted.contains(it) } // Exclude any highlighted elements
+        val start = if (this is EntityList) -1 else 0 // Account for player
+        val regular = (start..elements.size).filter { !highlighted.contains(it) } // Exclude any highlighted elements
 
         for (element in elements) {
             when {
