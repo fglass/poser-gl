@@ -114,31 +114,27 @@ class ManagerPanel(private val context: Processor): Panel() {
     private fun addModelPanel() {
         modelPanel = ScrollablePanel()
 
-        val width = 160f
+        val width = 159f
         modelPanel.style.setMaxWidth(width)
         modelPanel.container.size.x = width - 8f
 
         modelPanel.style.setMargin(79f, 0f, 6f, 6f)
         modelPanel.style.position = Style.PositionType.RELATIVE
         modelPanel.style.flexStyle.flexGrow = 1
-
         modelPanel.remove(modelPanel.horizontalScrollBar)
-        modelPanel.viewport.style.setBottom(0f)
-        modelPanel.verticalScrollBar.style.setBottom(0f)
+        modelPanel.viewport.style.setBottom(1f)
 
-        val containers = arrayOf(modelPanel.viewport, modelPanel.container)
-        containers.forEach {
+        modelPanel.verticalScrollBar.style.setBottom(0f)
+        modelPanel.verticalScrollBar.style.setWidth(8f)
+        modelPanel.verticalScrollBar.style.setBorderRadius(0f)
+        modelPanel.verticalScrollBar.style.border.isEnabled = false
+        modelPanel.verticalScrollBar.style.background.color = ColorConstants.darkGray()
+
+        val components = arrayOf(modelPanel.viewport, modelPanel.container, modelPanel)
+        components.forEach {
             it.style.border.isEnabled = false
             it.style.background.color = ColorUtil.fromInt(71, 71, 71, 1f)
         }
-
-        val components = arrayOf(modelPanel, modelPanel.verticalScrollBar)
-        components.forEach {
-            it.style.border.isEnabled = false
-            it.style.background.color = ColorConstants.darkGray()
-        }
-
-        modelPanel.verticalScrollBar.style.setWidth(9f)
         add(modelPanel)
     }
 
@@ -148,7 +144,7 @@ class ManagerPanel(private val context: Processor): Panel() {
 
         val init = 3
         val offset = 17f
-        modelPanel.container.size.y = max(init + entity.composition.size * offset + 1, modelPanel.size.y + 1)
+        modelPanel.container.size.y = init + entity.composition.size * offset
         modelPanel.container.clearChildComponents()
 
         for ((i, component) in entity.composition.withIndex()) {
