@@ -9,6 +9,7 @@ import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import org.liquidengine.legui.event.FocusEvent
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
@@ -19,7 +20,7 @@ import util.setSizeLimits
 
 class ListPanel(context: Processor): Panel() {
 
-    private val search = TextInput("Search")
+    private val search = TextInput()
     private val tabs = LinkedHashSet<Button>()
     private val entityList = EntityList(context)
     val animationList = AnimationList(context)
@@ -41,11 +42,12 @@ class ListPanel(context: Processor): Panel() {
     }
 
     private fun addSearch() {
-        search.textState.textColor = ColorConstants.gray()
-        search.listenerMap.addListener(MouseClickEvent::class.java) {
-            if (search.textState.text == "Search") { // Placeholder text
-                search.textState.text = ""
-                search.textState.textColor = ColorConstants.white()
+        setSearchPlaceholder()
+        search.listenerMap.addListener(FocusEvent::class.java) { event ->
+            if (event.isFocused && search.textState.text == "Search") {
+                resetSearchPlaceholder()
+            } else if (search.textState.text.isEmpty()) {
+                setSearchPlaceholder()
             }
         }
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
@@ -58,6 +60,16 @@ class ListPanel(context: Processor): Panel() {
         search.style.setMargin(5f, 0f, 0f, 5f)
         search.style.focusedStrokeColor = null
         add(search)
+    }
+
+    private fun setSearchPlaceholder() {
+        search.textState.text = "Search"
+        search.textState.textColor = ColorConstants.gray()
+    }
+
+    private fun resetSearchPlaceholder() {
+        search.textState.text = ""
+        search.textState.textColor = ColorConstants.white()
     }
 
     private fun addTabs() {
