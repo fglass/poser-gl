@@ -78,11 +78,15 @@ class CacheService(private val context: Processor) {
 
             val frames = frames.get(archiveId)
             if (frames.isNotEmpty()) {
-                val frameMap = frames.first().framemap.id
-                frameMaps.putIfAbsent(frameMap, HashSet())
-                frameMaps[frameMap]!!.add(animation.key) // TODO: put in new animations too
+                val frameMap = frames.first().framemap
+                appendToFrameMaps(frameMap.id, animation.key)
             }
         }
+    }
+
+    fun appendToFrameMaps(frameMapId: Int, animationId: Int) {
+        frameMaps.putIfAbsent(frameMapId, HashSet())
+        frameMaps[frameMapId]!!.add(animationId)
     }
 
     private fun addPlayer() {

@@ -3,10 +3,7 @@ package animation
 import Processor
 import gui.component.Dialog
 import mu.KotlinLogging
-import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.ItemDefinition
-import net.runelite.cache.definitions.NpcDefinition
-import net.runelite.cache.definitions.SequenceDefinition
+import net.runelite.cache.definitions.*
 import org.joml.Vector3f
 import org.joml.Vector3i
 import java.util.*
@@ -131,11 +128,14 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
 
     fun findSiblings(): IntArray {
         load()
-        val frameMap = keyframes.first().frameMap.id
-        val matching = context.cacheService.frameMaps[frameMap]?: return emptyArray<Int>().toIntArray()
+        val matching = context.cacheService.frameMaps[getFrameMap().id]?: return emptyArray<Int>().toIntArray()
         val siblings = matching.toIntArray()
         siblings.sort()
         return siblings
+    }
+
+    fun getFrameMap(): FramemapDefinition {
+        return keyframes.first().frameMap
     }
 
     fun addKeyframe() {

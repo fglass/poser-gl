@@ -100,13 +100,19 @@ class AnimationHandler(private val context: Processor) {
             return current
         }
 
+        // Copy animation as now modified
         val newIndex = context.cacheService.animations.maxBy { it.key }!!.key + 1
         val copied = Animation(newIndex, current)
 
         currentAnimation = copied
-        context.cacheService.animations[newIndex] = copied
-        context.gui.listPanel.animationList.addElement(copied)
+        addAnimation(copied)
         return copied
+    }
+
+    fun addAnimation(animation: Animation) {
+        context.cacheService.animations[animation.sequence.id] = animation
+        context.cacheService.appendToFrameMaps(animation.getFrameMap().id, animation.sequence.id)
+        context.gui.listPanel.animationList.addElement(animation)
     }
 
     fun togglePlay() {

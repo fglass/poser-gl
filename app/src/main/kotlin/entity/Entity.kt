@@ -1,6 +1,5 @@
 package entity
 
-import animation.ReferenceNode
 import model.Model
 import net.runelite.cache.definitions.ItemDefinition
 import org.joml.Vector3f

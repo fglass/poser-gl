@@ -22,15 +22,27 @@ class AnimationList(private val context: Processor): ElementList() {
     }
 
     fun addElement(animation: Animation) {
-        search("") // Reset search
         val element = AnimationElement(animation, context, listX, container.size.y)
         element.addClickListener()
 
         elements[animation.sequence.id] = element
         container.add(element)
-
         container.size.y += listYOffset
-        verticalScrollBar.curValue = container.size.y // Scroll to bottom
+
+        var offset = 1f // Scroll to bottom
+        if (isHighlighted(animation)) {
+            offset = highlighted.size / elements.size.toFloat() // Scroll to where inserted
+            highlighted += animation.sequence.id
+        }
+        reset()
+        verticalScrollBar.curValue = verticalScrollBar.maxValue * offset
+    }
+
+    private fun isHighlighted(animation: Animation): Boolean {
+        val first = context.cacheService.animations[highlighted.first()]!!
+        first.load()
+        val frameMap = first.getFrameMap()
+        return context.cacheService.frameMaps[frameMap.id]!!.contains(animation.sequence.id)
     }
 
     fun updateElement(animation: Animation?) {
@@ -74,8 +86,8 @@ class AnimationList(private val context: Processor): ElementList() {
 
             textState.text = animation.sequence.id.toString()
             textState.textColor = when {
-                highlighted -> ColorConstants.white()
                 animation.modified -> ColorConstants.lightRed()
+                highlighted -> ColorConstants.white()
                 else -> ColorConstants.lightGray()
             }
             isEnabled = true

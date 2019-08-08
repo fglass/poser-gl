@@ -20,9 +20,7 @@ class ImportManager(private val context: Processor) {
     private fun importPgl(data: ByteArray) {
         val animation = decodePgl(data)
         animation.length = animation.calculateLength()
-
-        context.cacheService.animations[animation.sequence.id] = animation
-        context.gui.listPanel.animationList.addElement(animation)
+        context.animationHandler.addAnimation(animation)
         context.animationHandler.load(animation)
     }
 

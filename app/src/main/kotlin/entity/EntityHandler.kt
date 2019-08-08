@@ -44,6 +44,7 @@ class EntityHandler(private val context: Processor) {
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
         context.entity = Entity(name, model, composition)
         context.gui.managerPanel.update(context.entity!!)
+        context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll
     }
 
     private fun clear() {
