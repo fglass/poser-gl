@@ -13,7 +13,7 @@ import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
 import util.Maths
 
-const val NODE_SCALE = 2.5f
+const val NODE_SCALE = 2.5f // TODO: based on entity size
 
 class NodeRenderer(private val context: Processor) {
 

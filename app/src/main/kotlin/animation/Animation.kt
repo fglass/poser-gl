@@ -8,6 +8,8 @@ import org.joml.Vector3f
 import org.joml.Vector3i
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashMap
 import kotlin.math.min
 
 private val logger = KotlinLogging.logger {}
@@ -39,6 +41,9 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     }
 
     private fun parseSequence() {
+        val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
+        val indices = HashSet<Int>() // Accumulate frame indices
+
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
             val archiveId = frameId ushr 16
             val frameArchive = context.cacheService.frames.get(archiveId)
@@ -52,20 +57,25 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
                 continue
             }
 
-            val frameMap = frame.framemap
-            val keyframe = Keyframe(index, frameId, sequence.frameLenghts[index], frameMap)
+            frames[index] = frame // Need to keep index in case frame fails to load above
+            frame.indexFrameIds.forEach {
+                indices.add(it)
+            }
+        }
 
+        for (frame in frames) {
+            val frameMap = frame.value.framemap
+            val keyframe = Keyframe(frame.key, sequence.frameIDs[frame.key], sequence.frameLenghts[frame.key], frameMap)
             val references = ArrayDeque<ReferenceNode>()
-            val maxId = frame.indexFrameIds.max()?: continue
 
-            for (id in 0..maxId) {
+            for (id in indices) {
                 val typeId = frameMap.types[id]
                 if (typeId > TransformationType.SCALE.id) { // Alpha transformations unsupported
                     continue
                 }
 
                 val type = TransformationType.fromId(typeId)
-                val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame, id, type))
+                val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame.value, id, type))
 
                 if (transformation.type == TransformationType.REFERENCE) {
                     references.add(ReferenceNode(transformation))
@@ -92,20 +102,13 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
         }
     }
 
-    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) { // TODO: improve parent assigning
+    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
         for (reference in references) {
-            val frameMap = reference.frameMap.toSet()
-            for (node in references) {
-
-                if (node.id == reference.id) {
+            for (other in references) {
+                if (other.id == reference.id) {
                     continue
                 }
-                val rotation = node.children[TransformationType.ROTATION]?: continue
-
-                // Parent if frame map is superset
-                if (rotation.frameMap.toSet().containsAll(frameMap)) {
-                    reference.parent = node
-                }
+                reference.trySetParent(other)
             }
         }
     }
