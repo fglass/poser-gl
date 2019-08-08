@@ -44,7 +44,7 @@ class Animation(private val context: Processor, val sequence: SequenceDefinition
     private fun parseSequence() {
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
             val archiveId = frameId ushr 16
-            val frameArchive = context.cacheService.getFrameArchive(archiveId)
+            val frameArchive = context.cacheService.frames.get(archiveId)
             val frameFileId = frameId and 0xFFFF
 
             val frame: FrameDefinition

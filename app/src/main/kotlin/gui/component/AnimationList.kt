@@ -53,7 +53,7 @@ class AnimationList(private val context: Processor): ElementList() {
         val animation = context.cacheService.animations[index]?: return
         if (element is AnimationElement) {
             element.animation = animation
-            element.highlighted = false
+            element.highlighted = false // TODO: incorrectly resetting colour during search
             element.updateText()
         }
     }

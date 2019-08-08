@@ -96,7 +96,6 @@ class LoadDialog(private val context: Processor):
         if (context.cacheService.loaded) {
             context.gui = GuiManager(context)
             context.entityHandler.loadPlayer()
-            context.cacheService.loadFrameArchives()
             close()
         } else {
             message.textState.text = "Unable to load a valid cache"
