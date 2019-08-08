@@ -65,7 +65,6 @@ class AnimationList(private val context: Processor): ElementList() {
         val animation = context.cacheService.animations[index]?: return
         if (element is AnimationElement) {
             element.animation = animation
-            element.highlighted = false // TODO: incorrectly resetting colour during search
             element.updateText()
         }
     }
@@ -75,8 +74,6 @@ class AnimationList(private val context: Processor): ElementList() {
         init {
             updateText()
         }
-
-        var highlighted = false
 
         override fun updateText() {
             style.background.color = when (animation) {
@@ -91,11 +88,6 @@ class AnimationList(private val context: Processor): ElementList() {
                 else -> ColorConstants.lightGray()
             }
             isEnabled = true
-        }
-
-        fun highlight() {
-            highlighted = true
-            updateText()
         }
 
         override fun onClickEvent() {

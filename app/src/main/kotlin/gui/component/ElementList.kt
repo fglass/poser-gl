@@ -7,7 +7,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 
-abstract class ElementList: ScrollablePanel() {
+abstract class ElementList: ScrollablePanel() { // TODO: refactor
 
     var searchText = "Search"
     var highlighted = emptyArray<Int>().toIntArray()
@@ -55,7 +55,11 @@ abstract class ElementList: ScrollablePanel() {
         var index = 0
         for (element in elements) {
             when {
-                index < filtered.size -> handleElement(filtered[index], element.value) // Shift matches up
+                index < filtered.size -> {
+                    val key = filtered[index]
+                    element.value.highlighted = highlighted.contains(key)
+                    handleElement(key, element.value) // Shift matches up
+                }
                 else -> element.value.isEnabled = false // Hide filtered
             }
             index++
@@ -69,10 +73,11 @@ abstract class ElementList: ScrollablePanel() {
         val regular = (start..elements.size).filter { !highlighted.contains(it) } // Exclude any highlighted elements
 
         for (element in elements) {
+            element.value.highlighted = false // Reset highlighting
             when {
-                this is AnimationList && index < highlighted.size -> { // Only applies to animation list
+                index < highlighted.size -> { // Only applies to animation list
+                    element.value.highlighted = true
                     handleElement(highlighted[index], element.value)
-                    (element.value as AnimationList.AnimationElement).highlight()
                 }
                 else -> handleElement(regular[index - highlighted.size], element.value)
             }
@@ -97,6 +102,8 @@ abstract class ElementList: ScrollablePanel() {
             style.background.color = ColorConstants.darkGray()
             style.border.isEnabled = false
         }
+
+        var highlighted = false
 
         abstract fun updateText()
 
