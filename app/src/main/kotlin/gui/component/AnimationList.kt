@@ -74,9 +74,9 @@ class AnimationList(private val context: Processor): ElementList() {
 
             textState.text = animation.sequence.id.toString()
             textState.textColor = when {
-                highlighted -> ColorConstants.lightBlue()
+                highlighted -> ColorConstants.white()
                 animation.modified -> ColorConstants.lightRed()
-                else -> ColorConstants.white()
+                else -> ColorConstants.lightGray()
             }
             isEnabled = true
         }
