@@ -21,7 +21,7 @@ class AnimationList(private val context: Processor): ElementList() {
         container.setSize(containerX, listY + index * listYOffset)
     }
 
-    fun addElement(animation: Animation) {
+    fun addElement(animation: Animation) { // TODO: bug when adding during search
         val element = AnimationElement(animation, context, listX, container.size.y)
         element.addClickListener()
 

@@ -12,8 +12,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
 import util.Maths
-
-const val NODE_SCALE = 2.5f // TODO: based on entity size
+import kotlin.math.max
 
 class NodeRenderer(private val context: Processor) {
 
@@ -74,13 +73,14 @@ class NodeRenderer(private val context: Processor) {
     }
 
     private fun getClosestNode(): ReferenceNode? {
+        val scale = getNodeScale()
         val ray = calculateRay()
         var minDistance = Float.MAX_VALUE
         var closest: ReferenceNode? = null
 
         for (node in nodes) {
-            val min = Vector3f(node.position).sub(NODE_SCALE, NODE_SCALE, NODE_SCALE)
-            val max = Vector3f(node.position).add(NODE_SCALE, NODE_SCALE, NODE_SCALE)
+            val min = Vector3f(node.position).sub(scale, scale, scale)
+            val max = Vector3f(node.position).add(scale, scale, scale)
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
@@ -148,9 +148,13 @@ class NodeRenderer(private val context: Processor) {
         modelMatrix.m20(viewMatrix.m02())
         modelMatrix.m21(viewMatrix.m12())
         modelMatrix.m22(viewMatrix.m22())
-        modelMatrix.scale(NODE_SCALE)
+        modelMatrix.scale(getNodeScale())
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
         shader.loadProjectionMatrix(context.framebuffer.entityRenderer.projectionMatrix)
+    }
+
+    private fun getNodeScale(): Float {
+        return max(context.entity!!.size.toFloat(), 2.5f)
     }
 
     private fun finish() {
