@@ -154,7 +154,8 @@ class NodeRenderer(private val context: Processor) {
     }
 
     private fun getNodeScale(): Float {
-        return max(context.entity!!.size.toFloat(), 2.5f)
+        val base = 2.5f
+        return base + context.entity!!.size
     }
 
     private fun finish() {

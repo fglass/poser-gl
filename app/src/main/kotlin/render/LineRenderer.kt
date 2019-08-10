@@ -9,51 +9,49 @@ import model.Model
 import shader.LineShader
 import org.lwjgl.opengl.GL30.*
 import util.Maths
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 private const val VERTEX_FILE = "shader/line-vs.glsl"
 private const val FRAGMENT_FILE = "shader/line-fs.glsl"
 
 class LineRenderer(private val framebuffer: Framebuffer) {
 
-    private val grid: Model
+    private var grid: Model? = null
     private val gridLoader = Loader()
     private val skeletonLoader = Loader()
     private val shader = LineShader(VERTEX_FILE, FRAGMENT_FILE)
 
-    init {
-        grid = getGrid()
+    fun setGrid(entitySize: Int) {
+        gridLoader.cleanUp()
+        val base = if (entitySize > 1) 10f else 9f
+        val dimension = ceil((base + entitySize) / 2f) * 2 // Round up to even number
+        val offset = dimension / 4f
+        val vertices = ArrayList<Float>()
+
+        for (i in 0..(dimension * 2).roundToInt() step 2) {
+            val x = (i - dimension) / 4f
+            vertices.addVertex(x, 0f, offset)
+            vertices.addVertex(x, 0f, -offset)
+            vertices.addVertex(offset, 0f, x)
+            vertices.addVertex(-offset, 0f, x)
+        }
+        grid = gridLoader.loadToVao(vertices.toFloatArray())
     }
 
-    private fun getGrid(): Model {
-        val vertices = ArrayList<Float>()
-        val offset = 2.5f
-
-        for (i in 0..20 step 2) {
-            val x = (i - 10) / 4f
-            vertices.add(x)
-            vertices.add(0f)
-            vertices.add(offset)
-
-            vertices.add(x)
-            vertices.add(0f)
-            vertices.add(-offset)
-
-            vertices.add(offset)
-            vertices.add(0f)
-            vertices.add(x)
-
-            vertices.add(-offset)
-            vertices.add(0f)
-            vertices.add(x)
-        }
-        return gridLoader.loadToVao(vertices.toFloatArray())
+    private fun ArrayList<Float>.addVertex(x: Float, y: Float, z: Float) {
+        add(x)
+        add(y)
+        add(z)
     }
 
     fun renderGrid(camera: Camera) {
-        prepare(grid, false)
-        loadMatrices(camera, 75f)
-        glDrawArrays(GL_LINES, 0, grid.vertexCount)
-        finish()
+        if (grid != null) {
+            prepare(grid, false)
+            loadMatrices(camera, 75f)
+            glDrawArrays(GL_LINES, 0, grid!!.vertexCount)
+            finish()
+        }
     }
 
     fun renderSkeleton(nodes: Set<ReferenceNode>, camera: Camera) {
@@ -73,10 +71,10 @@ class LineRenderer(private val framebuffer: Framebuffer) {
         }
     }
 
-    private fun prepare(line: Model, depth: Boolean = true) {
+    private fun prepare(line: Model?, depth: Boolean = true) {
         shader.start()
         shader.loadGridToggle(line == grid)
-        glBindVertexArray(line.vaoId)
+        glBindVertexArray(line!!.vaoId)
         glEnableVertexAttribArray(0)
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)

@@ -39,10 +39,11 @@ class EntityHandler(private val context: Processor) {
                 merge(defs)
             }
         }
-
         def.computeAnimationTables()
+
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
         context.entity = Entity(name, size, model, composition)
+        context.lineRenderer.setGrid(size)
         context.gui.managerPanel.update(context.entity!!)
         context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll
     }
