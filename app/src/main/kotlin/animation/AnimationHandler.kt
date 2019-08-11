@@ -104,12 +104,12 @@ class AnimationHandler(private val context: Processor) {
         val newIndex = context.cacheService.animations.maxBy { it.key }!!.key + 1
         val copied = Animation(newIndex, current)
 
-        currentAnimation = copied
         addAnimation(copied)
         return copied
     }
 
     fun addAnimation(animation: Animation) {
+        currentAnimation = animation
         context.cacheService.animations[animation.sequence.id] = animation
         context.cacheService.appendToFrameMaps(animation.getFrameMap().id, animation.sequence.id)
         context.gui.listPanel.animationList.addElement(animation)
