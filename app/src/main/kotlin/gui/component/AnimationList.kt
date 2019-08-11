@@ -21,7 +21,8 @@ class AnimationList(private val context: Processor): ElementList() {
         container.setSize(containerX, listY + index * listYOffset)
     }
 
-    fun addElement(animation: Animation) { // TODO: bug when adding during search
+    fun addElement(animation: Animation) {
+        search("") // Reset search
         val element = AnimationElement(animation, context, listX, container.size.y)
         element.addClickListener()
 
@@ -34,7 +35,7 @@ class AnimationList(private val context: Processor): ElementList() {
             offset = highlighted.size / elements.size.toFloat() // Scroll to where inserted
             highlighted += animation.sequence.id
         }
-        reset()
+        reset() // Reorder list
         verticalScrollBar.curValue = verticalScrollBar.maxValue * offset
     }
 

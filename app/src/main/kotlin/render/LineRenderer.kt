@@ -47,7 +47,7 @@ class LineRenderer(private val framebuffer: Framebuffer) {
 
     fun renderGrid(camera: Camera) {
         if (grid != null) {
-            prepare(grid, false)
+            prepare(grid!!, false)
             loadMatrices(camera, 75f)
             glDrawArrays(GL_LINES, 0, grid!!.vertexCount)
             finish()
@@ -71,10 +71,10 @@ class LineRenderer(private val framebuffer: Framebuffer) {
         }
     }
 
-    private fun prepare(line: Model?, depth: Boolean = true) {
+    private fun prepare(line: Model, depth: Boolean = true) {
         shader.start()
         shader.loadGridToggle(line == grid)
-        glBindVertexArray(line!!.vaoId)
+        glBindVertexArray(line.vaoId)
         glEnableVertexAttribArray(0)
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
