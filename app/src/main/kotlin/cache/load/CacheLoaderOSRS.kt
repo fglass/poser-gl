@@ -1,13 +1,13 @@
 package cache.load
 
-import Processor
+import render.RenderContext
 import animation.Animation
 import cache.CacheService
 import cache.IndexType
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
 
-class CacheLoaderOSRS(private val context: Processor, private val service: CacheService):
+class CacheLoaderOSRS(private val context: RenderContext, private val service: CacheService):
     CacheLoader {
 
     override fun loadSequences(library: CacheLibrary) {

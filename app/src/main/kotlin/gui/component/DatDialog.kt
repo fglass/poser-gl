@@ -1,14 +1,14 @@
 package gui.component
 
-import BG_COLOUR
-import Processor
+import render.BG_COLOUR
+import render.RenderContext
 import animation.Animation
 import org.displee.CacheLibrary
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 
-class DatDialog(private val context: Processor, private val animation: Animation):
+class DatDialog(private val context: RenderContext, private val animation: Animation):
       Dialog("Sequence Information", "", context, 260f, 80f) {
 
     private lateinit var framePanel: ScrollablePanel

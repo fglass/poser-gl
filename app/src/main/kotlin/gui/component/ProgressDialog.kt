@@ -1,9 +1,9 @@
 package gui.component
 
-import Processor
+import render.RenderContext
 import org.liquidengine.legui.component.ProgressBar
 
-class ProgressDialog(title: String, message: String, context: Processor, width: Float, height: Float):
+class ProgressDialog(title: String, message: String, context: RenderContext, width: Float, height: Float):
                      Dialog(title, message, context, width, height) {
 
     private val progressBar = ProgressBar(size.x / 2 - 50, 43f, 100f, 10f)

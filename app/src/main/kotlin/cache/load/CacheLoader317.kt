@@ -1,6 +1,6 @@
 package cache.load
 
-import Processor
+import render.RenderContext
 import animation.Animation
 import cache.CacheService
 import cache.IndexType
@@ -10,7 +10,7 @@ import org.displee.CacheLibrary
 
 private val logger = KotlinLogging.logger {}
 
-class CacheLoader317(private val context: Processor, private val service: CacheService): CacheLoader {
+class CacheLoader317(private val context: RenderContext, private val service: CacheService): CacheLoader {
 
     override fun loadSequences(library: CacheLibrary) {
         val archive = library.getIndex(IndexType.CONFIG.id317)

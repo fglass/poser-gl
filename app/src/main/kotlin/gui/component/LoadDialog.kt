@@ -1,7 +1,7 @@
 package gui.component
 
-import SPRITE_PATH
-import Processor
+import render.SPRITE_PATH
+import render.RenderContext
 import gui.GuiManager
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
@@ -12,7 +12,7 @@ import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialogs
 
-class LoadDialog(private val context: Processor):
+class LoadDialog(private val context: RenderContext):
       Dialog("Cache Loader", "Please backup your cache first", context, 260f, 109f) {
 
     private lateinit var cache: TextInput

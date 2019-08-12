@@ -1,8 +1,8 @@
 package gui
 
-import HEIGHT
-import Processor
-import WIDTH
+import render.HEIGHT
+import render.RenderContext
+import render.WIDTH
 import gui.panel.AnimationPanel
 import gui.panel.EditorPanel
 import gui.panel.ListPanel
@@ -14,7 +14,7 @@ import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 
-class GuiManager(context: Processor) {
+class GuiManager(context: RenderContext) {
 
     val container: LayerContainer = context.frame.componentLayer.container
     val listPanel = ListPanel(context)

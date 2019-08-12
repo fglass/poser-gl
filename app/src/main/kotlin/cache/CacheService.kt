@@ -1,6 +1,6 @@
 package cache
 
-import Processor
+import render.RenderContext
 import animation.Animation
 import cache.load.*
 import cache.pack.CachePacker317
@@ -17,7 +17,7 @@ import org.displee.CacheLibrary
 
 private val logger = KotlinLogging.logger {}
 
-class CacheService(private val context: Processor) {
+class CacheService(private val context: RenderContext) {
 
     lateinit var loader: CacheLoader
     var cachePath = ""

@@ -1,7 +1,5 @@
 package render
 
-import BG_COLOUR
-import Processor
 import entity.Camera
 import gui.component.Dialog
 import io.MouseHandler
@@ -14,7 +12,7 @@ import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import shader.StaticShader
 
-class Framebuffer(private val context: Processor, private val shader: StaticShader,
+class Framebuffer(private val context: RenderContext, private val shader: StaticShader,
                   private val mouse: MouseHandler, private val scaleFactor: Int): ImageView() {
 
     private var id: Int = 0

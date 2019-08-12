@@ -1,7 +1,7 @@
 package gui.panel
 
-import Processor
-import SPRITE_PATH
+import render.RenderContext
+import render.SPRITE_PATH
 import animation.Keyframe
 import gui.component.AnimationMenu
 import gui.component.AnimationTimeline
@@ -22,7 +22,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class AnimationPanel(private val context: Processor): Panel() {
+class AnimationPanel(private val context: RenderContext): Panel() {
 
     val menu: AnimationMenu
     private val timeline: AnimationTimeline

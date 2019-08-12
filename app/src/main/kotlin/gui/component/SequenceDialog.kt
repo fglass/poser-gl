@@ -1,6 +1,6 @@
 package gui.component
 
-import Processor
+import render.RenderContext
 import animation.Animation
 import animation.ITEM_OFFSET
 import org.liquidengine.legui.component.Label
@@ -9,7 +9,7 @@ import org.liquidengine.legui.component.event.widget.WidgetCloseEvent
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import kotlin.math.max
 
-class SequenceDialog(private val context: Processor, private val animation: Animation):
+class SequenceDialog(private val context: RenderContext, private val animation: Animation):
       Dialog("Sequence ${animation.sequence.id}", "", context, 260f, 69f) {
 
     init {

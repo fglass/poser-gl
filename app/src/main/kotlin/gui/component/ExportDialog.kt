@@ -1,6 +1,6 @@
 package gui.component
 
-import Processor
+import render.RenderContext
 import util.FileDialogs
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.RadioButton
@@ -8,7 +8,7 @@ import org.liquidengine.legui.component.RadioButtonGroup
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 
-class ExportDialog(private val context: Processor): Dialog("Export Manager", "", context, 230f, 80f) {
+class ExportDialog(private val context: RenderContext): Dialog("Export Manager", "", context, 230f, 80f) {
 
     init {
         isDraggable = false

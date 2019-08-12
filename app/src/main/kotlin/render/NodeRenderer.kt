@@ -1,6 +1,5 @@
 package render
 
-import Processor
 import animation.ReferenceNode
 import animation.TransformationType
 import entity.Camera
@@ -12,9 +11,8 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
 import util.Maths
-import kotlin.math.max
 
-class NodeRenderer(private val context: Processor) {
+class NodeRenderer(private val context: RenderContext) {
 
     private val quad: Model
     private val loader = Loader()
@@ -50,7 +48,7 @@ class NodeRenderer(private val context: Processor) {
         if (!enabled) {
             return
         }
-        
+
         context.lineRenderer.renderSkeleton(nodes, camera) // Render skeleton behind nodes
         prepare()
         viewMatrix = Maths.createViewMatrix(camera)

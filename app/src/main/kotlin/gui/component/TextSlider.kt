@@ -1,6 +1,6 @@
 package gui.component
 
-import SPRITE_PATH
+import render.SPRITE_PATH
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

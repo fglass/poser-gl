@@ -1,6 +1,6 @@
 package gui.panel
 
-import Processor
+import render.RenderContext
 import gui.component.AnimationList
 import gui.component.EntityList
 import gui.component.ItemList
@@ -18,7 +18,7 @@ import org.liquidengine.legui.style.flex.FlexStyle
 import org.lwjgl.glfw.GLFW
 import util.setSizeLimits
 
-class ListPanel(context: Processor): Panel() {
+class ListPanel(context: RenderContext): Panel() {
 
     private val search = TextInput()
     private val tabs = LinkedHashSet<Button>()

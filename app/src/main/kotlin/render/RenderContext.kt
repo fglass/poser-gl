@@ -1,3 +1,5 @@
+package render
+
 import animation.AnimationHandler
 import cache.CacheService
 import entity.Entity
@@ -25,7 +27,6 @@ import org.liquidengine.legui.system.context.DefaultCallbackKeeper
 import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
-import org.liquidengine.legui.system.renderer.nvg.util.NvgRenderUtils
 import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
@@ -33,13 +34,10 @@ import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
-import render.*
 import shader.StaticShader
 import transfer.ExportManager
 import transfer.ImportManager
 import util.VSyncTimer
-import java.lang.management.ManagementFactory
-import java.util.*
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.2"
@@ -50,7 +48,7 @@ var WIDTH = 800
 var HEIGHT = 600
 private val logger = KotlinLogging.logger {}
 
-class Processor {
+class RenderContext {
 
     val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
     lateinit var gui: GuiManager
@@ -197,54 +195,4 @@ class Processor {
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
         return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
     }
-}
-
-fun main() {
-    try {
-        if (restartJVM()) {
-            return
-        }
-        Processor().run()
-    } catch (e: Exception) {
-        logger.error(e) { "Main exception encountered" }
-    }
-}
-
-fun restartJVM(): Boolean {
-    val osName = System.getProperty("os.name")
-    if (!osName.startsWith("Mac") && !osName.startsWith("Darwin")) {
-        return false
-    }
-
-    // Get current JVM process pid
-    val pid =
-        ManagementFactory.getRuntimeMXBean().name.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-
-    // Get environment variable on whether XstartOnFirstThread is enabled
-    val env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_$pid")
-
-    // If environment variable is "1" then XstartOnFirstThread is enabled
-    if (env != null && env == "1") {
-        return false
-    }
-
-    // Restart JVM with -XstartOnFirstThread
-    val separator = System.getProperty("file.separator")
-    val classpath = System.getProperty("java.class.path")
-    val mainClass = System.getenv("JAVA_MAIN_CLASS_$pid")
-    val jvmPath = System.getProperty("java.home") + separator + "bin" + separator + "java"
-
-    val inputArguments = ManagementFactory.getRuntimeMXBean().inputArguments
-    val jvmArgs = ArrayList<String>()
-
-    jvmArgs.add(jvmPath)
-    jvmArgs.add("-XstartOnFirstThread")
-    jvmArgs.addAll(inputArguments)
-    jvmArgs.add("-cp")
-    jvmArgs.add(classpath)
-    jvmArgs.add(mainClass)
-
-    val processBuilder = ProcessBuilder(jvmArgs)
-    processBuilder.start()
-    return true
 }

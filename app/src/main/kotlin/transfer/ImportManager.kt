@@ -1,6 +1,6 @@
 package transfer
 
-import Processor
+import render.RenderContext
 import animation.*
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
@@ -9,7 +9,7 @@ import org.joml.Vector3i
 import util.FileDialogs
 import java.io.File
 
-class ImportManager(private val context: Processor) {
+class ImportManager(private val context: RenderContext) {
 
     fun import() {
         val name = FileDialogs.openFile(listOf("*.pgl"), ".")?: return

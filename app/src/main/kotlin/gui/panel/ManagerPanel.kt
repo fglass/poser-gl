@@ -1,20 +1,17 @@
 package gui.panel
 
-import SPRITE_PATH
-import BG_COLOUR
-import Processor
+import render.SPRITE_PATH
+import render.BG_COLOUR
+import render.RenderContext
 import entity.Entity
 import gui.component.ConfigGroup
 import org.joml.Vector2f
-import org.joml.Vector4f
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.event.MouseDragEvent
-import org.liquidengine.legui.event.ScrollEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
@@ -25,9 +22,8 @@ import org.liquidengine.legui.style.length.LengthType.PIXEL
 import render.PolygonMode
 import shader.ShadingType
 import util.setSizeLimits
-import kotlin.math.max
 
-class ManagerPanel(private val context: Processor): Panel() {
+class ManagerPanel(private val context: RenderContext): Panel() {
 
     private val selectedEntity = Label("Selected: N/A")
     private lateinit var modelPanel: ScrollablePanel

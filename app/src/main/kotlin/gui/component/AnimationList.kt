@@ -1,10 +1,10 @@
 package gui.component
 
-import Processor
+import render.RenderContext
 import animation.Animation
 import org.liquidengine.legui.style.color.ColorConstants
 
-class AnimationList(private val context: Processor): ElementList() {
+class AnimationList(private val context: RenderContext): ElementList() {
 
     private val elements = HashMap<Int, Element>()
     private var selected: AnimationElement? = null
@@ -70,7 +70,7 @@ class AnimationList(private val context: Processor): ElementList() {
         }
     }
 
-    class AnimationElement(var animation: Animation, private val context: Processor, x: Float, y: Float):
+    class AnimationElement(var animation: Animation, private val context: RenderContext, x: Float, y: Float):
                            Element(x, y) {
         init {
             updateText()

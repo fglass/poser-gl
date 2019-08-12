@@ -1,12 +1,12 @@
 package entity
 
-import Processor
+import render.RenderContext
 import model.ModelMerger.Companion.merge
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
 import shader.ShadingType
 
-class EntityHandler(private val context: Processor) {
+class EntityHandler(private val context: RenderContext) {
 
     fun loadPlayer() {
         load(context.cacheService.entities[-1]!!)

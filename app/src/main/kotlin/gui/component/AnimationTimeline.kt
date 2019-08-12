@@ -1,6 +1,6 @@
 package gui.component
 
-import BG_COLOUR
+import render.BG_COLOUR
 import gui.panel.AnimationPanel
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent

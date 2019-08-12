@@ -1,8 +1,8 @@
 package gui.panel
 
-import BG_COLOUR
-import Processor
-import SPRITE_PATH
+import render.BG_COLOUR
+import render.RenderContext
+import render.SPRITE_PATH
 import animation.Keyframe
 import animation.KeyframeAction
 import animation.ReferenceNode
@@ -11,7 +11,6 @@ import gui.component.ButtonGroup
 import gui.component.ConfigGroup
 import gui.component.TextSlider
 import org.joml.Vector2f
-import org.joml.Vector4f
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -25,7 +24,7 @@ import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.LengthType.PIXEL
 import util.setSizeLimits
 
-class EditorPanel(private val context: Processor): Panel() {
+class EditorPanel(private val context: RenderContext): Panel() {
 
     private val sliders = ArrayList<TextSlider>()
     private var currentReference: ReferenceNode? = null

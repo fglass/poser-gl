@@ -1,9 +1,9 @@
 package gui.component
 
-import Processor
+import render.RenderContext
 import net.runelite.cache.definitions.ItemDefinition
 
-class ItemList(context: Processor): ElementList() {
+class ItemList(context: RenderContext): ElementList() {
 
     private val items = context.cacheService.items
     private val elements = HashMap<Int, Element>()
@@ -38,7 +38,7 @@ class ItemList(context: Processor): ElementList() {
         }
     }
 
-    class ItemElement(var item: ItemDefinition, private val context: Processor, x: Float, y: Float): Element(x, y) {
+    class ItemElement(var item: ItemDefinition, private val context: RenderContext, x: Float, y: Float): Element(x, y) {
         init {
             updateText()
         }

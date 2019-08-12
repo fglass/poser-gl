@@ -1,6 +1,6 @@
 package animation
 
-import Processor
+import render.RenderContext
 import gui.component.Dialog
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
@@ -16,7 +16,7 @@ private val logger = KotlinLogging.logger {}
 
 const val ITEM_OFFSET = 512
 
-class Animation(private val context: Processor, val sequence: SequenceDefinition) {
+class Animation(private val context: RenderContext, val sequence: SequenceDefinition) {
 
     // Copy constructor
     constructor(newId: Int, animation: Animation): this(animation.context, SequenceDefinition(newId)) {

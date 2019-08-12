@@ -1,6 +1,6 @@
 package animation
 
-import Processor
+import render.RenderContext
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.ModelDefinition.*
 import shader.ShadingType
@@ -24,7 +24,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
     var modified = false
     val transformations = ArrayList<Transformation>()
 
-    fun apply(context: Processor) {
+    fun apply(context: RenderContext) {
         // Reset from last frame
         context.nodeRenderer.nodes.clear()
         animOffsetX = 0

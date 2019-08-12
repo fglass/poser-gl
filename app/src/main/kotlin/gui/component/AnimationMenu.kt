@@ -1,7 +1,7 @@
 package gui.component
 
-import SPRITE_PATH
-import Processor
+import render.SPRITE_PATH
+import render.RenderContext
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
@@ -12,10 +12,9 @@ import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.Auto
 import org.liquidengine.legui.style.length.LengthType.PIXEL
-import org.liquidengine.legui.system.renderer.nvg.util.NvgRenderUtils
 import util.setSizeLimits
 
-class AnimationMenu(context: Processor): Panel() {
+class AnimationMenu(context: RenderContext): Panel() {
 
     private val play: ImageButton
     private val playIcon = BufferedImage(SPRITE_PATH + "play.png")

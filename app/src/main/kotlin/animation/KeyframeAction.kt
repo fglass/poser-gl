@@ -1,7 +1,7 @@
 package animation
 
-import SPRITE_PATH
-import Processor
+import render.SPRITE_PATH
+import render.RenderContext
 import org.liquidengine.legui.image.BufferedImage
 import kotlin.reflect.KFunction1
 
@@ -14,7 +14,7 @@ enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, priva
     INTERPOLATE(Animation::interpolateKeyframes, "interpolate", "interpolate-hovered"),
     DELETE(Animation::deleteKeyframe, "trash", "trash-hovered");
 
-    fun apply(context: Processor) {
+    fun apply(context: RenderContext) {
         val current = context.animationHandler.currentAnimation?: return
         val useCurrent = this == COPY || this == DELETE && current.keyframes.size <= 1 ||
                          this == PASTE && context.animationHandler.copiedFrame.id == -1 ||

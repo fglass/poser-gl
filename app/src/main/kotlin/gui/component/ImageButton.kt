@@ -1,6 +1,6 @@
 package gui.component
 
-import WIDTH
+import render.WIDTH
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

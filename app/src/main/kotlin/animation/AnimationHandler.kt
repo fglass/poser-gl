@@ -1,13 +1,13 @@
 package animation
 
-import Processor
+import render.RenderContext
 import mu.KotlinLogging
 import net.runelite.cache.definitions.FramemapDefinition
 
 const val MAX_LENGTH = 999
 private val logger = KotlinLogging.logger {}
 
-class AnimationHandler(private val context: Processor) {
+class AnimationHandler(private val context: RenderContext) {
 
     var currentAnimation: Animation? = null
     var copiedFrame = Keyframe(-1, -1, -1, FramemapDefinition())

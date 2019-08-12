@@ -1,20 +1,18 @@
 package transfer
 
-import Processor
+import render.RenderContext
 import animation.Animation
 import animation.Keyframe
 import animation.ReferenceNode
 import cache.pack.CachePacker317
 import gui.component.DatDialog
 import gui.component.ExportDialog
-import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.FramemapDefinition
-import org.liquidengine.legui.component.Dialog
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
 
-class ExportManager(private val context: Processor) {
+class ExportManager(private val context: RenderContext) {
 
     private lateinit var dialog: ExportDialog
 
