@@ -12,6 +12,7 @@ import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.Auto
 import org.liquidengine.legui.style.length.LengthType.PIXEL
+import org.liquidengine.legui.system.renderer.nvg.util.NvgRenderUtils
 import util.setSizeLimits
 
 class AnimationMenu(context: Processor): Panel() {

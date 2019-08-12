@@ -50,7 +50,8 @@ class NodeRenderer(private val context: Processor) {
         if (!enabled) {
             return
         }
-
+        
+        context.lineRenderer.renderSkeleton(nodes, camera) // Render skeleton behind nodes
         prepare()
         viewMatrix = Maths.createViewMatrix(camera)
         getClosestNode()?.highlighted = true
@@ -61,7 +62,6 @@ class NodeRenderer(private val context: Processor) {
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
-        context.lineRenderer.renderSkeleton(nodes, camera)
     }
 
     private fun prepare() {

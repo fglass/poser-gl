@@ -25,6 +25,7 @@ import org.liquidengine.legui.system.context.DefaultCallbackKeeper
 import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
+import org.liquidengine.legui.system.renderer.nvg.util.NvgRenderUtils
 import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
