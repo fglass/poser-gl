@@ -78,8 +78,9 @@ public class ModelLoader {
             position += triangleCount;
         }
 
-        int var49 = position;
+        int texIndexPos = position;
         position += triangleCount;
+
         int priorityPos = position;
         if (modelPriority == 255) {
             position += triangleCount;
@@ -90,7 +91,7 @@ public class ModelLoader {
             position += triangleCount;
         }
 
-        int var35 = position;
+        int vertexSkinPos = position;
         if (modelVertexSkins == 1) {
             position += verticeCount;
         }
@@ -100,8 +101,9 @@ public class ModelLoader {
             position += triangleCount;
         }
 
-        int var11 = position;
+        int facePointPos = position;
         position += var22;
+
         int texturePos = position;
         if (modelTexture == 1) {
             position += triangleCount * 2;
@@ -111,11 +113,11 @@ public class ModelLoader {
         position += var38;
         int colorPos = position;
         position += triangleCount * 2;
-        int var40 = position;
+        int faceYPos = position;
         position += var20;
-        int var41 = position;
+        int vOffsetYPos = position;
         position += var21;
-        int var8 = position;
+        int vOffsetZPos = position;
         position += var42;
         int var43 = position;
         position += textureAmount * 6;
@@ -188,10 +190,10 @@ public class ModelLoader {
         }
 
         var2.setOffset(textureTriangleCount);
-        var24.setOffset(var40);
-        var3.setOffset(var41);
-        var28.setOffset(var8);
-        var6.setOffset(var35);
+        var24.setOffset(faceYPos);
+        var3.setOffset(vOffsetYPos);
+        var28.setOffset(vOffsetZPos);
+        var6.setOffset(vertexSkinPos);
         int vX = 0;
         int vY = 0;
         int vZ = 0;
@@ -264,8 +266,8 @@ public class ModelLoader {
             }
         }
 
-        var2.setOffset(var11);
-        var24.setOffset(var49);
+        var2.setOffset(facePointPos);
+        var24.setOffset(texIndexPos);
         trianglePointX = 0;
         trianglePointY = 0;
         int trianglePointZ = 0;

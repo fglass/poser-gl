@@ -16,8 +16,8 @@ fun main() {
 }
 
 fun restart(): Boolean {
-    val osName = System.getProperty("os.name")
-    if (!osName.startsWith("Mac") && !osName.startsWith("Darwin")) {
+    val os = System.getProperty("os.name")
+    if (!os.startsWith("Mac") && !os.startsWith("Darwin")) {
         return false
     }
 
@@ -36,18 +36,18 @@ fun restart(): Boolean {
     // Restart JVM with -XstartOnFirstThread
     val separator = System.getProperty("file.separator")
     val classpath = System.getProperty("java.class.path")
-    val mainClass = System.getenv("JAVA_MAIN_CLASS_$pid")
-    val jvmPath = System.getProperty("java.home") + separator + "bin" + separator + "java"
+    val main = System.getenv("JAVA_MAIN_CLASS_$pid")
+    val jvm = System.getProperty("java.home") + separator + "bin" + separator + "java"
 
-    val inputArguments = ManagementFactory.getRuntimeMXBean().inputArguments
+    val inputArgs = ManagementFactory.getRuntimeMXBean().inputArguments
     val jvmArgs = ArrayList<String>()
 
-    jvmArgs.add(jvmPath)
+    jvmArgs.add(jvm)
     jvmArgs.add("-XstartOnFirstThread")
-    jvmArgs.addAll(inputArguments)
+    jvmArgs.addAll(inputArgs)
     jvmArgs.add("-cp")
     jvmArgs.add(classpath)
-    jvmArgs.add(mainClass)
+    jvmArgs.add(main)
 
     val processBuilder = ProcessBuilder(jvmArgs)
     processBuilder.start()
