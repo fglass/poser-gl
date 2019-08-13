@@ -1,6 +1,6 @@
 package entity
 
-import io.MouseHandler
+import util.MouseHandler
 import org.joml.Vector3f
 import kotlin.math.cos
 import kotlin.math.max

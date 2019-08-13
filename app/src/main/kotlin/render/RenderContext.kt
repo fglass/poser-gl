@@ -6,7 +6,7 @@ import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
 import gui.component.LoadDialog
-import io.MouseHandler
+import util.MouseHandler
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Vector2f
@@ -56,19 +56,18 @@ class RenderContext {
     lateinit var nodeRenderer: NodeRenderer
     lateinit var lineRenderer: LineRenderer
 
-    var entity: Entity? = null
-    private var running = true
-
     val cacheService = CacheService(this)
     val exportManager = ExportManager(this)
     val importManager = ImportManager(this)
 
     val loader = Loader()
     val modelParser = ModelParser(loader)
+    var entity: Entity? = null
     val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
 
     fun run() {
+        var running = true
         System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
         System.setProperty("java.awt.headless", java.lang.Boolean.TRUE.toString())
 

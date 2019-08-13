@@ -1,7 +1,7 @@
 package shader
 
 import org.joml.Matrix4f
-import util.Maths
+import util.MatrixCreator
 import entity.Camera
 import entity.Light
 
@@ -35,7 +35,7 @@ class StaticShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
     }
 
     fun loadViewMatrix(camera: Camera) {
-        val matrix = Maths.createViewMatrix(camera)
+        val matrix = MatrixCreator.createViewMatrix(camera)
         loadMatrix(locationViewMatrix, matrix)
     }
 

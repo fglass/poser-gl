@@ -2,7 +2,7 @@ package render
 
 import entity.Camera
 import gui.component.Dialog
-import io.MouseHandler
+import util.MouseHandler
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage

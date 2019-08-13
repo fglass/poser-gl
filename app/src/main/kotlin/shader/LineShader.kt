@@ -2,7 +2,7 @@ package shader
 
 import entity.Camera
 import org.joml.Matrix4f
-import util.Maths
+import util.MatrixCreator
 
 class LineShader(vertexFile: String, fragmentFile: String): ShaderProgram(vertexFile, fragmentFile) {
 
@@ -27,7 +27,7 @@ class LineShader(vertexFile: String, fragmentFile: String): ShaderProgram(vertex
     }
 
     fun loadViewMatrix(camera: Camera) {
-        val matrix = Maths.createViewMatrix(camera)
+        val matrix = MatrixCreator.createViewMatrix(camera)
         loadMatrix(locationViewMatrix, matrix)
     }
 

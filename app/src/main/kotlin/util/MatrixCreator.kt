@@ -4,7 +4,7 @@ import org.joml.Matrix4f
 import org.joml.Vector3f
 import entity.Camera
 
-object Maths {
+object MatrixCreator {
 
     fun createTransformationMatrix(translation: Vector3f, rotation: Vector3f, scale: Float): Matrix4f {
         val matrix = Matrix4f()

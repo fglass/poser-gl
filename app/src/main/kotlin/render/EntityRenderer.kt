@@ -8,8 +8,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import shader.StaticShader
-import util.Maths
-import org.joml.Vector2f
+import util.MatrixCreator
 import kotlin.math.tan
 
 const val FOV = 70f
@@ -53,7 +52,9 @@ class EntityRenderer(private val shader: StaticShader) {
         GL20.glEnableVertexAttribArray(0)
         GL20.glEnableVertexAttribArray(1)
 
-        val transformationMatrix = Maths.createTransformationMatrix(entity.position, entity.rotation, entity.scale)
+        val transformationMatrix = MatrixCreator.createTransformationMatrix(
+            entity.position, entity.rotation, entity.scale
+        )
         shader.loadTransformationMatrix(transformationMatrix)
 
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, entity.model.vertexCount)

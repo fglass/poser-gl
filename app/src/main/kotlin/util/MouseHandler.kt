@@ -1,4 +1,4 @@
-package io
+package util
 
 import org.joml.Vector2f
 import org.liquidengine.legui.event.MouseClickEvent

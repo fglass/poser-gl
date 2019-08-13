@@ -8,7 +8,7 @@ import entity.ENTITY_SCALE
 import model.Model
 import shader.LineShader
 import org.lwjgl.opengl.GL30.*
-import util.Maths
+import util.MatrixCreator
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -84,7 +84,7 @@ class LineRenderer(private val framebuffer: Framebuffer) {
     }
 
     private fun loadMatrices(camera: Camera, scale: Float) {
-        shader.loadTransformationMatrix(Maths.createTransformationMatrix(ENTITY_POS, ENTITY_ROT, scale))
+        shader.loadTransformationMatrix(MatrixCreator.createTransformationMatrix(ENTITY_POS, ENTITY_ROT, scale))
         shader.loadProjectionMatrix(framebuffer.entityRenderer.projectionMatrix)
         shader.loadViewMatrix(camera)
     }

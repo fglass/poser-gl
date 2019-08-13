@@ -10,7 +10,7 @@ import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
-import util.Maths
+import util.MatrixCreator
 
 class NodeRenderer(private val context: RenderContext) {
 
@@ -51,7 +51,7 @@ class NodeRenderer(private val context: RenderContext) {
 
         context.lineRenderer.renderSkeleton(nodes, camera) // Render skeleton behind nodes
         prepare()
-        viewMatrix = Maths.createViewMatrix(camera)
+        viewMatrix = MatrixCreator.createViewMatrix(camera)
         getClosestNode()?.highlighted = true
 
         for (node in nodes) {
