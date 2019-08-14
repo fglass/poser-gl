@@ -51,13 +51,13 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
 
             val frame: FrameDefinition
             try {
-                frame = frameArchive.stream().filter { f -> f.id == frameFileId }.findFirst().get()
+                frame = frameArchive.first { f -> f.id == frameFileId }
             } catch (e: NoSuchElementException) {
                 logger.info { "Failed to load frame $frameFileId in archive $archiveId" }
                 continue
             }
 
-            frames[index] = frame // Need to keep index in case frame fails to load above
+            frames[index] = frame // Keep index in case frame fails to load above
             frame.indexFrameIds.forEach {
                 indices.add(it)
             }

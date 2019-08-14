@@ -1,18 +1,15 @@
 package gui
 
-import render.HEIGHT
-import render.RenderContext
-import render.WIDTH
 import gui.panel.AnimationPanel
 import gui.panel.EditorPanel
 import gui.panel.ListPanel
 import gui.panel.ManagerPanel
 import org.liquidengine.legui.component.LayerContainer
 import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import render.RenderContext
 
 class GuiManager(context: RenderContext) {
 
@@ -57,10 +54,5 @@ class GuiManager(context: RenderContext) {
 
         container.add(topPanel)
         container.add(animationPanel)
-
-        container.listenerMap.addListener(WindowSizeEvent::class.java) { event ->
-            WIDTH = event.width
-            HEIGHT = event.height
-        }
     }
 }

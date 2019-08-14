@@ -6,13 +6,13 @@ import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import net.runelite.cache.io.InputStream
 import org.joml.Vector3i
-import util.FileDialogs
+import util.FileDialog
 import java.io.File
 
 class ImportManager(private val context: RenderContext) {
 
     fun import() {
-        val name = FileDialogs.openFile(listOf("*.pgl"), ".")?: return
+        val name = FileDialog.openFile(listOf("*.pgl"), ".")?: return
         val data = File(name).readBytes()
         importPgl(data)
     }

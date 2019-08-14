@@ -10,7 +10,7 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
-import util.FileDialogs
+import util.FileDialog
 
 class LoadDialog(private val context: RenderContext):
       Dialog("Cache Loader", "Please backup your cache first", context, 260f, 109f) {
@@ -51,7 +51,7 @@ class LoadDialog(private val context: RenderContext):
         open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                cache.textState.text = FileDialogs.openFile(listOf(), ".", true)?: return@addListener
+                cache.textState.text = FileDialog.openFile(listOf(), ".", true)?: return@addListener
             }
         }
         container.add(open)

@@ -1,6 +1,5 @@
 package gui.component
 
-import render.WIDTH
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,8 +40,8 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
 
     private fun addTooltip(action: String) {
         tooltip = Tooltip(action)
-        tooltip.style.border = SimpleLineBorder(ColorUtil.fromInt(35, 35, 35, 1f), 1f)
         tooltip.style.setBorderRadius(0f)
+        tooltip.style.border = SimpleLineBorder(ColorUtil.fromInt(35, 35, 35, 1f), 1f)
         tooltip.style.background.color = ColorConstants.darkGray()
         tooltip.textState.textColor = ColorConstants.white()
         tooltip.style.shadow = null
@@ -55,20 +54,27 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             if (event.isEntered) {
                 tooltip.style.display = Style.DisplayType.NONE
-
-                // Shift if off screen
-                val offset = 6f
-                val delta = tooltip.absolutePosition.x + tooltip.size.x + offset - WIDTH // TODO: rework
-                if (delta > 0) {
-                    tooltip.position.x -= delta
-                }
-
-                // Delay displaying
+                shiftTooltip()
                 GlobalScope.launch {
-                    delay(900)
+                    delay(900) // Delay displaying
                     tooltip.style.display = Style.DisplayType.MANUAL
                 }
             }
+        }
+    }
+
+    private fun shiftTooltip() {
+        var parent = tooltip.parent
+        while (parent.parent != null) {
+            parent = parent.parent
+        }
+
+        val frameWidth = parent.size.x
+        val offset = 6f
+
+        val delta = tooltip.absolutePosition.x + tooltip.size.x + offset - frameWidth // Shift if off screen
+        if (delta > 0) {
+            tooltip.position.x -= delta
         }
     }
 }

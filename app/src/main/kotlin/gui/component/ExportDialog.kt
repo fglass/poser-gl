@@ -1,7 +1,7 @@
 package gui.component
 
 import render.RenderContext
-import util.FileDialogs
+import util.FileDialog
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.RadioButton
 import org.liquidengine.legui.component.RadioButtonGroup
@@ -31,7 +31,7 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val name = FileDialogs.saveFile(if (pgl.isChecked) "pgl" else "dat", ".")?: return@addListener
+                val name = FileDialog.saveFile(if (pgl.isChecked) "pgl" else "dat", ".")?: return@addListener
                 if (pgl.isChecked) context.exportManager.exportPgl(name) else context.exportManager.exportDat(name)
             }
         }

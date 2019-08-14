@@ -42,11 +42,11 @@ import util.VSyncTimer
 const val TITLE = "PoserGL"
 const val VERSION = "1.2"
 const val SPRITE_PATH = "sprite/"
+const val WIDTH = 800
+const val HEIGHT = 600
 
 private val logger = KotlinLogging.logger {}
 val BG_COLOUR: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
-var WIDTH = 800
-var HEIGHT = 600
 
 class RenderContext {
 
@@ -109,7 +109,6 @@ class RenderContext {
 
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
         framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
-
         nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(framebuffer)
 

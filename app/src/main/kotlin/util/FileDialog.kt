@@ -3,7 +3,7 @@ package util
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.nfd.NativeFileDialog
 
-object FileDialogs {
+object FileDialog {
 
     fun openFile(filters: List<String>, defaultPath: String, folder: Boolean = false): String? {
         val filter = filters.joinToString(",") { it.replace("*.", "") }
@@ -34,5 +34,4 @@ object FileDialogs {
         MemoryUtil.memFree(outPath)
         return path
     }
-
 }
