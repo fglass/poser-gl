@@ -35,6 +35,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
 
     fun load() {
         if (keyframes.isEmpty()) { // Check if already loaded
+            println("Loading ${sequence.id}")
             parseSequence()
             length = calculateLength()
         }
@@ -102,7 +103,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
     }
 
-    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
+    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) { // TODO: call on reload
         var root: ReferenceNode? = null
         for (reference in references) {
             // Set parent

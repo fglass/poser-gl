@@ -56,7 +56,8 @@ class NodeRenderer(private val context: RenderContext) {
         getClosestNode()?.highlighted = true
 
         for (node in nodes) {
-            shader.setHighlighted(node.highlighted || node.isToggled(selectedNode) || node.id == rootNode?.id)
+            shader.setHighlighted(node.highlighted || node.isToggled(selectedNode))
+            shader.setRoot(node.id == rootNode?.id)
             loadMatrices(node)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
