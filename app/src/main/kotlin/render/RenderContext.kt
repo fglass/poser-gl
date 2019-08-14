@@ -5,8 +5,7 @@ import cache.CacheService
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
-import gui.component.LoadDialog
-import util.MouseHandler
+import gui.component.StartScreen
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Vector2f
@@ -14,11 +13,6 @@ import org.joml.Vector2i
 import org.joml.Vector4f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
-import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.event.WindowSizeEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.listener.processor.EventProcessor
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
@@ -36,6 +30,7 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import transfer.ExportManager
 import transfer.ImportManager
+import util.MouseHandler
 import util.VSyncTimer
 
 const val TITLE = "PoserGL"
@@ -114,7 +109,7 @@ class RenderContext {
         lineRenderer = LineRenderer(this)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-        showStartScreen()
+        StartScreen.show(this, frame)
 
         // Render loop
         while (running) {
@@ -167,29 +162,6 @@ class RenderContext {
         guiRenderer.destroy()
         glfwDestroyWindow(window)
         glfwTerminate()
-    }
-
-    private fun showStartScreen() {
-        val dialog = LoadDialog(this)
-        dialog.show(frame)
-
-        val xOffset = 14
-        val yOffset = 120
-        val title = Panel(dialog.position.x - xOffset, dialog.position.y - yOffset, dialog.size.x + 27, 107f)
-        title.style.border.isEnabled = false
-        title.listenerMap.addListener(WindowSizeEvent::class.java) {
-            title.position = Vector2f(dialog.position.x - xOffset, dialog.position.y - yOffset)
-        }
-        frame.container.add(title)
-
-        val logo = ImageView(BufferedImage(SPRITE_PATH + "title.png"))
-        logo.size = Vector2f(title.size)
-        logo.style.border.isEnabled = false
-        title.add(logo)
-
-        val version = Label("v$VERSION")
-        version.position = Vector2f(title.size.x - 40, title.size.y - 25)
-        title.add(version)
     }
 
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
