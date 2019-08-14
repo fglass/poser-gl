@@ -21,6 +21,7 @@ class NodeRenderer(private val context: RenderContext) {
     private var viewMatrix = Matrix4f()
 
     val nodes = HashSet<ReferenceNode>()
+    var rootNode: ReferenceNode? = null
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
     var enabled = false
@@ -31,17 +32,17 @@ class NodeRenderer(private val context: RenderContext) {
     }
 
     fun addNode(node: ReferenceNode, def: ModelDefinition) {
-        if (!enabled) {
+        if (!enabled || node.children.size == 0) {
             return
         }
 
         node.position = node.getPosition(def)
+        if (node.position == Vector3f(-0f, 0f, 0f)) { // Ignore origin
+            return
+        }
+
         node.highlighted = false
         nodes.add(node)
-
-        // Update parent
-        val parent = node.parent?: return
-        parent.position = parent.getPosition(def)
     }
 
     fun render(camera: Camera) {
@@ -49,13 +50,13 @@ class NodeRenderer(private val context: RenderContext) {
             return
         }
 
-        context.lineRenderer.renderSkeleton(nodes, camera) // Render skeleton behind nodes
+        context.lineRenderer.renderSkeleton(nodes, rootNode, camera) // Render skeleton behind nodes
         prepare()
         viewMatrix = MatrixCreator.createViewMatrix(camera)
         getClosestNode()?.highlighted = true
 
         for (node in nodes) {
-            shader.setHighlighted(node.highlighted || node.isToggled(selectedNode))
+            shader.setHighlighted(node.highlighted || node.isToggled(selectedNode) || node.id == rootNode?.id)
             loadMatrices(node)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }

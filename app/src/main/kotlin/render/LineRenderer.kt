@@ -1,6 +1,7 @@
 package render
 
 import animation.ReferenceNode
+import animation.TransformationType
 import entity.Camera
 import entity.ENTITY_POS
 import entity.ENTITY_ROT
@@ -54,13 +55,17 @@ class LineRenderer(private val context: RenderContext) {
         }
     }
 
-    fun renderSkeleton(nodes: Set<ReferenceNode>, camera: Camera) {
+    fun renderSkeleton(nodes: Set<ReferenceNode>, root: ReferenceNode?, camera: Camera) {
         skeletonLoader.cleanUp()
         for (node in nodes) {
             val parent = node.parent?: continue
+            if (node.id == root?.id || parent.id == root?.id || !node.hasRotation() || !parent.hasRotation()) {
+                continue
+            }
+
             val vertices = floatArrayOf(
-                node.position.x, node.position.y, node.position.z,
-                parent.position.x, parent.position.y, parent.position.z
+                node.position.x, node.position.y, node.position.z, // Start
+                parent.position.x, parent.position.y, parent.position.z // End
             )
             val line = skeletonLoader.loadToVao(vertices)
 

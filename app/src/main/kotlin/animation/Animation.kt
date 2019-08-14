@@ -103,14 +103,22 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
     }
 
     private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
+        var root: ReferenceNode? = null
         for (reference in references) {
+            // Set parent
             for (other in references) {
                 if (other.id == reference.id) {
                     continue
                 }
                 reference.trySetParent(other)
             }
+            // Check if root node
+            val rotation = reference.getRotation()?: continue
+            if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
+                root = reference
+            }
         }
+        context.nodeRenderer.rootNode = root
     }
 
     fun calculateLength(): Int {

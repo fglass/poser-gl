@@ -32,6 +32,14 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         return if (type == TransformationType.REFERENCE) this else children[type]
     }
 
+    fun hasRotation(): Boolean {
+        return children[TransformationType.ROTATION] != null
+    }
+
+    fun getRotation(): Transformation? {
+        return children[TransformationType.ROTATION]
+    }
+
     fun getPosition(def: ModelDefinition): Vector3f {
         var index = 0f
         val position = Vector3f(delta)
@@ -70,7 +78,7 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
 
     fun trySetParent(node: ReferenceNode) {
         // Parent only if its frame map is a superset
-        val rotation = node.children[TransformationType.ROTATION]?: return
+        val rotation = node.getRotation()?: return
         if (!rotation.frameMap.toSet().containsAll(frameMap.toSet())) {
             return
         }
@@ -82,7 +90,7 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         }
 
         // Set if closer relation (indicated by a smaller superset)
-        val parentRotation = parent!!.children[TransformationType.ROTATION]?: return
+        val parentRotation = parent!!.getRotation()?: return
         if (rotation.frameMap.size < parentRotation.frameMap.size) {
             parent = node
         }

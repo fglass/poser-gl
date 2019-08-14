@@ -89,7 +89,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         camera.move()
 
         context.entityRenderer.render(context.entity, camera, shadingType)
-        context.gizmoRenderer.render()
+        //context.gizmoRenderer.render() TODO
         context.nodeRenderer.render(camera)
         context.lineRenderer.renderGrid(camera)
 
