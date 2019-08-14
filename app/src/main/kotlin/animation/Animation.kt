@@ -34,11 +34,11 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
     var length = 0
 
     fun load() {
-        if (keyframes.isEmpty()) { // Check if already loaded
-            println("Loading ${sequence.id}")
+        if (keyframes.isEmpty()) { // Animation already loaded
             parseSequence()
             length = calculateLength()
         }
+        setRootNode()
     }
 
     private fun parseSequence() {
@@ -103,20 +103,25 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
     }
 
-    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) { // TODO: call on reload
-        var root: ReferenceNode? = null
+    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
         for (reference in references) {
-            // Set parent
             for (other in references) {
                 if (other.id == reference.id) {
                     continue
                 }
                 reference.trySetParent(other)
             }
-            // Check if root node
-            val rotation = reference.getRotation()?: continue
-            if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
-                root = reference
+        }
+    }
+
+    private fun setRootNode() {
+        var root: ReferenceNode? = null
+        for (transformation in keyframes.first().transformations) {
+            if (transformation is ReferenceNode) {
+                val rotation = transformation.getRotation()?: continue
+                if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
+                    root = transformation
+                }
             }
         }
         context.nodeRenderer.rootNode = root
