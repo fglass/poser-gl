@@ -59,6 +59,8 @@ class LineRenderer(private val context: RenderContext) {
         skeletonLoader.cleanUp()
         for (node in nodes) {
             val parent = node.parent?: continue
+            node.parent = nodes.firstOrNull { it.id == parent.id }?: continue // Update parent reference
+
             if (node.id == root?.id || parent.id == root?.id || !node.hasRotation() || !parent.hasRotation()) {
                 continue
             }

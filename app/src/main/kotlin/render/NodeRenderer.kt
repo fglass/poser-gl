@@ -43,10 +43,6 @@ class NodeRenderer(private val context: RenderContext) {
 
         node.highlighted = false
         nodes.add(node)
-
-        // Update parent (as references voided when nodes updates)
-        val parent = node.parent?: return
-        parent.position = parent.getPosition(def)
     }
 
     fun render(camera: Camera) {
