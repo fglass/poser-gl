@@ -11,7 +11,8 @@ import java.util.*
 object GizmoLoader {
 
     fun load(filename: String, loader: Loader) {
-        val file = File("gizmo/$filename.obj")
+        val file = File("/Users/fred/Documents/PoserGL/app/src/main/resources/gizmo/translation.obj")
+        //File("resources/gizmo/$filename.obj") TODO
         val reader = BufferedReader(FileReader(file))
 
         val vertices = ArrayList<Vertex>()

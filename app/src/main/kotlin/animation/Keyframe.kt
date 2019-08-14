@@ -43,7 +43,7 @@ class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: Fra
         }
 
         // Load transformed model
-        context.loader.cleanUp()
+        context.modelParser.cleanUp()
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 

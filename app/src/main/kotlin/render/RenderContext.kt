@@ -4,6 +4,7 @@ import animation.AnimationHandler
 import cache.CacheService
 import entity.Entity
 import entity.EntityHandler
+import gizmo.GizmoLoader
 import gui.GuiManager
 import gui.component.LoadDialog
 import util.MouseHandler
@@ -60,8 +61,7 @@ class RenderContext {
     val exportManager = ExportManager(this)
     val importManager = ImportManager(this)
 
-    val loader = Loader()
-    val modelParser = ModelParser(loader)
+    val modelParser = ModelParser()
     var entity: Entity? = null
     val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
@@ -115,6 +115,8 @@ class RenderContext {
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         showStartScreen()
 
+        //GizmoLoader.load("translation", loader)
+
         // Render loop
         while (running) {
             context.updateGlfwWindow()
@@ -159,8 +161,8 @@ class RenderContext {
 
         nodeRenderer.cleanUp()
         lineRenderer.cleanUp()
+        modelParser.cleanUp()
         shader.cleanUp()
-        loader.cleanUp()
 
         guiRenderer.destroy()
         glfwDestroyWindow(window)

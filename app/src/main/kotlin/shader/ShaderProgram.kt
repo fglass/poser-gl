@@ -7,9 +7,6 @@ import org.liquidengine.leutil.io.IOUtil
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
-import java.io.BufferedReader
-import java.io.FileReader
-import java.io.IOException
 import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}

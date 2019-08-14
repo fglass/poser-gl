@@ -51,6 +51,6 @@ class EntityHandler(private val context: RenderContext) {
     private fun clear() {
         context.entity = null
         context.animationHandler.resetAnimation()
-        context.loader.cleanUp()
+        context.modelParser.cleanUp()
     }
 }

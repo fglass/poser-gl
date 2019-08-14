@@ -5,7 +5,9 @@ import org.joml.Vector3f
 import org.joml.Vector3i
 import render.Loader
 
-class ModelParser(private val loader: Loader) {
+class ModelParser {
+
+    private val loader = Loader()
 
     fun parse(def: ModelDefinition, flatShading: Boolean): Model {
         val nPosition = 4
@@ -91,5 +93,9 @@ class ModelParser(private val loader: Loader) {
         normals[index] = x
         normals[index + 1] = y
         normals[index + 2] = z
+    }
+
+    fun cleanUp() {
+        loader.cleanUp()
     }
 }
