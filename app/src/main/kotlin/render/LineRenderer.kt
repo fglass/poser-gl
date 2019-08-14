@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 private const val VERTEX_FILE = "shader/line-vs.glsl"
 private const val FRAGMENT_FILE = "shader/line-fs.glsl"
 
-class LineRenderer(private val framebuffer: Framebuffer) {
+class LineRenderer(private val context: RenderContext) {
 
     private var grid: Model? = null
     private val gridLoader = Loader()
@@ -85,7 +85,7 @@ class LineRenderer(private val framebuffer: Framebuffer) {
 
     private fun loadMatrices(camera: Camera, scale: Float) {
         shader.loadTransformationMatrix(MatrixCreator.createTransformationMatrix(ENTITY_POS, ENTITY_ROT, scale))
-        shader.loadProjectionMatrix(framebuffer.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
         shader.loadViewMatrix(camera)
     }
 

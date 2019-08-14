@@ -95,7 +95,7 @@ class NodeRenderer(private val context: RenderContext) {
 
         val origin = Vector3f()
         val dir = Vector3f()
-        Matrix4f(context.framebuffer.entityRenderer.projectionMatrix)
+        Matrix4f(context.entityRenderer.projectionMatrix)
             .mul(viewMatrix)
             .unprojectRay(mousePosition.x, mousePosition.y, intArrayOf(0, 0,
                 context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir
@@ -148,7 +148,7 @@ class NodeRenderer(private val context: RenderContext) {
         modelMatrix.m22(viewMatrix.m22())
         modelMatrix.scale(getNodeScale())
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
-        shader.loadProjectionMatrix(context.framebuffer.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
     }
 
     private fun getNodeScale(): Float {

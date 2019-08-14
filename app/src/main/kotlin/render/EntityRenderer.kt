@@ -1,12 +1,15 @@
 package render
 
+import entity.Camera
 import entity.Entity
 import entity.Light
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.glDrawArrays
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
+import shader.ShadingType
 import shader.StaticShader
 import util.MatrixCreator
 import kotlin.math.tan
@@ -15,8 +18,9 @@ const val FOV = 70f
 const val NEAR_PLANE = 1f
 const val FAR_PLANE = 10000f
 
-class EntityRenderer(private val shader: StaticShader) {
+class EntityRenderer {
 
+    private val shader = StaticShader()
     lateinit var projectionMatrix: Matrix4f
 
     fun init(width: Int, height: Int) {
@@ -43,10 +47,18 @@ class EntityRenderer(private val shader: StaticShader) {
         return projectionMatrix
     }
 
-    fun render(entity: Entity?, shader: StaticShader) {
-        if (entity == null) {
-            return
+    fun render(entity: Entity?, camera: Camera, shadingType: ShadingType) {
+        if (entity != null) {
+            prepare(entity, camera, shadingType)
+            glDrawArrays(GL11.GL_TRIANGLES, 0, entity.model.vertexCount)
+            finish()
         }
+    }
+
+    private fun prepare(entity: Entity, camera: Camera, shadingType: ShadingType) {
+        shader.start()
+        shader.loadViewMatrix(camera)
+        shader.loadShadingToggle(shadingType != ShadingType.NONE)
 
         GL30.glBindVertexArray(entity.model.vaoId)
         GL20.glEnableVertexAttribArray(0)
@@ -56,10 +68,16 @@ class EntityRenderer(private val shader: StaticShader) {
             entity.position, entity.rotation, entity.scale
         )
         shader.loadTransformationMatrix(transformationMatrix)
+    }
 
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, entity.model.vertexCount)
+    private fun finish() {
         GL20.glDisableVertexAttribArray(0)
         GL20.glDisableVertexAttribArray(1)
         GL30.glBindVertexArray(0)
+        shader.stop()
+    }
+
+    fun cleanUp() {
+        shader.cleanUp()
     }
 }

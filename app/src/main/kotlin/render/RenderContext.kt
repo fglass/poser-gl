@@ -4,7 +4,6 @@ import animation.AnimationHandler
 import cache.CacheService
 import entity.Entity
 import entity.EntityHandler
-import gizmo.GizmoLoader
 import gui.GuiManager
 import gui.component.LoadDialog
 import util.MouseHandler
@@ -35,7 +34,6 @@ import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
-import shader.StaticShader
 import transfer.ExportManager
 import transfer.ImportManager
 import util.VSyncTimer
@@ -54,6 +52,8 @@ class RenderContext {
     val frame = Frame(WIDTH.toFloat(), HEIGHT.toFloat())
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
+    lateinit var entityRenderer: EntityRenderer
+    lateinit var gizmoRenderer: GizmoRenderer
     lateinit var nodeRenderer: NodeRenderer
     lateinit var lineRenderer: LineRenderer
 
@@ -105,17 +105,16 @@ class RenderContext {
         guiRenderer.initialize()
 
         val vSync = VSyncTimer()
-        val shader = StaticShader()
-
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
-        framebuffer = Framebuffer(this, shader, mouse, scaleFactor)
+
+        framebuffer = Framebuffer(this, mouse, scaleFactor)
+        entityRenderer = EntityRenderer()
+        gizmoRenderer = GizmoRenderer()
         nodeRenderer = NodeRenderer(this)
-        lineRenderer = LineRenderer(framebuffer)
+        lineRenderer = LineRenderer(this)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         showStartScreen()
-
-        //GizmoLoader.load("translation", loader)
 
         // Render loop
         while (running) {
@@ -159,10 +158,11 @@ class RenderContext {
             vSync.waitIfNecessary()
         }
 
+        modelParser.cleanUp()
+        entityRenderer.cleanUp()
+        gizmoRenderer.cleanUp()
         nodeRenderer.cleanUp()
         lineRenderer.cleanUp()
-        modelParser.cleanUp()
-        shader.cleanUp()
 
         guiRenderer.destroy()
         glfwDestroyWindow(window)

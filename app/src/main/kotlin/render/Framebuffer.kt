@@ -10,21 +10,19 @@ import org.liquidengine.legui.style.Style
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
-import shader.StaticShader
 
-class Framebuffer(private val context: RenderContext, private val shader: StaticShader,
-                  private val mouse: MouseHandler, private val scaleFactor: Int): ImageView() {
+class Framebuffer(private val context: RenderContext, private val mouse: MouseHandler,
+                  private val scaleFactor: Int): ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0
     private var textureWidth = 0
     private var textureHeight = 0
-
-    val entityRenderer = EntityRenderer(shader)
+    
+    private val camera = Camera(mouse)
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
     var activeDialog: Dialog? = null
-    private val camera = Camera(mouse)
 
     init {
         style.setMargin(5f, 0f, 5f, 0f)
@@ -90,7 +88,8 @@ class Framebuffer(private val context: RenderContext, private val shader: Static
         context.animationHandler.tick()
         camera.move()
 
-        renderEntity()
+        context.entityRenderer.render(context.entity, camera, shadingType)
+        context.gizmoRenderer.render()
         context.nodeRenderer.render(camera)
         context.lineRenderer.renderGrid(camera)
 
@@ -111,14 +110,6 @@ class Framebuffer(private val context: RenderContext, private val shader: Static
         }
     }
 
-    private fun renderEntity() {
-        shader.start()
-        shader.loadViewMatrix(camera)
-        shader.loadShadingToggle(shadingType != ShadingType.NONE)
-        entityRenderer.render(context.entity, shader)
-        shader.stop()
-    }
-
     override fun setSize(width: Float, height: Float) {
         val previous = size.x
         super.setSize(width, height)
@@ -129,7 +120,7 @@ class Framebuffer(private val context: RenderContext, private val shader: Static
 
     private fun resize(width: Int, height: Int) {
         setTexture(width, height)
-        entityRenderer.init(width, height)
+        context.entityRenderer.init(width, height)
         activeDialog?.center(this)
     }
 
