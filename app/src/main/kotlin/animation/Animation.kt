@@ -25,8 +25,8 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
         sequence.leftHandItem = animation.sequence.leftHandItem
         sequence.rightHandItem = animation.sequence.rightHandItem
-        modified = true
         length = calculateLength()
+        modified = true
     }
 
     var modified = false
@@ -114,7 +114,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
     }
 
-    private fun setRootNode() {
+    private fun setRootNode() { // TODO: shifting on modification
         var root: ReferenceNode? = null
         for (transformation in keyframes.first().transformations) {
             if (transformation is ReferenceNode) {

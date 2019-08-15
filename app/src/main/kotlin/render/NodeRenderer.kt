@@ -20,11 +20,11 @@ class NodeRenderer(private val context: RenderContext) {
     private val shader = NodeShader()
     private var viewMatrix = Matrix4f()
 
+    var enabled = false
     val nodes = HashSet<ReferenceNode>()
     var rootNode: ReferenceNode? = null
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
-    var enabled = false
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)

@@ -61,7 +61,7 @@ class LineRenderer(private val context: RenderContext) {
             val parent = node.parent?: continue
             node.parent = nodes.firstOrNull { it.id == parent.id }?: continue // Update parent reference
 
-            if (node.id == root?.id || parent.id == root?.id || !node.hasRotation() || !parent.hasRotation()) {
+            if (node.id == root?.id || parent.id == root?.id || !parent.hasType(TransformationType.ROTATION)) {
                 continue
             }
 

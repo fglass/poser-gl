@@ -32,10 +32,6 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         return if (type == TransformationType.REFERENCE) this else children[type]
     }
 
-    fun hasRotation(): Boolean {
-        return children[TransformationType.ROTATION] != null
-    }
-
     fun getRotation(): Transformation? {
         return children[TransformationType.ROTATION]
     }
