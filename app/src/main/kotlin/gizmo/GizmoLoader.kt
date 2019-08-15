@@ -20,9 +20,9 @@ object GizmoLoader {
         for (line in reader.readLines()) {
             when {
                 line.startsWith("v ") -> {
-                    val split = line.split(" ")
-                    val vertex = Vector3f(split[1].toFloat(), split[2].toFloat(), split[3].toFloat())
-                    vertices.add(vertex)
+                    val split = line.substring(2).split(" ").map { it.toFloat() }
+                    val v = Vector3f(split[0], split[1], split[2])
+                    vertices.add(v)
                 }
                 line.startsWith("f ") -> {
                     val split = line.split(" ")

@@ -7,6 +7,7 @@ import entity.ENTITY_POS
 import entity.ENTITY_ROT
 import entity.ENTITY_SCALE
 import model.Model
+import org.lwjgl.opengl.GL11
 import shader.LineShader
 import org.lwjgl.opengl.GL30.*
 import util.MatrixCreator

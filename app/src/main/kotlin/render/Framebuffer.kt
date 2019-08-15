@@ -89,9 +89,9 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         camera.move()
 
         context.entityRenderer.render(context.entity, camera, shadingType)
-        context.gizmoRenderer.render(camera)
         context.nodeRenderer.render(camera)
         context.lineRenderer.renderGrid(camera)
+        context.gizmoRenderer.render(camera)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

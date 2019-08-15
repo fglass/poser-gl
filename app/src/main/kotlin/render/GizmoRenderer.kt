@@ -5,7 +5,7 @@ import entity.ENTITY_POS
 import entity.ENTITY_ROT
 import gizmo.GizmoLoader
 import model.Model
-import shader.LineShader
+import shader.GizmoShader
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 import org.lwjgl.opengl.GL11.glDrawArrays
 import org.lwjgl.opengl.GL30
@@ -14,7 +14,7 @@ import util.MatrixCreator
 class GizmoRenderer(private val context: RenderContext) {
 
     private val loader = Loader()
-    private val shader = LineShader()
+    private val shader = GizmoShader()
     private val translation: Model
 
     init {

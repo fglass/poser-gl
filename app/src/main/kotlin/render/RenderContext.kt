@@ -48,9 +48,9 @@ class RenderContext {
     lateinit var gui: GuiManager
     lateinit var framebuffer: Framebuffer
     lateinit var entityRenderer: EntityRenderer
-    lateinit var gizmoRenderer: GizmoRenderer
     lateinit var nodeRenderer: NodeRenderer
     lateinit var lineRenderer: LineRenderer
+    lateinit var gizmoRenderer: GizmoRenderer
 
     val cacheService = CacheService(this)
     val exportManager = ExportManager(this)
@@ -104,9 +104,9 @@ class RenderContext {
 
         framebuffer = Framebuffer(this, mouse, scaleFactor)
         entityRenderer = EntityRenderer()
-        gizmoRenderer = GizmoRenderer(this)
         nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(this)
+        gizmoRenderer = GizmoRenderer(this)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartScreen.show(this, frame)
