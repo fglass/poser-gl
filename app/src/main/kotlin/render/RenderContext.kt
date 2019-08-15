@@ -104,7 +104,7 @@ class RenderContext {
 
         framebuffer = Framebuffer(this, mouse, scaleFactor)
         entityRenderer = EntityRenderer()
-        gizmoRenderer = GizmoRenderer()
+        gizmoRenderer = GizmoRenderer(this)
         nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(this)
 

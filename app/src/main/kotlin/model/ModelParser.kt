@@ -24,7 +24,6 @@ class ModelParser {
         var nIndex = 0
 
         repeat(def.faceCount) {
-
             var alpha = 0
             if (def.faceAlphas != null) {
                 alpha = (def.faceAlphas[it].toInt() and 0xFFFF) shl 16

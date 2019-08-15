@@ -57,13 +57,12 @@ class EntityRenderer {
 
     private fun prepare(entity: Entity, camera: Camera, shadingType: ShadingType) {
         shader.start()
-        shader.loadViewMatrix(camera)
-        shader.loadShadingToggle(shadingType != ShadingType.NONE)
-
         GL30.glBindVertexArray(entity.model.vaoId)
         GL20.glEnableVertexAttribArray(0)
         GL20.glEnableVertexAttribArray(1)
 
+        shader.loadShadingToggle(shadingType != ShadingType.NONE)
+        shader.loadViewMatrix(camera)
         val transformationMatrix = MatrixCreator.createTransformationMatrix(
             entity.position, entity.rotation, entity.scale
         )

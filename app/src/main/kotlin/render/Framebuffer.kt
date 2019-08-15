@@ -82,14 +82,14 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         glViewport(0, 0, textureWidth, textureHeight)
 
         glClearColor(BG_COLOUR.x, BG_COLOUR.y, BG_COLOUR.z, BG_COLOUR.w)
-        glClear(GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
         setGlState()
 
         context.animationHandler.tick()
         camera.move()
 
         context.entityRenderer.render(context.entity, camera, shadingType)
-        //context.gizmoRenderer.render() TODO
+        context.gizmoRenderer.render(camera)
         context.nodeRenderer.render(camera)
         context.lineRenderer.renderGrid(camera)
 

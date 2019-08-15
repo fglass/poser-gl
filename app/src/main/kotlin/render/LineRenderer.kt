@@ -13,15 +13,12 @@ import util.MatrixCreator
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-private const val VERTEX_FILE = "shader/line-vs.glsl"
-private const val FRAGMENT_FILE = "shader/line-fs.glsl"
-
 class LineRenderer(private val context: RenderContext) {
 
     private var grid: Model? = null
     private val gridLoader = Loader()
     private val skeletonLoader = Loader()
-    private val shader = LineShader(VERTEX_FILE, FRAGMENT_FILE)
+    private val shader = LineShader()
 
     fun setGrid(entitySize: Int) {
         gridLoader.cleanUp()

@@ -4,7 +4,10 @@ import entity.Camera
 import org.joml.Matrix4f
 import util.MatrixCreator
 
-class LineShader(vertexFile: String, fragmentFile: String): ShaderProgram(vertexFile, fragmentFile) {
+private const val VERTEX_FILE = "shader/line-vs.glsl"
+private const val FRAGMENT_FILE = "shader/line-fs.glsl"
+
+class LineShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
 
     private var locationTransformationMatrix = 0
     private var locationProjectionMatrix = 0
