@@ -3,6 +3,7 @@ package shader
 import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.joml.Vector4f
 import org.liquidengine.leutil.io.IOUtil
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
@@ -61,6 +62,10 @@ abstract class ShaderProgram(vertexFile: String, fragmentFile: String) {
 
     fun loadVector(location: Int, vector: Vector3f) {
         GL20.glUniform3f(location, vector.x, vector.y, vector.z)
+    }
+
+    fun loadVector(location: Int, vector: Vector4f) {
+        GL20.glUniform4f(location, vector.x, vector.y, vector.z, vector.w)
     }
 
     fun loadBoolean(location: Int, value: Boolean) {

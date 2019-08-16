@@ -1,9 +1,7 @@
 package shader
 
-import entity.Camera
 import org.joml.Matrix4f
-import org.joml.Vector3f
-import util.MatrixCreator
+import org.joml.Vector4f
 
 private const val VERTEX_FILE = "shader/gizmo-vs.glsl"
 private const val FRAGMENT_FILE = "shader/gizmo-fs.glsl"
@@ -30,12 +28,11 @@ class GizmoShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
         loadMatrix(locationProjectionMatrix, matrix)
     }
 
-    fun loadViewMatrix(camera: Camera) {
-        val matrix = MatrixCreator.createViewMatrix(camera)
+    fun loadViewMatrix(matrix: Matrix4f) {
         loadMatrix(locationViewMatrix, matrix)
     }
 
-    fun loadColour(colour: Vector3f) {
+    fun loadColour(colour: Vector4f) {
         loadVector(locationColour, colour)
     }
 

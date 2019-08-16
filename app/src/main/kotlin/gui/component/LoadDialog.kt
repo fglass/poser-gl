@@ -86,7 +86,7 @@ class LoadDialog(private val context: RenderContext):
 
     private fun loadCache() {
         if (cache.textState.text.isEmpty()) {
-            message.textState.text = "Please select a cache first"
+            message.textState.text = "Select a cache first"
             return
         }
 
