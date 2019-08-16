@@ -26,7 +26,7 @@ import util.setSizeLimits
 
 class EditorPanel(private val context: RenderContext): Panel() {
 
-    private val sliders = ArrayList<TextSlider>()
+    val sliders = ArrayList<TextSlider>()
     private var currentReference: ReferenceNode? = null
     private lateinit var selectedFrame: Label
     private lateinit var frameLength: TextSlider

@@ -33,9 +33,11 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
             context.nodeRenderer.handleClick(event.button, event.action)
+            context.gizmoRenderer.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
             mouse.handleDrag(event.delta)
+            context.gizmoRenderer.handleDrag(event.delta)
         }
         listenerMap.addListener(ScrollEvent::class.java) { event ->
             mouse.handleScroll(event.yoffset)
@@ -86,7 +88,9 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         setGlState()
 
         context.animationHandler.tick()
-        camera.move()
+        if (!context.gizmoRenderer.transforming) { // TODO
+            camera.move()
+        }
 
         context.entityRenderer.render(context.entity, camera, shadingType)
         context.nodeRenderer.render(camera)

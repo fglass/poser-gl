@@ -95,6 +95,10 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         return max(newValue, limits.first)
     }
 
+    fun getValue(): Int {
+        return value.textState.text.toInt()
+    }
+
     fun setValue(newValue: Int) {
         value.textState.text = newValue.toString()
     }
