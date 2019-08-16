@@ -17,12 +17,12 @@ object StartScreen {
         val dialog = LoadDialog(context)
         dialog.show(frame)
 
-        val xOffset = 14
-        val yOffset = 120
-        val title = Panel(dialog.position.x - xOffset, dialog.position.y - yOffset, dialog.size.x + 27, 107f)
+        val xOffset = 5
+        val yOffset = 105
+        val title = Panel(dialog.position.x + xOffset, dialog.position.y - yOffset, dialog.size.x - xOffset * 2, 94f)
         title.style.border.isEnabled = false
         title.listenerMap.addListener(WindowSizeEvent::class.java) {
-            title.position = Vector2f(dialog.position.x - xOffset, dialog.position.y - yOffset)
+            title.position = Vector2f(dialog.position.x + xOffset, dialog.position.y - yOffset)
         }
         frame.container.add(title)
 
@@ -32,7 +32,7 @@ object StartScreen {
         title.add(logo)
 
         val version = Label("v$VERSION")
-        version.position = Vector2f(title.size.x - 40, title.size.y - 25)
+        version.position = Vector2f(title.size.x - 34, title.size.y - 25)
         title.add(version)
     }
 }

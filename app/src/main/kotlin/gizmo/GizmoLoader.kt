@@ -11,7 +11,7 @@ import java.util.*
 object GizmoLoader {
 
     fun load(filename: String, loader: Loader): Model {
-        val file = File("/Users/fred/Documents/PoserGL/app/src/main/resources/gizmo/$filename.obj")
+        val file = File("/Users/fred/Documents/PoserGL/app/src/main/resources/gizmo/$filename.obj") // TODO
         val reader = BufferedReader(FileReader(file))
 
         val vertices = ArrayList<Vector3f>()
@@ -36,7 +36,6 @@ object GizmoLoader {
                 }
             }
         }
-
         reader.close()
         return loader.loadToVao(positions.toFloatArray(), 3)
     }

@@ -13,7 +13,7 @@ import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialog
 
 class LoadDialog(private val context: RenderContext):
-      Dialog("Cache Loader", "Please backup your cache first", context, 260f, 109f) {
+      Dialog("Cache Loader", "Backup before committing any changes", context, 260f, 109f) {
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<String>
@@ -40,7 +40,7 @@ class LoadDialog(private val context: RenderContext):
         box.style.focusedStrokeColor = null
         container.add(box)
 
-        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 75f, 35f, 97f, 15f) // TODO: remove placeholder
+        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 35f, 97f, 15f) // TODO: remove text
         cache.style.focusedStrokeColor = null
         container.add(cache)
 
@@ -62,7 +62,7 @@ class LoadDialog(private val context: RenderContext):
         pluginLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
         container.add(pluginLabel)
 
-        plugins = SelectBox(75f, 63f, 112f, 15f)
+        plugins = SelectBox(76f, 63f, 112f, 15f)
         plugins.addElement("OSRS")
         plugins.addElement("317")
         plugins.addElement("Legacy 317")

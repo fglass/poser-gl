@@ -59,7 +59,7 @@ class GizmoRenderer(private val context: RenderContext) {
             shader.loadViewMatrix(camera)
 
             repeat(axes) {
-                val transformation = MatrixCreator.createTransformationMatrix(position, rotations[it], 60f)
+                val transformation = MatrixCreator.createTransformationMatrix(position, rotations[it], 50f)
                 shader.loadTransformationMatrix(transformation)
                 shader.loadColour(Vector3f(colours[it].x, colours[it].y, colours[it].z))
                 glDrawArrays(GL_TRIANGLES, 0, model.vertexCount)
