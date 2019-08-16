@@ -123,6 +123,7 @@ class NodeRenderer(private val context: RenderContext) {
         if (!node.hasType(selectedType)) {
             selectedType = TransformationType.REFERENCE
         }
+        context.gizmoRenderer.enable(node, selectedType)
         context.gui.editorPanel.setNode(node, selectedType)
     }
 

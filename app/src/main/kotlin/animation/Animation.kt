@@ -168,7 +168,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         Dialog("Keyframe Action", "Successfully copied keyframe ${keyframe.id}", context, 260f, 70f).display()
     }
 
-    fun pasteKeyframe() {
+    fun pasteKeyframe() { // TODO: don't permit if different frame map
         val copied = context.animationHandler.copiedFrame
         if (copied.id != -1) {
             val keyframe = Keyframe(keyframes.size, copied) // Copy after to avoid shared references
