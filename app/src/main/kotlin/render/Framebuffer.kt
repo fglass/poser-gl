@@ -37,7 +37,6 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
             mouse.handleDrag(event.delta)
-            context.gizmoRenderer.handleDrag(event.delta)
         }
         listenerMap.addListener(ScrollEvent::class.java) { event ->
             mouse.handleScroll(event.yoffset)
@@ -47,7 +46,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         }
     }
 
-    private fun createTexture(): FBOImage {
+    private fun createTexture(): FBOImage { // TODO: multisample
         id = glGenFramebuffers()
         glBindFramebuffer(GL_FRAMEBUFFER, id)
 
@@ -88,7 +87,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         setGlState()
 
         context.animationHandler.tick()
-        if (!context.gizmoRenderer.transforming) { // TODO
+        if (!context.gizmoRenderer.enabled) { // TODO
             camera.move()
         }
 

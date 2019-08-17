@@ -13,7 +13,6 @@ import shader.GizmoShader
 class GizmoRenderer(private val context: RenderContext) {
 
     var enabled = false
-    var transforming = false
     private val loader = Loader()
     private val shader = GizmoShader()
     private val translation = Gizmo("translation", loader, shader)
@@ -43,21 +42,11 @@ class GizmoRenderer(private val context: RenderContext) {
         shader.stop()
     }
 
-    fun handleDrag(delta: Vector2f) { // TODO: use ray instead
-        if (transforming) {
-            translation.transform(delta, context)
-        }
-    }
-
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (!enabled) {
-            return
-        }
-        if (button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
+        if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
             if (action == MouseClickEvent.MouseClickAction.PRESS) {
-                transforming = true
+                translation.active = true
             } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
-                transforming = false
                 translation.endTransform()
             }
         }

@@ -5,21 +5,27 @@ import model.Model
 import org.joml.*
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorUtil
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL11.GL_TRIANGLES
+import org.lwjgl.opengl.GL11.glDrawArrays
+import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
+import org.lwjgl.opengl.GL30.glBindVertexArray
 import render.Loader
 import render.RenderContext
 import shader.GizmoShader
 import util.MatrixCreator
 import kotlin.math.ceil
 
-class Gizmo(type: String, loader: Loader, private val shader: GizmoShader) {
+/**
+ * https://nelari.us/post/gizmos/
+ */
+class Gizmo(type: String, loader: Loader, private val shader: GizmoShader) { // TODO: refactor
 
     private val model: Model = GizmoLoader.load(type, loader)
     private val axes = 3
-    private var selectedAxis = -1
     private var previousAxis = -1
+    private var previousIntersection = Vector3f(0f)
 
+    var active = false
     var position = Vector3f(0f, 0f, 0f)
     private val rotations = arrayOf(Vector3f(0f, 180f, 0f), Vector3f(0f, 0f, -90f), Vector3f(0f, 90f, 0f))
     private val scale = 40f
@@ -30,16 +36,29 @@ class Gizmo(type: String, loader: Loader, private val shader: GizmoShader) {
     )
 
     fun render(context: RenderContext, camera: Camera) {
-        GL30.glBindVertexArray(model.vaoId)
-        GL30.glEnableVertexAttribArray(0)
+        glBindVertexArray(model.vaoId)
+        glEnableVertexAttribArray(0)
 
         val viewMatrix = MatrixCreator.createViewMatrix(camera)
         shader.loadViewMatrix(viewMatrix)
         shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
 
-        selectedAxis = getClosestAxis(context, viewMatrix)
+        val (selectedAxis, ray, t) = getClosestAxis(context, viewMatrix)
         if (selectedAxis != -1) {
-            previousAxis = selectedAxis
+
+            if (!active && selectedAxis != previousAxis) { // TODO: axis class/enum
+                previousAxis = selectedAxis
+                previousIntersection = Vector3f(0f)
+            }
+
+            if (active) {
+                val intersection = getIntersection(ray, t)
+                if (previousIntersection != Vector3f(0f)) {
+                    val delta = Vector3f(intersection).sub(previousIntersection)
+                    transform(delta, context)
+                }
+                previousIntersection = intersection
+            }
         }
 
         repeat(axes) {
@@ -48,17 +67,17 @@ class Gizmo(type: String, loader: Loader, private val shader: GizmoShader) {
 
             val opacity = if (it != selectedAxis) 1f else 0.6f
             shader.loadColour(Vector4f(colours[it].x, colours[it].y, colours[it].z, opacity))
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.vertexCount)
+            glDrawArrays(GL_TRIANGLES, 0, model.vertexCount)
         }
     }
 
-    private fun getClosestAxis(context: RenderContext, viewMatrix: Matrix4f): Int {
+    private fun getClosestAxis(context: RenderContext, viewMatrix: Matrix4f): Triple<Int, Rayf, Float> {
         val ray = calculateRay(context, viewMatrix)
         var minDistance = Float.MAX_VALUE
         var closest = -1
 
         repeat(axes) {
-            val offset = Vector3f(2f, 2f, 2f)
+            val offset = Vector3f(2f) // TODO: elongate for smoother manipulation or set min distance
             val min = Vector3f(position).sub(Vector3f(offset).setComponent(it, scale))
             val max = Vector3f(position).add(Vector3f(offset).setComponent(it, 0f))
             val nearFar = Vector2f()
@@ -68,7 +87,7 @@ class Gizmo(type: String, loader: Loader, private val shader: GizmoShader) {
                 closest = it
             }
         }
-        return closest
+        return Triple(closest, ray, minDistance)
     }
 
     private fun calculateRay(context: RenderContext, viewMatrix: Matrix4f): Rayf { // TODO deduplicate
@@ -85,22 +104,27 @@ class Gizmo(type: String, loader: Loader, private val shader: GizmoShader) {
         return Rayf(origin, dir)
     }
 
-    fun transform(delta: Vector2f, context: RenderContext) {
-        if (previousAxis == 0 || previousAxis == 1) {
-            val offset = delta[previousAxis]
+    private fun getIntersection(ray: Rayf, t: Float): Vector3f {
+        // p(t) = origin + dir * t
+        return Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(t))
+    }
 
-            val current = context.gui.editorPanel.sliders[previousAxis].getValue()
-            val newValue = ceil(current + offset).toInt()
+    private fun transform(delta: Vector3f, context: RenderContext) {
+        var offset = delta[previousAxis]
+        //position.setComponent(previousAxis, position[previousAxis] + offset) // TODO: remove?
 
-            context.gui.editorPanel.sliders[previousAxis].setValue(newValue) // TODO: limit
-            context.animationHandler.transformNode(previousAxis, newValue)
-
-            //offset *= if (previousAxis == 0) -1 else 1
-            //position.setComponent(previousAxis, position[previousAxis] + offset)
+        if (previousAxis == 0) { // Inverse for x axis
+            offset *= -1
         }
+        val current = context.gui.editorPanel.sliders[previousAxis].getValue()
+        val newValue = ceil(current + offset).toInt()
+
+        context.gui.editorPanel.sliders[previousAxis].setValue(newValue) // TODO: limit
+        context.animationHandler.transformNode(previousAxis, newValue)
     }
 
     fun endTransform() {
+        active = false
         previousAxis = -1
     }
 }

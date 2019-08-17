@@ -103,7 +103,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
     }
 
-    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) {
+    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) { // TODO: tree structure
         for (reference in references) {
             for (other in references) {
                 if (other.id == reference.id) {
