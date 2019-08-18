@@ -29,8 +29,7 @@ class LineShader: ShaderProgram(VERTEX_FILE, FRAGMENT_FILE) {
         loadMatrix(locationProjectionMatrix, matrix)
     }
 
-    fun loadViewMatrix(camera: Camera) {
-        val matrix = MatrixCreator.createViewMatrix(camera)
+    fun loadViewMatrix(matrix: Matrix4f) {
         loadMatrix(locationViewMatrix, matrix)
     }
 

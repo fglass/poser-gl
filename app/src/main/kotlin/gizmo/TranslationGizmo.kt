@@ -1,11 +1,10 @@
 package gizmo
 
-import entity.Camera
 import model.Model
 import org.joml.*
-import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorUtil
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.glDrawArrays
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 import render.Loader
@@ -24,25 +23,12 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
         GizmoAxis(AxisType.Z, ColorUtil.fromInt(14, 44, 220, 1f), Vector3f(0f, 90f, 0f))
     )
 
-    override fun render(context: RenderContext, camera: Camera) {
-        // Prepare
-        GL30.glBindVertexArray(model.vaoId)
-        GL20.glEnableVertexAttribArray(0)
+    override fun render(context: RenderContext, viewMatrix: Matrix4f, ray: Rayf) {
+        prepare(context, viewMatrix)
 
-        val viewMatrix = MatrixCreator.createViewMatrix(camera)
-        shader.loadViewMatrix(viewMatrix)
-        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
-
-        // Select closest axis if different
-        val ray = calculateRay(context, viewMatrix)
-        val closestAxis = getClosestAxis(ray)
-        if (!active && closestAxis != selectedAxis) {
-            selectAxis(closestAxis)
-        }
-
-        // Manipulate gizmo
-        if (active) {
-            manipulate(context, ray)
+        when {
+            !active -> selectAxis(getClosestAxis(ray))
+            else -> manipulate(context, ray)
         }
 
         // Render gizmo axes
@@ -52,8 +38,15 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
 
             axis.colour.w = if (axis == selectedAxis) 0.6f else 1f // Lower opacity to indicate highlighted axis
             shader.loadColour(axis.colour)
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.vertexCount)
+            glDrawArrays(GL11.GL_TRIANGLES, 0, model.vertexCount)
         }
+    }
+
+    private fun prepare(context: RenderContext, viewMatrix: Matrix4f) {
+        GL30.glBindVertexArray(model.vaoId)
+        GL20.glEnableVertexAttribArray(0)
+        shader.loadViewMatrix(viewMatrix)
+        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
     }
 
     private fun getClosestAxis(ray: Rayf): GizmoAxis? {
@@ -75,16 +68,16 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
     }
 
     private fun selectAxis(axis: GizmoAxis?) {
-        selectedAxis = axis
-        selectedAxis?.previousIntersection = Vector3f(0f) // Reset intersection
+        if (axis != selectedAxis) {
+            selectedAxis = axis
+            selectedAxis?.previousIntersection = Vector3f() // Reset intersection
+        }
     }
 
     private fun manipulate(context: RenderContext, ray: Rayf) {
         selectedAxis?.let {
-            // origin + dir * epsilon
             val intersection = getIntersection(ray)
-
-            if (intersection.x.isFinite() && it.previousIntersection != Vector3f(0f)) {
+            if (it.previousIntersection != Vector3f()) {
                 val delta = Vector3f(intersection).sub(it.previousIntersection).get(it.type.ordinal)
                 transform(context, delta)
             }
@@ -93,7 +86,7 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
     }
 
     private fun getIntersection(ray: Rayf): Vector3f {
-        // Allows for transforming without need to hover over axis
+        // Allow for transforming without need to hover over axis
         val plane = Planef(Vector3f(position), Vector3f(-ray.dX, -ray.dY, -ray.dZ))
         val epsilon = Intersectionf.intersectRayPlane(ray, plane, 0f)
 
@@ -112,22 +105,8 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
         context.animationHandler.transformNode(axis.type.ordinal, newValue)
     }
 
-    override fun endTransform() {
+    override fun deactivate() {
         active = false
         selectedAxis = null
-    }
-
-    private fun calculateRay(context: RenderContext, viewMatrix: Matrix4f): Rayf { // TODO deduplicate
-        val mousePosition = Mouse.getCursorPosition()
-        mousePosition.sub(context.framebuffer.position)
-
-        val origin = Vector3f()
-        val dir = Vector3f()
-        Matrix4f(context.entityRenderer.projectionMatrix)
-            .mul(viewMatrix)
-            .unprojectRay(mousePosition.x, mousePosition.y, intArrayOf(0, 0,
-                context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir
-            )
-        return Rayf(origin, dir)
     }
 }

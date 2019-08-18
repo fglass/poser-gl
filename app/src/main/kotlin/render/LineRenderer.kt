@@ -7,6 +7,7 @@ import entity.ENTITY_POS
 import entity.ENTITY_ROT
 import entity.ENTITY_SCALE
 import model.Model
+import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11
 import shader.LineShader
 import org.lwjgl.opengl.GL30.*
@@ -44,16 +45,16 @@ class LineRenderer(private val context: RenderContext) {
         add(z)
     }
 
-    fun renderGrid(camera: Camera) {
+    fun renderGrid(viewMatrix: Matrix4f) {
         if (grid != null) {
             prepare(grid!!, false)
-            loadMatrices(camera, 75f)
+            loadMatrices(viewMatrix, 75f)
             glDrawArrays(GL_LINES, 0, grid!!.vertexCount)
             finish()
         }
     }
 
-    fun renderSkeleton(nodes: Set<ReferenceNode>, root: ReferenceNode?, camera: Camera) {
+    fun renderSkeleton(nodes: Set<ReferenceNode>, root: ReferenceNode?, viewMatrix: Matrix4f) {
         skeletonLoader.cleanUp()
         for (node in nodes) {
             val parent = node.parent?: continue
@@ -70,7 +71,7 @@ class LineRenderer(private val context: RenderContext) {
             val line = skeletonLoader.loadToVao(vertices)
 
             prepare(line)
-            loadMatrices(camera, ENTITY_SCALE)
+            loadMatrices(viewMatrix, ENTITY_SCALE)
             glDrawArrays(GL_LINES, 0, line.vertexCount)
             finish()
         }
@@ -88,10 +89,10 @@ class LineRenderer(private val context: RenderContext) {
         }
     }
 
-    private fun loadMatrices(camera: Camera, scale: Float) {
+    private fun loadMatrices(viewMatrix: Matrix4f, scale: Float) {
         shader.loadTransformationMatrix(MatrixCreator.createTransformationMatrix(ENTITY_POS, ENTITY_ROT, scale))
         shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
-        shader.loadViewMatrix(camera)
+        shader.loadViewMatrix(viewMatrix)
     }
 
     private fun finish() {

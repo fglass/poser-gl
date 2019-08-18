@@ -10,6 +10,7 @@ import org.liquidengine.legui.style.Style
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
+import util.MatrixCreator
 
 class Framebuffer(private val context: RenderContext, private val mouse: MouseHandler,
                   private val scaleFactor: Int): ImageView() {
@@ -90,11 +91,13 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         if (!context.gizmoRenderer.enabled) { // TODO
             camera.move()
         }
+        val viewMatrix = MatrixCreator.createViewMatrix(camera)
+        val ray = camera.calculateRay(context, viewMatrix)
 
-        context.entityRenderer.render(context.entity, camera, shadingType)
-        context.nodeRenderer.render(camera)
-        context.lineRenderer.renderGrid(camera)
-        context.gizmoRenderer.render(camera)
+        context.entityRenderer.render(context.entity, viewMatrix, shadingType)
+        context.nodeRenderer.render(viewMatrix, ray)
+        context.lineRenderer.renderGrid(viewMatrix)
+        context.gizmoRenderer.render(viewMatrix, ray)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

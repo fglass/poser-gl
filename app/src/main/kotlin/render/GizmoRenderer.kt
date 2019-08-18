@@ -2,10 +2,9 @@ package render
 
 import animation.ReferenceNode
 import animation.TransformationType
-import entity.Camera
-import gizmo.Gizmo
 import gizmo.TranslationGizmo
-import org.joml.Vector2f
+import org.joml.Matrix4f
+import org.joml.Rayf
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
@@ -28,15 +27,15 @@ class GizmoRenderer(private val context: RenderContext) {
             if (action == MouseClickEvent.MouseClickAction.PRESS) {
                 translation.active = true
             } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
-                translation.endTransform()
+                translation.deactivate()
             }
         }
     }
 
-    fun render(camera: Camera) {
+    fun render(viewMatrix: Matrix4f, ray: Rayf) {
         if (enabled) {
             prepare()
-            translation.render(context, camera)
+            translation.render(context, viewMatrix, ray)
             finish()
         }
     }

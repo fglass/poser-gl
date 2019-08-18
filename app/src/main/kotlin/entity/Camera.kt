@@ -1,7 +1,11 @@
 package entity
 
+import org.joml.Matrix4f
+import org.joml.Rayf
 import util.MouseHandler
 import org.joml.Vector3f
+import org.liquidengine.legui.input.Mouse
+import render.RenderContext
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
@@ -70,5 +74,19 @@ class Camera(private val mouse: MouseHandler) {
         position.x = ENTITY_POS.x - xOffset
         position.y = ENTITY_POS.y + yOffset
         position.z = ENTITY_POS.z - zOffset
+    }
+
+    fun calculateRay(context: RenderContext, viewMatrix: Matrix4f): Rayf {
+        val mousePosition = Mouse.getCursorPosition()
+        mousePosition.sub(context.framebuffer.position)
+
+        val origin = Vector3f()
+        val dir = Vector3f()
+        Matrix4f(context.entityRenderer.projectionMatrix)
+            .mul(viewMatrix)
+            .unprojectRay(mousePosition.x, mousePosition.y, intArrayOf(0, 0,
+                context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir
+            )
+        return Rayf(origin, dir)
     }
 }

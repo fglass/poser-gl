@@ -16,15 +16,14 @@ class NodeRenderer(private val context: RenderContext) {
 
     private val quad: Model
     private val loader = Loader()
-
     private val shader = NodeShader()
-    private var viewMatrix = Matrix4f()
 
     var enabled = false
     val nodes = HashSet<ReferenceNode>()
     var rootNode: ReferenceNode? = null
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
+    private var clicked = false
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
@@ -45,20 +44,21 @@ class NodeRenderer(private val context: RenderContext) {
         nodes.add(node)
     }
 
-    fun render(camera: Camera) {
+    fun render(viewMatrix: Matrix4f, ray: Rayf) {
         if (!enabled) {
             return
         }
 
-        context.lineRenderer.renderSkeleton(nodes, rootNode, camera) // Render skeleton behind nodes
+        context.lineRenderer.renderSkeleton(nodes, rootNode, viewMatrix) // Render skeleton behind nodes
         prepare()
-        viewMatrix = MatrixCreator.createViewMatrix(camera)
-        getClosestNode()?.highlighted = true
+
+        val closest = getClosestNode(ray)
+        closest?.let(::handleClosestNode)
 
         for (node in nodes) {
             shader.setHighlighted(node.highlighted || node.isToggled(selectedNode))
             shader.setRoot(node.id == rootNode?.id)
-            loadMatrices(node)
+            loadMatrices(node, viewMatrix)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
@@ -72,15 +72,14 @@ class NodeRenderer(private val context: RenderContext) {
         glDisable(GL_DEPTH_TEST)
     }
 
-    private fun getClosestNode(): ReferenceNode? {
+    private fun getClosestNode(ray: Rayf): ReferenceNode? {
         val scale = getNodeScale()
-        val ray = calculateRay()
         var minDistance = Float.MAX_VALUE
         var closest: ReferenceNode? = null
 
         for (node in nodes) {
-            val min = Vector3f(node.position).sub(scale, scale, scale)
-            val max = Vector3f(node.position).add(scale, scale, scale)
+            val min = Vector3f(node.position).sub(Vector3f(scale))
+            val max = Vector3f(node.position).add(Vector3f(scale))
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
@@ -91,31 +90,20 @@ class NodeRenderer(private val context: RenderContext) {
         return closest
     }
 
-    private fun calculateRay(): Rayf {
-        val mousePosition = Mouse.getCursorPosition()
-        mousePosition.sub(context.framebuffer.position)
-
-        val origin = Vector3f()
-        val dir = Vector3f()
-        Matrix4f(context.entityRenderer.projectionMatrix)
-            .mul(viewMatrix)
-            .unprojectRay(mousePosition.x, mousePosition.y, intArrayOf(0, 0,
-                context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir
-        )
-        return Rayf(origin, dir)
+    private fun handleClosestNode(node: ReferenceNode) {
+        if (clicked) {
+            selectNode(node)
+            context.animationHandler.setPlay(false)
+            clicked = false
+        }
+        node.highlighted = true
     }
 
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
         if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
             action == MouseClickEvent.MouseClickAction.CLICK) {
-            clickNode()
+            clicked = true
         }
-    }
-
-    private fun clickNode() {
-        val closest = getClosestNode()?: return
-        selectNode(closest)
-        context.animationHandler.setPlay(false)
     }
 
     private fun selectNode(node: ReferenceNode) {
@@ -137,7 +125,7 @@ class NodeRenderer(private val context: RenderContext) {
         nodes.clear()
     }
 
-    private fun loadMatrices(node: ReferenceNode) {
+    private fun loadMatrices(node: ReferenceNode, viewMatrix: Matrix4f) {
         val modelMatrix = Matrix4f()
         modelMatrix.translate(node.position)
         modelMatrix.m00(viewMatrix.m00())

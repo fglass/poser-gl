@@ -47,22 +47,22 @@ class EntityRenderer {
         return projectionMatrix
     }
 
-    fun render(entity: Entity?, camera: Camera, shadingType: ShadingType) {
+    fun render(entity: Entity?, viewMatrix: Matrix4f, shadingType: ShadingType) {
         if (entity != null) {
-            prepare(entity, camera, shadingType)
+            prepare(entity, viewMatrix, shadingType)
             glDrawArrays(GL11.GL_TRIANGLES, 0, entity.model.vertexCount)
             finish()
         }
     }
 
-    private fun prepare(entity: Entity, camera: Camera, shadingType: ShadingType) {
+    private fun prepare(entity: Entity, viewMatrix: Matrix4f, shadingType: ShadingType) {
         shader.start()
         GL30.glBindVertexArray(entity.model.vaoId)
         GL20.glEnableVertexAttribArray(0)
         GL20.glEnableVertexAttribArray(1)
 
         shader.loadShadingToggle(shadingType != ShadingType.NONE)
-        shader.loadViewMatrix(camera)
+        shader.loadViewMatrix(viewMatrix)
         val transformationMatrix = MatrixCreator.createTransformationMatrix(
             entity.position, entity.rotation, entity.scale
         )
