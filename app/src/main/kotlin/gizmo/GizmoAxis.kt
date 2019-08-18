@@ -7,8 +7,8 @@ class GizmoAxis(val type: AxisType, val colour: Vector4f, val rotation: Vector3f
     var previousIntersection = Vector3f(0f)
 }
 
-enum class AxisType(val index: Int) { // Use index to avoid relying on ordinal
-    X(0),
-    Y(1),
-    Z(2)
+enum class AxisType {  // Can rely on ordinal in this context
+    X,
+    Y,
+    Z
 }

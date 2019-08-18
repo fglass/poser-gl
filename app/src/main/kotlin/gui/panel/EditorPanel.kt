@@ -69,7 +69,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         framePanel.add(length)
 
         frameLength = TextSlider({ context.animationHandler.getAnimation()?.changeKeyframeLength(it) },
-            Pair(1, 99), 81f, 40f, 51f, 15f)
+            1 to 99, 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
         val actions = ButtonGroup(
@@ -140,7 +140,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
             transformPanel.add(label)
 
             val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
-                                    Pair(-255, 255), 35f, y, 60f, 15f)
+                                    -255 to 255, 35f, y, 60f, 15f)
             sliders.add(slider)
             transformPanel.add(slider)
             y += 20

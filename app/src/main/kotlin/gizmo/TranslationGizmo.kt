@@ -25,6 +25,7 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
     )
 
     override fun render(context: RenderContext, camera: Camera) {
+        // Prepare
         GL30.glBindVertexArray(model.vaoId)
         GL20.glEnableVertexAttribArray(0)
 
@@ -32,30 +33,37 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
         shader.loadViewMatrix(viewMatrix)
         shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
 
-        val (closestAxis, ray, t) = getClosestAxis(context, viewMatrix)
-        if (closestAxis != null) {
-            handleAxis(closestAxis, ray, t, context)
+        // Select closest axis if different
+        val ray = calculateRay(context, viewMatrix)
+        val closestAxis = getClosestAxis(ray)
+        if (!active && closestAxis != selectedAxis) {
+            selectAxis(closestAxis)
         }
 
+        // Manipulate gizmo
+        if (active) {
+            manipulate(context, ray)
+        }
+
+        // Render gizmo axes
         for (axis in axes) {
             val transformation = MatrixCreator.createTransformationMatrix(position, axis.rotation, scale)
             shader.loadTransformationMatrix(transformation)
 
-            axis.colour.w = if (axis != selectedAxis) 1f else 0.6f // Lower opacity to indicate highlighted axis
+            axis.colour.w = if (axis == selectedAxis) 0.6f else 1f // Lower opacity to indicate highlighted axis
             shader.loadColour(axis.colour)
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.vertexCount)
         }
     }
 
-    private fun getClosestAxis(context: RenderContext, viewMatrix: Matrix4f): Triple<GizmoAxis?, Rayf, Float> {
-        val ray = calculateRay(context, viewMatrix)
+    private fun getClosestAxis(ray: Rayf): GizmoAxis? {
         var minDistance = Float.MAX_VALUE
         var closest: GizmoAxis? = null
 
         for (axis in axes) {
-            val offset = Vector3f(2f) // TODO: elongate for smoother manipulation or set min distance when active
-            val min = Vector3f(position).sub(Vector3f(offset).setComponent(axis.type.index, scale))
-            val max = Vector3f(position).add(Vector3f(offset).setComponent(axis.type.index, 0f))
+            val offset = Vector3f(2f)
+            val min = Vector3f(position).sub(Vector3f(offset).setComponent(axis.type.ordinal, scale))
+            val max = Vector3f(position).add(Vector3f(offset).setComponent(axis.type.ordinal, 0f))
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
@@ -63,7 +71,50 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
                 closest = axis
             }
         }
-        return Triple(closest, ray, minDistance)
+        return closest
+    }
+
+    private fun selectAxis(axis: GizmoAxis?) {
+        selectedAxis = axis
+        selectedAxis?.previousIntersection = Vector3f(0f) // Reset intersection
+    }
+
+    private fun manipulate(context: RenderContext, ray: Rayf) {
+        selectedAxis?.let {
+            // origin + dir * epsilon
+            val intersection = getIntersection(ray)
+
+            if (intersection.x.isFinite() && it.previousIntersection != Vector3f(0f)) {
+                val delta = Vector3f(intersection).sub(it.previousIntersection).get(it.type.ordinal)
+                transform(context, delta)
+            }
+            it.previousIntersection = intersection
+        }
+    }
+
+    private fun getIntersection(ray: Rayf): Vector3f {
+        // Allows for transforming without need to hover over axis
+        val plane = Planef(Vector3f(position), Vector3f(-ray.dX, -ray.dY, -ray.dZ))
+        val epsilon = Intersectionf.intersectRayPlane(ray, plane, 0f)
+
+        // origin + dir * epsilon
+        return Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(epsilon))
+    }
+
+    private fun transform(context: RenderContext, delta: Float) {
+        val axis = selectedAxis?: return
+        //position.setComponent(axis.type.ordinal, position[axis.type.ordinal] + delta) // TODO: need?
+
+        val current = context.gui.editorPanel.sliders[axis.type.ordinal].getValue()
+        val newValue = ceil(current + if (axis.type == AxisType.X) -delta else delta).toInt() // Invert for x axis
+
+        context.gui.editorPanel.sliders[axis.type.ordinal].setValue(newValue) // TODO: limit
+        context.animationHandler.transformNode(axis.type.ordinal, newValue)
+    }
+
+    override fun endTransform() {
+        active = false
+        selectedAxis = null
     }
 
     private fun calculateRay(context: RenderContext, viewMatrix: Matrix4f): Rayf { // TODO deduplicate
@@ -78,48 +129,5 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
                 context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir
             )
         return Rayf(origin, dir)
-    }
-
-    private fun handleAxis(closestAxis: GizmoAxis, ray: Rayf, t: Float, context: RenderContext) { // TODO: refactor
-        if (!active && closestAxis != selectedAxis) { // Axis changed
-            closestAxis.previousIntersection = Vector3f(0f)
-            selectedAxis = closestAxis
-        }
-
-        if (active) {
-            val intersection = getIntersection(ray, t)
-            val axis = selectedAxis?: return
-
-            if (axis.previousIntersection != Vector3f(0f)) {
-                val delta = Vector3f(intersection).sub(axis.previousIntersection)
-                transform(delta, context)
-            }
-            axis.previousIntersection = intersection
-        }
-    }
-
-    private fun getIntersection(ray: Rayf, t: Float): Vector3f {
-        // p(t) = origin + dir * t
-        return Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(t))
-    }
-
-    private fun transform(delta: Vector3f, context: RenderContext) {
-        val axis = selectedAxis?: return
-        var offset = delta[axis.type.index]
-        //position.setComponent(previousAxis, position[previousAxis] + offset) // TODO: need?
-
-        if (axis.type == AxisType.X) { // Inverse for x axis
-            offset *= -1
-        }
-        val current = context.gui.editorPanel.sliders[axis.type.index].getValue()
-        val newValue = ceil(current + offset).toInt()
-
-        context.gui.editorPanel.sliders[axis.type.index].setValue(newValue) // TODO: limit
-        context.animationHandler.transformNode(axis.type.index, newValue)
-    }
-
-    override fun endTransform() {
-        active = false
-        selectedAxis = null
     }
 }
