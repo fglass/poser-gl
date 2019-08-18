@@ -4,6 +4,7 @@ import animation.ReferenceNode
 import animation.TransformationType
 import entity.Camera
 import gizmo.Gizmo
+import gizmo.TranslationGizmo
 import org.joml.Vector2f
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
@@ -15,11 +16,21 @@ class GizmoRenderer(private val context: RenderContext) {
     var enabled = false
     private val loader = Loader()
     private val shader = GizmoShader()
-    private val translation = Gizmo("translation", loader, shader)
+    private val translation = TranslationGizmo(loader, shader)
 
     fun enable(node: ReferenceNode, type: TransformationType) {
         translation.position = node.position
         enabled = true
+    }
+
+    fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
+        if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
+            if (action == MouseClickEvent.MouseClickAction.PRESS) {
+                translation.active = true
+            } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
+                translation.endTransform()
+            }
+        }
     }
 
     fun render(camera: Camera) {
@@ -40,16 +51,6 @@ class GizmoRenderer(private val context: RenderContext) {
         glDisableVertexAttribArray(0)
         glBindVertexArray(0)
         shader.stop()
-    }
-
-    fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
-            if (action == MouseClickEvent.MouseClickAction.PRESS) {
-                translation.active = true
-            } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
-                translation.endTransform()
-            }
-        }
     }
 
     fun cleanUp() {
