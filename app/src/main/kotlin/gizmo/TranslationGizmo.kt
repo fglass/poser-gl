@@ -98,11 +98,8 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
         val axis = selectedAxis?: return
         //position.setComponent(axis.type.ordinal, position[axis.type.ordinal] + delta) // TODO: need?
 
-        val current = context.gui.editorPanel.sliders[axis.type.ordinal].getValue()
-        val newValue = ceil(current + if (axis.type == AxisType.X) -delta else delta).toInt() // Invert for x axis
-
-        context.gui.editorPanel.sliders[axis.type.ordinal].setValue(newValue) // TODO: limit
-        context.animationHandler.transformNode(axis.type.ordinal, newValue)
+        val value = ceil(if (axis.type == AxisType.X) -delta else delta).toInt()
+        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value)
     }
 
     override fun deactivate() {

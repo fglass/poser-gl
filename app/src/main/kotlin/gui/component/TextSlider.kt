@@ -33,17 +33,15 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         value.style.focusedStrokeColor = null
         value.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                val current = value.textState.text.toIntOrNull()
-                if (current != null) {
-                    val limited = limitValue(current)
-                    if (current != limited) {
-                        value.textState.text = limited.toString()
-                    }
-                    onValueChange(limited)
+                val current = getValue()?: return@addListener
+                val limited = limit(current)
+                if (current != limited) { // Only set if different
+                    setValue(limited)
                 }
+                onValueChange(limited)
             }
         }
-        setValue(limitValue(0))
+        setLimitedValue(0)
         add(value)
 
         val right = ImageButton(Vector2f(width - 10, 3f), rightArrow)
@@ -65,7 +63,7 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
                     adjusting = true
                     GlobalScope.launch {
                         while (adjusting) {
-                            adjustValue(increment)
+                            adjust(if (increment) 1 else - 1)
                             delay(10)
                         }
                     }
@@ -75,31 +73,34 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         }
     }
 
-    private fun getCursorListener(): CursorEnterEventListener {
-        return CursorEnterEventListener { event ->
-            if (!event.isEntered) {
-                adjusting = false
-            }
+    private fun getCursorListener() = CursorEnterEventListener { event ->
+        if (!event.isEntered) {
+            adjusting = false
         }
     }
 
-    private fun adjustValue(increment: Boolean) {
-        val newValue = value.textState.text.toInt() + if (increment) 1 else -1
-        val limited = limitValue(newValue)
-        setValue(limited)
-        onValueChange(limited)
-    }
-
-    private fun limitValue(value: Int): Int {
-        val newValue = min(value, limits.second)
-        return max(newValue, limits.first)
-    }
-
-    fun getValue(): Int {
-        return value.textState.text.toInt()
+    fun getValue(): Int? {
+        return value.textState.text.toIntOrNull()
     }
 
     fun setValue(newValue: Int) {
         value.textState.text = newValue.toString()
+    }
+
+    fun setLimitedValue(newValue: Int) {
+        val limited = limit(newValue)
+        setValue(limited)
+    }
+
+    private fun limit(value: Int): Int {
+        val newValue = min(value, limits.second)
+        return max(newValue, limits.first)
+    }
+
+    fun adjust(delta: Int) {
+        val newValue = value.textState.text.toInt() + delta
+        val limited = limit(newValue)
+        setValue(limited)
+        onValueChange(limited)
     }
 }

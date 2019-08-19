@@ -150,7 +150,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
     fun setKeyframe(keyframe: Keyframe) {
         selectedFrame.textState.text = "Selected: ${keyframe.id}"
-        frameLength.setValue(keyframe.length)
+        frameLength.setLimitedValue(keyframe.length)
     }
 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
@@ -170,7 +170,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         val transformation = currentReference?.getTransformation(type)?: return
 
         for (i in 0 until sliders.size) {
-            sliders[i].setValue(transformation.delta.get(i))
+            sliders[i].setLimitedValue(transformation.delta.get(i))
         }
     }
 
@@ -178,7 +178,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         val unselected = "Selected: N/A"
         selectedFrame.textState.text = unselected
         selectedNode.textState.text = unselected
-        frameLength.setValue(0)
-        sliders.forEach { it.setValue(0) }
+        frameLength.setLimitedValue(0)
+        sliders.forEach { it.setLimitedValue(0) }
     }
 }

@@ -33,7 +33,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
         }
 
         val archiveSlider = TextSlider({ setFrames(it) }, 0 to 999, 66f, 7f, 65f, 15f)
-        archiveSlider.setValue(archiveId)
+        archiveSlider.setLimitedValue(archiveId)
         container.add(archiveSlider)
 
         val frameLabel = Label("Frames:", 10f, 27f, 45f, 15f)
