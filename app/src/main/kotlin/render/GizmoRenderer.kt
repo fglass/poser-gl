@@ -15,19 +15,19 @@ class GizmoRenderer(private val context: RenderContext) {
     var enabled = false
     private val loader = Loader()
     private val shader = GizmoShader()
-    private val translation = TranslationGizmo(loader, shader)
+    val gizmo = TranslationGizmo(loader, shader)
 
     fun enable(node: ReferenceNode, type: TransformationType) {
-        translation.position = node.position
+        gizmo.position = node.position
         enabled = true
     }
 
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
         if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
             if (action == MouseClickEvent.MouseClickAction.PRESS) {
-                translation.active = true
+                gizmo.active = true
             } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
-                translation.deactivate()
+                gizmo.deactivate()
             }
         }
     }
@@ -35,7 +35,7 @@ class GizmoRenderer(private val context: RenderContext) {
     fun render(viewMatrix: Matrix4f, ray: Rayf) {
         if (enabled) {
             prepare()
-            translation.render(context, viewMatrix, ray)
+            gizmo.render(context, viewMatrix, ray)
             finish()
         }
     }

@@ -112,9 +112,6 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         val references = transformations.filterIsInstance<ReferenceNode>()
         for (reference in references) {
             for (other in references) {
-                if (other.id == reference.id) {
-                    continue
-                }
                 reference.trySetParent(other)
             }
         }

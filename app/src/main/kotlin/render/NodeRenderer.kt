@@ -35,13 +35,11 @@ class NodeRenderer(private val context: RenderContext) {
             return
         }
 
-        node.position = node.getPosition(def)
-        if (node.position == Vector3f(-0f, 0f, 0f)) { // Ignore origin
-            return
+        node.setPosition(def)
+        if (node.position != Vector3f(-0f, 0f, 0f)) { // Ignore origin
+            node.highlighted = false
+            nodes.add(node)
         }
-
-        node.highlighted = false
-        nodes.add(node)
     }
 
     fun render(viewMatrix: Matrix4f, ray: Rayf) {
@@ -57,12 +55,29 @@ class NodeRenderer(private val context: RenderContext) {
         clicked = false
 
         for (node in nodes) {
-            shader.setHighlighted(node.highlighted || node.isToggled(selectedNode))
+
+            // Render selected node later to display on top of gizmo
+            if (node.id == selectedNode?.id) {
+                selectedNode = node
+                continue
+            }
+
+            shader.setHighlighted(node.highlighted)
             shader.setRoot(node.id == rootNode?.id)
             loadMatrices(node, viewMatrix)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
         finish()
+    }
+
+    fun renderSelected(viewMatrix: Matrix4f) {
+        selectedNode?.let {
+            prepare()
+            shader.setHighlighted(true)
+            loadMatrices(it, viewMatrix)
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
+            finish()
+        }
     }
 
     private fun prepare() {
@@ -116,7 +131,7 @@ class NodeRenderer(private val context: RenderContext) {
     }
 
     fun reselectNode() {
-        val node = nodes.firstOrNull { it.isToggled(selectedNode) }?: return
+        val node = nodes.firstOrNull { it.id == selectedNode?.id }?: return
         selectNode(node)
     }
 

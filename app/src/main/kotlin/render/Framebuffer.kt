@@ -7,7 +7,6 @@ import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
 import org.liquidengine.legui.style.Style
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import util.MatrixCreator
@@ -88,7 +87,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         setGlState()
 
         context.animationHandler.tick()
-        if (!context.gizmoRenderer.enabled) { // TODO
+        if (!context.gizmoRenderer.gizmo.active) { // TODO
             camera.move()
         }
         val viewMatrix = MatrixCreator.createViewMatrix(camera)
@@ -98,6 +97,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         context.nodeRenderer.render(viewMatrix, ray)
         context.lineRenderer.renderGrid(viewMatrix)
         context.gizmoRenderer.render(viewMatrix, ray)
+        context.nodeRenderer.renderSelected(viewMatrix)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

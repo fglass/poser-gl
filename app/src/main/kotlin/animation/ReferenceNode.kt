@@ -36,7 +36,7 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         return children[TransformationType.ROTATION]
     }
 
-    fun getPosition(def: ModelDefinition): Vector3f {
+    fun setPosition(def: ModelDefinition) {
         var index = 0f
         val position = Vector3f(delta)
 
@@ -62,17 +62,15 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         }
 
         position.x = -position.x // Flip
-        return position
-    }
-
-    fun isToggled(selected: ReferenceNode?): Boolean {
-        if (selected == null) {
-            return false
-        }
-        return selected.id == id
+        this.position = position
     }
 
     fun trySetParent(node: ReferenceNode) {
+        // Ignore self
+        if (id == node.id) {
+            return
+        }
+
         // Parent only if its frame map is a superset
         val rotation = node.getRotation()?: return
         if (!rotation.frameMap.toSet().containsAll(frameMap.toSet())) {
