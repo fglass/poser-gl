@@ -54,6 +54,7 @@ class NodeRenderer(private val context: RenderContext) {
 
         val closest = getClosestNode(ray)
         closest?.let(::handleClosestNode)
+        clicked = false
 
         for (node in nodes) {
             shader.setHighlighted(node.highlighted || node.isToggled(selectedNode))
@@ -94,7 +95,6 @@ class NodeRenderer(private val context: RenderContext) {
         if (clicked) {
             selectNode(node)
             context.animationHandler.setPlay(false)
-            clicked = false
         }
         node.highlighted = true
     }
