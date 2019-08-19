@@ -3,11 +3,9 @@ package gizmo
 import org.joml.Matrix4f
 import org.joml.Rayf
 import org.joml.Vector3f
+import render.Loader
 import render.RenderContext
 
-/**
- * https://nelari.us/post/gizmos/
- */
 abstract class Gizmo {
 
     var active = false
@@ -17,4 +15,6 @@ abstract class Gizmo {
     abstract fun render(context: RenderContext, viewMatrix: Matrix4f, ray: Rayf)
 
     abstract fun deactivate()
+
+    internal fun getModel(filename: String, loader: Loader) = GizmoLoader.load(filename, loader)
 }

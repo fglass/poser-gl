@@ -13,7 +13,7 @@ import org.liquidengine.legui.style.color.ColorConstants
 import util.FileDialog
 
 class LoadDialog(private val context: RenderContext):
-      Dialog("Cache Loader", "Backup before committing any changes", context, 260f, 109f) {
+      Dialog("Cache Loader", "Backup your cache before making changes", context, 260f, 109f) {
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<String>
@@ -32,8 +32,7 @@ class LoadDialog(private val context: RenderContext):
     }
 
     private fun addPath() {
-        val cacheLabel = Label("Cache:", 9f, 35f, 40f, 15f)
-        cacheLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        val cacheLabel = Label("Cache:", 14f, 35f, 50f, 15f)
         container.add(cacheLabel)
 
         val box = Panel(172f, 35f, 16f, 15f)
@@ -58,8 +57,7 @@ class LoadDialog(private val context: RenderContext):
     }
 
     private fun addPlugin() {
-        val pluginLabel = Label("Plugin:", 9f, 63f, 40f, 15f)
-        pluginLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        val pluginLabel = Label("Plugin:", 14f, 63f, 50f, 15f)
         container.add(pluginLabel)
 
         plugins = SelectBox(76f, 63f, 112f, 15f)

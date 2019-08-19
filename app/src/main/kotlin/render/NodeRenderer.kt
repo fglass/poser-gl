@@ -31,7 +31,7 @@ class NodeRenderer(private val context: RenderContext) {
     }
 
     fun addNode(node: ReferenceNode, def: ModelDefinition) {
-        if (!enabled || node.children.size == 0) {
+        if (!enabled) {
             return
         }
 

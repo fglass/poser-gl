@@ -2,7 +2,7 @@ package animation
 
 import org.joml.Vector3i
 
-enum class TransformationType(val id: Int) {
+enum class TransformationType(val id: Int) { // Alpha transformations unsupported
 
     REFERENCE(0),
     TRANSLATION(1),
@@ -11,11 +11,12 @@ enum class TransformationType(val id: Int) {
 
     companion object {
         private val map = values().associateBy { it.id }
-        fun fromId(type: Int) = map[type]?: throw IllegalArgumentException()
+        fun fromId(type: Int) = map[type]
     }
 
     fun getDefaultOffset(): Vector3i {
-        return if (this == SCALE) Vector3i(128, 128, 128) else Vector3i(0, 0, 0)
+        val offset = if (this == SCALE) 128 else 0
+        return Vector3i(offset)
     }
 
     override fun toString(): String {

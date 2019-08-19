@@ -121,7 +121,8 @@ class EditorPanel(private val context: RenderContext): Panel() {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                     event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    updateType(TransformationType.fromId(i))
+                    val type = TransformationType.fromId(i)
+                    type?.let(::updateType)
                 }
             }
         }
@@ -154,7 +155,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
         for ((i, button) in transformations.buttons.withIndex()) {
-            val type = TransformationType.fromId(i)
+            val type = TransformationType.fromId(i)?: continue
             button.isFocusable = node.getTransformation(type) != null
         }
         transformations.updateConfigs(transformations.buttons[selectedType.id])

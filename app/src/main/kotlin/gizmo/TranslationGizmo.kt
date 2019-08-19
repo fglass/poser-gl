@@ -5,8 +5,8 @@ import org.joml.*
 import org.liquidengine.legui.style.color.ColorUtil
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.glDrawArrays
-import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
+import org.lwjgl.opengl.GL30.glBindVertexArray
 import render.Loader
 import render.RenderContext
 import shader.GizmoShader
@@ -16,7 +16,7 @@ import kotlin.math.ceil
 class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
 
     private val scale = 40f
-    private val model: Model = GizmoLoader.load("translation", loader)
+    private val model: Model = getModel("translation", loader)
     private val axes = arrayOf(
         GizmoAxis(AxisType.X, ColorUtil.fromInt(220, 14, 44, 1f), Vector3f(0f, 180f, 0f)),
         GizmoAxis(AxisType.Y, ColorUtil.fromInt(14, 220, 44, 1f), Vector3f(0f, 0f, -90f)),
@@ -43,8 +43,8 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
     }
 
     private fun prepare(context: RenderContext, viewMatrix: Matrix4f) {
-        GL30.glBindVertexArray(model.vaoId)
-        GL20.glEnableVertexAttribArray(0)
+        glBindVertexArray(model.vaoId)
+        glEnableVertexAttribArray(0)
         shader.loadViewMatrix(viewMatrix)
         shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
     }

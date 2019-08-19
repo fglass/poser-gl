@@ -87,14 +87,14 @@ class ImportManager(private val context: RenderContext) {
             transformations.add(reference)
 
             val children = stream.readUnsignedByte()
-            repeat(children) {
+            for (i in 0 until children) {
                 val childId = stream.readShort().toInt()
                 val childType = stream.readUnsignedByte()
                 val childX = stream.readShort().toInt()
                 val childY = stream.readShort().toInt()
                 val childZ = stream.readShort().toInt()
 
-                val type = TransformationType.fromId(childType)
+                val type = TransformationType.fromId(childType)?: continue
                 val child = Transformation(childId, type, frameMap.frameMaps[childId], Vector3i(childX, childY, childZ))
                 reference.children[type] = child
                 transformations.add(child)

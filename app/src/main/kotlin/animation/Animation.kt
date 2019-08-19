@@ -8,12 +8,10 @@ import org.joml.Vector3f
 import org.joml.Vector3i
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashMap
 import kotlin.math.min
 
 private val logger = KotlinLogging.logger {}
-
 const val ITEM_OFFSET = 512
 
 class Animation(private val context: RenderContext, val sequence: SequenceDefinition) {
@@ -43,8 +41,9 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
 
     private fun parseSequence() {
         val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
-        val indices = HashSet<Int>() // Accumulate frame indices
+        val references = TreeSet<Int>() // Sorted by values
 
+        // Pre-process sequence frames
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
             val archiveId = frameId ushr 16
             val frameArchive = context.cacheService.frames.get(archiveId)
@@ -58,40 +57,31 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
                 continue
             }
 
-            frames[index] = frame // Keep index in case frame fails to load above
-            frame.indexFrameIds.forEach {
-                indices.add(it)
-            }
+            val indices = frame.indexFrameIds.filter { frame.framemap.types[it] == TransformationType.REFERENCE.id }
+            references.addAll(indices) // Accumulate reference indices across animation
+            frames[index] = frame // Keep index in case frame fails to load
         }
 
         for (frame in frames) {
             val frameMap = frame.value.framemap
             val keyframe = Keyframe(frame.key, sequence.frameIDs[frame.key], sequence.frameLenghts[frame.key], frameMap)
-            val references = ArrayDeque<ReferenceNode>()
 
-            for (id in indices) {
-                val typeId = frameMap.types[id]
-                if (typeId > TransformationType.SCALE.id) { // Alpha transformations unsupported
-                    continue
-                }
-
-                val type = TransformationType.fromId(typeId)
+            for (id in references) {
+                val type = TransformationType.fromId(frameMap.types[id])?: continue
                 val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame.value, id, type))
+                val reference = ReferenceNode(transformation)
+                reference.findChildren(id, frame.value)
 
-                if (transformation.type == TransformationType.REFERENCE) {
-                    references.add(ReferenceNode(transformation))
-                } else if (references.size > 0) {
-                    references.peekLast().children[transformation.type] = transformation
+                if (reference.children.size > 0) { // Ignore lone references
+                    keyframe.transformations.add(reference)
+                    reference.children.forEach {
+                        keyframe.transformations.add(it.value)
+                    }
                 }
             }
 
-            for (reference in references) {
-                keyframe.transformations.add(reference)
-                reference.children.forEach { keyframe.transformations.add(it.value) }
-            }
-
+            constructSkeleton(keyframe.transformations)
             keyframes.add(keyframe)
-            constructSkeleton(references)
         }
     }
 
@@ -103,7 +93,23 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
     }
 
-    private fun constructSkeleton(references: ArrayDeque<ReferenceNode>) { // TODO: tree structure
+    private fun ReferenceNode.findChildren(id: Int, frame: FrameDefinition) { // Allows additional children to be found
+        val frameMap = frame.framemap
+        var childId = id + 1
+        var childType = frameMap.types[childId]
+
+        // Search transformations until encounter next reference
+        while (childType != TransformationType.REFERENCE.id) {
+            TransformationType.fromId(childType)?.let {
+                val child = Transformation(childId, it, frameMap.frameMaps[childId], getDelta(frame, childId, it))
+                children[it] = child
+            }
+            childType = frameMap.types[++childId] // Check next transformation
+        }
+    }
+
+    private fun constructSkeleton(transformations: ArrayList<Transformation>) { // TODO: tree structure
+        val references = transformations.filterIsInstance<ReferenceNode>()
         for (reference in references) {
             for (other in references) {
                 if (other.id == reference.id) {

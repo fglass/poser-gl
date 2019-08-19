@@ -6,7 +6,7 @@ import org.liquidengine.legui.image.BufferedImage
 import kotlin.reflect.KFunction1
 
 enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, private val iconPath: String,
-                          private val hoveredPath: String) { // TODO: refactor
+                          private val hoveredPath: String) { // TODO: refactor; command pattern
 
     ADD(Animation::addKeyframe, "add", "add-hovered"),
     COPY(Animation::copyKeyframe, "copy", "copy-hovered"),
