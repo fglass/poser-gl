@@ -41,7 +41,7 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
                 onValueChange(limited)
             }
         }
-        setLimitedValue(0)
+        setValue(0)
         add(value)
 
         val right = ImageButton(Vector2f(width - 10, 3f), rightArrow)
@@ -93,8 +93,13 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
     }
 
     private fun limit(value: Int): Int {
-        val newValue = min(value, limits.second)
-        return max(newValue, limits.first)
+        return value.coerceIn(limits.first, limits.second)
+
+        /*return when { TODO: cyclic for rotation gizmo
+            value > limits.second -> limits.first
+            value < limits.first -> limits.second
+            else -> value
+        }*/
     }
 
     fun adjust(delta: Int) {

@@ -2,7 +2,6 @@ package render
 
 import animation.ReferenceNode
 import animation.TransformationType
-import entity.Camera
 import model.Model
 import shader.NodeShader
 import net.runelite.cache.definitions.ModelDefinition
@@ -10,9 +9,9 @@ import org.joml.*
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
-import util.MatrixCreator
+import util.MouseHandler
 
-class NodeRenderer(private val context: RenderContext) {
+class NodeRenderer(private val context: RenderContext, private val mouse: MouseHandler) {
 
     private val quad: Model
     private val loader = Loader()
@@ -23,7 +22,6 @@ class NodeRenderer(private val context: RenderContext) {
     var rootNode: ReferenceNode? = null
     var selectedNode: ReferenceNode? = null
     var selectedType = TransformationType.REFERENCE
-    private var clicked = false
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
@@ -52,10 +50,8 @@ class NodeRenderer(private val context: RenderContext) {
 
         val closest = getClosestNode(ray)
         closest?.let(::handleClosestNode)
-        clicked = false
 
         for (node in nodes) {
-
             // Render selected node later to display on top of gizmo
             if (node.id == selectedNode?.id) {
                 selectedNode = node
@@ -107,18 +103,11 @@ class NodeRenderer(private val context: RenderContext) {
     }
 
     private fun handleClosestNode(node: ReferenceNode) {
-        if (clicked) {
+        if (mouse.clicked) {
             selectNode(node)
             context.animationHandler.setPlay(false)
         }
         node.highlighted = true
-    }
-
-    fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
-            action == MouseClickEvent.MouseClickAction.CLICK) {
-            clicked = true
-        }
     }
 
     private fun selectNode(node: ReferenceNode) {

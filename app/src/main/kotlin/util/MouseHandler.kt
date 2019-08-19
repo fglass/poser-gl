@@ -7,17 +7,20 @@ import org.liquidengine.legui.input.Mouse
 class MouseHandler {
 
     var pressed = false
+    var clicked = true
     var zooming = false
     var delta = Vector2f(0f, 0f)
     var dWheel = 0f
 
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
         if (button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
-            if (action == MouseClickEvent.MouseClickAction.PRESS) {
-                pressed = true
-                delta = Vector2f(0f, 0f)
-            } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
-                pressed = false
+            when (action) {
+                MouseClickEvent.MouseClickAction.PRESS -> {
+                    pressed = true
+                    delta = Vector2f(0f, 0f)
+                }
+                MouseClickEvent.MouseClickAction.RELEASE -> pressed = false
+                else -> clicked = true
             }
         }
     }

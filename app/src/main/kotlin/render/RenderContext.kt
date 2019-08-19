@@ -104,9 +104,9 @@ class RenderContext {
 
         framebuffer = Framebuffer(this, mouse, scaleFactor)
         entityRenderer = EntityRenderer()
-        nodeRenderer = NodeRenderer(this)
         lineRenderer = LineRenderer(this)
-        gizmoRenderer = GizmoRenderer(this)
+        nodeRenderer = NodeRenderer(this, mouse)
+        gizmoRenderer = GizmoRenderer(this, mouse)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartScreen.show(this, frame)

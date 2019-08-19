@@ -5,12 +5,11 @@ import animation.TransformationType
 import gizmo.TranslationGizmo
 import org.joml.Matrix4f
 import org.joml.Rayf
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
 import shader.GizmoShader
+import util.MouseHandler
 
-class GizmoRenderer(private val context: RenderContext) {
+class GizmoRenderer(private val context: RenderContext, private val mouse: MouseHandler) {
 
     var enabled = false
     private val loader = Loader()
@@ -22,19 +21,10 @@ class GizmoRenderer(private val context: RenderContext) {
         enabled = true
     }
 
-    fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (enabled && button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
-            if (action == MouseClickEvent.MouseClickAction.PRESS) {
-                gizmo.active = true
-            } else if (action == MouseClickEvent.MouseClickAction.RELEASE) {
-                gizmo.deactivate()
-            }
-        }
-    }
-
     fun render(viewMatrix: Matrix4f, ray: Rayf) {
         if (enabled) {
             prepare()
+            if (mouse.pressed) gizmo.active = true else gizmo.deactivate()
             gizmo.render(context, viewMatrix, ray)
             finish()
         }

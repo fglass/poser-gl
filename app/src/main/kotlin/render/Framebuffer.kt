@@ -32,8 +32,6 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
             mouse.handleClick(event.button, event.action)
-            context.nodeRenderer.handleClick(event.button, event.action)
-            context.gizmoRenderer.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
             mouse.handleDrag(event.delta)
@@ -99,6 +97,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         context.gizmoRenderer.render(viewMatrix, ray)
         context.nodeRenderer.renderSelected(viewMatrix)
 
+        mouse.clicked = false
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
 

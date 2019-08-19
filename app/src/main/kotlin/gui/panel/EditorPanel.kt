@@ -140,8 +140,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
             val label = Label(coord, 12f, y, 50f, 15f)
             transformPanel.add(label)
 
-            val slider = TextSlider({ context.animationHandler.transformNode(i, it) },
-                                    -255 to 255, 35f, y, 60f, 15f)
+            val slider = TextSlider({ context.animationHandler.transformNode(i, it) }, -255 to 255, 35f, y, 60f, 15f)
             sliders.add(slider)
             transformPanel.add(slider)
             y += 20
