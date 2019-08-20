@@ -9,7 +9,11 @@ import render.Loader
 import render.RenderContext
 import shader.GizmoShader
 import util.MatrixCreator
+import java.lang.Math.toDegrees
+import java.lang.Math.toRadians
+import kotlin.math.abs
 import kotlin.math.acos
+import kotlin.math.ceil
 
 class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
 
@@ -44,9 +48,21 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         var closest: GizmoAxis? = null
 
         for (axis in axes) {
-            val offset = Vector3f(scale).setComponent(axis.type.ordinal, 2f)
-            val min = Vector3f(position).sub(offset)
-            val max = Vector3f(position).add(offset)
+            val offset = Vector3f(scale + 1f, 2f, scale + 1f) // TODO: adjust
+            //val offset = Vector3f(scale).setComponent(axis.type.ordinal, 2f)
+
+            val matrix = Matrix3f()
+            matrix.rotateXYZ(
+                toRadians(axis.rotation.x.toDouble()).toFloat(),
+                toRadians(axis.rotation.y.toDouble()).toFloat(),
+                toRadians(axis.rotation.z.toDouble()).toFloat()
+            )
+
+            val rotated = matrix.transform(offset)
+            rotated.absolute()
+
+            val min = Vector3f(position).sub(rotated)
+            val max = Vector3f(position).add(rotated)
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
@@ -70,7 +86,7 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
             if (it.previousIntersection != Vector3f()) {
                 val product = intersection.dot(it.previousIntersection)
                 val theta = acos(product)
-                val angle = Math.toDegrees(theta.toDouble())
+                val angle = toDegrees(theta.toDouble())
 
                 if (angle.isFinite()) {
                     val normal = Vector3f(-ray.dX, -ray.dY, -ray.dZ)
@@ -101,9 +117,11 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
 
     private fun transform(context: RenderContext, delta: Double, negative: Boolean) {
         val axis = selectedAxis?: return
+        val offset = (if (negative) -delta else delta).toFloat()
+
         axes.forEach {
             var ord = axis.type.ordinal
-            if (it.type == AxisType.Z) { // TODO
+            if (it.type == AxisType.Z) { // TODO: research
                 ord = when (axis.type) {
                     AxisType.Y -> ord + 1
                     AxisType.Z -> ord - 1
@@ -111,10 +129,12 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
                 }
             }
 
-            val offset = (if (negative) -delta else delta).toFloat()
             val value = it.rotation[ord] + offset
             it.rotation.setComponent(ord, value)
         }
+
+        val value = ceil(if (axis.type == AxisType.Y) -offset else offset).toInt()
+        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.coerceIn(-2, 2))
     }
 
     fun reset() {
