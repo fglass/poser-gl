@@ -2,7 +2,9 @@ package render
 
 import animation.ReferenceNode
 import animation.TransformationType
+import gizmo.Gizmo
 import gizmo.TranslationGizmo
+import gizmo.RotationGizmo
 import org.joml.Matrix4f
 import org.joml.Rayf
 import org.lwjgl.opengl.GL30.*
@@ -11,21 +13,30 @@ import util.MouseHandler
 
 class GizmoRenderer(private val context: RenderContext, private val mouse: MouseHandler) {
 
-    var enabled = false
+    var enabled = false // TODO: remove?
     private val loader = Loader()
     private val shader = GizmoShader()
-    val gizmo = TranslationGizmo(loader, shader)
+
+    var gizmo: Gizmo? = null
+    private val translationGizmo = TranslationGizmo(loader, shader)
+    private val rotationGizmo = RotationGizmo(loader, shader)
 
     fun enable(node: ReferenceNode, type: TransformationType) {
-        gizmo.position = node.position
+        gizmo = when (type) {
+            TransformationType.REFERENCE -> translationGizmo
+            TransformationType.TRANSLATION -> translationGizmo
+            TransformationType.ROTATION -> rotationGizmo
+            TransformationType.SCALE -> translationGizmo
+        }
+        gizmo?.position = node.position
         enabled = true
     }
 
     fun render(viewMatrix: Matrix4f, ray: Rayf) {
         if (enabled) {
             prepare()
-            if (mouse.pressed) gizmo.active = true else gizmo.deactivate()
-            gizmo.render(context, viewMatrix, ray)
+            if (mouse.pressed) gizmo?.active = true else gizmo?.deactivate()
+            gizmo?.render(context, viewMatrix, ray)
             finish()
         }
     }

@@ -13,7 +13,7 @@ class MouseHandler {
     var dWheel = 0f
 
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) {
+        if (button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) { // TODO
             when (action) {
                 MouseClickEvent.MouseClickAction.PRESS -> {
                     pressed = true

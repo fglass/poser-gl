@@ -85,7 +85,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         setGlState()
 
         context.animationHandler.tick()
-        if (!context.gizmoRenderer.gizmo.active) { // TODO
+        if (!context.gizmoRenderer.enabled) { // TODO
             camera.move()
         }
         val viewMatrix = MatrixCreator.createViewMatrix(camera)

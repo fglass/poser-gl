@@ -5,8 +5,6 @@ import org.joml.*
 import org.liquidengine.legui.style.color.ColorUtil
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.glDrawArrays
-import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
-import org.lwjgl.opengl.GL30.glBindVertexArray
 import render.Loader
 import render.RenderContext
 import shader.GizmoShader
@@ -24,7 +22,7 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
     )
 
     override fun render(context: RenderContext, viewMatrix: Matrix4f, ray: Rayf) {
-        prepare(context, viewMatrix)
+        prepare(context, model, shader, viewMatrix)
 
         when {
             !active -> selectAxis(getClosestAxis(ray))
@@ -40,13 +38,6 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
             shader.loadColour(axis.colour)
             glDrawArrays(GL11.GL_TRIANGLES, 0, model.vertexCount)
         }
-    }
-
-    private fun prepare(context: RenderContext, viewMatrix: Matrix4f) {
-        glBindVertexArray(model.vaoId)
-        glEnableVertexAttribArray(0)
-        shader.loadViewMatrix(viewMatrix)
-        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
     }
 
     private fun getClosestAxis(ray: Rayf): GizmoAxis? {
@@ -100,10 +91,5 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
 
         val value = ceil(if (axis.type == AxisType.X) -delta else delta).toInt()
         context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value)
-    }
-
-    override fun deactivate() {
-        active = false
-        selectedAxis = null
     }
 }
