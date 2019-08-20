@@ -81,7 +81,7 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
         val plane = Planef(Vector3f(position), Vector3f(-ray.dX, -ray.dY, -ray.dZ))
         val epsilon = Intersectionf.intersectRayPlane(ray, plane, 0f)
 
-        // origin + dir * epsilon
+        // Origin + direction * epsilon
         return Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(epsilon))
     }
 

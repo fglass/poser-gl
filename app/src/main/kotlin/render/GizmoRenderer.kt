@@ -29,6 +29,7 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
             TransformationType.SCALE -> translationGizmo
         }
         gizmo?.position = node.position
+        (gizmo as? RotationGizmo)?.reset() // TODO
         enabled = true
     }
 
