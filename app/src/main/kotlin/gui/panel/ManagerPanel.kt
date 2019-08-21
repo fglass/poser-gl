@@ -18,7 +18,6 @@ import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
-import org.liquidengine.legui.style.length.LengthType.PIXEL
 import render.PolygonMode
 import shader.ShadingType
 import util.setSizeLimits
@@ -51,7 +50,7 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         add(title)
 
         selectedEntity.setSizeLimits(maxWidth, 15f)
-        selectedEntity.style.marginTop = PIXEL.length(20f)
+        selectedEntity.style.setMarginTop(20f)
         selectedEntity.textState.horizontalAlign = HorizontalAlign.CENTER
         add(selectedEntity)
 

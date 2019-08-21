@@ -48,8 +48,7 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         var closest: GizmoAxis? = null
 
         for (axis in axes) {
-            val offset = Vector3f(scale + 1f, 2f, scale + 1f) // TODO: adjust
-            //val offset = Vector3f(scale).setComponent(axis.type.ordinal, 2f)
+            val offset = Vector3f(scale, 2f, scale)
 
             val matrix = Matrix3f()
             matrix.rotateXYZ(
@@ -119,18 +118,20 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         val axis = selectedAxis?: return
         val offset = (if (negative) -delta else delta).toFloat()
 
-        axes.forEach {
-            var ord = axis.type.ordinal
-            if (it.type == AxisType.Z) { // TODO: research
-                ord = when (axis.type) {
-                    AxisType.Y -> ord + 1
-                    AxisType.Z -> ord - 1
-                    else -> ord
+        axes.forEach { // TODO: look into
+            if (it != axis) {
+                var ord = axis.type.ordinal
+                if (it.type == AxisType.Z) {
+                    ord = when (axis.type) {
+                        AxisType.Y -> ord + 1
+                        AxisType.Z -> ord - 1
+                        else -> ord
+                    }
                 }
-            }
 
-            val value = it.rotation[ord] + offset
-            it.rotation.setComponent(ord, value)
+                val value = it.rotation[ord] + offset
+                it.rotation.setComponent(ord, value)
+            }
         }
 
         val value = ceil(if (axis.type == AxisType.Y) -offset else offset).toInt()

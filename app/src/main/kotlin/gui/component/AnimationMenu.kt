@@ -11,7 +11,6 @@ import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 import org.liquidengine.legui.style.length.Auto
-import org.liquidengine.legui.style.length.LengthType.PIXEL
 import util.setSizeLimits
 
 class AnimationMenu(context: RenderContext): Panel() {
@@ -78,7 +77,7 @@ class AnimationMenu(context: RenderContext): Panel() {
         addMenuButton("export", context.exportManager::openDialog)
         
         val packButton = addMenuButton("pack", context.cacheService::pack)
-        packButton.style.marginRight = PIXEL.length(10f)
+        packButton.style.setMarginRight(10f)
 
     }
 
@@ -93,7 +92,7 @@ class AnimationMenu(context: RenderContext): Panel() {
         }
 
         button.setSizeLimits(23f, 23f)
-        button.style.marginTop = PIXEL.length(1f)
+        button.style.setMarginTop(1f)
         button.style.position = Style.PositionType.RELATIVE
         add(button)
         return button

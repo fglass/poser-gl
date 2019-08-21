@@ -16,7 +16,6 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
-import org.liquidengine.legui.style.length.LengthType.PIXEL
 import util.setHeightLimit
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -54,7 +53,7 @@ class AnimationPanel(private val context: RenderContext): Panel() {
 
         times = Panel()
         times.style.position = Style.PositionType.RELATIVE
-        times.style.marginTop = PIXEL.length(3f)
+        times.style.setMarginTop(3f)
         times.setHeightLimit(15f)
         times.style.flexStyle.flexGrow = 1
         times.style.background.color = ColorConstants.darkGray()

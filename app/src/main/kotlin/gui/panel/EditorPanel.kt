@@ -21,7 +21,6 @@ import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
-import org.liquidengine.legui.style.length.LengthType.PIXEL
 import util.setSizeLimits
 
 class EditorPanel(private val context: RenderContext): Panel() {
@@ -97,7 +96,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
     private fun addNodePanel(sizeX: Float) {
         val nodePanel = Panel()
         nodePanel.setSizeLimits(sizeX, 155f)
-        nodePanel.style.marginTop = PIXEL.length(95f)
+        nodePanel.style.setMarginTop(95f)
         nodePanel.style.background.color = ColorConstants.darkGray()
         nodePanel.style.border.isEnabled = false
         add(nodePanel)
