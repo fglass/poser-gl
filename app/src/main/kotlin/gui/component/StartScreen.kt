@@ -20,7 +20,7 @@ object StartScreen {
         val xOffset = 5
         val yOffset = 105
         val title = Panel(dialog.position.x + xOffset, dialog.position.y - yOffset, dialog.size.x - xOffset * 2, 94f)
-        //title.style.border.isEnabled = false
+        title.style.border.isEnabled = false
         title.listenerMap.addListener(WindowSizeEvent::class.java) {
             title.position = Vector2f(dialog.position.x + xOffset, dialog.position.y - yOffset)
         }
@@ -28,7 +28,7 @@ object StartScreen {
 
         val logo = ImageView(BufferedImage(SPRITE_PATH + "title.png"))
         logo.size = Vector2f(title.size)
-        //logo.style.border.isEnabled = false
+        logo.style.border.isEnabled = false
         title.add(logo)
 
         val version = Label("v$VERSION")

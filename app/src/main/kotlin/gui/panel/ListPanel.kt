@@ -34,7 +34,7 @@ class ListPanel(context: RenderContext): Panel() {
         style.position = Style.PositionType.RELATIVE
         style.setMaxWidth(174f)
         style.flexStyle.flexGrow = 1
-        //style.border.isEnabled = false
+        style.border.isEnabled = false
 
         addSearch()
         addTabs()

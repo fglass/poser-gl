@@ -31,7 +31,7 @@ class GuiManager(context: RenderContext) {
         topPanel.style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
         topPanel.style.setBorderRadius(0f)
         topPanel.style.focusedStrokeColor = null
-        //topPanel.style.border.isEnabled = false
+        topPanel.style.border.isEnabled = false
         topPanel.style.position = Style.PositionType.RELATIVE
         topPanel.style.flexStyle.flexGrow = 1
 
@@ -45,7 +45,7 @@ class GuiManager(context: RenderContext) {
         rightPanel.style.position = Style.PositionType.RELATIVE
         rightPanel.style.setMaxWidth(180f)
         rightPanel.style.flexStyle.flexGrow = 1
-        //rightPanel.style.border.isEnabled = false
+        rightPanel.style.border.isEnabled = false
         rightPanel.style.background.color = ColorConstants.transparent()
 
         rightPanel.add(managerPanel)

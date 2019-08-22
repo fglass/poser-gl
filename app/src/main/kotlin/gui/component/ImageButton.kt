@@ -21,7 +21,7 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
         this.position = position
         size = Vector2f(image.width.toFloat(), image.height.toFloat())
         style.setBorderRadius(0f)
-        //style.border.isEnabled = false
+        style.border.isEnabled = false
         style.background.color = ColorConstants.transparent()
 
         if (action.isNotEmpty()) {

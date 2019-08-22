@@ -57,7 +57,7 @@ class AnimationPanel(private val context: RenderContext): Panel() {
         times.setHeightLimit(15f)
         times.style.flexStyle.flexGrow = 1
         times.style.background.color = ColorConstants.darkGray()
-        //times.style.border.isEnabled = false
+        times.style.border.isEnabled = false
         add(times)
 
         reset()
@@ -127,7 +127,7 @@ class AnimationPanel(private val context: RenderContext): Panel() {
             val keyframe = Panel(position, Vector2f(yellowLine.width + 2 * border, yellowLine.height.toFloat()))
 
             keyframe.style.background.color = ColorConstants.transparent()
-            //keyframe.style.border.isEnabled = false
+            keyframe.style.border.isEnabled = false
             keyframe.style.focusedStrokeColor = null
 
             val line = ImageButton(Vector2f(border, 0f), yellowLine)

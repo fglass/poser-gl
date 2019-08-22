@@ -22,6 +22,7 @@ import org.liquidengine.legui.system.context.DefaultCallbackKeeper
 import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
+import org.liquidengine.legui.theme.Theme
 import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
@@ -33,6 +34,9 @@ import transfer.ExportManager
 import transfer.ImportManager
 import util.MouseHandler
 import util.VSyncTimer
+import org.liquidengine.legui.theme.colored.FlatColoredTheme
+
+
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.2"
@@ -84,7 +88,16 @@ class RenderContext {
 
         val context = Context(window)
         context.updateGlfwWindow()
-        Themes.setDefaultTheme(Themes.FLAT_DARK)
+
+        val theme = FlatColoredTheme(
+            ColorUtil.fromInt(33, 33, 33, 1.0f),
+            ColorUtil.fromInt(97, 97, 97, 1.0f),
+            ColorUtil.fromInt(2, 119, 189, 1.0f),
+            ColorUtil.fromInt(27, 94, 32, 1.0f),
+            ColorUtil.fromInt(183, 28, 28, 1.0f),
+            null
+        )
+        Themes.setDefaultTheme(theme)
         Themes.getDefaultTheme().applyAll(frame)
 
         val keeper = DefaultCallbackKeeper()

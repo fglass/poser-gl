@@ -33,7 +33,7 @@ class AnimationMenu(context: RenderContext): Panel() {
         style.setMaxHeight(23f)
 
         style.background.color = ColorConstants.darkGray()
-        //style.border.isEnabled = false
+        style.border.isEnabled = false
         style.setBorderRadius(0f)
 
         play = ImageButton(Vector2f(), playIcon)

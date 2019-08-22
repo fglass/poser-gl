@@ -27,6 +27,6 @@ open class ButtonGroup(position: Vector2f, iconSize: Vector2f, images: Array<Ima
         size.x = style.minWidth.get() as Float
         size.y = style.minHeight.get() as Float
         style.setMargin(position.y, 0f, 0f, position.x)
-        //style.border.isEnabled = false
+        style.border.isEnabled = false
     }
 }

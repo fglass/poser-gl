@@ -7,6 +7,7 @@ import org.liquidengine.legui.component.Dialog
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.WindowSizeEvent
+import org.liquidengine.legui.style.color.ColorConstants
 
 open class Dialog(title: String, text: String, private val context: RenderContext, width: Float, height: Float):
            Dialog(title, width, height) {
@@ -15,6 +16,8 @@ open class Dialog(title: String, text: String, private val context: RenderContex
 
     init {
         message.textState.horizontalAlign = HorizontalAlign.CENTER
+        titleContainer.style.background.color = ColorConstants.transparent()
+        closeButton.style.focusedStrokeColor = null
         container.add(message)
         container.isFocusable = false
         isFocusable = false
