@@ -4,7 +4,7 @@ import org.joml.Vector2f
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 
-class MouseHandler {
+class MouseHandler(private val button: Mouse.MouseButton) {
 
     var pressed = false
     var clicked = true
@@ -13,7 +13,7 @@ class MouseHandler {
     var dWheel = 0f
 
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
-        if (button == Mouse.MouseButton.MOUSE_BUTTON_LEFT) { // TODO
+        if (this.button == button) {
             when (action) {
                 MouseClickEvent.MouseClickAction.PRESS -> {
                     pressed = true

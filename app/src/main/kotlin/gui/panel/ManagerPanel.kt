@@ -122,12 +122,12 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         modelPanel.verticalScrollBar.style.setBottom(0f)
         modelPanel.verticalScrollBar.style.setWidth(8f)
         modelPanel.verticalScrollBar.style.setBorderRadius(0f)
-        modelPanel.verticalScrollBar.style.border.isEnabled = false
+        //modelPanel.verticalScrollBar.style.border.isEnabled = false
         modelPanel.verticalScrollBar.style.background.color = ColorConstants.darkGray()
 
         val components = arrayOf(modelPanel.viewport, modelPanel.container, modelPanel)
         components.forEach {
-            it.style.border.isEnabled = false
+            //it.style.border.isEnabled = false
             it.style.background.color = ColorUtil.fromInt(71, 71, 71, 1f)
         }
         add(modelPanel)
@@ -150,11 +150,11 @@ class ManagerPanel(private val context: RenderContext): Panel() {
             val label = Label("Model ${component.id}", 21f, y, 50f, 15f)
             val modelImage = ImageView(modelIcon)
             modelImage.position = Vector2f(7f, y + 3)
-            modelImage.style.border.isEnabled = false
+            //modelImage.style.border.isEnabled = false
 
             val deleteButton = ImageView(deleteIcon)
             deleteButton.position = Vector2f(136f, y + 3)
-            deleteButton.style.border.isEnabled = false
+            //deleteButton.style.border.isEnabled = false
             deleteButton.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                     entity.remove(component, context.entityHandler)

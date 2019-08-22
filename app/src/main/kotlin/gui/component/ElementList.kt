@@ -25,8 +25,8 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
         this.remove(horizontalScrollBar)
         style.background.color = BG_COLOUR
 
-        container.style.border.isEnabled = false
-        viewport.style.border.isEnabled = false
+        //container.style.border.isEnabled = false
+        //viewport.style.border.isEnabled = false
         viewport.style.setBottom(0f)
 
         verticalScrollBar.style.setBottom(0f)
@@ -100,7 +100,7 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
 
         init {
             style.background.color = ColorConstants.darkGray()
-            style.border.isEnabled = false
+            //style.border.isEnabled = false
         }
 
         var highlighted = false

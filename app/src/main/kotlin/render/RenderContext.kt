@@ -13,6 +13,7 @@ import org.joml.Vector2i
 import org.joml.Vector4f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
+import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.listener.processor.EventProcessor
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
@@ -89,7 +90,6 @@ class RenderContext {
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
 
-        val mouse = MouseHandler()
         val windowCloseCallback = GLFWWindowCloseCallbackI { running = false }
         keeper.chainWindowCloseCallback.add(windowCloseCallback)
 
@@ -100,13 +100,15 @@ class RenderContext {
         guiRenderer.initialize()
 
         val vSync = VSyncTimer()
+        val lmb = MouseHandler(Mouse.MouseButton.MOUSE_BUTTON_LEFT)
+        val rmb = MouseHandler(Mouse.MouseButton.MOUSE_BUTTON_RIGHT)
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
 
-        framebuffer = Framebuffer(this, mouse, scaleFactor)
+        framebuffer = Framebuffer(this, lmb, rmb, scaleFactor)
         entityRenderer = EntityRenderer()
         lineRenderer = LineRenderer(this)
-        nodeRenderer = NodeRenderer(this, mouse)
-        gizmoRenderer = GizmoRenderer(this, mouse)
+        nodeRenderer = NodeRenderer(this, lmb)
+        gizmoRenderer = GizmoRenderer(this, lmb)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartScreen.show(this, frame)

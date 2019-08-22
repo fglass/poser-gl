@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import util.MatrixCreator
 
-class Framebuffer(private val context: RenderContext, private val mouse: MouseHandler,
+class Framebuffer(private val context: RenderContext, private val lmb: MouseHandler, private val rmb: MouseHandler,
                   private val scaleFactor: Int): ImageView() {
 
     private var id: Int = 0
@@ -19,7 +19,7 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
     private var textureWidth = 0
     private var textureHeight = 0
     
-    private val camera = Camera(mouse)
+    private val camera = Camera(rmb)
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
     var activeDialog: Dialog? = null
@@ -31,16 +31,20 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         style.focusedStrokeColor = null
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            mouse.handleClick(event.button, event.action)
+            lmb.handleClick(event.button, event.action)
+            rmb.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
-            mouse.handleDrag(event.delta)
+            lmb.handleDrag(event.delta)
+            rmb.handleDrag(event.delta)
         }
         listenerMap.addListener(ScrollEvent::class.java) { event ->
-            mouse.handleScroll(event.yoffset)
+            lmb.handleScroll(event.yoffset)
+            rmb.handleScroll(event.yoffset)
         }
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-            mouse.handleCursorEvent(event.isEntered)
+            lmb.handleCursorEvent(event.isEntered)
+            rmb.handleCursorEvent(event.isEntered)
         }
     }
 
@@ -85,9 +89,8 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         setGlState()
 
         context.animationHandler.tick()
-        if (!context.gizmoRenderer.enabled) { // TODO
-            camera.move()
-        }
+        camera.move()
+
         val viewMatrix = MatrixCreator.createViewMatrix(camera)
         val ray = camera.calculateRay(context, viewMatrix)
 
@@ -96,8 +99,8 @@ class Framebuffer(private val context: RenderContext, private val mouse: MouseHa
         context.lineRenderer.renderGrid(viewMatrix)
         context.gizmoRenderer.render(viewMatrix, ray)
         context.nodeRenderer.renderSelected(viewMatrix)
+        lmb.clicked = false
 
-        mouse.clicked = false
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
 

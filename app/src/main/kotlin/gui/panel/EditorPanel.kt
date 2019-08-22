@@ -52,7 +52,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         val framePanel = Panel()
         framePanel.setSizeLimits(sizeX, 90f)
         framePanel.style.background.color = ColorConstants.darkGray()
-        framePanel.style.border.isEnabled = false
+        //framePanel.style.border.isEnabled = false
         add(framePanel)
 
         val frameTitle = Label("Keyframe Editor", 0f, 0f, sizeX, 16f)
@@ -98,7 +98,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         nodePanel.setSizeLimits(sizeX, 155f)
         nodePanel.style.setMarginTop(95f)
         nodePanel.style.background.color = ColorConstants.darkGray()
-        nodePanel.style.border.isEnabled = false
+        //nodePanel.style.border.isEnabled = false
         add(nodePanel)
 
         val nodeTitle = Label("Node Transformer", 0f, 0f, sizeX, 16f)
@@ -129,7 +129,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
         val transformPanel = Panel(32f, 82f, 106f, 70f)
         transformPanel.style.background.color = ColorUtil.fromInt(71, 71, 71, 1f)
-        transformPanel.style.border.isEnabled = false
+        //transformPanel.style.border.isEnabled = false
         nodePanel.add(transformPanel)
 
         var y = 7f

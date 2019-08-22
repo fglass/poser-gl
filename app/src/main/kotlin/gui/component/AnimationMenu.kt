@@ -33,7 +33,7 @@ class AnimationMenu(context: RenderContext): Panel() {
         style.setMaxHeight(23f)
 
         style.background.color = ColorConstants.darkGray()
-        style.border.isEnabled = false
+        //style.border.isEnabled = false
         style.setBorderRadius(0f)
 
         play = ImageButton(Vector2f(), playIcon)
@@ -78,7 +78,6 @@ class AnimationMenu(context: RenderContext): Panel() {
         
         val packButton = addMenuButton("pack", context.cacheService::pack)
         packButton.style.setMarginRight(10f)
-
     }
 
     private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
