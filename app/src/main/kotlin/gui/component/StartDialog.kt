@@ -5,15 +5,16 @@ import render.RenderContext
 import gui.GuiManager
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
+import render.VERSION
 import util.FileDialog
 
-class LoadDialog(private val context: RenderContext):
-      Dialog("Cache Loader", "Backup your cache before making changes", context, 260f, 109f) {
+class StartDialog(private val context: RenderContext):
+      Dialog("", "Backup your cache before making changes", context, 260f, 180f) {
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<String>
@@ -25,25 +26,43 @@ class LoadDialog(private val context: RenderContext):
     init {
         isDraggable = false
         isCloseable = false
-        message.position.y -= 7f
+
+        remove(titleContainer)
+        container.style.background.color = ColorUtil.fromInt(41, 41, 41, 1f)
+        message.position.y += 77f
+
+        addTitle()
         addPath()
         addPlugin()
         addLoadButton()
     }
 
+    private fun addTitle() {
+        val logo = ImageView(BufferedImage(SPRITE_PATH + "title.png"))
+        logo.position = Vector2f(20f, 5f)
+        logo.size = Vector2f(220f, 82f)
+        logo.style.border.isEnabled = false
+        logo.style.background.color = ColorConstants.transparent()
+        container.add(logo)
+
+        val version = Label("v$VERSION")
+        version.position = Vector2f(208f, 66f)
+        container.add(version)
+    }
+
     private fun addPath() {
-        val cacheLabel = Label("Cache:", 14f, 35f, 50f, 15f)
+        val cacheLabel = Label("Cache:", 14f, 125f, 50f, 15f)
         container.add(cacheLabel)
 
-        val box = Panel(172f, 35f, 16f, 15f)
+        val box = Panel(172f, 125f, 16f, 15f)
         box.style.focusedStrokeColor = null
         container.add(box)
 
-        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 35f, 97f, 15f) // TODO: remove text
+        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 125f, 97f, 15f) // TODO: remove text
         cache.style.focusedStrokeColor = null
         container.add(cache)
 
-        val open = ImageButton(Vector2f(175f, 35f), openIcon)
+        val open = ImageButton(Vector2f(175f, 125f), openIcon)
         open.hoveredIcon = openHoveredIcon
         open.size = Vector2f(13f, 14f)
 
@@ -57,19 +76,20 @@ class LoadDialog(private val context: RenderContext):
     }
 
     private fun addPlugin() {
-        val pluginLabel = Label("Plugin:", 14f, 63f, 50f, 15f)
+        val pluginLabel = Label("Plugin:", 14f, 153f, 50f, 15f)
         container.add(pluginLabel)
 
-        plugins = SelectBox(76f, 63f, 112f, 15f)
+        plugins = SelectBox(76f, 153f, 112f, 15f)
         plugins.addElement("OSRS")
         plugins.addElement("317")
         plugins.addElement("Legacy 317")
+        plugins.expandButton.style.border.isEnabled = false
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         container.add(plugins)
     }
 
     private fun addLoadButton() {
-        val load = ImageButton(Vector2f(235f, 63f), loadIcon)
+        val load = ImageButton(Vector2f(235f, 153f), loadIcon)
         load.hoveredIcon = loadHoveredIcon
         load.size = Vector2f(16f, 16f)
 

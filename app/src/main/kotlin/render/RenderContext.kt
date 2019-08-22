@@ -5,7 +5,7 @@ import cache.CacheService
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
-import gui.component.StartScreen
+import gui.component.StartDialog
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Vector2f
@@ -22,7 +22,6 @@ import org.liquidengine.legui.system.context.DefaultCallbackKeeper
 import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
-import org.liquidengine.legui.theme.Theme
 import org.liquidengine.legui.theme.Themes
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
@@ -90,11 +89,11 @@ class RenderContext {
         context.updateGlfwWindow()
 
         val theme = FlatColoredTheme(
-            ColorUtil.fromInt(33, 33, 33, 1.0f),
-            ColorUtil.fromInt(97, 97, 97, 1.0f),
-            ColorUtil.fromInt(2, 119, 189, 1.0f),
-            ColorUtil.fromInt(27, 94, 32, 1.0f),
-            ColorUtil.fromInt(183, 28, 28, 1.0f),
+            ColorUtil.fromInt(33, 33, 33, 1f),
+            ColorUtil.fromInt(97, 97, 97, 1f),
+            ColorUtil.fromInt(2, 119, 189, 1f),
+            ColorUtil.fromInt(27, 94, 32, 1f),
+            ColorUtil.fromInt(183, 28, 28, 1f),
             null
         )
         Themes.setDefaultTheme(theme)
@@ -124,7 +123,7 @@ class RenderContext {
         gizmoRenderer = GizmoRenderer(this, lmb)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-        StartScreen.show(this, frame)
+        StartDialog(this).show(frame)
 
         // Render loop
         while (running) {

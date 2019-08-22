@@ -24,7 +24,7 @@ open class Dialog(title: String, text: String, private val context: RenderContex
         isResizable = false
 
         listenerMap.addListener(WindowSizeEvent::class.java) { event ->
-            if (this is LoadDialog) { // Center on overall frame instead
+            if (this is StartDialog) { // Center on overall frame instead
                 position = Vector2f((event.width - size.x) / 2f, (event.height - size.y) / 2f)
             }
         }
