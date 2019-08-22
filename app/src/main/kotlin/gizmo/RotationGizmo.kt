@@ -15,6 +15,8 @@ import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.ceil
 
+const val ROTATION_SPEED = 2
+
 class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
 
     private val scale = 25f
@@ -102,11 +104,12 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         return Vector3f(onPlane).sub(point).normalize()
     }
 
-    private fun transform(axis: GizmoAxis, context: RenderContext, delta: Double, negative: Boolean) {
+    private fun transform(axis: GizmoAxis, context: RenderContext, delta: Double, negative: Boolean) { // TODO: direction with left and right sides
         var value = ceil(delta).toInt()
         value = if (negative) -value else value
         value = if (axis.type == AxisType.Y) -value else value
-        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.coerceIn(-1, 1), true)
+        value = value.coerceIn(-1, 1) * ROTATION_SPEED
+        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value, true)
     }
 
     fun reset() {
