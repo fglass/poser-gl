@@ -55,8 +55,8 @@ class RenderContext {
     lateinit var gizmoRenderer: GizmoRenderer
 
     val cacheService = CacheService(this)
-    val exportManager = ExportManager(this)
     val importManager = ImportManager(this)
+    val exportManager = ExportManager(this)
 
     val modelParser = ModelParser()
     var entity: Entity? = null

@@ -1,7 +1,5 @@
 package gui.component
 
-import render.SPRITE_PATH
-import render.RenderContext
 import gui.GuiManager
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
@@ -10,6 +8,8 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
+import render.RenderContext
+import render.SPRITE_PATH
 import render.VERSION
 import util.FileDialog
 

@@ -10,6 +10,7 @@ import render.RenderContext
 import shader.GizmoShader
 import util.MatrixCreator
 import kotlin.math.ceil
+import kotlin.math.floor
 
 class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
 
@@ -68,9 +69,9 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
     private fun manipulate(context: RenderContext, ray: Rayf) {
         selectedAxis?.let {
             val intersection = getIntersection(ray)
-            if (it.previousIntersection != Vector3f()) {
+            if (it.previousIntersection != Vector3f() && intersection != it.previousIntersection) {
                 val delta = Vector3f(intersection).sub(it.previousIntersection).get(it.type.ordinal)
-                transform(context, delta)
+                transform(it, context, delta)
             }
             it.previousIntersection = intersection
         }
@@ -85,11 +86,9 @@ class TranslationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo()
         return Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(epsilon))
     }
 
-    private fun transform(context: RenderContext, delta: Float) {
-        val axis = selectedAxis?: return
-        //position.setComponent(axis.type.ordinal, position[axis.type.ordinal] + delta) // TODO: need?
-
-        val value = ceil(if (axis.type == AxisType.X) -delta else delta).toInt()
-        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value)
+    private fun transform(axis: GizmoAxis, context: RenderContext, delta: Float) {
+        var value = if (delta > 0) ceil(delta) else floor(delta)
+        value = if (axis.type == AxisType.X) -value else value
+        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.toInt())
     }
 }

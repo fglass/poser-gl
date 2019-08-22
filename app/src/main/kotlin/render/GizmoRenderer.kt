@@ -13,7 +13,6 @@ import util.MouseHandler
 
 class GizmoRenderer(private val context: RenderContext, private val mouse: MouseHandler) {
 
-    var enabled = false // TODO: remove?
     private val loader = Loader()
     private val shader = GizmoShader()
 
@@ -30,14 +29,13 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
         }
         gizmo?.position = node.position
         (gizmo as? RotationGizmo)?.reset() // TODO
-        enabled = true
     }
 
     fun render(viewMatrix: Matrix4f, ray: Rayf) {
-        if (enabled) {
+        gizmo?.let {
             prepare()
-            if (mouse.pressed) gizmo?.active = true else gizmo?.deactivate()
-            gizmo?.render(context, viewMatrix, ray)
+            if (mouse.pressed) it.active = true else it.deactivate()
+            it.render(context, viewMatrix, ray)
             finish()
         }
     }

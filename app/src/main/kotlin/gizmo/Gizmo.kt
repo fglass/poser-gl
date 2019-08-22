@@ -10,7 +10,7 @@ import render.Loader
 import render.RenderContext
 import shader.GizmoShader
 
-abstract class Gizmo {
+abstract class Gizmo { // TODO: deduplicate subclasses
 
     var active = false
     var position = Vector3f(0f, 0f, 0f)

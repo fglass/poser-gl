@@ -22,7 +22,7 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
     private val axes = arrayOf(
         GizmoAxis(AxisType.X, ColorUtil.fromInt(220, 14, 44, 1f), Vector3f(0f, 0f, 90f)),
         GizmoAxis(AxisType.Y, ColorUtil.fromInt(14, 220, 44, 1f), Vector3f(0f, 0f, 0f)),
-        GizmoAxis(AxisType.Z, ColorUtil.fromInt(14, 44, 220, 1f), Vector3f(-90f, 0f, 0f))
+        GizmoAxis(AxisType.Z, ColorUtil.fromInt(14, 44, 220, 1f), Vector3f(0f, 90f, 90f))
     )
 
     override fun render(context: RenderContext, viewMatrix: Matrix4f, ray: Rayf) {
@@ -48,20 +48,9 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         var closest: GizmoAxis? = null
 
         for (axis in axes) {
-            val offset = Vector3f(scale, 2f, scale)
-
-            val matrix = Matrix3f()
-            matrix.rotateXYZ(
-                toRadians(axis.rotation.x.toDouble()).toFloat(),
-                toRadians(axis.rotation.y.toDouble()).toFloat(),
-                toRadians(axis.rotation.z.toDouble()).toFloat()
-            )
-
-            val rotated = matrix.transform(offset)
-            rotated.absolute()
-
-            val min = Vector3f(position).sub(rotated)
-            val max = Vector3f(position).add(rotated)
+            val offset = Vector3f(scale).setComponent(axis.type.ordinal, 2f)
+            val min = Vector3f(position).sub(offset)
+            val max = Vector3f(position).add(offset)
             val nearFar = Vector2f()
 
             if (Intersectionf.intersectRayAab(ray, AABBf(min, max), nearFar) && nearFar.x < minDistance) {
@@ -82,7 +71,7 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
     private fun manipulate(context: RenderContext, ray: Rayf) {
         selectedAxis?.let {
             val intersection = getIntersection(ray)
-            if (it.previousIntersection != Vector3f()) {
+            if (it.previousIntersection != Vector3f() && intersection != it.previousIntersection) {
                 val product = intersection.dot(it.previousIntersection)
                 val theta = acos(product)
                 val angle = toDegrees(theta.toDouble())
@@ -92,7 +81,7 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
                     val numerator = Vector3f(intersection).cross(it.previousIntersection).mul(normal)
                     val length = numerator.length()
                     val sign = numerator.div(length)[it.type.ordinal]
-                    transform(context, angle, sign < 0)
+                    transform(it, context, angle, sign < 0)
                 }
             }
             it.previousIntersection = intersection
@@ -108,34 +97,16 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         val onPlane = Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(epsilon))
 
         // Project point onto circle's circumference
-        val r = scale / 2
-        val p = Vector3f(onPlane).sub(position).normalize().mul(r)
+        val p = Vector3f(onPlane).sub(position).normalize().mul(scale)
         val point = Vector3f(position).add(p)
         return Vector3f(onPlane).sub(point).normalize()
     }
 
-    private fun transform(context: RenderContext, delta: Double, negative: Boolean) {
-        val axis = selectedAxis?: return
-        val offset = (if (negative) -delta else delta).toFloat()
-
-        axes.forEach { // TODO: look into
-            if (it != axis) {
-                var ord = axis.type.ordinal
-                if (it.type == AxisType.Z) {
-                    ord = when (axis.type) {
-                        AxisType.Y -> ord + 1
-                        AxisType.Z -> ord - 1
-                        else -> ord
-                    }
-                }
-
-                val value = it.rotation[ord] + offset
-                it.rotation.setComponent(ord, value)
-            }
-        }
-
-        val value = ceil(if (axis.type == AxisType.Y) -offset else offset).toInt()
-        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.coerceIn(-2, 2))
+    private fun transform(axis: GizmoAxis, context: RenderContext, delta: Double, negative: Boolean) {
+        var value = ceil(delta).toInt()
+        value = if (negative) -value else value
+        value = if (axis.type == AxisType.Y) -value else value
+        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.coerceIn(-1, 1))
     }
 
     fun reset() {

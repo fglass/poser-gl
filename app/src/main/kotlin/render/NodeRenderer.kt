@@ -67,6 +67,10 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
     }
 
     fun renderSelected(viewMatrix: Matrix4f) {
+        if (!enabled) {
+            return
+        }
+
         selectedNode?.let {
             prepare()
             shader.setHighlighted(true)
