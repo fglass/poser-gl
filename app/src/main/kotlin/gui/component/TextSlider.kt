@@ -15,8 +15,6 @@ import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.listener.CursorEnterEventListener
 import org.liquidengine.legui.listener.MouseClickEventListener
 import org.lwjgl.glfw.GLFW
-import kotlin.math.max
-import kotlin.math.min
 
 class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
                  x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
@@ -92,19 +90,21 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         setValue(limited)
     }
 
-    private fun limit(value: Int): Int {
-        return value.coerceIn(limits.first, limits.second)
-
-        /*return when { TODO: cyclic for rotation gizmo
-            value > limits.second -> limits.first
-            value < limits.first -> limits.second
-            else -> value
-        }*/
+    private fun limit(value: Int, cyclic: Boolean = false): Int {
+        return if (!cyclic) {
+            value.coerceIn(limits.first, limits.second)
+        } else {
+            when {
+                value > limits.second -> limits.first
+                value < limits.first -> limits.second
+                else -> value
+            }
+        }
     }
 
-    fun adjust(delta: Int) {
+    fun adjust(delta: Int, cyclic: Boolean = false) {
         val newValue = value.textState.text.toInt() + delta
-        val limited = limit(newValue)
+        val limited = limit(newValue, cyclic)
         setValue(limited)
         onValueChange(limited)
     }

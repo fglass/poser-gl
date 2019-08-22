@@ -28,7 +28,7 @@ class StartDialog(private val context: RenderContext):
         isCloseable = false
 
         remove(titleContainer)
-        container.style.background.color = ColorUtil.fromInt(41, 41, 41, 1f)
+        container.style.background.color = ColorUtil.fromInt(35, 35, 35, 1f)
         message.position.y += 77f
 
         addTitle()

@@ -106,7 +106,7 @@ class RotationGizmo(loader: Loader, private val shader: GizmoShader): Gizmo() {
         var value = ceil(delta).toInt()
         value = if (negative) -value else value
         value = if (axis.type == AxisType.Y) -value else value
-        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.coerceIn(-1, 1))
+        context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value.coerceIn(-1, 1), true)
     }
 
     fun reset() {
