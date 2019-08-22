@@ -89,7 +89,7 @@ class StartDialog(private val context: RenderContext):
     }
 
     private fun addLoadButton() {
-        val load = ImageButton(Vector2f(235f, 153f), loadIcon)
+        val load = ImageButton(Vector2f(232f, 153f), loadIcon)
         load.hoveredIcon = loadHoveredIcon
         load.size = Vector2f(16f, 16f)
 

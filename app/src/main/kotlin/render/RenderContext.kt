@@ -35,8 +35,6 @@ import util.MouseHandler
 import util.VSyncTimer
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 
-
-
 const val TITLE = "PoserGL"
 const val VERSION = "1.2"
 const val SPRITE_PATH = "sprite/"

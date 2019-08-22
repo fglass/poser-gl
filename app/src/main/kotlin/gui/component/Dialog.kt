@@ -16,7 +16,7 @@ open class Dialog(title: String, text: String, private val context: RenderContex
 
     init {
         message.textState.horizontalAlign = HorizontalAlign.CENTER
-        titleContainer.style.background.color = ColorConstants.transparent()
+        titleContainer.style.background.color = ColorConstants.darkGray()
         closeButton.style.focusedStrokeColor = null
         container.add(message)
         container.isFocusable = false

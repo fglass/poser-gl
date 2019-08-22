@@ -15,8 +15,8 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
         container.remove(message)
 
         val group = RadioButtonGroup()
-        val pgl = RadioButton(".pgl", 68f, 7f, 37f, 15f)
-        val dat = RadioButton(".dat", 120f, 7f, 37f, 15f)
+        val pgl = RadioButton(".pgl", 68f, 9f, 37f, 15f)
+        val dat = RadioButton(".dat", 120f, 9f, 37f, 15f)
 
         val buttons = arrayOf(pgl, dat)
         buttons.forEach {
@@ -27,7 +27,7 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
             container.add(it)
         }
 
-        val export = Button("Export", 90f, 33f, 46f, 15f)
+        val export = Button("Export", 90f, 35f, 46f, 15f)
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
