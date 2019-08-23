@@ -7,7 +7,8 @@ import shader.ShadingType
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
-class Keyframe(val id: Int, val frameId: Int, var length: Int, val frameMap: FramemapDefinition) {
+class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
+               val frameMap: FramemapDefinition = FramemapDefinition()) {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {

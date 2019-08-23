@@ -10,8 +10,8 @@ private val logger = KotlinLogging.logger {}
 class AnimationHandler(private val context: RenderContext) {
 
     var currentAnimation: Animation? = null
-    var copiedFrame = Keyframe(-1, -1, -1, FramemapDefinition())
-    private var previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
+    var copiedFrame = Keyframe()
+    private var previousFrame = Keyframe()
     private var frameLength = 0
     var frameCount = 0
 
@@ -154,7 +154,7 @@ class AnimationHandler(private val context: RenderContext) {
         timer = 0
         frameCount = 0
         frameLength = 0
-        previousFrame = Keyframe(-1, -1, -1, FramemapDefinition())
+        previousFrame = Keyframe()
 
         context.nodeRenderer.reset() // TODO: use events
         context.gizmoRenderer.reset()
