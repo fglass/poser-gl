@@ -28,6 +28,15 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         quad = loader.loadToVao(vertices, 2)
     }
 
+    fun toggle() {
+        enabled = !enabled
+
+        if (!enabled) {
+            reset()
+            context.gizmoRenderer.reset()
+        }
+    }
+
     fun addNode(node: ReferenceNode, def: ModelDefinition) {
         if (!enabled) {
             return

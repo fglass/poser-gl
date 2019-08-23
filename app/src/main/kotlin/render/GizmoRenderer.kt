@@ -52,6 +52,10 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
         shader.stop()
     }
 
+    fun reset() {
+        gizmo = null
+    }
+
     fun cleanUp() {
         loader.cleanUp()
         shader.cleanUp()

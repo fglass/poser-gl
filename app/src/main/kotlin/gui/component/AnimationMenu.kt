@@ -67,7 +67,7 @@ class AnimationMenu(context: RenderContext): Panel() {
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 nodeToggle.setIconImage(if (nodeToggle.image == nodeToggledIcon) nodeIcon else nodeToggledIcon)
-                context.nodeRenderer.enabled = !context.nodeRenderer.enabled
+                context.nodeRenderer.toggle()
             }
         }
         add(nodeToggle)
