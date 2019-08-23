@@ -20,7 +20,7 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
     private val translationGizmo = TranslationGizmo(loader, shader)
     private val rotationGizmo = RotationGizmo(loader, shader)
 
-    fun enable(node: ReferenceNode, type: TransformationType) {
+    fun enable(node: ReferenceNode, type: TransformationType) { // TODO: call on type change
         gizmo = when (type) {
             TransformationType.REFERENCE -> translationGizmo
             TransformationType.TRANSLATION -> translationGizmo
@@ -28,7 +28,7 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
             TransformationType.SCALE -> translationGizmo
         }
         gizmo?.position = node.position
-        (gizmo as? RotationGizmo)?.reset() // TODO
+        (gizmo as? RotationGizmo)?.reset() // TODO: refactor
     }
 
     fun render(viewMatrix: Matrix4f, ray: Rayf) {

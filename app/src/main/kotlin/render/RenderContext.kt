@@ -95,7 +95,7 @@ class RenderContext {
             null
         )
         Themes.setDefaultTheme(theme)
-        Themes.getDefaultTheme().applyAll(frame)
+        theme.applyAll(frame)
 
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
