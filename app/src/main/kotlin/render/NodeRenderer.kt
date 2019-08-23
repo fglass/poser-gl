@@ -128,6 +128,13 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         selectNode(node)
     }
 
+    fun updateType(type: TransformationType) {
+        selectedType = type
+        selectedNode?.let {
+            context.gizmoRenderer.enable(it, selectedType)
+        }
+    }
+
     fun reset() {
         selectedNode = null
         nodes.clear()

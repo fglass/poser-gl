@@ -26,7 +26,6 @@ import util.setSizeLimits
 class EditorPanel(private val context: RenderContext): Panel() {
 
     val sliders = ArrayList<TextSlider>()
-    private var currentReference: ReferenceNode? = null
     private lateinit var selectedFrame: Label
     private lateinit var frameLength: TextSlider
     private lateinit var selectedNode: Label
@@ -158,17 +157,15 @@ class EditorPanel(private val context: RenderContext): Panel() {
         }
         transformations.updateConfigs(transformations.buttons[selectedType.id])
 
-        currentReference = node
         selectedNode.textState.text = "Selected: ${node.id}"
         updateType(selectedType)
     }
 
     private fun updateType(type: TransformationType) {
-        context.nodeRenderer.selectedType = type
-        val transformation = currentReference?.getTransformation(type)?: return
-
-        for (i in 0 until sliders.size) {
-            sliders[i].setLimitedValue(transformation.delta.get(i))
+        context.nodeRenderer.updateType(type)
+        val transformation = context.nodeRenderer.selectedNode?.getTransformation(type)?: return
+        repeat(sliders.size) {
+            sliders[it].setLimitedValue(transformation.delta[it])
         }
     }
 
