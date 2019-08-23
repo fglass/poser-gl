@@ -77,9 +77,21 @@ class RotationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) {
     private fun transform(axis: GizmoAxis, context: RenderContext, delta: Double, negative: Boolean) { // TODO: direction with left and right sides
         var value = ceil(delta).toInt()
         value = if (negative) -value else value
+
+        axes.forEach {
+            if (it != axis) {
+                it.rotation.setComponent(axis.type.ordinal, it.rotation[axis.type.ordinal] + value)
+            }
+        }
+
         value = if (axis.type == AxisType.Y) -value else value
         value = value.coerceIn(-1, 1) * ROTATION_SPEED
         context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value, true)
+    }
+
+    override fun deactivate() {
+        super.deactivate()
+        reset() // Snap back after release
     }
 
     fun reset() {

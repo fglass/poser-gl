@@ -69,7 +69,7 @@ abstract class Gizmo(private val shader: GizmoShader) {
         return Vector3f(ray.oX, ray.oY, ray.oZ).add(Vector3f(ray.dX, ray.dY, ray.dZ).mul(epsilon))
     }
 
-    internal fun deactivate() {
+    internal open fun deactivate() {
         active = false
         selectedAxis = null
     }

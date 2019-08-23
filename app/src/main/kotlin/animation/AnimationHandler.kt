@@ -12,6 +12,7 @@ class AnimationHandler(private val context: RenderContext) {
     var currentAnimation: Animation? = null
     var copiedFrame = Keyframe()
     private var previousFrame = Keyframe()
+
     private var frameLength = 0
     var frameCount = 0
 

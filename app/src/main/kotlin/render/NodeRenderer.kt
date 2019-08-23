@@ -30,7 +30,6 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
 
     fun toggle() {
         enabled = !enabled
-
         if (!enabled) {
             reset()
             context.gizmoRenderer.reset()
@@ -123,7 +122,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         node.highlighted = true
     }
 
-    private fun selectNode(node: ReferenceNode) {
+    private fun selectNode(node: ReferenceNode) { // TODO: unselecting on reclick
         selectedNode = node
         if (!node.hasType(selectedType)) {
             selectedType = TransformationType.REFERENCE
