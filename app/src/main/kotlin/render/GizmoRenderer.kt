@@ -5,6 +5,7 @@ import animation.TransformationType
 import gizmo.Gizmo
 import gizmo.TranslationGizmo
 import gizmo.RotationGizmo
+import gizmo.ScaleGizmo
 import org.joml.Matrix4f
 import org.joml.Rayf
 import org.lwjgl.opengl.GL30.*
@@ -19,13 +20,14 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
     var gizmo: Gizmo? = null
     private val translationGizmo = TranslationGizmo(loader, shader)
     private val rotationGizmo = RotationGizmo(loader, shader)
+    private val scaleGizmo = ScaleGizmo(loader, shader)
 
     fun enable(node: ReferenceNode, type: TransformationType) {
         gizmo = when (type) {
             TransformationType.REFERENCE -> translationGizmo
             TransformationType.TRANSLATION -> translationGizmo
             TransformationType.ROTATION -> rotationGizmo
-            TransformationType.SCALE -> translationGizmo
+            TransformationType.SCALE -> scaleGizmo
         }
         gizmo?.position = node.position
         (gizmo as? RotationGizmo)?.reset() // TODO: refactor

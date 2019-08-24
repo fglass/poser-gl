@@ -8,7 +8,7 @@ import shader.GizmoShader
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class TranslationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) { // TODO: chain to node position
+open class TranslationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) { // TODO: chain to node position
 
     override var scale = 40f
     override var model = getModel("translation", loader)

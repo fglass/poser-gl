@@ -104,7 +104,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
                 val child = Transformation(childId, it, frameMap.frameMaps[childId], getDelta(frame, childId, it))
                 children[it] = child
             }
-            childType = frameMap.types[++childId] // Check next transformation
+            childType = frameMap.types[++childId] // Check next transformation TODO: out of bounds
         }
     }
 
