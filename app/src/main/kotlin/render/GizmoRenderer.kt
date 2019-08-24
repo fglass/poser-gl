@@ -19,10 +19,10 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
     private val shader = GizmoShader()
 
     var gizmo: Gizmo? = null
-    private val referenceGizmo = ReferenceGizmo(loader, shader)
-    private val translationGizmo = TranslationGizmo(loader, shader)
-    private val rotationGizmo = RotationGizmo(loader, shader)
-    private val scaleGizmo = ScaleGizmo(loader, shader)
+    private val referenceGizmo = ReferenceGizmo(context, loader, shader)
+    private val translationGizmo = TranslationGizmo(context, loader, shader)
+    private val rotationGizmo = RotationGizmo(context, loader, shader)
+    private val scaleGizmo = ScaleGizmo(context, loader, shader)
 
     fun enable(node: ReferenceNode, type: TransformationType) {
         gizmo = when (type) {
@@ -39,7 +39,7 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
         gizmo?.let {
             prepare()
             if (mouse.pressed) it.active = true else it.deactivate()
-            it.render(context, viewMatrix, ray)
+            it.render(viewMatrix, ray)
             finish()
         }
     }

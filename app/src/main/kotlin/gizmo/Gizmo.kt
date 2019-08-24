@@ -11,9 +11,9 @@ import render.RenderContext
 import shader.GizmoShader
 import util.MatrixCreator
 
-abstract class Gizmo(private val shader: GizmoShader) {
+abstract class Gizmo(private val context: RenderContext, private val shader: GizmoShader) {
 
-    internal open var scale = 1f // TODO: entity size based
+    internal open var scale = 1f
     internal open lateinit var model: Model
     internal open lateinit var axes: Array<GizmoAxis>
 
@@ -23,6 +23,8 @@ abstract class Gizmo(private val shader: GizmoShader) {
 
     internal fun getModel(filename: String, loader: Loader) = GizmoLoader.load(filename, loader)
 
+    internal fun getRelativeScale() = scale * context.entity!!.size // TODO: adjust values
+
     private fun prepare(context: RenderContext, model: Model, shader: GizmoShader, viewMatrix: Matrix4f) {
         glBindVertexArray(model.vaoId)
         glEnableVertexAttribArray(0)
@@ -30,17 +32,17 @@ abstract class Gizmo(private val shader: GizmoShader) {
         shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
     }
 
-    fun render(context: RenderContext, viewMatrix: Matrix4f, ray: Rayf) {
+    fun render(viewMatrix: Matrix4f, ray: Rayf) {
         prepare(context, model, shader, viewMatrix)
 
         when {
             !active -> selectAxis(getClosestAxis(ray))
-            else -> manipulate(context, ray)
+            else -> manipulate(ray)
         }
 
         // Render gizmo axes
         for (axis in axes.reversed()) {
-            val transformation = MatrixCreator.createTransformationMatrix(position, axis.rotation, scale)
+            val transformation = MatrixCreator.createTransformationMatrix(position, axis.rotation, getRelativeScale())
             shader.loadTransformationMatrix(transformation)
 
             axis.colour.w = if (axis == selectedAxis) 0.6f else 1f // Lower opacity to indicate highlighted axis
@@ -58,7 +60,7 @@ abstract class Gizmo(private val shader: GizmoShader) {
         }
     }
 
-    abstract fun manipulate(context: RenderContext, ray: Rayf)
+    abstract fun manipulate(ray: Rayf)
 
     internal fun getPlaneIntersection(ray: Rayf): Vector3f {
         // Allow for transforming without need to hover over axis

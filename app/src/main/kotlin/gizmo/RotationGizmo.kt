@@ -17,7 +17,7 @@ import kotlin.math.ceil
 
 const val ROTATION_SPEED = 2
 
-class RotationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) {
+class RotationGizmo(private val context: RenderContext, loader: Loader, shader: GizmoShader): Gizmo(context, shader) {
 
     override var scale = 25f
     override var model: Model = getModel("rotation", loader)
@@ -32,7 +32,7 @@ class RotationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) {
         var closest: GizmoAxis? = null
 
         for (axis in axes) {
-            val offset = Vector3f(scale).setComponent(axis.type.ordinal, 2f)
+            val offset = Vector3f(getRelativeScale()).setComponent(axis.type.ordinal, 2f)
             val min = Vector3f(position).sub(offset)
             val max = Vector3f(position).add(offset)
             val nearFar = Vector2f()
@@ -45,7 +45,7 @@ class RotationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) {
         return closest
     }
 
-    override fun manipulate(context: RenderContext, ray: Rayf) {
+    override fun manipulate(ray: Rayf) {
         selectedAxis?.let {
             val intersection = getCircleIntersection(ray)
 
@@ -59,7 +59,7 @@ class RotationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) {
                     val numerator = Vector3f(intersection).cross(it.previousIntersection).mul(normal)
                     val length = numerator.length()
                     val sign = numerator.div(length)[it.type.ordinal]
-                    transform(it, context, angle, sign < 0)
+                    transform(it, angle, sign < 0)
                 }
             }
             it.previousIntersection = intersection
@@ -69,12 +69,12 @@ class RotationGizmo(loader: Loader, shader: GizmoShader): Gizmo(shader) {
     private fun getCircleIntersection(ray: Rayf): Vector3f {
         val onPlane = getPlaneIntersection(ray)
         // Project point onto circle's circumference
-        val p = Vector3f(onPlane).sub(position).normalize().mul(scale)
+        val p = Vector3f(onPlane).sub(position).normalize().mul(getRelativeScale())
         val point = Vector3f(position).add(p)
         return Vector3f(onPlane).sub(point).normalize()
     }
 
-    private fun transform(axis: GizmoAxis, context: RenderContext, delta: Double, negative: Boolean) { // TODO: direction with left and right sides
+    private fun transform(axis: GizmoAxis, delta: Double, negative: Boolean) { // TODO: direction with left and right sides
         var value = ceil(delta).toInt()
         value = if (negative) -value else value
 
