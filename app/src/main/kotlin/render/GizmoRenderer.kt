@@ -3,6 +3,7 @@ package render
 import animation.ReferenceNode
 import animation.TransformationType
 import gizmo.Gizmo
+import gizmo.ReferenceGizmo
 import gizmo.TranslationGizmo
 import gizmo.RotationGizmo
 import gizmo.ScaleGizmo
@@ -18,13 +19,14 @@ class GizmoRenderer(private val context: RenderContext, private val mouse: Mouse
     private val shader = GizmoShader()
 
     var gizmo: Gizmo? = null
+    private val referenceGizmo = ReferenceGizmo(loader, shader)
     private val translationGizmo = TranslationGizmo(loader, shader)
     private val rotationGizmo = RotationGizmo(loader, shader)
     private val scaleGizmo = ScaleGizmo(loader, shader)
 
     fun enable(node: ReferenceNode, type: TransformationType) {
         gizmo = when (type) {
-            TransformationType.REFERENCE -> translationGizmo
+            TransformationType.REFERENCE -> referenceGizmo
             TransformationType.TRANSLATION -> translationGizmo
             TransformationType.ROTATION -> rotationGizmo
             TransformationType.SCALE -> scaleGizmo
