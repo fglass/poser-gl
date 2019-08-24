@@ -13,7 +13,7 @@ import util.MatrixCreator
 
 abstract class Gizmo(private val shader: GizmoShader) {
 
-    internal open var scale = 1f
+    internal open var scale = 1f // TODO: entity size based
     internal open lateinit var model: Model
     internal open lateinit var axes: Array<GizmoAxis>
 
