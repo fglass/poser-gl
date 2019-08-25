@@ -10,6 +10,7 @@ import render.Loader
 import render.RenderContext
 import shader.GizmoShader
 import util.MatrixCreator
+import kotlin.math.sqrt
 
 abstract class Gizmo(private val context: RenderContext, private val shader: GizmoShader) {
 
@@ -23,7 +24,7 @@ abstract class Gizmo(private val context: RenderContext, private val shader: Giz
 
     internal fun getModel(filename: String, loader: Loader) = GizmoLoader.load(filename, loader)
 
-    internal fun getRelativeScale() = scale * context.entity!!.size // TODO: adjust values
+    internal fun getRelativeScale() = scale * sqrt(context.entity!!.size.toFloat())
 
     private fun prepare(context: RenderContext, model: Model, shader: GizmoShader, viewMatrix: Matrix4f) {
         glBindVertexArray(model.vaoId)

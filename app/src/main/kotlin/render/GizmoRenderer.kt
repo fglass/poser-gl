@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL30.*
 import shader.GizmoShader
 import util.MouseHandler
 
-class GizmoRenderer(private val context: RenderContext, private val mouse: MouseHandler) {
+class GizmoRenderer(context: RenderContext, private val mouse: MouseHandler) {
 
     private val loader = Loader()
     private val shader = GizmoShader()
