@@ -158,7 +158,6 @@ class AnimationHandler(private val context: RenderContext) {
         previousFrame = Keyframe()
 
         context.nodeRenderer.reset() // TODO: use events
-        context.gizmoRenderer.reset()
         context.gui.editorPanel.reset()
         context.gui.animationPanel.reset()
     }

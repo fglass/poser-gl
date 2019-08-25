@@ -18,7 +18,7 @@ abstract class Gizmo(private val context: RenderContext, private val shader: Giz
     internal open lateinit var axes: Array<GizmoAxis>
 
     var active = false
-    var position = Vector3f(0f, 0f, 0f)
+    var position = Vector3f()
     internal var selectedAxis: GizmoAxis? = null
 
     internal fun getModel(filename: String, loader: Loader) = GizmoLoader.load(filename, loader)

@@ -32,7 +32,6 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         enabled = !enabled
         if (!enabled) {
             reset()
-            context.gizmoRenderer.reset()
         }
     }
 
@@ -116,13 +115,18 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
 
     private fun handleClosestNode(node: ReferenceNode) {
         if (mouse.clicked) {
-            selectNode(node)
-            context.animationHandler.setPlay(false)
+            // Toggle off if already selected
+            if (selectedNode?.id == node.id) {
+                reset()
+            } else {
+                selectNode(node)
+                context.animationHandler.setPlay(false)
+            }
         }
         node.highlighted = true
     }
 
-    private fun selectNode(node: ReferenceNode) { // TODO: unselecting on reclick
+    private fun selectNode(node: ReferenceNode) {
         selectedNode = node
         if (!node.hasType(selectedType)) {
             selectedType = TransformationType.REFERENCE
@@ -146,6 +150,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
     fun reset() {
         selectedNode = null
         nodes.clear()
+        context.gizmoRenderer.reset()
     }
 
     private fun loadMatrices(node: ReferenceNode, viewMatrix: Matrix4f) {
