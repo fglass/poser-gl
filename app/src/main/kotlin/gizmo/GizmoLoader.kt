@@ -4,15 +4,14 @@ import model.Model
 import org.joml.Vector3f
 import render.Loader
 import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
+import java.io.InputStreamReader
 import java.util.*
 
 object GizmoLoader {
 
     fun load(filename: String, loader: Loader): Model {
-        val file = File("/Users/fred/Documents/PoserGL/app/src/main/resources/gizmo/$filename.obj") // TODO
-        val reader = BufferedReader(FileReader(file))
+        val stream = this::class.java.getResourceAsStream("$filename.obj")
+        val reader = BufferedReader(InputStreamReader(stream))
 
         val vertices = ArrayList<Vector3f>()
         val positions = ArrayList<Float>()
