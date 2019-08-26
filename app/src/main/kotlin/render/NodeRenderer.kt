@@ -73,12 +73,13 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         finish()
     }
 
-    fun renderSelected(viewMatrix: Matrix4f) {
+    fun renderSelected(viewMatrix: Matrix4f, ray: Rayf) {
         if (!enabled) {
             return
         }
 
         selectedNode?.let {
+            context.gizmoRenderer.render(it, viewMatrix, ray)
             prepare()
             shader.setHighlighted(true)
             loadMatrices(it, viewMatrix)

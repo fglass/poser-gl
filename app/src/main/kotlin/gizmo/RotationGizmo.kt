@@ -82,11 +82,6 @@ class RotationGizmo(private val context: RenderContext, loader: Loader, shader: 
         context.gui.editorPanel.sliders[axis.type.ordinal].adjust(value, true)
     }
 
-    override fun deactivate() {
-        super.deactivate()
-        reset() // Snap back after release
-    }
-
     fun reset() {
         axes.forEach(GizmoAxis::reset)
     }

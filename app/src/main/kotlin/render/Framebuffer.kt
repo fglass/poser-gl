@@ -97,8 +97,7 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
         context.entityRenderer.render(context.entity, viewMatrix, shadingType)
         context.nodeRenderer.render(viewMatrix, ray)
         context.lineRenderer.renderGrid(viewMatrix)
-        context.gizmoRenderer.render(viewMatrix, ray)
-        context.nodeRenderer.renderSelected(viewMatrix)
+        context.nodeRenderer.renderSelected(viewMatrix, ray)
         lmb.clicked = false
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)

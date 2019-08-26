@@ -35,9 +35,10 @@ class GizmoRenderer(context: RenderContext, private val mouse: MouseHandler) {
         (gizmo as? RotationGizmo)?.reset() // TODO: refactor
     }
 
-    fun render(viewMatrix: Matrix4f, ray: Rayf) {
+    fun render(node: ReferenceNode, viewMatrix: Matrix4f, ray: Rayf) {
         gizmo?.let {
             prepare()
+            it.position = node.position
             if (mouse.pressed) it.active = true else it.deactivate()
             it.render(viewMatrix, ray)
             finish()

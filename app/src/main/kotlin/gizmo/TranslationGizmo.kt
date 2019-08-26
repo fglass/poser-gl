@@ -9,7 +9,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 open class TranslationGizmo(private val context: RenderContext, loader: Loader, shader: GizmoShader):
-           Gizmo(context, shader) { // TODO: chain to node position
+           Gizmo(context, shader) {
 
     override var scale = 40f
     override var model = getModel("translation", loader)
