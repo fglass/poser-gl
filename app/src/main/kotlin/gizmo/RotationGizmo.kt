@@ -11,9 +11,7 @@ import shader.GizmoShader
 import util.MatrixCreator
 import java.lang.Math.toDegrees
 import java.lang.Math.toRadians
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.ceil
+import kotlin.math.*
 
 const val ROTATION_SPEED = 2
 
@@ -47,20 +45,13 @@ class RotationGizmo(private val context: RenderContext, loader: Loader, shader: 
 
     override fun manipulate(ray: Rayf) {
         selectedAxis?.let {
-            val intersection = getCircleIntersection(ray)
-
+            val intersection = getCircleIntersection(ray) // TODO: torus intersection (4x box)
             if (it.previousIntersection != Vector3f() && intersection != it.previousIntersection) {
-                val product = intersection.dot(it.previousIntersection)
-                val theta = acos(product)
-                val angle = toDegrees(theta.toDouble())
-
-                if (angle.isFinite()) {
-                    val normal = Vector3f(-ray.dX, -ray.dY, -ray.dZ)
-                    val numerator = Vector3f(intersection).cross(it.previousIntersection).mul(normal)
-                    val length = numerator.length()
-                    val sign = numerator.div(length)[it.type.ordinal]
-                    transform(it, angle, sign < 0)
-                }
+                val cross = Vector3f(intersection).cross(it.previousIntersection)
+                val sin = cross.length() / (intersection.length() * it.previousIntersection.length())
+                val theta = asin(sin)
+                val delta = toDegrees(theta.toDouble())
+                transform(it, delta, cross[it.type.ordinal] > 0)
             }
             it.previousIntersection = intersection
         }
@@ -74,7 +65,7 @@ class RotationGizmo(private val context: RenderContext, loader: Loader, shader: 
         return Vector3f(onPlane).sub(point).normalize()
     }
 
-    private fun transform(axis: GizmoAxis, delta: Double, negative: Boolean) { // TODO: direction with left and right sides
+    private fun transform(axis: GizmoAxis, delta: Double, negative: Boolean) {
         var value = ceil(delta).toInt()
         value = if (negative) -value else value
         value = if (axis.type == AxisType.Y) -value else value
