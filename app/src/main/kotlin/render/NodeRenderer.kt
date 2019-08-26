@@ -41,7 +41,8 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         }
 
         node.setPosition(def)
-        if (node.position != Vector3f(-0f, 0f, 0f)) { // Ignore origin
+        // Ignore origin and a certain player node TODO: remove hardcoding
+        if (node.position != Vector3f(-0f, 0f, 0f) && !(node.id == 44 && context.entity?.name == "Player")) {
             node.highlighted = false
             nodes.add(node)
         }

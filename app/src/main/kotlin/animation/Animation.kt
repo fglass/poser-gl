@@ -123,7 +123,7 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         }
     }
 
-    private fun setRootNode() { // TODO: shifting on modification
+    private fun setRootNode() {
         var root: ReferenceNode? = null
         for (transformation in keyframes.first().transformations) {
             if (transformation is ReferenceNode) {
@@ -177,8 +177,13 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         Dialog("Keyframe Action", "Successfully copied keyframe ${keyframe.id}", context, 200f, 70f).display()
     }
 
-    fun pasteKeyframe() { // TODO: don't permit if different frame map
+    fun pasteKeyframe() {
         val copied = context.animationHandler.copiedFrame
+        if (copied.frameMap.id != getFrameMap().id) { // TODO: prevent animation copy
+            Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
+            return
+        }
+
         if (copied.id != -1) {
             val keyframe = Keyframe(keyframes.size, copied) // Copy after to avoid shared references
             val newIndex = context.animationHandler.getFrameIndex(this) + 1

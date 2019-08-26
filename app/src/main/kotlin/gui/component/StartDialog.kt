@@ -14,7 +14,7 @@ import render.VERSION
 import util.FileDialog
 
 class StartDialog(private val context: RenderContext):
-      Dialog("", "Backup your cache before making changes", context, 260f, 180f) {
+      Dialog("", "Backup your cache before making changes", context, 260f, 177f) {
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<String>
@@ -51,18 +51,18 @@ class StartDialog(private val context: RenderContext):
     }
 
     private fun addPath() {
-        val cacheLabel = Label("Cache:", 14f, 125f, 50f, 15f)
+        val cacheLabel = Label("Cache:", 14f, 122f, 50f, 15f)
         container.add(cacheLabel)
 
-        val box = Panel(172f, 125f, 16f, 15f)
+        val box = Panel(172f, 122f, 16f, 15f)
         box.style.focusedStrokeColor = null
         container.add(box)
 
-        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 125f, 97f, 15f) // TODO: remove text
+        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 122f, 97f, 15f) // TODO: remove text
         cache.style.focusedStrokeColor = null
         container.add(cache)
 
-        val open = ImageButton(Vector2f(175f, 125f), openIcon)
+        val open = ImageButton(Vector2f(175f, 122f), openIcon)
         open.hoveredIcon = openHoveredIcon
         open.size = Vector2f(13f, 14f)
 
@@ -76,10 +76,10 @@ class StartDialog(private val context: RenderContext):
     }
 
     private fun addPlugin() {
-        val pluginLabel = Label("Plugin:", 14f, 153f, 50f, 15f)
+        val pluginLabel = Label("Plugin:", 14f, 150f, 50f, 15f)
         container.add(pluginLabel)
 
-        plugins = SelectBox(76f, 153f, 112f, 15f)
+        plugins = SelectBox(76f, 150f, 112f, 15f)
         plugins.addElement("OSRS")
         plugins.addElement("317")
         plugins.addElement("Legacy 317")
@@ -89,7 +89,7 @@ class StartDialog(private val context: RenderContext):
     }
 
     private fun addLoadButton() {
-        val load = ImageButton(Vector2f(232f, 153f), loadIcon)
+        val load = ImageButton(Vector2f(232f, 150f), loadIcon)
         load.hoveredIcon = loadHoveredIcon
         load.size = Vector2f(16f, 16f)
 
