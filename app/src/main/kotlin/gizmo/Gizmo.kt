@@ -43,6 +43,10 @@ abstract class Gizmo(private val context: RenderContext, private val shader: Giz
 
         // Render gizmo axes
         for (axis in axes.reversed()) {
+            if (active && this is RotationGizmo && axis != selectedAxis) { // Only render selected rotation axis
+                continue
+            }
+
             val transformation = MatrixCreator.createTransformationMatrix(position, axis.rotation, getRelativeScale())
             shader.loadTransformationMatrix(transformation)
 

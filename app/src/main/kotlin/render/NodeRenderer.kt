@@ -117,7 +117,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         if (mouse.clicked) {
             // Toggle off if already selected
             if (selectedNode?.id == node.id) {
-                reset()
+                reset(false)
             } else {
                 selectNode(node)
                 context.animationHandler.setPlay(false)
@@ -147,10 +147,12 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         }
     }
 
-    fun reset() {
+    fun reset(clear: Boolean = true) {
         selectedNode = null
-        nodes.clear()
         context.gizmoRenderer.reset()
+        if (clear) {
+            nodes.clear()
+        }
     }
 
     private fun loadMatrices(node: ReferenceNode, viewMatrix: Matrix4f) {
