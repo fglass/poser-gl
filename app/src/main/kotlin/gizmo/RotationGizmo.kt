@@ -13,7 +13,8 @@ import java.lang.Math.toDegrees
 import java.lang.Math.toRadians
 import kotlin.math.*
 
-const val ROTATION_SPEED = 2
+const val ROTATION_SPEED = 3
+const val MOVE_THRESHOLD = 0.01f
 
 class RotationGizmo(private val context: RenderContext, loader: Loader, shader: GizmoShader): Gizmo(context, shader) {
 
@@ -46,9 +47,10 @@ class RotationGizmo(private val context: RenderContext, loader: Loader, shader: 
     override fun manipulate(ray: Rayf) {
         selectedAxis?.let {
             val intersection = getCircleIntersection(ray) // TODO: torus intersection (4x box)
-            if (it.previousIntersection != Vector3f() && intersection != it.previousIntersection) {
+            if (it.previousIntersection != Vector3f() &&
+                !intersection.equals(it.previousIntersection, MOVE_THRESHOLD)) {
                 val cross = Vector3f(intersection).cross(it.previousIntersection)
-                val sin = cross.length() / (intersection.length() * it.previousIntersection.length())
+                val sin = cross.length()
                 val theta = asin(sin)
                 val delta = toDegrees(theta.toDouble())
                 transform(it, delta, cross[it.type.ordinal] > 0)
