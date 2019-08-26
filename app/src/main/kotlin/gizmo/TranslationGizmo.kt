@@ -41,7 +41,7 @@ open class TranslationGizmo(private val context: RenderContext, loader: Loader, 
         selectedAxis?.let {
             val intersection = getPlaneIntersection(ray)
             if (it.previousIntersection != Vector3f() && intersection != it.previousIntersection) {
-                val delta = Vector3f(intersection).sub(it.previousIntersection).get(it.type.ordinal)
+                val delta = Vector3f(intersection).sub(it.previousIntersection)[it.type.ordinal]
                 transform(it, delta)
             }
             it.previousIntersection = intersection

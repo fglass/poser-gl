@@ -9,6 +9,7 @@ import gizmo.RotationGizmo
 import gizmo.ScaleGizmo
 import org.joml.Matrix4f
 import org.joml.Rayf
+import org.joml.Vector2f
 import org.lwjgl.opengl.GL30.*
 import shader.GizmoShader
 import util.MouseHandler
@@ -38,7 +39,7 @@ class GizmoRenderer(context: RenderContext, private val mouse: MouseHandler) {
     fun render(node: ReferenceNode, viewMatrix: Matrix4f, ray: Rayf) {
         gizmo?.let {
             prepare()
-            it.position = node.position
+            //it.position = node.position
             if (mouse.pressed) it.active = true else it.deactivate()
             it.render(viewMatrix, ray)
             finish()

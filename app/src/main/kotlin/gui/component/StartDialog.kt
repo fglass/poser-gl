@@ -58,7 +58,7 @@ class StartDialog(private val context: RenderContext):
         box.style.focusedStrokeColor = null
         container.add(box)
 
-        cache = TextInput("/Users/fred/Documents/PoserGL/repository/cache", 76f, 122f, 97f, 15f) // TODO: remove text
+        cache = TextInput(76f, 122f, 97f, 15f) // TODO: remove text
         cache.style.focusedStrokeColor = null
         container.add(cache)
 
