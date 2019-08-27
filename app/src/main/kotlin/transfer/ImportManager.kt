@@ -12,7 +12,7 @@ import java.io.File
 class ImportManager(private val context: RenderContext) {
 
     fun import() {
-        val name = FileDialog.openFile(listOf("*.pgl"), ".")?: return
+        val name = FileDialog.openFile(listOf("*.pgl"))?: return
         val data = File(name).readBytes()
         importPgl(data)
     }

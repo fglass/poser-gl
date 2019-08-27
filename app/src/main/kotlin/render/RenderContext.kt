@@ -34,9 +34,10 @@ import transfer.ImportManager
 import util.MouseHandler
 import util.VSyncTimer
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
+import java.lang.Boolean.TRUE
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.2"
+const val VERSION = "1.2.1"
 const val SPRITE_PATH = "sprite/"
 const val WIDTH = 800
 const val HEIGHT = 600
@@ -65,8 +66,8 @@ class RenderContext {
 
     fun run() {
         var running = true
-        System.setProperty("joml.nounsafe", java.lang.Boolean.TRUE.toString())
-        System.setProperty("java.awt.headless", java.lang.Boolean.TRUE.toString())
+        System.setProperty("joml.nounsafe", TRUE.toString())
+        System.setProperty("java.awt.headless", TRUE.toString())
 
         if (!glfwInit()) {
             throw RuntimeException("Unable to initialize GLFW")

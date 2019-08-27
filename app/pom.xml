@@ -158,24 +158,24 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <version>${lwjgl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <version>${lwjgl.version}</version>
             <classifier>natives-macos</classifier>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <version>${lwjgl.version}</version>
             <classifier>natives-windows</classifier>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <version>${lwjgl.version}</version>
             <classifier>natives-linux</classifier>
         </dependency>

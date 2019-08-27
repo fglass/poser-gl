@@ -69,7 +69,7 @@ class StartDialog(private val context: RenderContext):
         open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                cache.textState.text = FileDialog.openFile(listOf(), ".", true)?: return@addListener
+                cache.textState.text = FileDialog.openFile(listOf(), folder = true)?: return@addListener
             }
         }
         container.add(open)
