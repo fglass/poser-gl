@@ -58,7 +58,7 @@ class StartDialog(private val context: RenderContext):
         box.style.focusedStrokeColor = null
         container.add(box)
 
-        cache = TextInput(76f, 122f, 97f, 15f) // TODO: remove text
+        cache = TextInput(76f, 122f, 97f, 15f)
         cache.style.focusedStrokeColor = null
         container.add(cache)
 
@@ -69,7 +69,7 @@ class StartDialog(private val context: RenderContext):
         open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                cache.textState.text = FileDialog.openFile(listOf(), folder = true)?: return@addListener
+                cache.textState.text = FileDialog.openFile(folder = true)?: return@addListener
             }
         }
         container.add(open)

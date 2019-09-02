@@ -1,2 +1,2 @@
 # PoserGL
-OpenGL 3D model viewer & animator
+OpenGL 3D animation editor written in Kotlin

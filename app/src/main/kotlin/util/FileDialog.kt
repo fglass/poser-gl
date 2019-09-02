@@ -6,18 +6,18 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs
 
 object FileDialog {
 
-    fun openFile(filters: List<String>, defaultPath: String = ".", folder: Boolean = false): String? {
-        val filter = filters.toPointerBuffer()
-        val path = if (!folder) TinyFileDialogs.tinyfd_openFileDialog("", defaultPath, filter, "", false)
+    fun openFile(filters: List<String> = listOf(), defaultPath: String = ".", folder: Boolean = false): String? {
+        val pattern = filters.toPointerBuffer()
+        val path = if (!folder) TinyFileDialogs.tinyfd_openFileDialog("", defaultPath, pattern, "", false)
                    else TinyFileDialogs.tinyfd_selectFolderDialog("", defaultPath)
-        MemoryUtil.memFree(filter)
+        MemoryUtil.memFree(pattern)
         return path
     }
 
     fun saveFile(suffix: String): String? {
-        val filter = listOf("").toPointerBuffer()
-        val path = TinyFileDialogs.tinyfd_saveFileDialog("", "untitled.$suffix", filter, "")
-        MemoryUtil.memFree(filter)
+        val pattern = listOf("").toPointerBuffer()
+        val path = TinyFileDialogs.tinyfd_saveFileDialog("", "untitled.$suffix", pattern, "")
+        MemoryUtil.memFree(pattern)
         return path
     }
 
