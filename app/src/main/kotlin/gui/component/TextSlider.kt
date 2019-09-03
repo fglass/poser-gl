@@ -61,8 +61,8 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
                     adjusting = true
                     GlobalScope.launch {
                         while (adjusting) {
-                            adjust(if (increment) 1 else - 1)
-                            delay(10)
+                            adjust(if (increment) 1 else -1)
+                            delay(300)
                         }
                     }
                 }
