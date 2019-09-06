@@ -19,7 +19,7 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
     private var textureWidth = 0
     private var textureHeight = 0
     
-    private val camera = Camera(rmb)
+    private val camera = Camera(lmb, rmb)
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
     var activeDialog: Dialog? = null
@@ -35,7 +35,9 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
             rmb.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
-            lmb.handleDrag(event.delta)
+            if (context.gizmoRenderer.gizmo?.selectedAxis == null) {
+                lmb.handleDrag(event.delta)
+            }
             rmb.handleDrag(event.delta)
         }
         listenerMap.addListener(ScrollEvent::class.java) { event ->

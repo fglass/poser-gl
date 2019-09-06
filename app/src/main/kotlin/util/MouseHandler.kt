@@ -15,18 +15,17 @@ class MouseHandler(private val button: Mouse.MouseButton) {
     fun handleClick(button: Mouse.MouseButton, action: MouseClickEvent.MouseClickAction) {
         if (this.button == button) {
             when (action) {
-                MouseClickEvent.MouseClickAction.PRESS -> {
-                    pressed = true
-                    delta = Vector2f()
-                }
-                MouseClickEvent.MouseClickAction.RELEASE -> pressed = false
+                MouseClickEvent.MouseClickAction.PRESS -> pressed = true
+                MouseClickEvent.MouseClickAction.RELEASE -> reset()
                 else -> clicked = true
             }
         }
     }
 
     fun handleDrag(delta: Vector2f) {
-        this.delta = delta
+        if (pressed) {
+            this.delta = delta
+        }
     }
 
     fun handleScroll(dWheel: Double) {
@@ -36,7 +35,12 @@ class MouseHandler(private val button: Mouse.MouseButton) {
 
     fun handleCursorEvent(entered: Boolean) {
         if (!entered) {
-            pressed = false
+            reset()
         }
+    }
+
+    private fun reset() {
+        pressed = false
+        delta = Vector2f()
     }
 }
