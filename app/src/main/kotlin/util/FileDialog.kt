@@ -5,7 +5,8 @@ import org.lwjgl.util.nfd.NativeFileDialog
 
 object FileDialog {
 
-    fun openFile(filters: List<String> = listOf(), defaultPath: String = ".", folder: Boolean = false): String? {
+    fun openFile(filters: List<String> = listOf(), folder: Boolean = false): String? {
+        val defaultPath = System.getProperty("user.home")
         val filter = filters.joinToString(",") { it.replace("*.", "") }
         val outPath = MemoryUtil.memAllocPointer(1)
 
@@ -21,11 +22,12 @@ object FileDialog {
         return path
     }
 
-    fun saveFile(suffix: String, defaultPath: String): String? {
+    fun saveFile(suffix: String): String? {
+        val defaultPath = System.getProperty("user.home")
         val outPath = MemoryUtil.memAllocPointer(1)
         val res = NativeFileDialog.NFD_SaveDialog(suffix, defaultPath, outPath)
-        var path: String? = null
 
+        var path: String? = null
         if (res == NativeFileDialog.NFD_OKAY) {
             path = outPath.stringUTF8
             NativeFileDialog.nNFD_Free(outPath.get(0))

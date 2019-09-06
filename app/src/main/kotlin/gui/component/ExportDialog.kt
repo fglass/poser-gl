@@ -31,7 +31,7 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val name = FileDialog.saveFile(if (pgl.isChecked) "pgl" else "dat", ".")?: return@addListener
+                val name = FileDialog.saveFile(if (pgl.isChecked) "pgl" else "dat")?: return@addListener
                 if (pgl.isChecked) context.exportManager.exportPgl(name) else context.exportManager.exportDat(name)
             }
         }
