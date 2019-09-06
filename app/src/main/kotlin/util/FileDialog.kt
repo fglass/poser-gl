@@ -1,30 +1,37 @@
 package util
 
-import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil
-import org.lwjgl.util.tinyfd.TinyFileDialogs
+import org.lwjgl.util.nfd.NativeFileDialog
 
 object FileDialog {
 
     fun openFile(filters: List<String> = listOf(), defaultPath: String = ".", folder: Boolean = false): String? {
-        val pattern = filters.toPointerBuffer()
-        val path = if (!folder) TinyFileDialogs.tinyfd_openFileDialog("", defaultPath, pattern, "", false)
-                   else TinyFileDialogs.tinyfd_selectFolderDialog("", defaultPath)
-        MemoryUtil.memFree(pattern)
+        val filter = filters.joinToString(",") { it.replace("*.", "") }
+        val outPath = MemoryUtil.memAllocPointer(1)
+
+        val res = if (!folder) NativeFileDialog.NFD_OpenDialog(filter, defaultPath, outPath)
+                  else NativeFileDialog.NFD_PickFolder(defaultPath, outPath)
+
+        var path: String? = null
+        if (res == NativeFileDialog.NFD_OKAY) {
+            path = outPath.stringUTF8
+            NativeFileDialog.nNFD_Free(outPath.get(0))
+        }
+        MemoryUtil.memFree(outPath)
         return path
     }
 
-    fun saveFile(suffix: String): String? {
-        val pattern = listOf("").toPointerBuffer()
-        val path = TinyFileDialogs.tinyfd_saveFileDialog("", "untitled.$suffix", pattern, "")
-        MemoryUtil.memFree(pattern)
-        return path
-    }
+    fun saveFile(suffix: String, defaultPath: String): String? {
+        val outPath = MemoryUtil.memAllocPointer(1)
+        val res = NativeFileDialog.NFD_SaveDialog(suffix, defaultPath, outPath)
+        var path: String? = null
 
-    private fun List<String>.toPointerBuffer(): PointerBuffer {
-        val pointer = MemoryUtil.memAllocPointer(size)
-        forEach { pointer.put(MemoryUtil.memUTF8(it)) }
-        pointer.flip()
-        return pointer
+        if (res == NativeFileDialog.NFD_OKAY) {
+            path = outPath.stringUTF8
+            NativeFileDialog.nNFD_Free(outPath.get(0))
+        }
+
+        MemoryUtil.memFree(outPath)
+        return path
     }
 }
