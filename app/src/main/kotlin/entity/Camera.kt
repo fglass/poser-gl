@@ -36,7 +36,7 @@ class Camera(private val lmb: MouseHandler, private val rmb: MouseHandler) {
 
     private fun calculateZoom() {
         if (rmb.zooming) {
-            val zoomLevel = rmb.dWheel * 2f
+            val zoomLevel = rmb.dWheel * 5f
             distance = max(distance - zoomLevel, MIN_ZOOM)
             distance = min(distance, MAX_ZOOM)
             rmb.zooming = false
