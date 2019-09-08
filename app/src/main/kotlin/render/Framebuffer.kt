@@ -35,7 +35,7 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
             rmb.handleClick(event.button, event.action)
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
-            if (context.gizmoRenderer.gizmo?.selectedAxis == null) {
+            if (context.gizmoRenderer.gizmo?.selectedAxis == null) { // Prevent camera pan when transforming gizmo
                 lmb.handleDrag(event.delta)
             }
             rmb.handleDrag(event.delta)
@@ -91,10 +91,11 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
         setGlState()
 
         context.animationHandler.tick()
-        camera.move()
+        camera.tick()
 
         val viewMatrix = MatrixCreator.createViewMatrix(camera)
         val ray = camera.calculateRay(context, viewMatrix)
+        camera.pan(viewMatrix)
 
         context.entityRenderer.render(context.entity, viewMatrix, shadingType)
         context.nodeRenderer.render(viewMatrix, ray)

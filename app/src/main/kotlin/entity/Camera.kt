@@ -1,15 +1,11 @@
 package entity
 
-import org.joml.Matrix4f
-import org.joml.Rayf
+import org.joml.*
 import util.MouseHandler
-import org.joml.Vector3f
 import org.liquidengine.legui.input.Mouse
 import render.RenderContext
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sin
+import java.lang.Math
+import kotlin.math.*
 
 const val MIN_ZOOM = 100f
 const val MAX_ZOOM = 1600f
@@ -26,7 +22,7 @@ class Camera(private val lmb: MouseHandler, private val rmb: MouseHandler) {
     private var distance = 500f
     private var angle = 0f
 
-    fun move() {
+    fun tick() {
         calculateZoom()
         calculatePitch()
         calculateAngle()
@@ -34,7 +30,6 @@ class Camera(private val lmb: MouseHandler, private val rmb: MouseHandler) {
         val h = calculateHorizontalDistance()
         val v = calculateVerticalDistance()
         calculatePosition(h, v)
-        handleTranslation()
 
         yaw = 180 - (ENTITY_ROT.y + angle)
     }
@@ -71,7 +66,7 @@ class Camera(private val lmb: MouseHandler, private val rmb: MouseHandler) {
     private fun calculatePosition(h: Float, v: Float) {
         val theta = (ENTITY_ROT.y + angle).toDouble()
         val xOffset = (h * sin(Math.toRadians(theta))).toFloat()
-        val yOffset = v - 60f
+        val yOffset = v - 60
         val zOffset = (h * cos(Math.toRadians(theta))).toFloat()
 
         position.x = center.x - xOffset
@@ -79,9 +74,13 @@ class Camera(private val lmb: MouseHandler, private val rmb: MouseHandler) {
         position.z = center.z - zOffset
     }
 
-    private fun handleTranslation() { // TODO: use ray casting instead
-        center.x -= lmb.delta.x
-        center.y += lmb.delta.y
+    fun pan(viewMatrix: Matrix4f) {
+        if (lmb.pressed) {
+            val right = Vector3f(viewMatrix.m00(), viewMatrix.m10(), viewMatrix.m20()).mul(lmb.delta.x)
+            val up = Vector3f(viewMatrix.m01(), viewMatrix.m11(), viewMatrix.m21()).mul(lmb.delta.y)
+            val delta = right.add(up)
+            center.sub(delta)
+        }
     }
 
     fun calculateRay(context: RenderContext, viewMatrix: Matrix4f): Rayf {

@@ -27,8 +27,7 @@ object MatrixCreator { // TODO: add projection matrix
             toRadians(camera.roll.toDouble()).toFloat()
         )
 
-        val pos = camera.position
-        val negativeCameraPos = Vector3f(-pos.x, -pos.y, -pos.z)
+        val negativeCameraPos = Vector3f(camera.position).negate()
         matrix.translate(negativeCameraPos)
         return matrix
     }
