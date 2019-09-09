@@ -37,7 +37,7 @@ import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import java.lang.Boolean.TRUE
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.2.1"
+const val VERSION = "1.2.2"
 const val SPRITE_PATH = "sprite/"
 const val WIDTH = 800
 const val HEIGHT = 600

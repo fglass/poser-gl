@@ -56,17 +56,8 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
 
     private fun getClickListener(increment: Boolean): MouseClickEventListener {
         return MouseClickEventListener { event ->
-            when {
-                event.action == MouseClickEvent.MouseClickAction.PRESS -> {
-                    adjusting = true
-                    GlobalScope.launch {
-                        while (adjusting) {
-                            adjust(if (increment) 1 else -1)
-                            delay(400)
-                        }
-                    }
-                }
-                else -> adjusting = false
+            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
+                adjust(if (increment) 1 else -1)
             }
         }
     }
