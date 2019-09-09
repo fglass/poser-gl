@@ -21,7 +21,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
     val nodes = HashSet<ReferenceNode>()
     var rootNode: ReferenceNode? = null
     var selectedNode: ReferenceNode? = null
-    var selectedType = TransformationType.REFERENCE
+    var selectedType = TransformationType.TRANSLATION
 
     init {
         val vertices = floatArrayOf(-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
@@ -80,7 +80,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         }
 
         selectedNode?.let {
-            context.gizmoRenderer.render(it, viewMatrix, ray)
+            context.gizmoRenderer.render(viewMatrix, ray)
             prepare()
             shader.setHighlighted(true)
             loadMatrices(it, viewMatrix)
@@ -131,7 +131,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
     private fun selectNode(node: ReferenceNode) {
         selectedNode = node
         if (!node.hasType(selectedType)) {
-            selectedType = TransformationType.REFERENCE
+            selectedType = node.children.keys.first()
         }
         context.gizmoRenderer.enable(node, selectedType)
         context.gui.editorPanel.setNode(node, selectedType)

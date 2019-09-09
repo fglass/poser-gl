@@ -109,17 +109,17 @@ class EditorPanel(private val context: RenderContext): Panel() {
         selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(selectedNode)
 
-        transformations = ConfigGroup(Vector2f(31f, 41f), Vector2f(24f, 24f),
-            arrayOf(BufferedImage(SPRITE_PATH + "reference.png"), BufferedImage(SPRITE_PATH + "translation.png"),
-                BufferedImage(SPRITE_PATH + "rotation.png"), BufferedImage(SPRITE_PATH + "scale.png")),
-            arrayOf("Reference", "Translation", "Rotation", "Scale"))
+        transformations = ConfigGroup(Vector2f(), Vector2f(24f, 24f),
+            arrayOf(BufferedImage(SPRITE_PATH + "translation.png"), BufferedImage(SPRITE_PATH + "rotation.png"),
+                    BufferedImage(SPRITE_PATH + "scale.png")),
+            arrayOf("Translation", "Rotation", "Scale"))
 
-        transformations.position = Vector2f(31f, 41f)
+        transformations.position = Vector2f(43f, 42f)
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                     event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    val type = TransformationType.fromId(i)
+                    val type = TransformationType.fromId(i + 1)
                     type?.let(::updateType)
                 }
             }
@@ -152,20 +152,22 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
     fun setNode(node: ReferenceNode, selectedType: TransformationType) {
         for ((i, button) in transformations.buttons.withIndex()) {
-            val type = TransformationType.fromId(i)?: continue
+            val type = TransformationType.fromId(i + 1)?: continue
             button.isFocusable = node.getTransformation(type) != null
         }
-        transformations.updateConfigs(transformations.buttons[selectedType.id])
+        transformations.updateConfigs(transformations.buttons[selectedType.id - 1])
 
         selectedNode.textState.text = "Selected: ${node.id}"
         updateType(selectedType)
     }
 
     private fun updateType(type: TransformationType) {
-        context.nodeRenderer.updateType(type)
-        val transformation = context.nodeRenderer.selectedNode?.getTransformation(type)?: return
-        repeat(sliders.size) {
-            sliders[it].setLimitedValue(transformation.delta[it])
+        if (type != TransformationType.REFERENCE) {
+            context.nodeRenderer.updateType(type)
+            val transformation = context.nodeRenderer.selectedNode?.getTransformation(type) ?: return
+            repeat(sliders.size) {
+                sliders[it].setLimitedValue(transformation.delta[it])
+            }
         }
     }
 
