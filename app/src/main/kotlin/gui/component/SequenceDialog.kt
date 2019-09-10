@@ -48,7 +48,7 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
                 val animation = context.animationHandler.getAnimation()?: return@addListener
                 animation.sequence.leftHandItem = mainHand + ITEM_OFFSET
                 animation.sequence.rightHandItem = offHand + ITEM_OFFSET
-                animation.equipItems()
+                animation.toggleItems(true)
             }
         }
     }

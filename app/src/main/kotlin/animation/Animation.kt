@@ -140,15 +140,20 @@ class Animation(private val context: RenderContext, val sequence: SequenceDefini
         return min(keyframes.sumBy { it.length }, MAX_LENGTH)
     }
 
-    fun equipItems() {
-        equipItem(sequence.leftHandItem)
-        equipItem(sequence.rightHandItem)
+    fun toggleItems(equip: Boolean) {
+        toggleItem(sequence.leftHandItem, equip)
+        toggleItem(sequence.rightHandItem, equip)
     }
 
-    private fun equipItem(id: Int) {
-        if (id >= ITEM_OFFSET) {
-            val item = context.cacheService.items[id - ITEM_OFFSET]?: return
-            context.entity?.addItem(item, context.entityHandler)
+    private fun toggleItem(id: Int, equip: Boolean) {
+        if (id < ITEM_OFFSET) {
+            return
+        }
+
+        val item = context.cacheService.items[id - ITEM_OFFSET]?: return
+        context.entity?.let {
+            val action = if (equip) it::addItem else it::removeItem
+            action.invoke(item, context.entityHandler)
         }
     }
 

@@ -26,6 +26,16 @@ class Entity(val name: String, val size: Int, var model: Model, val composition:
         }
     }
 
+    fun removeItem(item: ItemDefinition, entityHandler: EntityHandler) {
+        val size = composition.size
+        val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
+        composition.removeIf { models.contains(it.id) }
+
+        if (composition.size < size) {
+            reload(entityHandler)
+        }
+    }
+
     fun remove(component: EntityComponent, entityHandler: EntityHandler) {
         composition.remove(component)
         reload(entityHandler)
