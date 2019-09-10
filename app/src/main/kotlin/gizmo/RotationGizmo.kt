@@ -46,7 +46,7 @@ class RotationGizmo(private val context: RenderContext, loader: Loader, shader: 
 
     override fun manipulate(ray: Rayf) {
         selectedAxis?.let {
-            val intersection = getCircleIntersection(ray) // TODO: torus intersection (4x box)
+            val intersection = getCircleIntersection(ray)
             if (it.previousIntersection != Vector3f() &&
                 !intersection.equals(it.previousIntersection, MOVE_THRESHOLD)) {
                 val cross = Vector3f(intersection).cross(it.previousIntersection)

@@ -1,6 +1,5 @@
 package render
 
-import entity.Camera
 import entity.Entity
 import entity.Light
 import org.joml.Matrix4f
@@ -12,39 +11,15 @@ import org.lwjgl.opengl.GL30
 import shader.ShadingType
 import shader.StaticShader
 import util.MatrixCreator
-import kotlin.math.tan
 
-const val FOV = 70f
-const val NEAR_PLANE = 1f
-const val FAR_PLANE = 10000f
-
-class EntityRenderer {
+class EntityRenderer(private val context: RenderContext) {
 
     private val shader = StaticShader()
-    lateinit var projectionMatrix: Matrix4f
 
-    fun init(width: Int, height: Int) {
+    init {
         shader.start()
         shader.loadLight(Light(Vector3f(0f, -500f, -1000f), Vector3f(1f, 1f, 1f)))
-        projectionMatrix = createProjectionMatrix(width, height)
-        shader.loadProjectionMatrix(projectionMatrix)
         shader.stop()
-    }
-
-    private fun createProjectionMatrix(width: Int, height: Int): Matrix4f {
-        val aspectRatio = width.toFloat() / height
-        val yScale = ((1f / tan(Math.toRadians((FOV / 2f).toDouble()))) * aspectRatio).toFloat()
-        val xScale = yScale / aspectRatio
-        val frustumLength = FAR_PLANE - NEAR_PLANE
-
-        val projectionMatrix = Matrix4f()
-        projectionMatrix.m00(xScale)
-        projectionMatrix.m11(yScale)
-        projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustumLength))
-        projectionMatrix.m23(-1f)
-        projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustumLength))
-        projectionMatrix.m33(0f)
-        return projectionMatrix
     }
 
     fun render(entity: Entity?, viewMatrix: Matrix4f, shadingType: ShadingType) {
@@ -67,6 +42,7 @@ class EntityRenderer {
             entity.position, entity.rotation, entity.scale
         )
         shader.loadTransformationMatrix(transformationMatrix)
+        shader.loadProjectionMatrix(context.projectionMatrix)
     }
 
     private fun finish() {

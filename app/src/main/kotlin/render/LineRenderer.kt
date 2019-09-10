@@ -91,7 +91,7 @@ class LineRenderer(private val context: RenderContext) {
 
     private fun loadMatrices(viewMatrix: Matrix4f, scale: Float) {
         shader.loadTransformationMatrix(MatrixCreator.createTransformationMatrix(ENTITY_POS, ENTITY_ROT, scale))
-        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.projectionMatrix)
         shader.loadViewMatrix(viewMatrix)
     }
 

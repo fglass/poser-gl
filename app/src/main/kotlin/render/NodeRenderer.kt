@@ -171,7 +171,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
         modelMatrix.m22(viewMatrix.m22())
         modelMatrix.scale(getNodeScale())
         shader.loadModelViewMatrix(Matrix4f(viewMatrix).mul(modelMatrix))
-        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.projectionMatrix)
     }
 
     private fun getNodeScale(): Float {

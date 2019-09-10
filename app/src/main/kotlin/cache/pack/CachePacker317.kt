@@ -32,7 +32,7 @@ class CachePacker317(private val service: CacheService): CachePacker {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMap = animation.keyframes.first().frameMap // TODO: potential issue with differing frame maps
+        val frameMap = animation.keyframes.first().frameMap
         os.write(encodeFrameMap(frameMap))
 
         val modified = animation.keyframes.filter { it.modified }

@@ -89,7 +89,7 @@ class Camera(private val lmb: MouseHandler, private val rmb: MouseHandler) {
 
         val origin = Vector3f()
         val dir = Vector3f()
-        Matrix4f(context.entityRenderer.projectionMatrix)
+        Matrix4f(context.projectionMatrix)
             .mul(viewMatrix)
             .unprojectRay(mousePosition.x, mousePosition.y, intArrayOf(0, 0,
                 context.framebuffer.size.x.toInt(), context.framebuffer.size.y.toInt()), origin, dir

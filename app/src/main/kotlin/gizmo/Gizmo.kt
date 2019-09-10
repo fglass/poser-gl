@@ -30,7 +30,7 @@ abstract class Gizmo(private val context: RenderContext, private val shader: Giz
         glBindVertexArray(model.vaoId)
         glEnableVertexAttribArray(0)
         shader.loadViewMatrix(viewMatrix)
-        shader.loadProjectionMatrix(context.entityRenderer.projectionMatrix)
+        shader.loadProjectionMatrix(context.projectionMatrix)
     }
 
     fun render(viewMatrix: Matrix4f, ray: Rayf) {

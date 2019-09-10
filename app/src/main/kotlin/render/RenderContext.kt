@@ -8,6 +8,7 @@ import gui.GuiManager
 import gui.component.StartDialog
 import model.ModelParser
 import mu.KotlinLogging
+import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector4f
@@ -34,6 +35,7 @@ import transfer.ImportManager
 import util.MouseHandler
 import util.VSyncTimer
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
+import util.MatrixCreator
 import java.lang.Boolean.TRUE
 
 const val TITLE = "PoserGL"
@@ -54,6 +56,7 @@ class RenderContext {
     lateinit var nodeRenderer: NodeRenderer
     lateinit var lineRenderer: LineRenderer
     lateinit var gizmoRenderer: GizmoRenderer
+    lateinit var projectionMatrix: Matrix4f
 
     val cacheService = CacheService(this)
     val importManager = ImportManager(this)
@@ -116,10 +119,11 @@ class RenderContext {
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
 
         framebuffer = Framebuffer(this, lmb, rmb, scaleFactor)
-        entityRenderer = EntityRenderer()
+        entityRenderer = EntityRenderer(this)
         lineRenderer = LineRenderer(this)
         nodeRenderer = NodeRenderer(this, lmb)
         gizmoRenderer = GizmoRenderer(this, lmb)
+        projectionMatrix = MatrixCreator.createProjectionMatrix(WIDTH, HEIGHT)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartDialog(this).show(frame)

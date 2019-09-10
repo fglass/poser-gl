@@ -130,7 +130,7 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
 
     private fun resize(width: Int, height: Int) {
         setTexture(width, height)
-        context.entityRenderer.init(width, height)
+        context.projectionMatrix = MatrixCreator.createProjectionMatrix(width, height)
         activeDialog?.center(this)
     }
 
