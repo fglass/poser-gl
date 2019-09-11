@@ -104,7 +104,6 @@ class AnimationHandler(private val context: RenderContext) {
         // Copy animation as now modified
         val newIndex = context.cacheService.animations.maxBy { it.key }!!.key + 1
         val copied = Animation(newIndex, current)
-
         addAnimation(copied)
         return copied
     }

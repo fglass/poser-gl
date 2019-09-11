@@ -14,7 +14,7 @@ import kotlin.math.min
 private val logger = KotlinLogging.logger {}
 const val ITEM_OFFSET = 512
 
-class Animation(private val context: RenderContext, val sequence: SequenceDefinition) {
+class Animation(private val context: RenderContext, var sequence: SequenceDefinition) {
 
     // Copy constructor
     constructor(newId: Int, animation: Animation): this(animation.context, SequenceDefinition(newId)) {

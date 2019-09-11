@@ -40,7 +40,7 @@ import java.lang.Boolean.TRUE
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.2.2"
-const val SPRITE_PATH = "sprite/"
+const val SPRITE_PATH = "sprite/" // TODO: resources map
 const val WIDTH = 800
 const val HEIGHT = 600
 
