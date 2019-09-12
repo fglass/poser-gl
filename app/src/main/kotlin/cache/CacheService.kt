@@ -17,6 +17,8 @@ import org.displee.CacheLibrary
 
 private val logger = KotlinLogging.logger {}
 
+// TODO: plugins & thorough testing
+
 class CacheService(private val context: RenderContext) {
 
     lateinit var loader: CacheLoader
@@ -50,6 +52,7 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun load(library: CacheLibrary) {
+        reset()
         addPlayer()
         loader.loadNpcDefintions(library)
         logger.info { "Loaded ${entities.size} entities" }
@@ -69,6 +72,14 @@ class CacheService(private val context: RenderContext) {
         loaded = true
     }
 
+    private fun reset() {
+        entities.clear()
+        items.clear()
+        animations.clear()
+        frames.clear()
+        frameMaps.clear()
+    }
+
     private fun loadFrameArchives(library: CacheLibrary) {
         for (animation in animations) {
             val archiveId = animation.value.sequence.frameIDs.first() ushr 16
@@ -86,7 +97,7 @@ class CacheService(private val context: RenderContext) {
 
     fun appendToFrameMaps(frameMapId: Int, animationId: Int) {
         frameMaps.putIfAbsent(frameMapId, HashSet())
-        frameMaps[frameMapId]!!.add(animationId)
+        frameMaps[frameMapId]?.add(animationId)
     }
 
     private fun addPlayer() {
@@ -105,7 +116,7 @@ class CacheService(private val context: RenderContext) {
         val def = ModelLoader().load(component.id, model.data)
 
         if (component.originalColours != null && component.newColours != null) {
-            for (i in 0 until component.originalColours.size) {
+            for (i in component.originalColours.indices) {
                 def.recolor(component.originalColours[i], component.newColours[i])
             }
         }

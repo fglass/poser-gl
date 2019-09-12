@@ -74,7 +74,11 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
         val frameIndex = IndexType.FRAME.id317
         val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
         if (file.data.isNotEmpty()) {
-            decodeFrameArchive(archiveId, file.data)
+            try {
+                decodeFrameArchive(archiveId, file.data)
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                logger.error { "Archive $archiveId could not be fully loaded" }
+            }
         }
     }
 

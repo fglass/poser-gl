@@ -8,7 +8,7 @@ import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
 
 class CacheLoaderOSRS(private val context: RenderContext, private val service: CacheService):
-    CacheLoader {
+      CacheLoader {
 
     override fun loadSequences(library: CacheLibrary) {
         val sequenceLoader = SequenceLoader()
