@@ -6,12 +6,10 @@ import model.Model
 import shader.NodeShader
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
 import org.lwjgl.opengl.GL30.*
-import util.MouseHandler
+import util.MouseButtonHandler
 
-class NodeRenderer(private val context: RenderContext, private val mouse: MouseHandler) {
+class NodeRenderer(private val context: RenderContext, private val lmb: MouseButtonHandler) {
 
     private val quad: Model
     private val loader = Loader()
@@ -58,6 +56,7 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
 
         val closest = getClosestNode(ray)
         closest?.let(::handleClosestNode)
+        lmb.clicked = false
 
         for (node in nodes) {
             // Render selected node later to display on top of gizmo
@@ -116,13 +115,13 @@ class NodeRenderer(private val context: RenderContext, private val mouse: MouseH
     }
 
     private fun handleClosestNode(node: ReferenceNode) {
-        if (mouse.clicked) {
-            // Toggle off if already selected
-            if (selectedNode?.id == node.id) {
-                reset(false)
-            } else {
-                selectNode(node)
-                context.animationHandler.setPlay(false)
+        if (lmb.clicked) {
+            when {
+                selectedNode?.id == node.id -> reset(false) // Toggle off if already selected
+                else -> {
+                    selectNode(node)
+                    context.animationHandler.setPlay(false)
+                }
             }
         }
         node.highlighted = true

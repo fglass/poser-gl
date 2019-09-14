@@ -2,24 +2,25 @@ package render
 
 import entity.Camera
 import gui.component.Dialog
-import util.MouseHandler
+import util.MouseButtonHandler
 import org.liquidengine.legui.component.ImageView
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
+import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import util.MatrixCreator
 
-class Framebuffer(private val context: RenderContext, private val lmb: MouseHandler, private val rmb: MouseHandler,
-                  private val scaleFactor: Int): ImageView() {
+class Framebuffer(private val context: RenderContext, private val scaleFactor: Int,
+                  private val buttons: Array<MouseButtonHandler>): ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0
     private var textureWidth = 0
     private var textureHeight = 0
     
-    private val camera = Camera(lmb, rmb)
+    private val camera = Camera(lmb=buttons[0], mmb=buttons[1], rmb=buttons[2])
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
     var activeDialog: Dialog? = null
@@ -31,22 +32,21 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
         style.focusedStrokeColor = null
 
         listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            lmb.handleClick(event.button, event.action)
-            rmb.handleClick(event.button, event.action)
+            buttons.forEach { it.handleClick(event.button, event.action) }
         }
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
-            if (context.gizmoRenderer.gizmo?.selectedAxis == null) { // Prevent camera pan when transforming gizmo
-                lmb.handleDrag(event.delta)
+            buttons.forEach {
+                // Prevent camera pan when transforming gizmo
+                if (it.button != Mouse.MouseButton.MOUSE_BUTTON_LEFT || context.gizmoRenderer.gizmo?.selectedAxis == null) {
+                    it.handleDrag(event.delta)
+                }
             }
-            rmb.handleDrag(event.delta)
         }
         listenerMap.addListener(ScrollEvent::class.java) { event ->
-            lmb.handleScroll(event.yoffset)
-            rmb.handleScroll(event.yoffset)
+            camera.handleScroll(event.yoffset)
         }
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-            lmb.handleCursorEvent(event.isEntered)
-            rmb.handleCursorEvent(event.isEntered)
+            buttons.forEach { it.handleCursorEvent(event.isEntered) }
         }
     }
 
@@ -101,7 +101,7 @@ class Framebuffer(private val context: RenderContext, private val lmb: MouseHand
         context.nodeRenderer.render(viewMatrix, ray)
         context.lineRenderer.renderGrid(viewMatrix)
         context.nodeRenderer.renderSelected(viewMatrix, ray)
-        lmb.clicked = false
+        //buttons[0].clicked = false // Un-click lmb
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

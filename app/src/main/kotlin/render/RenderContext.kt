@@ -32,14 +32,14 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import transfer.ExportManager
 import transfer.ImportManager
-import util.MouseHandler
+import util.MouseButtonHandler
 import util.VSyncTimer
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import util.MatrixCreator
 import java.lang.Boolean.TRUE
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.2.2"
+const val VERSION = "1.2.3"
 const val SPRITE_PATH = "sprite/" // TODO: resources map
 const val WIDTH = 800
 const val HEIGHT = 600
@@ -114,11 +114,12 @@ class RenderContext {
         guiRenderer.initialize()
 
         val vSync = VSyncTimer()
-        val lmb = MouseHandler(Mouse.MouseButton.MOUSE_BUTTON_LEFT)
-        val rmb = MouseHandler(Mouse.MouseButton.MOUSE_BUTTON_RIGHT)
         val scaleFactor = if (isRetinaDisplay(context.framebufferSize, frame.container.size)) 2 else 1
+        val lmb = MouseButtonHandler(Mouse.MouseButton.MOUSE_BUTTON_LEFT)
+        val mmb = MouseButtonHandler(Mouse.MouseButton.MOUSE_BUTTON_MIDDLE)
+        val rmb = MouseButtonHandler(Mouse.MouseButton.MOUSE_BUTTON_RIGHT)
 
-        framebuffer = Framebuffer(this, lmb, rmb, scaleFactor)
+        framebuffer = Framebuffer(this, scaleFactor, arrayOf(lmb, mmb, rmb))
         entityRenderer = EntityRenderer(this)
         lineRenderer = LineRenderer(this)
         nodeRenderer = NodeRenderer(this, lmb)

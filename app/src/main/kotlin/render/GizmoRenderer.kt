@@ -10,9 +10,9 @@ import org.joml.Matrix4f
 import org.joml.Rayf
 import org.lwjgl.opengl.GL30.*
 import shader.GizmoShader
-import util.MouseHandler
+import util.MouseButtonHandler
 
-class GizmoRenderer(context: RenderContext, private val mouse: MouseHandler) {
+class GizmoRenderer(context: RenderContext, private val lmb: MouseButtonHandler) {
 
     private val loader = Loader()
     private val shader = GizmoShader()
@@ -36,7 +36,7 @@ class GizmoRenderer(context: RenderContext, private val mouse: MouseHandler) {
     fun render(viewMatrix: Matrix4f, ray: Rayf) {
         gizmo?.let {
             prepare()
-            if (mouse.pressed) it.active = true else it.deactivate()
+            if (lmb.pressed) it.active = true else it.deactivate()
             it.render(viewMatrix, ray)
             finish()
         }

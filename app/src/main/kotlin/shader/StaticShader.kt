@@ -1,8 +1,6 @@
 package shader
 
 import org.joml.Matrix4f
-import util.MatrixCreator
-import entity.Camera
 import entity.Light
 
 private const val VERTEX_FILE = "shader/entity-vs.glsl"

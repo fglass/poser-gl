@@ -23,6 +23,8 @@ import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
 import util.setSizeLimits
 
+// TODO: node position editing
+
 class EditorPanel(private val context: RenderContext): Panel() {
 
     val sliders = ArrayList<TextSlider>()
