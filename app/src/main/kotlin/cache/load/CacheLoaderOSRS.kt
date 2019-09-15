@@ -2,15 +2,18 @@ package cache.load
 
 import render.RenderContext
 import animation.Animation
-import cache.CacheService
 import cache.IndexType
+import net.runelite.cache.definitions.FrameDefinition
+import net.runelite.cache.definitions.ItemDefinition
+import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
+import java.util.HashSet
 
-class CacheLoaderOSRS(private val context: RenderContext, private val service: CacheService):
-      CacheLoader {
+class CacheLoaderOSRS(private val context: RenderContext): ICacheLoader {
 
-    override fun loadSequences(library: CacheLibrary) {
+    override fun loadSequences(library: CacheLibrary): HashMap<Int, Animation> {
+        val animations = HashMap<Int, Animation>()
         val sequenceLoader = SequenceLoader()
         val maxIndex = library.getIndex(IndexType.CONFIG.idOsrs)
             .getArchive(IndexType.SEQUENCE.idOsrs)
@@ -23,14 +26,14 @@ class CacheLoaderOSRS(private val context: RenderContext, private val service: C
 
             val sequence = sequenceLoader.load(file.id, file.data)
             val animation = Animation(context, sequence)
-            service.animations[file.id] = animation
+            animations[file.id] = animation
         }
+        return animations
     }
 
-    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary) {
+    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary): HashSet<FrameDefinition> {
+        val frames = HashSet<FrameDefinition>()
         val frameIndex = IndexType.FRAME.idOsrs
-
-        val archive = library.getIndex(frameIndex).getArchive(archiveId)?: return
         val frameLoader = FrameLoader()
         val frameMapLoader = FramemapLoader()
         val frameMapIndex = IndexType.FRAME_MAP.idOsrs
@@ -44,11 +47,13 @@ class CacheLoaderOSRS(private val context: RenderContext, private val service: C
 
             val frameMap = frameMapLoader.load(frameMapArchiveId, frameMapFile.data)
             val frame = frameLoader.load(frameMap, frameFile.id, frameData)
-            service.frames.put(archive.id, frame)
+            frames.add(frame)
         }
+        return frames
     }
 
-    override fun loadNpcDefintions(library: CacheLibrary) {
+    override fun loadNpcDefintions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
+        val entities = HashMap<Int, NpcDefinition>()
         val npcLoader = NpcLoader()
         val maxIndex = library.getIndex(IndexType.CONFIG.idOsrs)
             .getArchive(IndexType.NPC.idOsrs)
@@ -61,12 +66,14 @@ class CacheLoaderOSRS(private val context: RenderContext, private val service: C
 
             val npc = npcLoader.load(file.id, file.data)
             if (npc.models != null && npc.name.toLowerCase() != "null" && npc.name != "") {
-                service.entities[npc.id] = npc
+                entities[npc.id] = npc
             }
         }
+        return entities
     }
 
-    override fun loadItemDefinitions(library: CacheLibrary) {
+    override fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition> {
+        val items = HashMap<Int, ItemDefinition>()
         val itemLoader = ItemLoader()
         val maxIndex = library.getIndex(IndexType.CONFIG.idOsrs)
             .getArchive(IndexType.ITEM.idOsrs)
@@ -79,8 +86,9 @@ class CacheLoaderOSRS(private val context: RenderContext, private val service: C
 
             val item = itemLoader.load(file.id, file.data)
             if (item.maleModel0 > 0 && item.name.toLowerCase() != "null") {
-                service.items[item.id] = item
+                items[item.id] = item
             }
         }
+        return items
     }
 }

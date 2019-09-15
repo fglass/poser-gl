@@ -14,6 +14,16 @@ import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
+import com.google.inject.Guice
+import com.google.inject.Inject
+import com.google.inject.Injector
+import java.util.HashSet
+import com.sun.corba.se.impl.util.RepositoryId.cache
+import net.runelite.cache.definitions.FrameDefinition
+import net.runelite.cache.definitions.ItemDefinition
+import net.runelite.cache.definitions.NpcDefinition
+import kotlin.reflect.typeOf
+
 
 private val logger = KotlinLogging.logger {}
 
@@ -21,24 +31,22 @@ private val logger = KotlinLogging.logger {}
 
 class CacheService(private val context: RenderContext) {
 
-    lateinit var loader: CacheLoader
+    lateinit var loader: ICacheLoader
     var cachePath = ""
     var osrs = true
     var loaded = false
 
-    val entities = HashMap<Int, NpcDefinition>()
-    val items = HashMap<Int, ItemDefinition>()
+    var entities = HashMap<Int, NpcDefinition>()
+    var items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
     val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
     var frameMaps = HashMap<Int, HashSet<Int>>()
 
     fun init(cachePath: String, pluginName: String) {
         this.cachePath = cachePath
-        loader = when (pluginName) {
-            "OSRS" -> CacheLoaderOSRS(context, this)
-            "317" -> AltCacheLoader317(context, this)
-            else -> CacheLoader317(context, this)
-        }
+        val injector = Guice.createInjector(LoadModule())
+        val processor = injector.getInstance(PluginProcessor::class.java)
+        loader = processor.getPlugin(pluginName)?: return
 
         try {
             val library = CacheLibrary(cachePath)
@@ -53,14 +61,14 @@ class CacheService(private val context: RenderContext) {
 
     private fun load(library: CacheLibrary) {
         reset()
+        entities = loader.loadNpcDefintions(library)
         addPlayer()
-        loader.loadNpcDefintions(library)
         logger.info { "Loaded ${entities.size} entities" }
 
-        loader.loadItemDefinitions(library)
+        items = loader.loadItemDefinitions(library)
         logger.info { "Loaded ${items.size} items" }
 
-        loader.loadSequences(library)
+        animations = loader.loadSequences(library)
         logger.info { "Loaded ${animations.size} sequences" }
 
         loadFrameArchives(library)
@@ -80,11 +88,12 @@ class CacheService(private val context: RenderContext) {
         frameMaps.clear()
     }
 
-    private fun loadFrameArchives(library: CacheLibrary) {
+    private fun loadFrameArchives(library: CacheLibrary) { // TODO: refactor/improve & fix bug
         for (animation in animations) {
             val archiveId = animation.value.sequence.frameIDs.first() ushr 16
             if (archiveId !in frames.keySet()) {
-                loader.loadFrameArchive(archiveId, library)
+                val archive = loader.loadFrameArchive(archiveId, library)
+                archive.forEach { frames.put(archiveId, it) }
             }
 
             val frames = frames.get(archiveId)

@@ -5,16 +5,20 @@ import animation.Animation
 import cache.CacheService
 import cache.IndexType
 import mu.KotlinLogging
+import net.runelite.cache.definitions.FrameDefinition
+import net.runelite.cache.definitions.ItemDefinition
+import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
+import java.util.HashSet
 
 private val logger = KotlinLogging.logger {}
 
-class AltCacheLoader317(private val context: RenderContext, private val service: CacheService): CacheLoader {
+class AltCacheLoader317(private val context: RenderContext): ICacheLoader {
 
-    private val originalLoader = CacheLoader317(context, service)
+    private val originalLoader = CacheLoader317(context)
 
-    override fun loadSequences(library: CacheLibrary) {
+    override fun loadSequences(library: CacheLibrary): HashMap<Int, Animation> {
         val archive = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat")
@@ -31,7 +35,7 @@ class AltCacheLoader317(private val context: RenderContext, private val service:
                 logger.info { "Sequence $i contains no frames" }
             }
         }
-        service.animations = sequences
+        return sequences
     }
 
     // OSRS decoding
@@ -93,15 +97,15 @@ class AltCacheLoader317(private val context: RenderContext, private val service:
         }
     }
 
-    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary) {
-        originalLoader.loadFrameArchive(archiveId, library)
+    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary): HashSet<FrameDefinition> {
+        return originalLoader.loadFrameArchive(archiveId, library)
     }
 
-    override fun loadNpcDefintions(library: CacheLibrary) {
-        originalLoader.loadNpcDefintions(library)
+    override fun loadNpcDefintions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
+        return originalLoader.loadNpcDefintions(library)
     }
 
-    override fun loadItemDefinitions(library: CacheLibrary) {
-        originalLoader.loadItemDefinitions(library)
+    override fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition> {
+        return originalLoader.loadItemDefinitions(library)
     }
 }

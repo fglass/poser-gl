@@ -39,7 +39,7 @@ import util.MatrixCreator
 import java.lang.Boolean.TRUE
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.2.3"
+const val VERSION = "1.3"
 const val SPRITE_PATH = "sprite/" // TODO: resources map
 const val WIDTH = 800
 const val HEIGHT = 600

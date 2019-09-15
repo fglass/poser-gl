@@ -7,12 +7,13 @@ import cache.IndexType
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
+import java.util.HashSet
 
 private val logger = KotlinLogging.logger {}
 
-class CacheLoader317(private val context: RenderContext, private val service: CacheService): CacheLoader {
+class CacheLoader317(private val context: RenderContext): ICacheLoader {
 
-    override fun loadSequences(library: CacheLibrary) {
+    override fun loadSequences(library: CacheLibrary): HashMap<Int, Animation> {
         val archive = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat")
@@ -29,7 +30,7 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
                 logger.info { "Sequence $i contains no frames" }
             }
         }
-        service.animations = sequences
+        return sequences
     }
 
     private fun decodeSequence(def: SequenceDefinition, stream: InputStream317): SequenceDefinition {
@@ -70,19 +71,21 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
         }
     }
 
-    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary) {
+    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary): HashSet<FrameDefinition> {
+        val frames = HashSet<FrameDefinition>()
         val frameIndex = IndexType.FRAME.id317
         val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
         if (file.data.isNotEmpty()) {
             try {
-                decodeFrameArchive(archiveId, file.data)
+                decodeFrameArchive(archiveId, file.data, frames)
             } catch (e: ArrayIndexOutOfBoundsException) {
                 logger.error { "Archive $archiveId could not be fully loaded" }
             }
         }
+        return frames
     }
 
-    private fun decodeFrameArchive(archive: Int, data: ByteArray) {
+    private fun decodeFrameArchive(archive: Int, data: ByteArray, frames: HashSet<FrameDefinition>) {
         val stream = InputStream317(data)
         val frameMap = decodeFrameMap(stream)
 
@@ -153,7 +156,7 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
                 def.translator_y[i] = scratchTranslatorY[i]
                 def.translator_z[i] = scratchTranslatorZ[i]
             }
-            service.frames.put(archive, def)
+            frames.add(def)
         }
     }
 
@@ -180,7 +183,8 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
         return def
     }
 
-    override fun loadNpcDefintions(library: CacheLibrary) {
+    override fun loadNpcDefintions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
+        val entities = HashMap<Int, NpcDefinition>()
         val npcIdx = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.NPC.id317)
             .getFile("npc.idx")
@@ -203,9 +207,10 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
             stream.currentPosition = streamIndices[i]
             val npc = decodeNpcDefinition(i, stream)
             if (npc.models != null && npc.name.toLowerCase() != "null" && npc.name != "") {
-                service.entities[npc.id] = npc
+                entities[npc.id] = npc
             }
         }
+        return entities
     }
 
     private fun decodeNpcDefinition(id: Int, stream: InputStream317): NpcDefinition {
@@ -299,7 +304,8 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
         }
     }
 
-    override fun loadItemDefinitions(library: CacheLibrary) {
+    override fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition> {
+        val items = HashMap<Int, ItemDefinition>()
         val itemIdx = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.ITEM.id317)
             .getFile("obj.idx")
@@ -322,9 +328,10 @@ class CacheLoader317(private val context: RenderContext, private val service: Ca
             stream.currentPosition = streamIndices[i]
             val item = decodeItemDefinition(i, stream)
             if (item.maleModel0 > 0 && item.name.toLowerCase() != "null") {
-                service.items[item.id] = item
+                items[item.id] = item
             }
         }
+        return items
     }
 
     private fun decodeItemDefinition(id: Int, stream: InputStream317): ItemDefinition {
