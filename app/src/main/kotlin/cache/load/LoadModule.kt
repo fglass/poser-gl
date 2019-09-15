@@ -26,24 +26,24 @@ class LoadModule: AbstractModule() {
     }
 
     @Provides
-    fun provide317Plugin(context: RenderContext): AltCacheLoader317 {
-        return AltCacheLoader317(context)
-    }
-
-    @ProvidesIntoMap
-    @StringMapKey("317")
-    fun get317Plugin(plugin: AltCacheLoader317): ICacheLoader {
-        return plugin
-    }
-
-    @Provides
-    fun provideLegacy317Plugin(context: RenderContext): CacheLoader317 {
+    fun provide317Plugin(context: RenderContext): CacheLoader317 {
         return CacheLoader317(context)
     }
 
     @ProvidesIntoMap
+    @StringMapKey("317")
+    fun get317Plugin(plugin: CacheLoader317): ICacheLoader {
+        return plugin
+    }
+
+    @Provides
+    fun provideLegacy317Plugin(context: RenderContext): LegacyCacheLoader317 {
+        return LegacyCacheLoader317(context)
+    }
+
+    @ProvidesIntoMap
     @StringMapKey("Legacy 317")
-    fun getLegacyPlugin(plugin: CacheLoader317): ICacheLoader {
+    fun getLegacyPlugin(plugin: LegacyCacheLoader317): ICacheLoader {
         return plugin
     }
 }
