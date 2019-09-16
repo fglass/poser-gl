@@ -64,18 +64,11 @@ class CacheService(private val context: RenderContext) {
         items = loader.loadItemDefinitions(library)
         logger.info { "Loaded ${items.size} items" }
 
-        loadAnimations(library)
-        logger.info { "Loaded ${animations.size} animations" }
-
         frames = loader.loadFrameArchives(library)
         logger.info { "Loaded ${frames.keys().size} frames" }
-        /*
-        val frames = frames.get(archiveId)
-            if (frames.isNotEmpty()) {
-                val frameMap = frames.first().framemap
-                appendToFrameMaps(frameMap.id, animation.key)
-            }
-         */
+
+        loadAnimations(library)
+        logger.info { "Loaded ${animations.size} animations" }
 
         if (entities.size <= 1) {
             throw Exception("Cache loaded incorrectly")
@@ -96,15 +89,22 @@ class CacheService(private val context: RenderContext) {
         sequences.forEach {
             if (it.frameIDs != null) {
                 animations[it.id] = Animation(context, it)
+                addFrameMap(it)
             } else {
                 logger.info { "Sequence ${it.id} contains no frames" }
             }
         }
     }
 
-    fun appendToFrameMaps(frameMapId: Int, animationId: Int) {
-        frameMaps.putIfAbsent(frameMapId, HashSet())
-        frameMaps[frameMapId]?.add(animationId)
+    fun addFrameMap(sequence: SequenceDefinition) {
+        val archiveId = sequence.frameIDs.first() ushr 16
+        val frames = frames[archiveId]
+        
+        if (frames.isNotEmpty()) {
+            val frameMap = frames.first().framemap
+            frameMaps.putIfAbsent(frameMap.id, HashSet())
+            frameMaps[frameMap.id]?.add(sequence.id)
+        }
     }
 
     private fun addPlayer() {

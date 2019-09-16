@@ -2,7 +2,6 @@ package animation
 
 import render.RenderContext
 import mu.KotlinLogging
-import net.runelite.cache.definitions.FramemapDefinition
 
 const val MAX_LENGTH = 999
 private val logger = KotlinLogging.logger {}
@@ -111,7 +110,7 @@ class AnimationHandler(private val context: RenderContext) {
     fun addAnimation(animation: Animation) {
         currentAnimation = animation
         context.cacheService.animations[animation.sequence.id] = animation
-        context.cacheService.appendToFrameMaps(animation.getFrameMap().id, animation.sequence.id)
+        context.cacheService.addFrameMap(animation.sequence)
         context.gui.listPanel.animationList.addElement(animation)
     }
 
