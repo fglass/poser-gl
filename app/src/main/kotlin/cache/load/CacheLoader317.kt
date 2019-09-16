@@ -1,38 +1,28 @@
 package cache.load
 
-import render.RenderContext
-import animation.Animation
 import cache.IndexType
-import mu.KotlinLogging
+import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
-import java.util.HashSet
 
-private val logger = KotlinLogging.logger {}
+class CacheLoader317: ICacheLoader {
 
-class CacheLoader317(private val context: RenderContext): ICacheLoader {
+    private val originalLoader = LegacyCacheLoader317()
 
-    private val originalLoader = LegacyCacheLoader317(context)
-
-    override fun loadSequences(library: CacheLibrary): HashMap<Int, Animation> {
+    override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat")
 
         val stream = InputStream317(archive.data)
         val length = stream.readUShort()
-        val sequences = HashMap<Int, Animation>()
+        val sequences = ArrayList<SequenceDefinition>()
 
         for (i in 0 until length) {
-            val animation = Animation(context, decodeSequence(SequenceDefinition(i), stream))
-            if (animation.sequence.frameIDs != null) {
-                sequences[i] = animation
-            } else {
-                logger.info { "Sequence $i contains no frames" }
-            }
+            sequences.add(decodeSequence(SequenceDefinition(i), stream))
         }
         return sequences
     }
@@ -96,12 +86,12 @@ class CacheLoader317(private val context: RenderContext): ICacheLoader {
         }
     }
 
-    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary): HashSet<FrameDefinition> {
-        return originalLoader.loadFrameArchive(archiveId, library)
+    override fun loadFrameArchives(library: CacheLibrary): HashMultimap<Int, FrameDefinition> {
+        return originalLoader.loadFrameArchives(library)
     }
 
-    override fun loadNpcDefintions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
-        return originalLoader.loadNpcDefintions(library)
+    override fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
+        return originalLoader.loadNpcDefinitions(library)
     }
 
     override fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition> {

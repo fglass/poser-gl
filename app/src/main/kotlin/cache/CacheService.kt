@@ -15,14 +15,10 @@ import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 import com.google.inject.Guice
-import com.google.inject.Inject
-import com.google.inject.Injector
 import java.util.HashSet
-import com.sun.corba.se.impl.util.RepositoryId.cache
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
-import kotlin.reflect.typeOf
 
 
 private val logger = KotlinLogging.logger {}
@@ -39,7 +35,7 @@ class CacheService(private val context: RenderContext) {
     var entities = HashMap<Int, NpcDefinition>()
     var items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
-    val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
+    var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
     var frameMaps = HashMap<Int, HashSet<Int>>()
 
     fun init(cachePath: String, pluginName: String) {
@@ -61,18 +57,25 @@ class CacheService(private val context: RenderContext) {
 
     private fun load(library: CacheLibrary) {
         reset()
-        entities = loader.loadNpcDefintions(library)
+        entities = loader.loadNpcDefinitions(library)
         addPlayer()
         logger.info { "Loaded ${entities.size} entities" }
 
         items = loader.loadItemDefinitions(library)
         logger.info { "Loaded ${items.size} items" }
 
-        animations = loader.loadSequences(library)
-        logger.info { "Loaded ${animations.size} sequences" }
+        loadAnimations(library)
+        logger.info { "Loaded ${animations.size} animations" }
 
-        loadFrameArchives(library)
+        frames = loader.loadFrameArchives(library)
         logger.info { "Loaded ${frames.keys().size} frames" }
+        /*
+        val frames = frames.get(archiveId)
+            if (frames.isNotEmpty()) {
+                val frameMap = frames.first().framemap
+                appendToFrameMaps(frameMap.id, animation.key)
+            }
+         */
 
         if (entities.size <= 1) {
             throw Exception("Cache loaded incorrectly")
@@ -88,18 +91,13 @@ class CacheService(private val context: RenderContext) {
         frameMaps.clear()
     }
 
-    private fun loadFrameArchives(library: CacheLibrary) { // TODO: refactor/improve & fix bug
-        for (animation in animations) {
-            val archiveId = animation.value.sequence.frameIDs.first() ushr 16
-            if (archiveId !in frames.keySet()) {
-                val archive = loader.loadFrameArchive(archiveId, library)
-                archive.forEach { frames.put(archiveId, it) }
-            }
-
-            val frames = frames.get(archiveId)
-            if (frames.isNotEmpty()) {
-                val frameMap = frames.first().framemap
-                appendToFrameMaps(frameMap.id, animation.key)
+    private fun loadAnimations(library: CacheLibrary) {
+        val sequences = loader.loadSequences(library)
+        sequences.forEach {
+            if (it.frameIDs != null) {
+                animations[it.id] = Animation(context, it)
+            } else {
+                logger.info { "Sequence ${it.id} contains no frames" }
             }
         }
     }

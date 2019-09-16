@@ -1,34 +1,26 @@
 package cache.load
 
-import render.RenderContext
-import animation.Animation
-import cache.CacheService
 import cache.IndexType
+import com.google.common.collect.HashMultimap
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
-import java.util.HashSet
 
 private val logger = KotlinLogging.logger {}
 
-class LegacyCacheLoader317(private val context: RenderContext): ICacheLoader {
+class LegacyCacheLoader317: ICacheLoader {
 
-    override fun loadSequences(library: CacheLibrary): HashMap<Int, Animation> {
+    override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.SEQUENCE.id317)
             .getFile("seq.dat")
 
         val stream = InputStream317(archive.data)
         val length = stream.readUShort()
-        val sequences = HashMap<Int, Animation>()
+        val sequences = ArrayList<SequenceDefinition>()
 
         for (i in 0 until length) {
-            val animation = Animation(context, decodeSequence(SequenceDefinition(i), stream))
-            if (animation.sequence.frameIDs != null) {
-                sequences[i] = animation
-            } else {
-                logger.info { "Sequence $i contains no frames" }
-            }
+            sequences.add(decodeSequence(SequenceDefinition(i), stream))
         }
         return sequences
     }
@@ -71,21 +63,24 @@ class LegacyCacheLoader317(private val context: RenderContext): ICacheLoader {
         }
     }
 
-    override fun loadFrameArchive(archiveId: Int, library: CacheLibrary): HashSet<FrameDefinition> {
-        val frames = HashSet<FrameDefinition>()
+    override fun loadFrameArchives(library: CacheLibrary): HashMultimap<Int, FrameDefinition> {
+        val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
         val frameIndex = IndexType.FRAME.id317
-        val file = library.getIndex(frameIndex).getArchive(archiveId).getFile(0)
-        if (file.data.isNotEmpty()) {
-            try {
-                decodeFrameArchive(archiveId, file.data, frames)
-            } catch (e: ArrayIndexOutOfBoundsException) {
-                logger.error { "Archive $archiveId could not be fully loaded" }
+
+        for (i in 0..library.getIndex(frameIndex).lastArchive.id) {
+            val file = library.getIndex(frameIndex).getArchive(i).getFile(0)
+            if (file.data.isNotEmpty()) {
+                try {
+                    decodeFrameArchive(i, file.data, frames)
+                } catch (e: ArrayIndexOutOfBoundsException) {
+                    logger.error { "Archive $i could not be fully loaded" }
+                }
             }
         }
         return frames
     }
 
-    private fun decodeFrameArchive(archive: Int, data: ByteArray, frames: HashSet<FrameDefinition>) {
+    private fun decodeFrameArchive(archiveId: Int, data: ByteArray, frames: HashMultimap<Int, FrameDefinition>) {
         val stream = InputStream317(data)
         val frameMap = decodeFrameMap(stream)
 
@@ -156,7 +151,7 @@ class LegacyCacheLoader317(private val context: RenderContext): ICacheLoader {
                 def.translator_y[i] = scratchTranslatorY[i]
                 def.translator_z[i] = scratchTranslatorZ[i]
             }
-            frames.add(def)
+            frames.put(archiveId, def)
         }
     }
 
@@ -183,7 +178,7 @@ class LegacyCacheLoader317(private val context: RenderContext): ICacheLoader {
         return def
     }
 
-    override fun loadNpcDefintions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
+    override fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
         val entities = HashMap<Int, NpcDefinition>()
         val npcIdx = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.NPC.id317)

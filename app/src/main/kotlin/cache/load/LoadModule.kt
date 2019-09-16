@@ -5,18 +5,16 @@ import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.multibindings.ProvidesIntoMap
 import com.google.inject.multibindings.StringMapKey
-import render.RenderContext
 
 class LoadModule: AbstractModule() {
 
     override fun configure() {
-        bind(RenderContext::class.java)
         bind(PluginProcessor::class.java)
     }
 
     @Provides
-    fun provideOldSchoolPlugin(context: RenderContext): CacheLoaderOSRS {
-        return CacheLoaderOSRS(context)
+    fun provideOldSchoolPlugin(): CacheLoaderOSRS {
+        return CacheLoaderOSRS()
     }
 
     @ProvidesIntoMap
@@ -26,8 +24,8 @@ class LoadModule: AbstractModule() {
     }
 
     @Provides
-    fun provide317Plugin(context: RenderContext): CacheLoader317 {
-        return CacheLoader317(context)
+    fun provide317Plugin(): CacheLoader317 {
+        return CacheLoader317()
     }
 
     @ProvidesIntoMap
@@ -37,8 +35,8 @@ class LoadModule: AbstractModule() {
     }
 
     @Provides
-    fun provideLegacy317Plugin(context: RenderContext): LegacyCacheLoader317 {
-        return LegacyCacheLoader317(context)
+    fun provideLegacy317Plugin(): LegacyCacheLoader317 {
+        return LegacyCacheLoader317()
     }
 
     @ProvidesIntoMap

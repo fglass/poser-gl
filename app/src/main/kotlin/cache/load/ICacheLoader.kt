@@ -1,18 +1,20 @@
 package cache.load
 
 import animation.Animation
+import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
+import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
 
-interface ICacheLoader { // TODO: map/set instead of impl's
+interface ICacheLoader {
 
-    fun loadSequences(library: CacheLibrary): HashMap<Int, Animation>
+    fun loadSequences(library: CacheLibrary): List<SequenceDefinition>
 
-    fun loadFrameArchive(archiveId: Int, library: CacheLibrary): HashSet<FrameDefinition>
+    fun loadFrameArchives(library: CacheLibrary): HashMultimap<Int, FrameDefinition>
 
-    fun loadNpcDefintions(library: CacheLibrary): HashMap<Int, NpcDefinition>
+    fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition>
 
     fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition>
 }
