@@ -4,6 +4,7 @@
 
 *.iml
 data/saves/
+app/plugins/
 
 ## Directory-based project format:
 .idea/

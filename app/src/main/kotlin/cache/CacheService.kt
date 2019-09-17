@@ -20,7 +20,6 @@ import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
 
-
 private val logger = KotlinLogging.logger {}
 
 // TODO: plugins & thorough testing
@@ -38,20 +37,21 @@ class CacheService(private val context: RenderContext) {
     var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
     var frameMaps = HashMap<Int, HashSet<Int>>()
 
-    fun init(cachePath: String, pluginName: String) {
+    fun init(cachePath: String, plugin: String) {
         this.cachePath = cachePath
         val injector = Guice.createInjector(LoadModule())
         val processor = injector.getInstance(PluginProcessor::class.java)
-        loader = processor.getPlugin(pluginName)?: return
+        loader = processor.getPlugin(plugin)?: return
 
         try {
             val library = CacheLibrary(cachePath)
+            val serviceLoader = PluginLoader.load(library) // TODO
             load(library)
             library.close()
             osrs = library.isOSRS
-            logger.info { "Loaded cache $cachePath with $pluginName plugin" }
+            logger.info { "Loaded cache $cachePath with $plugin plugin" }
         } catch (e: Exception) {
-            logger.error(e) { "Failed to load cache $cachePath with $pluginName plugin" }
+            logger.error(e) { "Failed to load cache $cachePath with $plugin plugin" }
         }
     }
 
@@ -99,7 +99,7 @@ class CacheService(private val context: RenderContext) {
     fun addFrameMap(sequence: SequenceDefinition) {
         val archiveId = sequence.frameIDs.first() ushr 16
         val frames = frames[archiveId]
-        
+
         if (frames.isNotEmpty()) {
             val frameMap = frames.first().framemap
             frameMaps.putIfAbsent(frameMap.id, HashSet())

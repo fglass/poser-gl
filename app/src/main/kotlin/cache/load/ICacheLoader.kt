@@ -1,6 +1,5 @@
 package cache.load
 
-import animation.Animation
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
