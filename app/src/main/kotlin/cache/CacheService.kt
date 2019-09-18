@@ -45,7 +45,6 @@ class CacheService(private val context: RenderContext) {
 
         try {
             val library = CacheLibrary(cachePath)
-            val serviceLoader = PluginLoader.load(library) // TODO
             load(library)
             library.close()
             osrs = library.isOSRS

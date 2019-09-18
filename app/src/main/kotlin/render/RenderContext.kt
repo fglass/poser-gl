@@ -2,6 +2,7 @@ package render
 
 import animation.AnimationHandler
 import cache.CacheService
+import cache.PluginLoader
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
@@ -61,6 +62,7 @@ class RenderContext {
     val cacheService = CacheService(this)
     val importManager = ImportManager(this)
     val exportManager = ExportManager(this)
+    val plugins = PluginLoader.load()
 
     val modelParser = ModelParser()
     var entity: Entity? = null
@@ -126,6 +128,7 @@ class RenderContext {
         gizmoRenderer = GizmoRenderer(this, lmb)
         projectionMatrix = MatrixCreator.createProjectionMatrix(WIDTH, HEIGHT)
 
+        logger.info { "Loaded ${plugins.size} plugins" }
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartDialog(this).show(frame)
 

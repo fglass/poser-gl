@@ -75,7 +75,7 @@ class StartDialog(private val context: RenderContext):
         container.add(open)
     }
 
-    private fun addPlugin() {
+    private fun addPlugin() { // TODO: load elements dynamically
         val pluginLabel = Label("Plugin:", 14f, 150f, 50f, 15f)
         container.add(pluginLabel)
 
