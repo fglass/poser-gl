@@ -11,6 +11,8 @@ import org.displee.CacheLibrary
 
 class CacheLoaderOSRS: ICacheLoader {
 
+    override fun getName() = "OSRS"
+
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val sequences = ArrayList<SequenceDefinition>()
         val sequenceLoader = SequenceLoader()

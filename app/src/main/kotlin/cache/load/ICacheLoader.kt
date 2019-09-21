@@ -9,6 +9,8 @@ import org.displee.CacheLibrary
 
 interface ICacheLoader {
 
+    fun getName(): String
+
     fun loadSequences(library: CacheLibrary): List<SequenceDefinition>
 
     fun loadFrameArchives(library: CacheLibrary): HashMultimap<Int, FrameDefinition>

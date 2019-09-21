@@ -10,6 +10,8 @@ private val logger = KotlinLogging.logger {}
 
 class LegacyCacheLoader317: ICacheLoader {
 
+    override fun getName() = "Legacy 317"
+
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.SEQUENCE.id317)

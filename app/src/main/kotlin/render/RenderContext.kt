@@ -128,9 +128,9 @@ class RenderContext {
         gizmoRenderer = GizmoRenderer(this, lmb)
         projectionMatrix = MatrixCreator.createProjectionMatrix(WIDTH, HEIGHT)
 
-        logger.info { "Loaded ${plugins.size} plugins" }
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartDialog(this).show(frame)
+        logger.info { "Loaded ${plugins.size} plugins" }
 
         // Render loop
         while (running) {

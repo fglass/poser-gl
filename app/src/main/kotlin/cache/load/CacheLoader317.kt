@@ -12,6 +12,8 @@ class CacheLoader317: ICacheLoader {
 
     private val originalLoader = LegacyCacheLoader317()
 
+    override fun getName() = "317"
+
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(IndexType.CONFIG.id317)
             .getArchive(IndexType.SEQUENCE.id317)

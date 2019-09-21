@@ -33,7 +33,7 @@ class StartDialog(private val context: RenderContext):
 
         addTitle()
         addPath()
-        addPlugin()
+        addPlugins()
         addLoadButton()
     }
 
@@ -75,14 +75,14 @@ class StartDialog(private val context: RenderContext):
         container.add(open)
     }
 
-    private fun addPlugin() { // TODO: load elements dynamically
+    private fun addPlugins() {
         val pluginLabel = Label("Plugin:", 14f, 150f, 50f, 15f)
         container.add(pluginLabel)
 
         plugins = SelectBox(76f, 150f, 112f, 15f)
-        plugins.addElement("OSRS")
-        plugins.addElement("317")
-        plugins.addElement("Legacy 317")
+        context.plugins.forEach {
+            plugins.addElement(it.getName())
+        }
         plugins.expandButton.style.border.isEnabled = false
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         container.add(plugins)

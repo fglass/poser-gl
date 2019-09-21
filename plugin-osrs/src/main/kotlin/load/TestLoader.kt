@@ -10,6 +10,8 @@ import org.displee.CacheLibrary
 
 class TestLoader: ICacheLoader { // TODO: refactor pom
 
+    override fun getName() = "Test"
+
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         println("test1")
         return ArrayList()
