@@ -1,5 +1,3 @@
-package cache.load;
-
 public final class InputStream317 {
 
     public byte payload[];

@@ -4,7 +4,6 @@ import animation.Animation
 import cache.CacheService
 import cache.IndexType
 import cache.ProgressListener
-import cache.load.CacheLoader317
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
@@ -82,11 +81,11 @@ class CachePacker317(private val service: CacheService): CachePacker {
         existingData[1] = ((length ushr 0) and 0xFF).toByte()
 
         val sequence = animation.toSequence(archiveId)
-        val newData = if (service.loader is CacheLoader317) {
-            CachePackerOSRS(service).encodeSequence(sequence)
-        } else {
-            encodeSequence(sequence)
-        }
+        //val newData = if (service.loader is CacheLoader317) { TODO: fix
+          //  CachePackerOSRS(service).encodeSequence(sequence)
+        //} else {
+        val newData = encodeSequence(sequence)
+        //}
 
         // Combine data
         library.getIndex(IndexType.CONFIG.id317)

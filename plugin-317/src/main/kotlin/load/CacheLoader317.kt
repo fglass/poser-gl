@@ -1,22 +1,22 @@
-package cache.load
+package load
 
 import InputStream317
-import cache.IndexType
-import load.ICacheLoader
 import com.google.common.collect.HashMultimap
-import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 
-private val logger = KotlinLogging.logger {}
+const val FRAME_INDEX = 2
+const val CONFIG_INDEX = 0
+const val NPC_INDEX = 2
+const val ITEM_INDEX = 2
+const val SEQUENCE_INDEX = 2
 
-class LegacyCacheLoader317: ICacheLoader {
+class CacheLoader317: ICacheLoader {
+
+    override fun toString() = "317"
 
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
-        val archive = library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.SEQUENCE.id317)
-            .getFile("seq.dat")
-
+        val archive = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).getFile("seq.dat")
         val stream = InputStream317(archive.data)
         val length = stream.readUShort()
         val sequences = ArrayList<SequenceDefinition>()
@@ -27,6 +27,7 @@ class LegacyCacheLoader317: ICacheLoader {
         return sequences
     }
 
+    // OSRS decoding
     private fun decodeSequence(def: SequenceDefinition, stream: InputStream317): SequenceDefinition {
         while (true) {
             when (stream.readUnsignedByte()) {
@@ -34,13 +35,18 @@ class LegacyCacheLoader317: ICacheLoader {
                 1 -> {
                     val length = stream.readUShort()
                     def.frameIDs = IntArray(length)
+                    def.frameLenghts = IntArray(length)
+
                     for (i in 0 until length) {
-                        def.frameIDs[i] = stream.readInt()
+                        def.frameLenghts[i] = stream.readUShort()
                     }
 
-                    def.frameLenghts = IntArray(length)
                     for (i in 0 until length) {
-                        def.frameLenghts[i] = stream.readUnsignedByte()
+                        def.frameIDs[i] = stream.readUShort()
+                    }
+
+                    for (i in 0 until length) {
+                        def.frameIDs[i] += stream.readUShort() shl 16
                     }
                 }
                 2 -> def.frameStep = stream.readUShort()
@@ -60,22 +66,35 @@ class LegacyCacheLoader317: ICacheLoader {
                 9 -> def.precedenceAnimating = stream.readUnsignedByte()
                 10 -> def.priority = stream.readUnsignedByte()
                 11 -> def.replyMode = stream.readUnsignedByte()
-                12 -> stream.readInt()
+                12 -> {
+                    val length = stream.readUnsignedByte()
+                    for (i in 0 until length) {
+                        stream.readUShort()
+                    }
+
+                    for (i in 0 until length) {
+                        stream.readUShort()
+                    }
+                }
+                13 -> {
+                    val length = stream.readUnsignedByte()
+                    for (i in 0 until length) {
+                        stream.readUTriByte()
+                    }
+                }
             }
         }
     }
 
     override fun loadFrameArchives(library: CacheLibrary): HashMultimap<Int, FrameDefinition> {
         val frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
-        val frameIndex = IndexType.FRAME.id317
-
-        for (i in 0..library.getIndex(frameIndex).lastArchive.id) {
-            val file = library.getIndex(frameIndex).getArchive(i).getFile(0)
+        for (i in 0..library.getIndex(FRAME_INDEX).lastArchive.id) {
+            val file = library.getIndex(FRAME_INDEX).getArchive(i).getFile(0)
             if (file.data.isNotEmpty()) {
                 try {
                     decodeFrameArchive(i, file.data, frames)
                 } catch (e: ArrayIndexOutOfBoundsException) {
-                    logger.error { "Archive $i could not be fully loaded" }
+                    //logger.error { "Archive $i could not be fully loaded" } TODO
                 }
             }
         }
@@ -182,12 +201,8 @@ class LegacyCacheLoader317: ICacheLoader {
 
     override fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition> {
         val entities = HashMap<Int, NpcDefinition>()
-        val npcIdx = library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.NPC.id317)
-            .getFile("npc.idx")
-        val npcArchive = library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.NPC.id317)
-            .getFile("npc.dat")
+        val npcIdx = library.getIndex(CONFIG_INDEX).getArchive(NPC_INDEX).getFile("npc.idx")
+        val npcArchive = library.getIndex(CONFIG_INDEX).getArchive(NPC_INDEX).getFile("npc.dat")
 
         val idxStream = InputStream317(npcIdx.data)
         val total = idxStream.readUShort()
@@ -303,12 +318,8 @@ class LegacyCacheLoader317: ICacheLoader {
 
     override fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition> {
         val items = HashMap<Int, ItemDefinition>()
-        val itemIdx = library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.ITEM.id317)
-            .getFile("obj.idx")
-        val itemArchive = library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.ITEM.id317)
-            .getFile("obj.dat")
+        val itemIdx = library.getIndex(CONFIG_INDEX).getArchive(ITEM_INDEX).getFile("obj.idx")
+        val itemArchive = library.getIndex(CONFIG_INDEX).getArchive(ITEM_INDEX).getFile("obj.dat")
 
         val idxStream = InputStream317(itemIdx.data)
         val total = idxStream.readUShort()
