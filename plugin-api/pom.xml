@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>PoserGL</groupId>
-    <artifactId>plugin-osrs</artifactId>
+    <artifactId>plugin-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -52,14 +52,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>PoserGL</groupId>
-            <artifactId>plugin-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.Displee</groupId>
             <artifactId>RS-Cache-Library</artifactId>
             <version>master-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.runelite</groupId>
+            <artifactId>cache</artifactId>
+            <version>1.5.25-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -73,5 +73,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
 </project>

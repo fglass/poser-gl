@@ -1,6 +1,7 @@
 package cache.load
 
 import cache.IndexType
+import load.ICacheLoader
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
@@ -11,8 +12,6 @@ import org.displee.CacheLibrary
 class CacheLoader317: ICacheLoader {
 
     private val originalLoader = LegacyCacheLoader317()
-
-    override fun getName() = "317"
 
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(IndexType.CONFIG.id317)

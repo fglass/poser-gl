@@ -1,4 +1,4 @@
-package cache.load
+package load
 
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition
@@ -6,10 +6,9 @@ import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
+import java.util.*
 
 interface ICacheLoader {
-
-    fun getName(): String
 
     fun loadSequences(library: CacheLibrary): List<SequenceDefinition>
 

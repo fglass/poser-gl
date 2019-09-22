@@ -11,18 +11,16 @@ import gui.component.Dialog
 import gui.component.ProgressDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import load.ICacheLoader
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
-import com.google.inject.Guice
 import java.util.HashSet
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
 
 private val logger = KotlinLogging.logger {}
-
-// TODO: plugins & thorough testing
 
 class CacheService(private val context: RenderContext) {
 
@@ -37,20 +35,17 @@ class CacheService(private val context: RenderContext) {
     var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
     var frameMaps = HashMap<Int, HashSet<Int>>()
 
-    fun init(cachePath: String, plugin: String) {
+    fun init(cachePath: String, loader: ICacheLoader) {
         this.cachePath = cachePath
-        val injector = Guice.createInjector(LoadModule())
-        val processor = injector.getInstance(PluginProcessor::class.java)
-        loader = processor.getPlugin(plugin)?: return
-
+        this.loader = loader
         try {
             val library = CacheLibrary(cachePath)
             load(library)
             library.close()
             osrs = library.isOSRS
-            logger.info { "Loaded cache $cachePath with $plugin plugin" }
+            logger.info { "Loaded cache $cachePath with $loader plugin" }
         } catch (e: Exception) {
-            logger.error(e) { "Failed to load cache $cachePath with $plugin plugin" }
+            logger.error(e) { "Failed to load cache $cachePath with $loader plugin" }
         }
     }
 

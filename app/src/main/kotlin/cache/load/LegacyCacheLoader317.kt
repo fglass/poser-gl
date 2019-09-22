@@ -1,6 +1,7 @@
 package cache.load
 
 import cache.IndexType
+import load.ICacheLoader
 import com.google.common.collect.HashMultimap
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
@@ -9,8 +10,6 @@ import org.displee.CacheLibrary
 private val logger = KotlinLogging.logger {}
 
 class LegacyCacheLoader317: ICacheLoader {
-
-    override fun getName() = "Legacy 317"
 
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(IndexType.CONFIG.id317)

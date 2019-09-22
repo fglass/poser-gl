@@ -1,6 +1,6 @@
 package cache
 
-enum class IndexType(val idOsrs: Int, val id317: Int) {
+enum class IndexType(val idOsrs: Int, val id317: Int) {  // TODO: remove
     // Indices
     FRAME(0, 2),
     FRAME_MAP(1, 2),

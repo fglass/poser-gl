@@ -1,6 +1,7 @@
 package gui.component
 
 import gui.GuiManager
+import load.ICacheLoader
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.MouseClickEvent
@@ -17,7 +18,7 @@ class StartDialog(private val context: RenderContext):
       Dialog("", "Backup your cache before making changes", context, 260f, 177f) {
 
     private lateinit var cache: TextInput
-    private lateinit var plugins: SelectBox<String>
+    private lateinit var plugins: SelectBox<ICacheLoader>
     private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
     private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
     private val loadIcon = BufferedImage(SPRITE_PATH + "load.png")
@@ -81,7 +82,7 @@ class StartDialog(private val context: RenderContext):
 
         plugins = SelectBox(76f, 150f, 112f, 15f)
         context.plugins.forEach {
-            plugins.addElement(it.getName())
+            plugins.addElement(it)
         }
         plugins.expandButton.style.border.isEnabled = false
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }

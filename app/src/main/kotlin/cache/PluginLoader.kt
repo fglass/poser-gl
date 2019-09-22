@@ -1,6 +1,6 @@
 package cache
 
-import cache.load.ICacheLoader
+import load.ICacheLoader
 import java.io.File
 import java.net.URLClassLoader
 import java.util.ServiceLoader
@@ -8,7 +8,7 @@ import java.util.ServiceLoader
 object PluginLoader {
 
     fun load(): List<ICacheLoader> {
-        val path = File("/Users/fred/Documents/PoserGL/app/plugins") // TODO
+        val path = File("./plugins")
         val jars = path.listFiles { _, name -> name.endsWith(".jar") }?: return emptyList()
         val urls = jars.map { it.toURI().toURL() }
 
