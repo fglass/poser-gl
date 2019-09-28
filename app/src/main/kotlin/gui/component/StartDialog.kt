@@ -1,7 +1,9 @@
 package gui.component
 
+import api.ICacheLoader
 import gui.GuiManager
-import load.ICacheLoader
+import render.SPRITE_PATH
+import render.VERSION
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.MouseClickEvent
@@ -10,8 +12,6 @@ import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import render.RenderContext
-import render.SPRITE_PATH
-import render.VERSION
 import util.FileDialog
 
 class StartDialog(private val context: RenderContext):
@@ -81,7 +81,7 @@ class StartDialog(private val context: RenderContext):
         container.add(pluginLabel)
 
         plugins = SelectBox(76f, 150f, 112f, 15f)
-        context.plugins.forEach {
+        context.loaders.forEach {
             plugins.addElement(it)
         }
         plugins.expandButton.style.border.isEnabled = false

@@ -62,7 +62,7 @@ class RenderContext {
     val cacheService = CacheService(this)
     val importManager = ImportManager(this)
     val exportManager = ExportManager(this)
-    val plugins = PluginLoader.load()
+    val loaders = PluginLoader.getLoaders()
 
     val modelParser = ModelParser()
     var entity: Entity? = null
@@ -130,7 +130,7 @@ class RenderContext {
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartDialog(this).show(frame)
-        logger.info { "Loaded ${plugins.size} plugins" }
+        logger.info { "Loaded ${loaders.size} plugins" }
 
         // Render loop
         while (running) {

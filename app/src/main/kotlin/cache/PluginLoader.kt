@@ -1,21 +1,21 @@
 package cache
 
-import load.ICacheLoader
+import api.ICacheLoader
 import java.io.File
 import java.net.URLClassLoader
 import java.util.ServiceLoader
 
 object PluginLoader {
 
-    fun load(): List<ICacheLoader> {
+    fun getLoaders(): List<ICacheLoader> {
         val path = File("./plugins")
         val jars = path.listFiles { _, name -> name.endsWith(".jar") }?: return emptyList()
         val urls = jars.map { it.toURI().toURL() }
 
         val classLoader = URLClassLoader.newInstance(urls.toTypedArray(), Thread.currentThread().contextClassLoader)
         val serviceLoader = ServiceLoader.load(ICacheLoader::class.java, classLoader)
-        val plugins = serviceLoader.asSequence().toList()
+        val loaders = serviceLoader.asSequence().toList()
         classLoader.close()
-        return plugins
+        return loaders.sortedBy { it.toString() }
     }
 }

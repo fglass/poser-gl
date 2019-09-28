@@ -1,4 +1,4 @@
-package load
+package api
 
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.FrameDefinition

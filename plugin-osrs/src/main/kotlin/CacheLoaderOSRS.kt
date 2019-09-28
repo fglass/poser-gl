@@ -1,6 +1,5 @@
-package load
-
 import com.google.common.collect.HashMultimap
+import api.ICacheLoader
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition

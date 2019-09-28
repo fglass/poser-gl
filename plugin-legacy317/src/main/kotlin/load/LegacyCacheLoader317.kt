@@ -1,6 +1,7 @@
 package load
 
-import InputStream317
+import api.ICacheLoader
+import api.InputStream317
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary

@@ -11,7 +11,7 @@ import gui.component.Dialog
 import gui.component.ProgressDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import load.ICacheLoader
+import api.ICacheLoader
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
