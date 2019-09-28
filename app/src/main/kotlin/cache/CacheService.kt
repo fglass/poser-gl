@@ -22,7 +22,7 @@ private val logger = KotlinLogging.logger {}
 
 class CacheService(private val context: RenderContext) {
 
-    var cachePath = ""
+    var path = ""
     var osrs = true
     var loaded = false
     lateinit var loader: ICacheLoader
@@ -34,19 +34,19 @@ class CacheService(private val context: RenderContext) {
     var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
     var frameMaps = HashMap<Int, HashSet<Int>>()
 
-    fun init(cachePath: String, loader: ICacheLoader) {
-        this.cachePath = cachePath
+    fun init(path: String, loader: ICacheLoader) {
+        this.path = path
         this.loader = loader
         packer = context.packers.first { it.toString() == loader.toString() }
 
         try {
-            val library = CacheLibrary(cachePath)
+            val library = CacheLibrary(path)
             load(library)
             library.close()
             osrs = library.isOSRS
-            logger.info { "Loaded cache $cachePath with $loader plugin" }
+            logger.info { "Loaded cache $path with $loader plugin" }
         } catch (e: Exception) {
-            logger.error(e) { "Failed to load cache $cachePath with $loader plugin" }
+            logger.error(e) { "Failed to load cache $path with $loader plugin" }
         }
     }
 
@@ -113,9 +113,9 @@ class CacheService(private val context: RenderContext) {
         entities[player.id] = player
     }
 
-    fun loadModelDefinition(component: EntityComponent): ModelDefinition {
-        val library = CacheLibrary(cachePath)
-        val modelIndex = if (osrs) IndexType.MODEL.idOsrs else IndexType.MODEL.id317
+    fun loadModelDefinition(component: EntityComponent): ModelDefinition { // TODO: move to plugins
+        val library = CacheLibrary(path)
+        val modelIndex = if (osrs) 7 else 1
 
         val model = library.getIndex(modelIndex).getArchive(component.id).getFile(0)
         val def = ModelLoader().load(component.id, model.data)
@@ -130,27 +130,27 @@ class CacheService(private val context: RenderContext) {
     }
 
     fun getMaxFrameArchive(library: CacheLibrary): Int {
-        val frameIndex = if (osrs) IndexType.FRAME.idOsrs else IndexType.FRAME.id317
+        val frameIndex = if (osrs) 0 else 2
         return library.getIndex(frameIndex).lastArchive.id
     }
 
-    fun pack() { // TODO: reloading packing error
+    fun pack() { // TODO: packing error on reload
         val animation = context.animationHandler.currentAnimation?: return
         if (animation.modified) {
-            val progress = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...",
+            val dialog = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...",
                                           context, 230f, 92f)
-            val listener = ProgressListener(progress)
-            progress.display()
+            val listener = ProgressListener(dialog)
+            dialog.display()
 
             // Asynchronously pack animation
-            val library = CacheLibrary(cachePath)
+            val library = CacheLibrary(path)
             GlobalScope.launch {
                 try {
                     val archiveId = getMaxFrameArchive(library) + 1
                     val maxAnimationId = animations.keys.max()?: return@launch
                     packer.packAnimation(animation, archiveId, library, listener, maxAnimationId)
 
-                    progress.finish(animation.sequence.id)
+                    dialog.finish(animation.sequence.id)
                     animation.modified = false
                     context.gui.listPanel.animationList.updateElement(animation)
                 } catch (e: Exception) {

@@ -24,7 +24,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
         container.add(archiveLabel)
 
         val archiveId = if (animation.modified) {
-            val library = CacheLibrary(context.cacheService.cachePath)
+            val library = CacheLibrary(context.cacheService.path)
             val newId = context.cacheService.getMaxFrameArchive(library) + 1
             library.close()
             newId
