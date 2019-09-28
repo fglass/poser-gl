@@ -1,40 +1,35 @@
-package cache.pack
-
-import animation.Animation
-import cache.CacheService
-import cache.IndexType
-import cache.ProgressListener
+import api.IAnimation
+import api.ICachePacker
+import api.ProgressListenerWrapper
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
-class CachePacker317(private val service: CacheService): CachePacker {
+class CachePackerLegacy317: ICachePacker {
 
-    override fun packAnimation(animation: Animation, listener: ProgressListener) {
-        val library = CacheLibrary(service.cachePath)
+    override fun toString() = "Legacy 317"
+
+    override fun packAnimation(animation: IAnimation, archiveId: Int, library: CacheLibrary,
+                               listener: ProgressListenerWrapper, maxAnimationId: Int) {
+
         val file = encodeAnimation(animation)
-
-        val frameIndex = IndexType.FRAME.id317
-        val newArchiveId = service.getMaxFrameArchive(library) + 1
-
-        library.getIndex(frameIndex).addArchive(newArchiveId)
-        library.getIndex(frameIndex).getArchive(newArchiveId).addFile(0, file)
-        library.getIndex(frameIndex).update(listener)
-
-        packSequence(animation, newArchiveId, listener, library)
+        library.getIndex(FRAME_INDEX).addArchive(archiveId)
+        library.getIndex(FRAME_INDEX).getArchive(archiveId).addFile(0, file)
+        library.getIndex(FRAME_INDEX).update(listener)
+        packSequence(animation, archiveId, library, listener, maxAnimationId)
         library.close()
     }
 
-    fun encodeAnimation(animation: Animation): ByteArray {
+    private fun encodeAnimation(animation: IAnimation): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMap = animation.keyframes.first().frameMap
+        val frameMap = animation.getKeyframes().first().getFrameMapDef()
         os.write(encodeFrameMap(frameMap))
 
-        val modified = animation.keyframes.filter { it.modified }
+        val modified = animation.getKeyframes().filter { it.isModified() }
         os.writeShort(modified.size)
 
         for ((i, keyframe) in modified.withIndex()) { // To decrement keyframe id
@@ -48,7 +43,6 @@ class CachePacker317(private val service: CacheService): CachePacker {
     private fun encodeFrameMap(def: FramemapDefinition): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
-
         os.writeShort(def.length)
 
         for (i in 0 until def.length) {
@@ -60,8 +54,8 @@ class CachePacker317(private val service: CacheService): CachePacker {
         }
 
         for (i in 0 until def.length) {
-            for (j in 0 until def.frameMaps[i].size) {
-                os.writeShort(def.frameMaps[i][j])
+            for (j in def.frameMaps[i]) {
+                os.writeShort(j)
             }
         }
 
@@ -69,30 +63,22 @@ class CachePacker317(private val service: CacheService): CachePacker {
         return out.toByteArray()
     }
 
-    private fun packSequence(animation: Animation, archiveId: Int, listener: ProgressListener, library: CacheLibrary) {
+    private fun packSequence(animation: IAnimation, archiveId: Int, library: CacheLibrary,
+                             listener: ProgressListenerWrapper, maxAnimationId: Int) {
         listener.change(0.0, "Packing sequence definition...")
-        val existingData = library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.SEQUENCE.id317)
-            .getFile("seq.dat").data
+        val existingData = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).getFile("seq.dat").data
 
-        val length = service.animations.keys.max()!! + 1
         // Change length
+        val length = maxAnimationId + 1
         existingData[0] = ((length ushr 8) and 0xFF).toByte()
         existingData[1] = ((length ushr 0) and 0xFF).toByte()
 
         val sequence = animation.toSequence(archiveId)
-        //val newData = if (service.loader is CacheLoader317) { TODO: fix
-          //  CachePackerOSRS(service).encodeSequence(sequence)
-        //} else {
         val newData = encodeSequence(sequence)
-        //}
 
         // Combine data
-        library.getIndex(IndexType.CONFIG.id317)
-            .getArchive(IndexType.SEQUENCE.id317)
-            .addFile("seq.dat", existingData + newData)
-
-        library.getIndex(IndexType.CONFIG.id317).update(listener)
+        library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).addFile("seq.dat", existingData + newData)
+        library.getIndex(CONFIG_INDEX).update(listener)
     }
 
     private fun encodeSequence(sequence: SequenceDefinition): ByteArray {

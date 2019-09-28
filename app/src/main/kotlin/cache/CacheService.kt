@@ -2,9 +2,6 @@ package cache
 
 import render.RenderContext
 import animation.Animation
-import cache.load.*
-import cache.pack.CachePacker317
-import cache.pack.CachePackerOSRS
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import gui.component.Dialog
@@ -12,6 +9,7 @@ import gui.component.ProgressDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import api.ICacheLoader
+import api.ICachePacker
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
@@ -24,10 +22,11 @@ private val logger = KotlinLogging.logger {}
 
 class CacheService(private val context: RenderContext) {
 
-    lateinit var loader: ICacheLoader
     var cachePath = ""
     var osrs = true
     var loaded = false
+    lateinit var loader: ICacheLoader
+    lateinit var packer: ICachePacker
 
     var entities = HashMap<Int, NpcDefinition>()
     var items = HashMap<Int, ItemDefinition>()
@@ -38,6 +37,8 @@ class CacheService(private val context: RenderContext) {
     fun init(cachePath: String, loader: ICacheLoader) {
         this.cachePath = cachePath
         this.loader = loader
+        packer = context.packers.first { it.toString() == loader.toString() }
+
         try {
             val library = CacheLibrary(cachePath)
             load(library)
@@ -82,23 +83,26 @@ class CacheService(private val context: RenderContext) {
         val sequences = loader.loadSequences(library)
         sequences.forEach {
             if (it.frameIDs != null) {
-                animations[it.id] = Animation(context, it)
-                addFrameMap(it)
+                val animation = Animation(context, it)
+                animations[it.id] = animation
+                addFrameMap(animation)
             } else {
                 logger.info { "Sequence ${it.id} contains no frames" }
             }
         }
     }
 
-    fun addFrameMap(sequence: SequenceDefinition) {
-        val archiveId = sequence.frameIDs.first() ushr 16
-        val frames = frames[archiveId]
-
-        if (frames.isNotEmpty()) {
-            val frameMap = frames.first().framemap
-            frameMaps.putIfAbsent(frameMap.id, HashSet())
-            frameMaps[frameMap.id]?.add(sequence.id)
+    fun addFrameMap(animation: Animation) {
+        val frameMap = when {
+            animation.keyframes.isNotEmpty() -> animation.getFrameMap()
+            else -> {
+                val archiveId = animation.sequence.frameIDs.first() ushr 16
+                val frames = frames[archiveId]
+                frames.firstOrNull()?.framemap?: return
+            }
         }
+        frameMaps.putIfAbsent(frameMap.id, HashSet())
+        frameMaps[frameMap.id]?.add(animation.sequence.id)
     }
 
     private fun addPlayer() {
@@ -130,7 +134,7 @@ class CacheService(private val context: RenderContext) {
         return library.getIndex(frameIndex).lastArchive.id
     }
 
-    fun pack() {
+    fun pack() { // TODO: reloading packing error
         val animation = context.animationHandler.currentAnimation?: return
         if (animation.modified) {
             val progress = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...",
@@ -139,15 +143,20 @@ class CacheService(private val context: RenderContext) {
             progress.display()
 
             // Asynchronously pack animation
-            val packer = if (osrs) CachePackerOSRS(this) else CachePacker317(this)
+            val library = CacheLibrary(cachePath)
             GlobalScope.launch {
                 try {
-                    packer.packAnimation(animation, listener)
+                    val archiveId = getMaxFrameArchive(library) + 1
+                    val maxAnimationId = animations.keys.max()?: return@launch
+                    packer.packAnimation(animation, archiveId, library, listener, maxAnimationId)
+
                     progress.finish(animation.sequence.id)
                     animation.modified = false
                     context.gui.listPanel.animationList.updateElement(animation)
                 } catch (e: Exception) {
                     logger.error(e) { "Pack exception encountered" }
+                } finally {
+                    library.close()
                 }
             }
         } else {

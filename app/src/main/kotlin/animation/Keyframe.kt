@@ -1,5 +1,6 @@
 package animation
 
+import api.IKeyframe
 import render.RenderContext
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.ModelDefinition.*
@@ -8,7 +9,7 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
 class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
-               val frameMap: FramemapDefinition = FramemapDefinition()) {
+               val frameMap: FramemapDefinition = FramemapDefinition()): IKeyframe {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {
@@ -48,11 +49,7 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
-    fun encode(): ByteArray {
-        return encode(-1, true) // OSRS only
-    }
-
-    fun encode(id: Int, osrs: Boolean): ByteArray {
+    override fun encode(id: Int, osrs: Boolean): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
@@ -110,5 +107,13 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         val y = if (transformation.delta.y != 0) 2 else 0
         val z = if (transformation.delta.z != 0) 4 else 0
         return x or y or z
+    }
+
+    override fun isModified(): Boolean {
+        return modified
+    }
+
+    override fun getFrameMapDef(): FramemapDefinition {
+        return frameMap
     }
 }

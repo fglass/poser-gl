@@ -1,44 +1,40 @@
-package cache.pack
-
-import animation.Animation
-import cache.CacheService
-import cache.IndexType
-import cache.ProgressListener
+import api.IAnimation
+import api.ICachePacker
+import api.ProgressListenerWrapper
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
-class CachePackerOSRS(private val service: CacheService): CachePacker {
+class CachePackerOSRS: ICachePacker {
 
-    override fun packAnimation(animation: Animation, listener: ProgressListener) {
-        val library = CacheLibrary(service.cachePath)
-        val frameIndex = IndexType.FRAME.idOsrs
-        val newArchiveId = service.getMaxFrameArchive(library) + 1
-        library.getIndex(frameIndex).addArchive(newArchiveId)
+    override fun toString() = "OSRS"
 
+    override fun packAnimation(animation: IAnimation, archiveId: Int, library: CacheLibrary,
+                               listener: ProgressListenerWrapper, maxAnimationId: Int) {
+
+        library.getIndex(FRAME_INDEX).addArchive(archiveId)
         var modified = 0 // To decrement keyframe id's if necessary
-        animation.keyframes.forEach {
-            if (it.modified) {
-                library.getIndex(frameIndex).getArchive(newArchiveId).addFile(modified++, it.encode())
+        animation.getKeyframes().forEach {
+            if (it.isModified()) {
+                library.getIndex(FRAME_INDEX).getArchive(archiveId).addFile(modified++, it.encode())
             }
         }
-        library.getIndex(frameIndex).update(listener)
+        library.getIndex(FRAME_INDEX).update(listener)
 
-        packSequence(animation, newArchiveId, listener, library)
+        packSequence(animation, archiveId, library, listener)
         library.close()
     }
 
-    private fun packSequence(animation: Animation, archiveId: Int, listener: ProgressListener, library: CacheLibrary) {
+    private fun packSequence(animation: IAnimation, archiveId: Int, library: CacheLibrary,
+                             listener: ProgressListenerWrapper) {
+
         listener.change(0.0, "Packing sequence definition...")
         val sequence = animation.toSequence(archiveId)
         val data = encodeSequence(sequence)
 
-        library.getIndex(IndexType.CONFIG.idOsrs)
-            .getArchive(IndexType.SEQUENCE.idOsrs)
-            .addFile(sequence.id, data)
-
-        library.getIndex(IndexType.CONFIG.idOsrs).update(listener)
+        library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).addFile(sequence.id, data)
+        library.getIndex(CONFIG_INDEX).update(listener)
     }
 
     private fun encodeSequence(sequence: SequenceDefinition): ByteArray {

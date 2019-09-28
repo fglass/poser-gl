@@ -10,7 +10,7 @@ class ProgressDialog(title: String, message: String, context: RenderContext, wid
 
     init {
         isCloseable = false
-        progressBar.value = 0f
+        progressBar.value = 0f // TODO: add border
         container.add(progressBar)
     }
 

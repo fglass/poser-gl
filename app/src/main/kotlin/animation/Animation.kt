@@ -1,5 +1,7 @@
 package animation
 
+import api.IAnimation
+import api.IKeyframe
 import render.RenderContext
 import gui.component.Dialog
 import mu.KotlinLogging
@@ -14,13 +16,14 @@ import kotlin.math.min
 private val logger = KotlinLogging.logger {}
 const val ITEM_OFFSET = 512
 
-class Animation(private val context: RenderContext, var sequence: SequenceDefinition) {
+class Animation(private val context: RenderContext, var sequence: SequenceDefinition): IAnimation {
 
     // Copy constructor
     constructor(newId: Int, animation: Animation): this(animation.context, SequenceDefinition(newId)) {
         animation.keyframes.forEach {
             keyframes.add(Keyframe(it.id, it))
         }
+        sequence.frameIDs = animation.sequence.frameIDs
         sequence.leftHandItem = animation.sequence.leftHandItem
         sequence.rightHandItem = animation.sequence.rightHandItem
         length = calculateLength()
@@ -250,7 +253,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    fun toSequence(archiveId: Int): SequenceDefinition {
+    override fun toSequence(archiveId: Int): SequenceDefinition {
         val sequence = SequenceDefinition(sequence.id)
 
         sequence.leftHandItem = this.sequence.leftHandItem
@@ -271,5 +274,9 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             }
         }
         return sequence
+    }
+
+    override fun getKeyframes(): List<IKeyframe> {
+        return keyframes
     }
 }

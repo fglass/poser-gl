@@ -4,7 +4,6 @@ import render.RenderContext
 import animation.Animation
 import animation.Keyframe
 import animation.ReferenceNode
-import cache.pack.CachePacker317
 import gui.component.DatDialog
 import gui.component.ExportDialog
 import net.runelite.cache.definitions.FramemapDefinition
@@ -96,9 +95,51 @@ class ExportManager(private val context: RenderContext) {
 
     fun exportDat(name: String) {
         val animation = context.animationHandler.currentAnimation ?: return
-        val data = CachePacker317(context.cacheService).encodeAnimation(animation)
+        val data = encodeAnimation317(animation)
         File(name).writeBytes(data)
         dialog.close()
         DatDialog(context, animation).display()
+    }
+
+    private fun encodeAnimation317(animation: Animation): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        val frameMap = animation.keyframes.first().frameMap
+        os.write(encodeFrameMap317(frameMap))
+
+        val modified = animation.keyframes.filter { it.modified }
+        os.writeShort(modified.size)
+
+        for ((i, keyframe) in modified.withIndex()) { // To decrement keyframe id
+            os.write(keyframe.encode(i, false))
+        }
+
+        os.close()
+        return out.toByteArray()
+    }
+
+    private fun encodeFrameMap317(def: FramemapDefinition): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeShort(def.length)
+
+        for (i in 0 until def.length) {
+            os.writeShort(def.types[i])
+        }
+
+        for (i in 0 until def.length) {
+            os.writeShort(def.frameMaps[i].size)
+        }
+
+        for (i in 0 until def.length) {
+            for (j in def.frameMaps[i]) {
+                os.writeShort(j)
+            }
+        }
+
+        os.close()
+        return out.toByteArray()
     }
 }

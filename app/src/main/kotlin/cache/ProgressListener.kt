@@ -1,9 +1,9 @@
 package cache
 
+import api.ProgressListenerWrapper
 import gui.component.ProgressDialog
-import org.displee.progress.AbstractProgressListener
 
-class ProgressListener(private val dialog: ProgressDialog): AbstractProgressListener() {
+class ProgressListener(private val dialog: ProgressDialog): ProgressListenerWrapper() {
 
     override fun change(percentage: Double, message: String?) {
         dialog.update(percentage.toFloat(), message?: "Packing...")

@@ -62,7 +62,10 @@ class RenderContext {
     val cacheService = CacheService(this)
     val importManager = ImportManager(this)
     val exportManager = ExportManager(this)
-    val loaders = PluginLoader.getLoaders()
+
+    private val plugins = PluginLoader.load()
+    val loaders = plugins.first
+    val packers = plugins.second
 
     val modelParser = ModelParser()
     var entity: Entity? = null

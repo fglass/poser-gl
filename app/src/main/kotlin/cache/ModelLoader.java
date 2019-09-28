@@ -1,10 +1,10 @@
-package cache.load;
+package cache;
 
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.io.InputStream;
 
 /**
- * Originates from RuneLite cache module TODO: clean-up
+ * Originates from RuneLite cache module TODO: clean-up & move to plugins/api
  */
 public class ModelLoader {
 

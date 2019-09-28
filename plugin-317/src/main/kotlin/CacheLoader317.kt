@@ -1,5 +1,3 @@
-package load
-
 import api.ICacheLoader
 import api.InputStream317
 import com.google.common.collect.HashMultimap
@@ -12,9 +10,9 @@ const val NPC_INDEX = 2
 const val ITEM_INDEX = 2
 const val SEQUENCE_INDEX = 2
 
-class LegacyCacheLoader317: ICacheLoader {
+class CacheLoader317: ICacheLoader {
 
-    override fun toString() = "Legacy 317"
+    override fun toString() = "317"
 
     override fun loadSequences(library: CacheLibrary): List<SequenceDefinition> {
         val archive = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).getFile("seq.dat")
@@ -28,6 +26,7 @@ class LegacyCacheLoader317: ICacheLoader {
         return sequences
     }
 
+    // OSRS decoding
     private fun decodeSequence(def: SequenceDefinition, stream: InputStream317): SequenceDefinition {
         while (true) {
             when (stream.readUnsignedByte()) {
@@ -35,13 +34,18 @@ class LegacyCacheLoader317: ICacheLoader {
                 1 -> {
                     val length = stream.readUShort()
                     def.frameIDs = IntArray(length)
+                    def.frameLenghts = IntArray(length)
+
                     for (i in 0 until length) {
-                        def.frameIDs[i] = stream.readInt()
+                        def.frameLenghts[i] = stream.readUShort()
                     }
 
-                    def.frameLenghts = IntArray(length)
                     for (i in 0 until length) {
-                        def.frameLenghts[i] = stream.readUnsignedByte()
+                        def.frameIDs[i] = stream.readUShort()
+                    }
+
+                    for (i in 0 until length) {
+                        def.frameIDs[i] += stream.readUShort() shl 16
                     }
                 }
                 2 -> def.frameStep = stream.readUShort()
@@ -61,7 +65,22 @@ class LegacyCacheLoader317: ICacheLoader {
                 9 -> def.precedenceAnimating = stream.readUnsignedByte()
                 10 -> def.priority = stream.readUnsignedByte()
                 11 -> def.replyMode = stream.readUnsignedByte()
-                12 -> stream.readInt()
+                12 -> {
+                    val length = stream.readUnsignedByte()
+                    for (i in 0 until length) {
+                        stream.readUShort()
+                    }
+
+                    for (i in 0 until length) {
+                        stream.readUShort()
+                    }
+                }
+                13 -> {
+                    val length = stream.readUnsignedByte()
+                    for (i in 0 until length) {
+                        stream.readUTriByte()
+                    }
+                }
             }
         }
     }
@@ -172,7 +191,7 @@ class LegacyCacheLoader317: ICacheLoader {
         }
 
         for (i in 0 until def.length) {
-            for (j in def.frameMaps[i].indices) {
+            for (j in 0 until def.frameMaps[i].size) {
                 def.frameMaps[i][j] = stream.readUShort()
             }
         }
