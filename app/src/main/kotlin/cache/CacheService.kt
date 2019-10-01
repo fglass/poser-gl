@@ -41,9 +41,10 @@ class CacheService(private val context: RenderContext) {
 
         try {
             val library = CacheLibrary(path)
-            load(library)
-            library.close()
             osrs = library.isOSRS
+            load(library)
+            addPlayer()
+            library.close()
             logger.info { "Loaded cache $path with $loader plugin" }
         } catch (e: Exception) {
             logger.error(e) { "Failed to load cache $path with $loader plugin" }
@@ -51,10 +52,8 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun load(library: CacheLibrary) {
-        reset()
         entities = loader.loadNpcDefinitions(library)
-        addPlayer()
-        logger.info { "Loaded ${entities.size} entities" }
+        logger.info { "Loaded ${entities.size} npcs" }
 
         items = loader.loadItemDefinitions(library)
         logger.info { "Loaded ${items.size} items" }
@@ -71,23 +70,18 @@ class CacheService(private val context: RenderContext) {
         loaded = true
     }
 
-    private fun reset() {
-        entities.clear()
-        items.clear()
-        animations.clear()
-        frames.clear()
-        frameMaps.clear()
-    }
-
     private fun loadAnimations(library: CacheLibrary) {
+        animations.clear()
+        frameMaps.clear()
         val sequences = loader.loadSequences(library)
         sequences.forEach {
-            if (it.frameIDs != null) {
-                val animation = Animation(context, it)
-                animations[it.id] = animation
-                addFrameMap(animation)
-            } else {
-                logger.info { "Sequence ${it.id} contains no frames" }
+            when {
+                it.frameIDs != null -> {
+                    val animation = Animation(context, it)
+                    animations[it.id] = animation
+                    addFrameMap(animation)
+                }
+                else -> logger.error { "Sequence ${it.id} contains no frames" }
             }
         }
     }
@@ -129,38 +123,39 @@ class CacheService(private val context: RenderContext) {
         return def
     }
 
-    fun getMaxFrameArchive(library: CacheLibrary): Int {
-        val frameIndex = if (osrs) 0 else 2
-        return library.getIndex(frameIndex).lastArchive.id
-    }
-
     fun pack() { // TODO: packing error on reload
         val animation = context.animationHandler.currentAnimation?: return
         if (animation.modified) {
-            val dialog = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...",
-                                          context, 230f, 92f)
+            val dialog = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...", context)
             val listener = ProgressListener(dialog)
             dialog.display()
-
-            // Asynchronously pack animation
-            val library = CacheLibrary(path)
-            GlobalScope.launch {
-                try {
-                    val archiveId = getMaxFrameArchive(library) + 1
-                    val maxAnimationId = animations.keys.max()?: return@launch
-                    packer.packAnimation(animation, archiveId, library, listener, maxAnimationId)
-
-                    dialog.finish(animation.sequence.id)
-                    animation.modified = false
-                    context.gui.listPanel.animationList.updateElement(animation)
-                } catch (e: Exception) {
-                    logger.error(e) { "Pack exception encountered" }
-                } finally {
-                    library.close()
-                }
-            }
+            invokePacker(animation, listener, dialog)
         } else {
             Dialog("Invalid Operation", "This animation has not been modified yet", context, 260f, 70f).display()
         }
+    }
+
+    private fun invokePacker(animation: Animation, listener: ProgressListener, dialog: ProgressDialog) {
+        val library = CacheLibrary(path)
+        GlobalScope.launch { // Asynchronously pack
+            try {
+                val archiveId = getMaxFrameArchive(library) + 1
+                val maxAnimationId = animations.keys.max()?: throw Exception()  // Only used in 317 plugins
+                packer.packAnimation(animation, archiveId, library, listener, maxAnimationId)
+
+                dialog.finish(animation.sequence.id)
+                animation.modified = false
+                context.gui.listPanel.animationList.updateElement(animation)
+            } catch (e: Exception) {
+                logger.error(e) { "Exception encountered during packing" }
+            } finally {
+                library.close()
+            }
+        }
+    }
+
+    fun getMaxFrameArchive(library: CacheLibrary): Int { // TODO: move to plugins
+        val frameIndex = if (osrs) 0 else 2
+        return library.getIndex(frameIndex).lastArchive.id
     }
 }
