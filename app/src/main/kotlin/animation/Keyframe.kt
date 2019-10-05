@@ -49,7 +49,7 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
     }
 
-    override fun encode(id: Int, osrs: Boolean): ByteArray {
+    override fun encode(id: Int, osrs: Boolean): ByteArray { // TODO: move to plugin
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 

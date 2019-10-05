@@ -24,7 +24,7 @@ class CacheLoaderOSRS: ICacheLoader {
         val maxIndex = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).lastFile.id
 
         for (i in 0..maxIndex) {
-            val file = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).getFile(i) ?: continue
+            val file = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).getFile(i)?: continue
             sequences.add(sequenceLoader.load(file.id, file.data))
         }
         return sequences
@@ -37,7 +37,7 @@ class CacheLoaderOSRS: ICacheLoader {
 
         for (i in 0..library.getIndex(FRAME_INDEX).lastArchive.id) {
             for (j in 0..library.getIndex(FRAME_INDEX).getArchive(i).lastFile.id) {
-                val frameFile = library.getIndex(FRAME_INDEX).getArchive(i).getFile(j) ?: continue
+                val frameFile = library.getIndex(FRAME_INDEX).getArchive(i).getFile(j)?: continue
                 val frameData = frameFile.data
 
                 val frameMapArchiveId = (frameData[0].toInt() and 0xff) shl 8 or (frameData[1].toInt() and 0xff)

@@ -89,11 +89,12 @@ class CacheService(private val context: RenderContext) {
     fun addFrameMap(animation: Animation) {
         val frameMap = when {
             animation.keyframes.isNotEmpty() -> animation.getFrameMap()
-            else -> {
+            animation.sequence.frameIDs.isNotEmpty()  -> {
                 val archiveId = animation.sequence.frameIDs.first() ushr 16
                 val frames = frames[archiveId]
                 frames.firstOrNull()?.framemap?: return
             }
+            else -> return
         }
         frameMaps.putIfAbsent(frameMap.id, HashSet())
         frameMaps[frameMap.id]?.add(animation.sequence.id)

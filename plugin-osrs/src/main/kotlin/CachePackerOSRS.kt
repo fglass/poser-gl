@@ -37,7 +37,7 @@ class CachePackerOSRS: ICachePacker {
         library.getIndex(CONFIG_INDEX).update(listener)
     }
 
-    private fun encodeSequence(sequence: SequenceDefinition): ByteArray {
+    fun encodeSequence(sequence: SequenceDefinition): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
