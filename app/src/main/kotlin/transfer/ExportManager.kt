@@ -97,7 +97,7 @@ class ExportManager(private val context: RenderContext) {
 
     fun exportDat(name: String) {
         val animation = context.animationHandler.currentAnimation ?: return
-        val data = encodeAnimation317(animation)
+        val data = encodeAnimation317(animation) // TODO: use 317 plugin instead
         File(name).writeBytes(data)
         dialog.close()
         DatDialog(context, animation).display()

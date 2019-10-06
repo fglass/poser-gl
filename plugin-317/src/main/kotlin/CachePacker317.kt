@@ -66,19 +66,17 @@ class CachePacker317: ICachePacker {
         val os = DataOutputStream(out)
 
         os.writeShort(id) // TODO: keyframe.id instead?
-        os.writeByte(keyframe.transformations.size)
+        val length = keyframe.transformations.maxBy { it.id }?.id?: -1
+        os.writeByte(length + 1)
 
         // Write transformation values
         var index = 0
         for (transformation in keyframe.transformations) {
-
-            if (index < transformation.id) {
-                repeat(transformation.id - index) {
-                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: refactor?
-                }
-                index = transformation.id
+            // Insert ignored masks to preserve transformation indices
+            repeat(transformation.id - index) {
+                os.writeByte(0)
             }
-            index++
+            index = transformation.id + 1
 
             val mask = getMask(transformation.delta)
             os.writeByte(mask)

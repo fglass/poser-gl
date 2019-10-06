@@ -29,27 +29,25 @@ class CachePackerOSRS: ICachePacker {
         val os = DataOutputStream(out)
 
         os.writeShort(keyframe.frameMap.id)
-        os.writeByte(keyframe.transformations.size)
+        val length = keyframe.transformations.maxBy { it.id }?.id?: -1
+        os.writeByte(length + 1)
 
         // Write masks first
+        var index = 0
         for (transformation in keyframe.transformations) {
-            os.writeByte(getMask(transformation.delta))
+            // Insert ignored masks to preserve transformation indices
+            repeat(transformation.id - index) {
+                os.writeByte(0)
+            }
+            index = transformation.id + 1
+
+            val mask = getMask(transformation.delta)
+            os.writeByte(mask)
         }
 
         // Write transformation values
-        var index = 0
         for (transformation in keyframe.transformations) {
-
-            if (index < transformation.id) {
-                repeat(transformation.id - index) {
-                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: adjust for osrs
-                }
-                index = transformation.id
-            }
-            index++
-
             val mask = getMask(transformation.delta)
-
             if (mask == 0) {
                 continue
             }
