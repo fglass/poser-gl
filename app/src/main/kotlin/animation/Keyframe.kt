@@ -1,15 +1,13 @@
 package animation
 
 import api.IKeyframe
-import render.RenderContext
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.ModelDefinition.*
+import render.RenderContext
 import shader.ShadingType
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
 
 class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
-               val frameMap: FramemapDefinition = FramemapDefinition()): IKeyframe {
+               override val frameMap: FramemapDefinition = FramemapDefinition()): IKeyframe {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {
@@ -23,8 +21,8 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         }
     }
 
-    var modified = false
-    val transformations = ArrayList<Transformation>()
+    override var modified = false
+    override val transformations = ArrayList<Transformation>()
 
     fun apply(context: RenderContext) {
         // Reset from last frame
@@ -47,83 +45,5 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         // Load transformed model
         context.modelParser.cleanUp()
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-    }
-
-    override fun encode(id: Int, osrs: Boolean): ByteArray { // TODO: move to plugin
-        val out = ByteArrayOutputStream()
-        val os = DataOutputStream(out)
-
-        os.writeShort(if (osrs) frameMap.id else id)
-        os.writeByte(transformations.size)
-
-        // Write masks first if OSRS
-        if (osrs) {
-            for (transformation in transformations) {
-                os.writeByte(getMask(transformation))
-            }
-        }
-
-        // Write transformation values
-        var index = 0
-        for (transformation in transformations) {
-
-            if (index < transformation.id) {
-                repeat(transformation.id - index) {
-                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: refactor & for osrs too
-                }
-                index = transformation.id
-            }
-            index++
-
-            val mask = getMask(transformation)
-            if (!osrs) {
-                os.writeByte(mask)
-            }
-
-            if (mask == 0) {
-                continue
-            }
-
-            if (mask and 1 != 0) {
-                writeSmartShort(os, osrs, transformation.delta.x)
-            }
-
-            if (mask and 2 != 0) {
-                writeSmartShort(os, osrs, transformation.delta.y)
-            }
-
-            if (mask and 4 != 0) {
-                writeSmartShort(os, osrs, transformation.delta.z)
-            }
-        }
-        os.close()
-        return out.toByteArray()
-    }
-
-    private fun writeSmartShort(os: DataOutputStream, osrs: Boolean, value: Int) {
-        if (!osrs) {
-            os.writeShort(value) // TODO: slightly off as readShort2 not readShort
-            return
-        }
-        if (value >= -64 && value < 64) {
-            os.writeByte(value + 64)
-        } else if (value >= -16384 && value < 16384) {
-            os.writeShort(value + 49152)
-        }
-    }
-
-    private fun getMask(transformation: Transformation): Int {
-        val x = if (transformation.delta.x != 0) 1 else 0
-        val y = if (transformation.delta.y != 0) 2 else 0
-        val z = if (transformation.delta.z != 0) 4 else 0
-        return x or y or z
-    }
-
-    override fun isModified(): Boolean {
-        return modified
-    }
-
-    override fun getFrameMapDef(): FramemapDefinition {
-        return frameMap
     }
 }

@@ -31,7 +31,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
     }
 
     var modified = false
-    val keyframes = ArrayList<Keyframe>()
+    override val keyframes = ArrayList<Keyframe>()
     var length = 0
 
     fun load() {
@@ -216,7 +216,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
         val index = context.animationHandler.getFrameIndex(this)
         val first = keyframes[index]
-        val second = keyframes[index + 1]
+        val second = keyframes[index + 1] // TODO: index out of bounds? and prevent between different frame maps
 
         val largest = if (first.transformations.size > second.transformations.size) first else second
         val smallest = if (largest == first) second else first
@@ -283,9 +283,5 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             }
         }
         return sequence
-    }
-
-    override fun getKeyframes(): List<IKeyframe> {
-        return keyframes
     }
 }

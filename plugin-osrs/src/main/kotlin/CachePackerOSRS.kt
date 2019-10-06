@@ -1,6 +1,4 @@
-import api.IAnimation
-import api.ICachePacker
-import api.ProgressListenerWrapper
+import api.*
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
 import java.io.ByteArrayOutputStream
@@ -15,15 +13,69 @@ class CachePackerOSRS: ICachePacker {
 
         library.getIndex(FRAME_INDEX).addArchive(archiveId)
         var modified = 0 // To decrement keyframe id's if necessary
-        animation.getKeyframes().forEach {
-            if (it.isModified()) {
-                library.getIndex(FRAME_INDEX).getArchive(archiveId).addFile(modified++, it.encode())
+        animation.keyframes.forEach {
+            if (it.modified) {
+                library.getIndex(FRAME_INDEX).getArchive(archiveId).addFile(modified++, encodeKeyframe(it))
             }
         }
         library.getIndex(FRAME_INDEX).update(listener)
 
         packSequence(animation, archiveId, library, listener)
         library.close()
+    }
+
+    private fun encodeKeyframe(keyframe: IKeyframe): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeShort(keyframe.frameMap.id)
+        os.writeByte(keyframe.transformations.size)
+
+        // Write masks first
+        for (transformation in keyframe.transformations) {
+            os.writeByte(getMask(transformation.delta))
+        }
+
+        // Write transformation values
+        var index = 0
+        for (transformation in keyframe.transformations) {
+
+            if (index < transformation.id) {
+                repeat(transformation.id - index) {
+                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: adjust for osrs
+                }
+                index = transformation.id
+            }
+            index++
+
+            val mask = getMask(transformation.delta)
+
+            if (mask == 0) {
+                continue
+            }
+
+            if (mask and 1 != 0) {
+                writeSmartShort(os, transformation.delta.x)
+            }
+
+            if (mask and 2 != 0) {
+                writeSmartShort(os, transformation.delta.y)
+            }
+
+            if (mask and 4 != 0) {
+                writeSmartShort(os, transformation.delta.z)
+            }
+        }
+        os.close()
+        return out.toByteArray()
+    }
+
+    private fun writeSmartShort(os: DataOutputStream, value: Int) {
+        if (value >= -64 && value < 64) {
+            os.writeByte(value + 64)
+        } else if (value >= -16384 && value < 16384) {
+            os.writeShort(value + 49152)
+        }
     }
 
     private fun packSequence(animation: IAnimation, archiveId: Int, library: CacheLibrary,

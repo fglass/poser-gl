@@ -1,6 +1,4 @@
-import api.IAnimation
-import api.ICachePacker
-import api.ProgressListenerWrapper
+import api.*
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
@@ -26,14 +24,14 @@ class CachePackerLegacy317: ICachePacker {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        val frameMap = animation.getKeyframes().first().getFrameMapDef()
+        val frameMap = animation.keyframes.first().frameMap
         os.write(encodeFrameMap(frameMap))
 
-        val modified = animation.getKeyframes().filter { it.isModified() }
+        val modified = animation.keyframes.filter { it.modified }
         os.writeShort(modified.size)
 
         for ((i, keyframe) in modified.withIndex()) { // To decrement keyframe id
-            os.write(keyframe.encode(i, false))
+            os.write(encodeKeyframe(keyframe, i))
         }
 
         os.close()
@@ -59,6 +57,48 @@ class CachePackerLegacy317: ICachePacker {
             }
         }
 
+        os.close()
+        return out.toByteArray()
+    }
+
+    private fun encodeKeyframe(keyframe: IKeyframe, id: Int): ByteArray {
+        val out = ByteArrayOutputStream()
+        val os = DataOutputStream(out)
+
+        os.writeShort(id) // TODO: keyframe.id instead?
+        os.writeByte(keyframe.transformations.size)
+
+        // Write transformation values
+        var index = 0
+        for (transformation in keyframe.transformations) {
+
+            if (index < transformation.id) {
+                repeat(transformation.id - index) {
+                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: refactor?
+                }
+                index = transformation.id
+            }
+            index++
+
+            val mask = getMask(transformation.delta)
+            os.writeByte(mask)
+
+            if (mask == 0) {
+                continue
+            }
+
+            if (mask and 1 != 0) {
+                os.writeShort(transformation.delta.x) // TODO: slightly off as readShort2 not readShort
+            }
+
+            if (mask and 2 != 0) {
+                os.writeShort(transformation.delta.y)
+            }
+
+            if (mask and 4 != 0) {
+                os.writeShort(transformation.delta.z)
+            }
+        }
         os.close()
         return out.toByteArray()
     }

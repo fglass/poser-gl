@@ -1,9 +1,11 @@
 package animation
 
+import api.ITransformation
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Vector3i
 
-open class Transformation(var id: Int, val type: TransformationType, var frameMap: IntArray, var delta: Vector3i) {
+open class Transformation(override var id: Int, val type: TransformationType, var frameMap: IntArray,
+                          override var delta: Vector3i): ITransformation {
 
     constructor(transformation: Transformation): this(
         transformation.id, transformation.type,
