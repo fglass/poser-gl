@@ -1,10 +1,7 @@
 package api
 
 import com.google.common.collect.HashMultimap
-import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.ItemDefinition
-import net.runelite.cache.definitions.NpcDefinition
-import net.runelite.cache.definitions.SequenceDefinition
+import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 import java.util.*
 
@@ -17,4 +14,7 @@ interface ICacheLoader {
     fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition>
 
     fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition>
+
+    fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition
+
 }

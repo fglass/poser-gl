@@ -31,9 +31,8 @@ class EntityHandler(private val context: RenderContext) {
 
     fun process(name: String, size: Int, composition: HashSet<EntityComponent>) {
         val def = when {
-            composition.size == 1 -> {
-                context.cacheService.loadModelDefinition(composition.first())
-            } else -> {
+            composition.size == 1 -> context.cacheService.loadModelDefinition(composition.first())
+            else -> {
                 val defs = ArrayList<ModelDefinition>()
                 composition.forEach { defs.add(context.cacheService.loadModelDefinition(it)) }
                 merge(defs)

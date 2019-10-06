@@ -1,20 +1,20 @@
 import com.google.common.collect.HashMultimap
 import api.ICacheLoader
-import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.ItemDefinition
-import net.runelite.cache.definitions.NpcDefinition
-import net.runelite.cache.definitions.SequenceDefinition
+import net.runelite.cache.definitions.*
 import net.runelite.cache.definitions.loaders.*
 import org.displee.CacheLibrary
 
 const val FRAME_INDEX = 0
 const val FRAME_MAP_INDEX = 1
 const val CONFIG_INDEX = 2
+const val MODEL_INDEX = 7
 const val NPC_INDEX = 9
 const val ITEM_INDEX = 10
 const val SEQUENCE_INDEX = 12
 
 class CacheLoaderOSRS: ICacheLoader {
+
+    private val modelLoader = ModelLoader()
 
     override fun toString() = "OSRS"
 
@@ -79,5 +79,10 @@ class CacheLoaderOSRS: ICacheLoader {
             }
         }
         return items
+    }
+
+    override fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition {
+        val model = library.getIndex(MODEL_INDEX).getArchive(modelId).getFile(0)
+        return modelLoader.load(modelId, model.data)
     }
 }

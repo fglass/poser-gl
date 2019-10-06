@@ -101,26 +101,23 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun addPlayer() {
-        val player = NpcDefinition(-1)
+        val player = NpcDefinition(-1) // TODO: reorder
         player.name = "Player"
         player.walkAnimation = 819
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
     }
 
-    fun loadModelDefinition(component: EntityComponent): ModelDefinition { // TODO: move to plugins
+    fun loadModelDefinition(component: EntityComponent): ModelDefinition {
         val library = CacheLibrary(path)
-        val modelIndex = if (osrs) 7 else 1
-
-        val model = library.getIndex(modelIndex).getArchive(component.id).getFile(0)
-        val def = ModelLoader().load(component.id, model.data)
+        val def = loader.loadModelDefinition(library, component.id)
+        library.close()
 
         if (component.originalColours != null && component.newColours != null) {
             for (i in component.originalColours.indices) {
                 def.recolor(component.originalColours[i], component.newColours[i])
             }
         }
-        library.close()
         return def
     }
 

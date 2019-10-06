@@ -2,15 +2,19 @@ import api.ICacheLoader
 import api.InputStream317
 import com.google.common.collect.HashMultimap
 import net.runelite.cache.definitions.*
+import net.runelite.cache.definitions.loaders.ModelLoader
 import org.displee.CacheLibrary
 
-const val FRAME_INDEX = 2
 const val CONFIG_INDEX = 0
+const val FRAME_INDEX = 2
+const val MODEL_INDEX = 1
 const val NPC_INDEX = 2
 const val ITEM_INDEX = 2
 const val SEQUENCE_INDEX = 2
 
 class CacheLoader317: ICacheLoader {
+
+    private val modelLoader = ModelLoader()
 
     override fun toString() = "317"
 
@@ -430,5 +434,10 @@ class CacheLoader317: ICacheLoader {
             else if (opCode == 115)
                 def.team = stream.readUnsignedByte()
         }
+    }
+
+    override fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition {
+        val model = library.getIndex(MODEL_INDEX).getArchive(modelId).getFile(0)
+        return modelLoader.load(modelId, model.data)
     }
 }
