@@ -64,7 +64,17 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         }
 
         // Write transformation values
+        var index = 0
         for (transformation in transformations) {
+
+            if (index < transformation.id) {
+                repeat(transformation.id - index) {
+                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: refactor & for osrs too
+                }
+                index = transformation.id
+            }
+            index++
+
             val mask = getMask(transformation)
             if (!osrs) {
                 os.writeByte(mask)
@@ -92,7 +102,7 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
 
     private fun writeSmartShort(os: DataOutputStream, osrs: Boolean, value: Int) {
         if (!osrs) {
-            os.writeShort(value)
+            os.writeShort(value) // TODO: slightly off as readShort2 not readShort
             return
         }
         if (value >= -64 && value < 64) {

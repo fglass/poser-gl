@@ -9,21 +9,25 @@ class TestCodec {
 
     @BeforeAll
     fun before() {
-        library = CacheLibrary("/Users/fred/Documents/PoserGL/repository/cache") // TODO: test cache
+        library = CacheLibrary("/Users/fred/Documents/PoserGL/repository/cache") // TODO: need?
     }
 
     @Test
-    fun `sequence decoding matches encoding`() {
-        val file = library.getIndex(CONFIG_INDEX).getArchive(SEQUENCE_INDEX).getFile(14)
-        val decoded = file.data
+    fun `sequence encoding consistent`() {
+        val id = 1
+        val raw = byteArrayOf(
+            1, 0, 11, 0, 4, 0, 4, 0, 10, 0, 4, 0, 10, 0, 2, 0, 6, 0, 4, 0, 3, 0, 2, 0, 4, 0, -101, 0, -98, 0, -97, 0,
+            -96, 0, -95, 0, -94, 0, -93, 0, -92, 0, -91, 0, -100, 0, -99, 0, -23, 0, -23, 0, -23, 0, -23, 0, -23, 0,
+            -23, 0, -23, 0, -23, 0, -23, 0, -23, 0, -23, 0
+        )
 
-        val sequence = SequenceLoader().load(file.id, decoded)
+        val sequence = SequenceLoader().load(id, raw)
         val encoded = CachePackerOSRS().encodeSequence(sequence)
-        Assertions.assertArrayEquals(decoded, encoded)
+        Assertions.assertArrayEquals(raw, encoded)
     }
 
     @Test
-    fun `keyframe decoding matches encoding`() {
+    fun `keyframe encoding consistent`() {
         // TODO
     }
 

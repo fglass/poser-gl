@@ -83,26 +83,26 @@ class LegacyCacheLoader317: ICacheLoader {
         val stream = InputStream317(data)
         val frameMap = decodeFrameMap(stream)
 
-        val fileLength = stream.readUShort()
+        val nFrames = stream.readUShort()
         val indexFrameIds = IntArray(500)
         val scratchTranslatorX = IntArray(500)
         val scratchTranslatorY = IntArray(500)
         val scratchTranslatorZ = IntArray(500)
 
-        repeat(fileLength) {
+        repeat(nFrames) {
             val frameIndex = stream.readUShort()
             val def = FrameDefinition()
             def.id = frameIndex
-            frameMap.id = frameIndex
+            frameMap.id = frameIndex // TODO: set properly?
             def.framemap = frameMap
 
-            val length = stream.readUnsignedByte()
+            val nTransformations = stream.readUnsignedByte()
             var lastI = -1
             var index = 0
 
-            for (i in 0 until length) {
-                val type = stream.readUnsignedByte()
-                if (type > 0) {
+            for (i in 0 until nTransformations) {
+                val mask = stream.readUnsignedByte()
+                if (mask > 0) {
                     if (frameMap.types[i] != 0) {
                         for (var10 in i - 1 downTo lastI + 1) {
                             if (frameMap.types[var10] == 0) {
@@ -115,24 +115,13 @@ class LegacyCacheLoader317: ICacheLoader {
                             }
                         }
                     }
+
                     indexFrameIds[index] = i
                     val value = if (frameMap.types[i] == 3) 128 else 0
+                    scratchTranslatorX[index] = if ((mask and 1) != 0) stream.readShort2() else value
+                    scratchTranslatorY[index] = if ((mask and 2) != 0) stream.readShort2() else value
+                    scratchTranslatorZ[index] = if ((mask and 4) != 0) stream.readShort2() else value
 
-                    if ((type and 1) != 0) {
-                        scratchTranslatorX[index] = stream.readShort2()
-                    } else {
-                        scratchTranslatorX[index] = value
-                    }
-                    if ((type and 2) != 0) {
-                        scratchTranslatorY[index] = stream.readShort2()
-                    } else {
-                        scratchTranslatorY[index] = value
-                    }
-                    if ((type and 4) != 0) {
-                        scratchTranslatorZ[index] = stream.readShort2()
-                    } else {
-                        scratchTranslatorZ[index] = value
-                    }
                     lastI = i
                     ++index
                 }

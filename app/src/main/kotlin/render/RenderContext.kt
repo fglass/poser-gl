@@ -149,7 +149,7 @@ class RenderContext {
             try {
                 guiRenderer.render(frame, context)
             } catch (e: NullPointerException) {
-                logger.error(e) { "UI render error" }
+                logger.error(e) { "Render error" }
             }
 
             // Render fbo

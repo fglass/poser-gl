@@ -114,8 +114,9 @@ public final class InputStream317 {
     public int readShort2() {
         currentPosition += 2;
         int i = ((payload[currentPosition - 2] & 0xff) << 8) + (payload[currentPosition - 1] & 0xff);
-        if(i > 32767)
+        if (i > 32767) {
             i -= 65537;
+        }
         return i;
     }
 

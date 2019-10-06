@@ -70,7 +70,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             val keyframe = Keyframe(frame.key, sequence.frameIDs[frame.key], sequence.frameLenghts[frame.key], frameMap)
 
             for (id in references) {
-                val type = TransformationType.fromId(frameMap.types[id])?: continue
+                val type = TransformationType.REFERENCE
                 val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame.value, id, type))
                 val reference = ReferenceNode(transformation)
                 reference.findChildren(id, frame.value)
@@ -86,6 +86,15 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             constructSkeleton(keyframe.transformations)
             keyframes.add(keyframe)
         }
+
+
+        /*println("animation ${sequence.id}") TODO: removedebug
+        for (keyframe in keyframes) {
+            println("--- keyframe ${keyframe.id} len ${keyframe.length} fm ${keyframe.frameMap.id} frame ${keyframe.frameId}")
+            for (transformation in keyframe.transformations) {
+                println("transformation ${transformation.id} type ${transformation.type} xyz ${transformation.delta.x} ${transformation.delta.y} ${transformation.delta.z}")
+            }
+        }*/
     }
 
     private fun getDelta(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -253,7 +262,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    override fun toSequence(archiveId: Int): SequenceDefinition {
+    override fun toSequence(archiveId: Int): SequenceDefinition { // TODO: move to plugins
         val sequence = SequenceDefinition(sequence.id)
 
         sequence.leftHandItem = this.sequence.leftHandItem
