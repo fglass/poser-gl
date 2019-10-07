@@ -88,7 +88,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
 
 
-        /*println("animation ${sequence.id}") TODO: removedebug
+        /*println("animation ${sequence.id}") //TODO: remove debug
         for (keyframe in keyframes) {
             println("--- keyframe ${keyframe.id} len ${keyframe.length} fm ${keyframe.frameMap.id} frame ${keyframe.frameId}")
             for (transformation in keyframe.transformations) {

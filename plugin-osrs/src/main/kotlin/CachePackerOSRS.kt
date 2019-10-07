@@ -8,10 +8,12 @@ class CachePackerOSRS: ICachePacker {
 
     override fun toString() = "OSRS"
 
-    override fun packAnimation(animation: IAnimation, archiveId: Int, library: CacheLibrary,
+    override fun packAnimation(animation: IAnimation, library: CacheLibrary,
                                listener: ProgressListenerWrapper, maxAnimationId: Int) {
 
+        val archiveId = getMaxFrameArchive(library) + 1
         library.getIndex(FRAME_INDEX).addArchive(archiveId)
+
         var modified = 0 // To decrement keyframe id's if necessary
         animation.keyframes.forEach {
             if (it.modified) {
@@ -23,6 +25,8 @@ class CachePackerOSRS: ICachePacker {
         packSequence(animation, archiveId, library, listener)
         library.close()
     }
+
+    override fun getMaxFrameArchive(library: CacheLibrary) = library.getIndex(FRAME_INDEX).lastArchive.id
 
     private fun encodeKeyframe(keyframe: IKeyframe): ByteArray {
         val out = ByteArrayOutputStream()

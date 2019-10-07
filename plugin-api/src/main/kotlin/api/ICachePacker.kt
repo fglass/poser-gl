@@ -2,7 +2,10 @@ package api
 
 import org.displee.CacheLibrary
 
-interface ICachePacker {
-    fun packAnimation(animation: IAnimation, archiveId: Int, library: CacheLibrary, listener: ProgressListenerWrapper,
+interface ICachePacker { // TODO: just encoding methods instead?
+
+    fun packAnimation(animation: IAnimation, library: CacheLibrary, listener: ProgressListenerWrapper,
                       maxAnimationId: Int)
+
+    fun getMaxFrameArchive(library: CacheLibrary): Int
 }

@@ -9,9 +9,10 @@ class CachePacker317: ICachePacker {
 
     override fun toString() = "317"
 
-    override fun packAnimation(animation: IAnimation, archiveId: Int, library: CacheLibrary,
+    override fun packAnimation(animation: IAnimation, library: CacheLibrary,
                                listener: ProgressListenerWrapper, maxAnimationId: Int) {
 
+        val archiveId = getMaxFrameArchive(library) + 1
         val file = encodeAnimation(animation)
         library.getIndex(FRAME_INDEX).addArchive(archiveId)
         library.getIndex(FRAME_INDEX).getArchive(archiveId).addFile(0, file)
@@ -19,6 +20,8 @@ class CachePacker317: ICachePacker {
         packSequence(animation, archiveId, library, listener, maxAnimationId)
         library.close()
     }
+
+    override fun getMaxFrameArchive(library: CacheLibrary) = library.getIndex(FRAME_INDEX).lastArchive.id
 
     private fun encodeAnimation(animation: IAnimation): ByteArray {
         val out = ByteArrayOutputStream()

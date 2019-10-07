@@ -23,7 +23,7 @@ private val logger = KotlinLogging.logger {}
 class CacheService(private val context: RenderContext) {
 
     var path = ""
-    var osrs = true
+    var osrs = true // TODO: remove
     var loaded = false
     lateinit var loader: ICacheLoader
     lateinit var packer: ICachePacker
@@ -37,14 +37,14 @@ class CacheService(private val context: RenderContext) {
     fun init(path: String, loader: ICacheLoader) {
         this.path = path
         this.loader = loader
-        packer = context.packers.first { it.toString() == loader.toString() }
+        packer = context.packers.first { it.toString() == loader.toString() } // TODO: couple better
 
         try {
             val library = CacheLibrary(path)
             osrs = library.isOSRS
             load(library)
-            addPlayer()
             library.close()
+            addPlayer()
             logger.info { "Loaded cache $path with $loader plugin" }
         } catch (e: Exception) {
             logger.error(e) { "Failed to load cache $path with $loader plugin" }
@@ -121,7 +121,7 @@ class CacheService(private val context: RenderContext) {
         return def
     }
 
-    fun pack() { // TODO: packing error on reload
+    fun pack() {
         val animation = context.animationHandler.currentAnimation?: return
         if (animation.modified) {
             val dialog = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...", context)
@@ -135,11 +135,10 @@ class CacheService(private val context: RenderContext) {
 
     private fun invokePacker(animation: Animation, listener: ProgressListener, dialog: ProgressDialog) {
         val library = CacheLibrary(path)
-        GlobalScope.launch { // Asynchronously pack
+        GlobalScope.launch {
             try {
-                val archiveId = getMaxFrameArchive(library) + 1
                 val maxAnimationId = animations.keys.max()?: throw Exception()  // Only used in 317 plugins
-                packer.packAnimation(animation, archiveId, library, listener, maxAnimationId)
+                packer.packAnimation(animation, library, listener, maxAnimationId)
 
                 dialog.finish(animation.sequence.id)
                 animation.modified = false
@@ -150,10 +149,5 @@ class CacheService(private val context: RenderContext) {
                 library.close()
             }
         }
-    }
-
-    fun getMaxFrameArchive(library: CacheLibrary): Int { // TODO: move to plugins
-        val frameIndex = if (osrs) 0 else 2
-        return library.getIndex(frameIndex).lastArchive.id
     }
 }
