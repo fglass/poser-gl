@@ -222,6 +222,10 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
         val first = keyframes[index]
         val second = keyframes[index + 1]
+        if (first.frameMap.id != second.frameMap.id) {
+            Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
+            return
+        }
 
         val largest = if (first.transformations.size > second.transformations.size) first else second
         val smallest = if (largest == first) second else first
