@@ -208,15 +208,20 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
     }
 
-    fun interpolateKeyframes() {
+    fun interpolateKeyframes() { // TODO: prevent animation copy
         if (keyframes.size < 2) {
             Dialog("Invalid Operation", "Insufficient number of keyframes", context, 200f, 70f).display()
             return
         }
 
         val index = context.animationHandler.getFrameIndex(this)
+        if (index >= keyframes.size - 1) {
+            Dialog("Invalid Operation", "No subsequent keyframe to interpolate with", context, 250f, 70f).display()
+            return
+        }
+
         val first = keyframes[index]
-        val second = keyframes[index + 1] // TODO: index out of bounds? and prevent between different frame maps
+        val second = keyframes[index + 1]
 
         val largest = if (first.transformations.size > second.transformations.size) first else second
         val smallest = if (largest == first) second else first
@@ -262,9 +267,8 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    override fun toSequence(archiveId: Int): SequenceDefinition { // TODO: move to plugins
+    override fun toSequence(archiveId: Int): SequenceDefinition {
         val sequence = SequenceDefinition(sequence.id)
-
         sequence.leftHandItem = this.sequence.leftHandItem
         sequence.rightHandItem = this.sequence.rightHandItem
 

@@ -2,7 +2,7 @@ import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.io.InputStream;
 
 /**
- * Originates from RuneLite cache module TODO: clean-up
+ * Originates from RuneLite cache module
  */
 public class ModelLoader317 {
 
