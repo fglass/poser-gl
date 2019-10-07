@@ -4,7 +4,7 @@ import api.ICacheLoader
 import api.ICachePacker
 import java.io.File
 import java.net.URLClassLoader
-import java.util.ServiceLoader
+import java.util.*
 
 object PluginLoader {
 

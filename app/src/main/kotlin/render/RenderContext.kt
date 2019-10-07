@@ -38,6 +38,7 @@ import util.VSyncTimer
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import util.MatrixCreator
 import java.lang.Boolean.TRUE
+import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.3"
@@ -133,7 +134,13 @@ class RenderContext {
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartDialog(this).show(frame)
-        logger.info { "Loaded ${loaders.size} plugins" }
+
+        if (loaders.isEmpty() || packers.isEmpty()) {
+            logger.error { "No plugins found" }
+            exitProcess(1)
+        } else {
+            logger.info { "Loaded ${loaders.size} plugins" }
+        }
 
         // Render loop
         while (running) {
