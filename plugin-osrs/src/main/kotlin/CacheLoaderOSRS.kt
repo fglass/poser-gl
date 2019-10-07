@@ -14,7 +14,7 @@ const val SEQUENCE_INDEX = 12
 
 class CacheLoaderOSRS: ICacheLoader {
 
-    private val modelLoader = ModelLoader()
+    private val modelLoader = ModelLoaderOSRS()
 
     override fun toString() = "OSRS"
 

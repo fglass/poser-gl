@@ -1,14 +1,12 @@
-package cache;
-
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.io.InputStream;
 
 /**
- * Originates from RuneLite cache module TODO: clean-up & move to plugins/api
+ * Originates from RuneLite cache module TODO: clean-up
  */
-public class ModelLoader {
+public class ModelLoader317 {
 
-    public ModelLoader() { }
+    public ModelLoader317() { }
 
     public ModelDefinition load(int modelId, byte[] b) {
         ModelDefinition def = new ModelDefinition();
