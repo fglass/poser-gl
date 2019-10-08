@@ -7,6 +7,8 @@ import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
 import gui.component.StartDialog
+import java.lang.Boolean.TRUE
+import kotlin.system.exitProcess
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Matrix4f
@@ -25,6 +27,7 @@ import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
+import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
@@ -35,10 +38,7 @@ import transfer.ExportManager
 import transfer.ImportManager
 import util.MouseButtonHandler
 import util.VSyncTimer
-import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import util.MatrixCreator
-import java.lang.Boolean.TRUE
-import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.3"

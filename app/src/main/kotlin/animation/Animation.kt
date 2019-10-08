@@ -1,7 +1,6 @@
 package animation
 
 import api.IAnimation
-import api.IKeyframe
 import render.RenderContext
 import gui.component.Dialog
 import mu.KotlinLogging
@@ -86,7 +85,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             constructSkeleton(keyframe.transformations)
             keyframes.add(keyframe)
         }
-
 
         /*println("animation ${sequence.id}") //TODO: remove debug
         for (keyframe in keyframes) {
