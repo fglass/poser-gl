@@ -34,7 +34,7 @@ class ExportManager(private val context: RenderContext) {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        os.writeByte(if (context.cacheService.osrs) 1 else 0) // Revision byte
+        os.writeByte(0) // Revision byte (0, 1) for backwards compatibility
         os.writeShort(animation.keyframes.size)
 
         for (keyframe in animation.keyframes) {

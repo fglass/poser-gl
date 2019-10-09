@@ -23,7 +23,6 @@ private val logger = KotlinLogging.logger {}
 class CacheService(private val context: RenderContext) {
 
     var path = ""
-    var osrs = true // TODO: remove
     var loaded = false
     lateinit var loader: ICacheLoader
     lateinit var packer: ICachePacker
@@ -41,7 +40,6 @@ class CacheService(private val context: RenderContext) {
 
         try {
             val library = CacheLibrary(path)
-            osrs = library.isOSRS
             load(library)
             library.close()
             addPlayer()
