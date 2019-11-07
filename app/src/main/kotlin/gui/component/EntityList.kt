@@ -10,7 +10,7 @@ class EntityList(context: RenderContext): ElementList() {
 
     init {
         var index = 0
-        for (entity in entities.values) {
+        for (entity in entities.values.sortedBy { it.id }) {
             val element = EntityElement(entity, context, listX, listY + index++ * listYOffset)
             element.addClickListener()
             elements[entity.id] = element
