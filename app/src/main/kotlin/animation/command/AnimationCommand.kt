@@ -1,6 +1,6 @@
 package animation.command
 
-interface KeyframeCommand {
+interface AnimationCommand {
 
     fun execute()
 

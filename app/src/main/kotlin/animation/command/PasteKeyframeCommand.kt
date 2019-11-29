@@ -4,7 +4,7 @@ import animation.Keyframe
 import gui.component.Dialog
 import render.RenderContext
 
-class PasteKeyframeCommand(private val context: RenderContext) : KeyframeCommand {
+class PasteKeyframeCommand(private val context: RenderContext) : AnimationCommand {
 
     override fun execute() {
         val copied = context.animationHandler.copiedFrame

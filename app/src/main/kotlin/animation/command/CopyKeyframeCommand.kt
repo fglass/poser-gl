@@ -3,7 +3,7 @@ package animation.command
 import gui.component.Dialog
 import render.RenderContext
 
-class CopyKeyframeCommand(private val context: RenderContext) : KeyframeCommand {
+class CopyKeyframeCommand(private val context: RenderContext) : AnimationCommand {
 
     override fun execute() {
         val animation = context.animationHandler.getAnimation(useCurrent = true)?: return
