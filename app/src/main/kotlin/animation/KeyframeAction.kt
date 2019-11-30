@@ -18,8 +18,9 @@ enum class KeyframeAction(private val reference: KFunction1<RenderContext, Comma
 
     fun apply(context: RenderContext) {
         val command = reference.invoke(context)
-        command.execute()
-        context.animationHandler.history.add(command)
+        if (command.execute()) {
+            context.animationHandler.history.add(command)
+        }
     }
 
     val icon = BufferedImage("$SPRITE_PATH$iconName.png")

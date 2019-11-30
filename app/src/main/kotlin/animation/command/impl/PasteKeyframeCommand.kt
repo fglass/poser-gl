@@ -9,24 +9,25 @@ class PasteKeyframeCommand(private val context: RenderContext) : Command {
 
     private var insertedIndex = UNSET
 
-    override fun execute() {
+    override fun execute(): Boolean {
         val copied = context.animationHandler.copiedFrame
         if (copied.id == UNSET) {
-            return
+            return false
         }
 
         if (copied.frameMap.id != context.animationHandler.currentAnimation?.getFrameMap()?.id) {
             Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
-            return
+            return false
         }
 
-        val animation = context.animationHandler.getAnimationOrCopy()?: return
+        val animation = context.animationHandler.getAnimationOrCopy()?: return false
 
         if (insertedIndex == UNSET) {
             insertedIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
         }
         val keyframe = Keyframe(animation.keyframes.size, copied) // Copy here to avoid shared references
         animation.insertKeyframe(keyframe, insertedIndex)
+        return true
     }
 
     override fun unexecute() {

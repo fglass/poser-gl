@@ -11,24 +11,24 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
     private var insertedIndex = UNSET
 
-    override fun execute() {
-        val animation = context.animationHandler.currentAnimation ?: return
+    override fun execute(): Boolean {
+        val animation = context.animationHandler.currentAnimation ?: return false
         if (animation.keyframes.size <= 1) {
             Dialog("Invalid Operation", "Insufficient number of keyframes", context, 200f, 70f).display()
-            return
+            return false
         }
 
         val index = context.animationHandler.getCurrentFrameIndex(animation)
         if (index >= animation.keyframes.size - 1) {
             Dialog("Invalid Operation", "No subsequent keyframe to interpolate with", context, 250f, 70f).display()
-            return
+            return false
         }
 
         val first = animation.keyframes[index]
         val second = animation.keyframes[index + 1]
         if (first.frameMap.id != second.frameMap.id) {
             Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
-            return
+            return false
         }
 
         val largest = if (first.transformations.size > second.transformations.size) first else second
@@ -42,6 +42,7 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
         insertedIndex = index + 1
         context.animationHandler.getAnimationOrCopy()?.insertKeyframe(keyframe, insertedIndex)
+        return true
     }
 
     override fun unexecute() {
