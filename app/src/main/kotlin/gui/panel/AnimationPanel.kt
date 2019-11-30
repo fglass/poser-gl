@@ -157,7 +157,7 @@ class AnimationPanel(private val context: RenderContext): Panel() {
         val animation = context.animationHandler.currentAnimation?: return
         for ((frameCount, frame) in animation.keyframes.withIndex()) {
             if (timer >= cumulative && timer < cumulative + frame.length) {
-                context.animationHandler.setFrame(frameCount, timer - cumulative)
+                context.animationHandler.setCurrentFrame(frameCount, timer - cumulative)
                 return
             }
             cumulative += frame.length

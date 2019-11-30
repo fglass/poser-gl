@@ -27,8 +27,8 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         modified = true
     }
 
-    var modified = false
     override val keyframes = ArrayList<Keyframe>()
+    var modified = false
     var length = 0
 
     fun load() {
@@ -184,13 +184,13 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         keyframe.modified = true
         length = calculateLength()
 
-        context.animationHandler.setFrame(context.animationHandler.frameCount, 0) // Restart frame
+        context.animationHandler.setCurrentFrame(context.animationHandler.frameCount, 0) // Restart frame
         context.gui.animationPanel.setTimeline()
     }
 
     fun insertKeyframe(keyframe: Keyframe, index: Int) {
         keyframes.add(index, keyframe)
-        context.animationHandler.setFrame(index, 0)
+        context.animationHandler.setCurrentFrame(index, 0)
         updateKeyframes()
     }
 
@@ -199,7 +199,12 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         updateKeyframes()
     }
 
-    fun updateKeyframes() {
+    fun removeKeyframeAt(index: Int) {
+        keyframes.removeAt(index)
+        updateKeyframes()
+    }
+
+    private fun updateKeyframes() {
         context.animationHandler.setPlay(false)
         length = calculateLength()
         context.gui.animationPanel.setTimeline()

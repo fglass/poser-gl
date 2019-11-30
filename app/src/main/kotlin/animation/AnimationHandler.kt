@@ -43,7 +43,7 @@ class AnimationHandler(private val context: RenderContext) {
         }
 
         if (timer > MAX_LENGTH) {
-            setFrame(0, 0) // Restart animation
+            setCurrentFrame(0, 0) // Restart animation
         }
 
         if (playing) {
@@ -128,7 +128,7 @@ class AnimationHandler(private val context: RenderContext) {
         context.gui.animationPanel.menu.updatePlayIcon(playing)
     }
 
-    fun setFrame(frame: Int, offset: Int) {
+    fun setCurrentFrame(frame: Int, offset: Int) {
         val animation = currentAnimation?: return
         frameCount = frame
 

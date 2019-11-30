@@ -7,11 +7,11 @@ import render.RenderContext
 
 class PasteKeyframeCommand(private val context: RenderContext) : Command {
 
-    private lateinit var insertedKeyframe: Keyframe
+    private var insertedIndex = UNSET
 
     override fun execute() {
         val copied = context.animationHandler.copiedFrame
-        if (copied.id == -1) {
+        if (copied.id == UNSET) {
             return
         }
 
@@ -21,14 +21,17 @@ class PasteKeyframeCommand(private val context: RenderContext) : Command {
         }
 
         val animation = context.animationHandler.getAnimationOrCopy()?: return
-        val newIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
-        insertedKeyframe = Keyframe(animation.keyframes.size, copied) // Copy here to avoid shared references
-        animation.insertKeyframe(insertedKeyframe, newIndex)
+
+        if (insertedIndex == UNSET) {
+            insertedIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
+        }
+        val keyframe = Keyframe(animation.keyframes.size, copied) // Copy here to avoid shared references
+        animation.insertKeyframe(keyframe, insertedIndex)
     }
 
     override fun unexecute() {
         val animation = context.animationHandler.currentAnimation ?: return
-        animation.removeKeyframe(insertedKeyframe)
+        animation.removeKeyframeAt(insertedIndex)
     }
 
     override fun reversible() = true

@@ -6,7 +6,8 @@ class CommandHistory : ArrayList<Command>() {
 
     override fun add(element: Command): Boolean {
         if (element.reversible()) {
-            super.add(index++, element) // TODO: replacing
+            super.add(index++, element)
+            removeRange(index, size) // Set new command as head
         }
         return true
     }

@@ -4,21 +4,25 @@ import animation.Keyframe
 import animation.command.Command
 import render.RenderContext
 
+const val UNSET = -1
+
 class AddKeyframeCommand(private val context: RenderContext) : Command {
 
-    private lateinit var insertedKeyframe: Keyframe
+    private var insertedIndex = UNSET
 
     override fun execute() {
         val animation = context.animationHandler.getAnimationOrCopy() ?: return
-        val newIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
+        if (insertedIndex == UNSET) {
+            insertedIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
+        }
 
-        insertedKeyframe = Keyframe(animation.keyframes.size, animation.keyframes[newIndex - 1]) // Copy of previous
-        animation.insertKeyframe(insertedKeyframe, newIndex)
+        val keyframe = Keyframe(animation.keyframes.size, animation.keyframes[insertedIndex - 1]) // Copy of previous
+        animation.insertKeyframe(keyframe, insertedIndex)
     }
 
     override fun unexecute() {
         val animation = context.animationHandler.currentAnimation ?: return
-        animation.removeKeyframe(insertedKeyframe)
+        animation.removeKeyframeAt(insertedIndex)
     }
 
     override fun reversible() = true
