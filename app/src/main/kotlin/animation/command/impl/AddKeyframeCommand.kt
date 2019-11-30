@@ -16,7 +16,7 @@ class AddKeyframeCommand(private val context: RenderContext) : Command {
             insertedIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
         }
 
-        val keyframe = Keyframe(animation.keyframes.size, animation.keyframes[insertedIndex - 1]) // Copy previous TODO: range checks
+        val keyframe = Keyframe(animation.keyframes.size, animation.keyframes[insertedIndex - 1]) // Copy of previous
         animation.insertKeyframe(keyframe, insertedIndex)
     }
 

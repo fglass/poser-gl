@@ -1,10 +1,14 @@
 package animation.command.impl
 
+import animation.Keyframe
 import animation.command.Command
 import gui.component.Dialog
 import render.RenderContext
 
 class DeleteKeyframeCommand(private val context: RenderContext) : Command {
+
+    private lateinit var deletedKeyframe: Keyframe
+    private var removedIndex = UNSET
 
     override fun execute() {
         var animation = context.animationHandler.currentAnimation ?: return
@@ -14,13 +18,18 @@ class DeleteKeyframeCommand(private val context: RenderContext) : Command {
         }
 
         animation = context.animationHandler.getAnimationOrCopy() ?: return
-        val index = context.animationHandler.getCurrentFrameIndex(animation)
-        animation.keyframes.remove(animation.keyframes[index])
+        if (removedIndex == UNSET) {
+            removedIndex = context.animationHandler.getCurrentFrameIndex(animation)
+        }
+
+        deletedKeyframe = animation.keyframes[removedIndex]
+        animation.keyframes.remove(deletedKeyframe)
         animation.updateKeyframes()
     }
 
     override fun unexecute() {
-        println("adding deleted")
+        val animation = context.animationHandler.currentAnimation ?: return
+        animation.insertKeyframe(deletedKeyframe, removedIndex)
     }
 
     override fun reversible() = true
