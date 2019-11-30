@@ -1,5 +1,6 @@
 package animation
 
+import animation.command.CommandHistory
 import render.RenderContext
 import mu.KotlinLogging
 
@@ -9,6 +10,7 @@ private val logger = KotlinLogging.logger {}
 class AnimationHandler(private val context: RenderContext) {
 
     var currentAnimation: Animation? = null
+    val history = CommandHistory()
     var copiedFrame = Keyframe()
     private var previousFrame = Keyframe()
 

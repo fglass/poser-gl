@@ -29,6 +29,8 @@ import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFWKeyCallback
+import org.lwjgl.glfw.GLFWKeyCallbackI
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
@@ -112,6 +114,13 @@ class RenderContext {
 
         val windowCloseCallback = GLFWWindowCloseCallbackI { running = false }
         keeper.chainWindowCloseCallback.add(windowCloseCallback)
+        keeper.chainKeyCallback.add { _, key, _, action, _ -> // TODO: ctrl + c, ctrl + v
+            if (key == GLFW_KEY_U && action == GLFW_RELEASE) {
+                animationHandler.history.undo()
+            } else if (key == GLFW_KEY_R && action == GLFW_RELEASE) {
+                animationHandler.history.redo()
+            }
+        }
 
         val systemEventProcessor = SystemEventProcessor()
         systemEventProcessor.addDefaultCallbacks(keeper)

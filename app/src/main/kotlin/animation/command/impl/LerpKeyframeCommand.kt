@@ -1,12 +1,13 @@
-package animation.command
+package animation.command.impl
 
 import animation.Keyframe
+import animation.command.Command
 import gui.component.Dialog
 import org.joml.Vector3f
 import org.joml.Vector3i
 import render.RenderContext
 
-class InterpolateKeyframeCommand(private val context: RenderContext) : Command {
+class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
     override fun execute() {
         val animation = context.animationHandler.currentAnimation ?: return
@@ -40,8 +41,8 @@ class InterpolateKeyframeCommand(private val context: RenderContext) : Command {
     }
 
     override fun unexecute() {
-        // TODO: delete inserted
+        println("deleting inserted")
     }
 
-    override fun reversible() = false
+    override fun reversible() = true
 }

@@ -1,6 +1,7 @@
-package animation.command
+package animation.command.impl
 
 import animation.Keyframe
+import animation.command.Command
 import render.RenderContext
 
 class AddKeyframeCommand(private val context: RenderContext) : Command {
@@ -13,8 +14,8 @@ class AddKeyframeCommand(private val context: RenderContext) : Command {
     }
 
     override fun unexecute() {
-        // TODO: delete added
+        println("deleting added")
     }
 
-    override fun reversible() = false
+    override fun reversible() = true
 }

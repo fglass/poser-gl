@@ -1,6 +1,7 @@
-package animation.command
+package animation.command.impl
 
 import animation.Keyframe
+import animation.command.Command
 import gui.component.Dialog
 import render.RenderContext
 
@@ -24,7 +25,7 @@ class PasteKeyframeCommand(private val context: RenderContext) : Command {
     }
 
     override fun unexecute() {
-        // TODO: delete inserted
+        println("deleting pasted")
     }
 
     override fun reversible() = true

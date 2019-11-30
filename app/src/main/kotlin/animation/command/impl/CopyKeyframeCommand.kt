@@ -1,5 +1,6 @@
-package animation.command
+package animation.command.impl
 
+import animation.command.Command
 import render.RenderContext
 
 class CopyKeyframeCommand(private val context: RenderContext) : Command {
