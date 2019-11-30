@@ -8,7 +8,7 @@ import render.RenderContext
 class DeleteKeyframeCommand(private val context: RenderContext) : Command {
 
     private lateinit var deletedKeyframe: Keyframe
-    private var removedIndex = UNSET
+    private var removedIndex = -1
 
     override fun execute() {
         var animation = context.animationHandler.currentAnimation ?: return
@@ -18,13 +18,12 @@ class DeleteKeyframeCommand(private val context: RenderContext) : Command {
         }
 
         animation = context.animationHandler.getAnimationOrCopy() ?: return
-        if (removedIndex == UNSET) {
+        if (removedIndex == -1) {
             removedIndex = context.animationHandler.getCurrentFrameIndex(animation)
         }
 
         deletedKeyframe = animation.keyframes[removedIndex]
-        animation.keyframes.remove(deletedKeyframe)
-        animation.updateKeyframes()
+        animation.removeKeyframe(deletedKeyframe)
     }
 
     override fun unexecute() {

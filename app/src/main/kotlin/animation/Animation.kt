@@ -194,8 +194,8 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         updateKeyframes()
     }
 
-    fun removeKeyframeAt(index: Int) {
-        keyframes.removeAt(index)
+    fun removeKeyframe(keyframe: Keyframe) {
+        keyframes.remove(keyframe)
         updateKeyframes()
     }
 

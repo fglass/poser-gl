@@ -9,6 +9,8 @@ import render.RenderContext
 
 class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
+    private lateinit var lerpedKeyframe: Keyframe
+
     override fun execute() {
         val animation = context.animationHandler.currentAnimation ?: return
         if (animation.keyframes.size <= 1) {
@@ -31,17 +33,18 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
         val largest = if (first.transformations.size > second.transformations.size) first else second
         val smallest = if (largest == first) second else first
-        val interpolated = Keyframe(animation.keyframes.size, largest)
+        lerpedKeyframe = Keyframe(animation.keyframes.size, largest)
 
         repeat(smallest.transformations.size) {
             val delta = Vector3f(first.transformations[it].delta).lerp(Vector3f(second.transformations[it].delta), 0.5f)
-            interpolated.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
+            lerpedKeyframe.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
         }
-        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(interpolated, index + 1)
+        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(lerpedKeyframe, index + 1)
     }
 
     override fun unexecute() {
-        println("deleting inserted")
+        val animation = context.animationHandler.currentAnimation ?: return
+        animation.removeKeyframe(lerpedKeyframe)
     }
 
     override fun reversible() = true
