@@ -112,12 +112,15 @@ class RenderContext {
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
 
-        val windowCloseCallback = GLFWWindowCloseCallbackI { running = false }
-        keeper.chainWindowCloseCallback.add(windowCloseCallback)
-        keeper.chainKeyCallback.add { _, key, _, action, _ -> // TODO: ctrl + c, ctrl + v
-            if (key == GLFW_KEY_U && action == GLFW_RELEASE) {
+        keeper.chainWindowCloseCallback.add { running = false }
+        keeper.chainKeyCallback.add { _, key, _, action, mods ->
+            val valid = action == GLFW_PRESS || action == GLFW_REPEAT
+            val mac = System.getProperty("os.name").startsWith("Mac")
+            val ctrl = if (mac) GLFW_MOD_SUPER else GLFW_MOD_CONTROL
+
+            if (valid && mods == ctrl && key == GLFW_KEY_Z) {
                 animationHandler.history.undo()
-            } else if (key == GLFW_KEY_R && action == GLFW_RELEASE) {
+            } else if (valid && mods == ctrl + GLFW_MOD_SHIFT && key == GLFW_KEY_Z) {
                 animationHandler.history.redo()
             }
         }
