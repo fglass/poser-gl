@@ -10,7 +10,7 @@ private val logger = KotlinLogging.logger {}
 class AnimationHandler(private val context: RenderContext) {
 
     var currentAnimation: Animation? = null
-    val history = CommandHistory()
+    val history = CommandHistory() // TODO: clear on animation change
     var copiedFrame = Keyframe()
     private var previousFrame = Keyframe()
 
@@ -49,12 +49,12 @@ class AnimationHandler(private val context: RenderContext) {
         if (playing) {
             if (--frameLength <= 0) { // Traverse frame
                 frameCount++
-                frameLength = animation.keyframes[getFrameIndex(animation)].length
+                frameLength = animation.keyframes[getCurrentFrameIndex(animation)].length
             }
             timer = ++timer % animation.length // Increment timer
         }
 
-        val keyframe = animation.keyframes[getFrameIndex(animation)]
+        val keyframe = animation.keyframes[getCurrentFrameIndex(animation)]
         keyframe.apply(context)
 
         if (keyframe.id != previousFrame.id) {
@@ -63,7 +63,7 @@ class AnimationHandler(private val context: RenderContext) {
         context.gui.animationPanel.tickCursor(timer, animation.length)
     }
 
-    fun getFrameIndex(animation: Animation): Int {
+    fun getCurrentFrameIndex(animation: Animation): Int {
         return frameCount % animation.keyframes.size
     }
 
@@ -83,7 +83,7 @@ class AnimationHandler(private val context: RenderContext) {
         val preCopy = selected.getTransformation(type)?: return
 
         val animation = getAnimationOrCopy()?: return
-        val keyframe = animation.keyframes[getFrameIndex(animation)]
+        val keyframe = animation.keyframes[getCurrentFrameIndex(animation)]
 
         try {
             val transformation = keyframe.transformations.first { it.id == preCopy.id }
@@ -133,7 +133,7 @@ class AnimationHandler(private val context: RenderContext) {
         frameCount = frame
 
         var cumulative = 0
-        val frameIndex = getFrameIndex(animation)
+        val frameIndex = getCurrentFrameIndex(animation)
         repeat(frameIndex) {
             cumulative += animation.keyframes[it].length
         }

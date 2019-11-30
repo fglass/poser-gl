@@ -7,7 +7,7 @@ class CopyKeyframeCommand(private val context: RenderContext) : Command {
 
     override fun execute() {
         val animation = context.animationHandler.currentAnimation ?: return
-        val index = context.animationHandler.getFrameIndex(animation)
+        val index = context.animationHandler.getCurrentFrameIndex(animation)
         val keyframe = animation.keyframes[index]
         context.animationHandler.copiedFrame = keyframe
     }

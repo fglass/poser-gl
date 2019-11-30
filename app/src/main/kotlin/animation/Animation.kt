@@ -2,10 +2,8 @@ package animation
 
 import api.IAnimation
 import render.RenderContext
-import gui.component.Dialog
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
-import org.joml.Vector3f
 import org.joml.Vector3i
 import java.util.*
 import kotlin.collections.ArrayList
@@ -180,7 +178,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
     }
 
     fun changeKeyframeLength(newLength: Int) {
-        val index = context.animationHandler.getFrameIndex(this)
+        val index = context.animationHandler.getCurrentFrameIndex(this)
         val keyframe = keyframes[index]
         keyframe.length = newLength
         keyframe.modified = true
@@ -190,9 +188,14 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    fun insertKeyframe(index: Int, keyframe: Keyframe) {
+    fun insertKeyframe(keyframe: Keyframe, index: Int) {
         keyframes.add(index, keyframe)
         context.animationHandler.setFrame(index, 0)
+        updateKeyframes()
+    }
+
+    fun removeKeyframeAt(index: Int) {
+        keyframes.removeAt(index)
         updateKeyframes()
     }
 

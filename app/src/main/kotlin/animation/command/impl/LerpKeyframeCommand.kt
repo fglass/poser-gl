@@ -16,7 +16,7 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
             return
         }
 
-        val index = context.animationHandler.getFrameIndex(animation)
+        val index = context.animationHandler.getCurrentFrameIndex(animation)
         if (index >= animation.keyframes.size - 1) {
             Dialog("Invalid Operation", "No subsequent keyframe to interpolate with", context, 250f, 70f).display()
             return
@@ -37,7 +37,7 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
             val delta = Vector3f(first.transformations[it].delta).lerp(Vector3f(second.transformations[it].delta), 0.5f)
             interpolated.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
         }
-        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(index + 1, interpolated)
+        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(interpolated, index + 1)
     }
 
     override fun unexecute() {
