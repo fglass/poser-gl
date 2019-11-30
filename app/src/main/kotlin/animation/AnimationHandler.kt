@@ -1,5 +1,6 @@
 package animation
 
+import animation.command.Command
 import animation.command.CommandHistory
 import render.RenderContext
 import mu.KotlinLogging
@@ -10,7 +11,7 @@ private val logger = KotlinLogging.logger {}
 class AnimationHandler(private val context: RenderContext) {
 
     var currentAnimation: Animation? = null
-    val history = CommandHistory() // TODO: clear on animation change
+    val history = CommandHistory()
     var copiedFrame = Keyframe()
     private var previousFrame = Keyframe()
 
@@ -141,6 +142,12 @@ class AnimationHandler(private val context: RenderContext) {
         timer = cumulative + offset
         val keyframe = animation.keyframes[frameIndex]
         frameLength = keyframe.length - offset
+    }
+
+    fun executeCommand(command: Command) {
+        if (command.execute()) {
+            history.add(command)
+        }
     }
 
     fun resetAnimation() {

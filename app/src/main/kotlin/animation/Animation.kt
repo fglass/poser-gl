@@ -131,7 +131,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
     }
 
-    private fun setRootNode() {
+    private fun setRootNode() { // TODO: on copy
         var root: ReferenceNode? = null
         for (transformation in keyframes.first().transformations) {
             if (transformation is ReferenceNode) {
