@@ -25,4 +25,9 @@ class CommandHistory : ArrayList<Command>() {
             command.execute()
         }
     }
+
+    fun reset() {
+        index = 0
+        clear()
+    }
 }

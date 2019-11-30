@@ -158,6 +158,7 @@ class AnimationHandler(private val context: RenderContext) {
         frameLength = 0
         previousFrame = Keyframe()
 
+        history.reset()
         context.nodeRenderer.reset() // TODO: use events
         context.gui.editorPanel.reset()
         context.gui.animationPanel.reset()
