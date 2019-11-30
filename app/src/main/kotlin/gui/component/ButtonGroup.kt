@@ -6,10 +6,10 @@ import org.liquidengine.legui.image.Image
 import util.setSizeLimits
 
 open class ButtonGroup(position: Vector2f, private val iconSize: Vector2f, images: Array<Image> = emptyArray(),
-                       actions: Array<String> = emptyArray()) : Panel() { // TODO: refactor
+                       actions: Array<String> = emptyArray(), private val padding: Int = 2) : Panel() { // TODO: redo
 
     val buttons = ArrayList<ImageButton>()
-    private var containerX = 3f
+    private var containerX = padding + 1f
     private val offset = 3f
 
     init {
@@ -24,7 +24,7 @@ open class ButtonGroup(position: Vector2f, private val iconSize: Vector2f, image
     fun addButton(image: Image, action: String): ImageButton {
         val button = ImageButton(Vector2f(containerX, offset), image, action)
         button.size = iconSize
-        containerX += button.size.x + 2
+        containerX += button.size.x + padding
         button.style.setBorderRadius(1f)
 
         buttons.add(button)

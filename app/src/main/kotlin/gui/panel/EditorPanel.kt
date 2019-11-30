@@ -110,12 +110,18 @@ class EditorPanel(private val context: RenderContext): Panel() {
         selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(selectedNode)
 
-        transformations = ConfigGroup(Vector2f(), Vector2f(24f, 24f),
-            arrayOf(BufferedImage(SPRITE_PATH + "translation.png"), BufferedImage(SPRITE_PATH + "rotation.png"),
-                    BufferedImage(SPRITE_PATH + "scale.png")),
-            arrayOf("Translation", "Rotation", "Scale"))
+        transformations = ConfigGroup(
+            Vector2f(), Vector2f(24f, 24f),
+            arrayOf(
+                BufferedImage("${SPRITE_PATH}translation.png"),
+                BufferedImage("${SPRITE_PATH}rotation.png"),
+                BufferedImage("${SPRITE_PATH}scale.png")
+            ),
+            arrayOf("Translation", "Rotation", "Scale"),
+            padding = 8
+        )
+        transformations.position = Vector2f(32f, 42f)
 
-        transformations.position = Vector2f(43f, 42f)
         for ((i, button) in transformations.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&

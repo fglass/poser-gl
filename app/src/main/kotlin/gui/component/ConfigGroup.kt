@@ -6,8 +6,8 @@ import org.liquidengine.legui.image.Image
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 
-class ConfigGroup(position: Vector2f, iconSize: Vector2f, images: Array<Image>, actions: Array<String>):
-      ButtonGroup(position, iconSize, images, actions) {
+class ConfigGroup(position: Vector2f, iconSize: Vector2f, images: Array<Image>, actions: Array<String>, padding: Int = 2):
+      ButtonGroup(position, iconSize, images, actions, padding) {
 
     init {
         buttons.forEach {
