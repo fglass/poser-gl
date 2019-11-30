@@ -7,6 +7,7 @@ import animation.Keyframe
 import animation.KeyframeAction
 import animation.ReferenceNode
 import animation.TransformationType
+import animation.command.impl.ChangeLengthCommand
 import animation.command.impl.TransformNodeCommand
 import gui.component.ButtonGroup
 import gui.component.ConfigGroup
@@ -30,7 +31,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
     val sliders = ArrayList<TextSlider>()
     private lateinit var selectedFrame: Label
-    private lateinit var frameLength: TextSlider
+    lateinit var frameLength: TextSlider
     private lateinit var selectedNode: Label
     private lateinit var transformations: ConfigGroup
 
@@ -69,8 +70,10 @@ class EditorPanel(private val context: RenderContext): Panel() {
         val length = Label("Length:", 35f, 40f, 50f, 15f)
         framePanel.add(length)
 
-        frameLength = TextSlider({ context.animationHandler.getAnimationOrCopy()?.changeKeyframeLength(it) },
-            1 to 99, 81f, 40f, 51f, 15f)
+        frameLength = TextSlider(
+            { context.animationHandler.executeCommand(ChangeLengthCommand(context, it)) },
+            1 to 99, 81f, 40f, 51f, 15f
+        )
         framePanel.add(frameLength)
 
         val actions = ButtonGroup(Vector2f(23f, 59f), Vector2f(23f, 23f))

@@ -65,34 +65,13 @@ class AnimationHandler(private val context: RenderContext) {
     }
 
     fun getCurrentFrameIndex(animation: Animation): Int {
-        return frameCount % animation.keyframes.size
+        return frameCount % animation.keyframes.size // TODO: use current animation?
     }
 
     private fun onNewFrame(keyframe: Keyframe) {
         context.nodeRenderer.reselectNode()
         context.gui.editorPanel.setKeyframe(keyframe)
         previousFrame = keyframe
-    }
-
-    fun transformNode(coordIndex: Int, newValue: Int) {
-        if (!context.nodeRenderer.enabled) {
-            return
-        }
-
-        val selected = context.nodeRenderer.selectedNode?: return
-        val type = context.nodeRenderer.selectedType
-        val preCopy = selected.getTransformation(type)?: return
-
-        val animation = getAnimationOrCopy()?: return
-        val keyframe = animation.keyframes[getCurrentFrameIndex(animation)]
-
-        try {
-            val transformation = keyframe.transformations.first { it.id == preCopy.id }
-            transformation.delta.setComponent(coordIndex, newValue)
-            keyframe.modified = true
-        } catch (e: NoSuchElementException) {
-            logger.error(e) { "Node ${preCopy.id} does not exist" }
-        }
     }
 
     fun getAnimationOrCopy(): Animation? {

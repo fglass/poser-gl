@@ -29,9 +29,10 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         value.textState.horizontalAlign = HorizontalAlign.CENTER
         value.style.setBorderRadius(0f)
         value.style.focusedStrokeColor = null
+
         value.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                val current = getValue()?: return@addListener
+                val current = getValue() ?: return@addListener
                 val limited = limit(current)
                 if (current != limited) { // Only set if different
                     setValue(limited)
@@ -39,6 +40,7 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
                 onValueChange(limited)
             }
         }
+
         setValue(0)
         add(value)
 

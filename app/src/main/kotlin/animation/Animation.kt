@@ -83,14 +83,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             constructSkeleton(keyframe.transformations)
             keyframes.add(keyframe)
         }
-
-        /*println("animation ${sequence.id}") //TODO: remove debug
-        for (keyframe in keyframes) {
-            println("--- keyframe ${keyframe.id} len ${keyframe.length} fm ${keyframe.frameMap.id} frame ${keyframe.frameId}")
-            for (transformation in keyframe.transformations) {
-                println("transformation ${transformation.id} type ${transformation.type} xyz ${transformation.delta.x} ${transformation.delta.y} ${transformation.delta.z}")
-            }
-        }*/
     }
 
     private fun getDelta(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
@@ -131,7 +123,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
     }
 
-    private fun setRootNode() { // TODO: on copy
+    private fun setRootNode() { // TODO: on copy glitch - call in constructor?
         var root: ReferenceNode? = null
         for (transformation in keyframes.first().transformations) {
             if (transformation is ReferenceNode) {
