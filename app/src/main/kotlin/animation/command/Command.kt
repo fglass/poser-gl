@@ -1,6 +1,6 @@
 package animation.command
 
-interface AnimationCommand {
+interface Command {
 
     fun execute()
 

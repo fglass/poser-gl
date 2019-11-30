@@ -4,12 +4,11 @@ import animation.Keyframe
 import gui.component.Dialog
 import render.RenderContext
 
-class PasteKeyframeCommand(private val context: RenderContext) : AnimationCommand {
+class PasteKeyframeCommand(private val context: RenderContext) : Command {
 
     override fun execute() {
         val copied = context.animationHandler.copiedFrame
         if (copied.id == -1) {
-            Dialog("Invalid Operation", "You have no keyframe copied", context, 200f, 70f).display()
             return
         }
 
@@ -18,7 +17,7 @@ class PasteKeyframeCommand(private val context: RenderContext) : AnimationComman
             return
         }
 
-        val animation = context.animationHandler.getAnimation()?: return
+        val animation = context.animationHandler.getAnimationOrCopy()?: return
         val keyframe = Keyframe(animation.keyframes.size, copied) // Copy after to avoid shared references
         val newIndex = context.animationHandler.getFrameIndex(animation) + 1
         animation.insertKeyframe(newIndex, keyframe)

@@ -68,29 +68,24 @@ class EditorPanel(private val context: RenderContext): Panel() {
         val length = Label("Length:", 35f, 40f, 50f, 15f)
         framePanel.add(length)
 
-        frameLength = TextSlider({ context.animationHandler.getAnimation()?.changeKeyframeLength(it) },
+        frameLength = TextSlider({ context.animationHandler.getAnimationOrCopy()?.changeKeyframeLength(it) },
             1 to 99, 81f, 40f, 51f, 15f)
         framePanel.add(frameLength)
 
-        val actions = ButtonGroup(
-            Vector2f(23f, 59f), Vector2f(23f, 23f), arrayOf(KeyframeAction.ADD.getIcon(false),
-                KeyframeAction.COPY.getIcon(false), KeyframeAction.PASTE.getIcon(false),
-                KeyframeAction.INTERPOLATE.getIcon(false), KeyframeAction.DELETE.getIcon(false)),
-            arrayOf("Add", "Copy" ,"Paste", "Interpolate", "Delete")
-        )
-
-        for ((i, button) in actions.buttons.withIndex()) {
-            val action = KeyframeAction.values()[i]
+        val actions = ButtonGroup(Vector2f(23f, 59f), Vector2f(23f, 23f))
+        KeyframeAction.values().forEach {
+            val button = actions.addButton(it.icon, it.name.toLowerCase().capitalize())
+            button.hoveredIcon = it.hoveredIcon
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                     event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                    action.apply(context)
+                    it.apply(context)
                 }
             }
-            button.hoveredIcon = action.getIcon(true)
         }
         actions.style.background.color = ColorConstants.transparent()
         actions.position = Vector2f(23f, 59f)
+        actions.setSizes()
         framePanel.add(actions)
     }
 

@@ -80,7 +80,7 @@ class AnimationHandler(private val context: RenderContext) {
         val type = context.nodeRenderer.selectedType
         val preCopy = selected.getTransformation(type)?: return
 
-        val animation = getAnimation()?: return
+        val animation = getAnimationOrCopy()?: return
         val keyframe = animation.keyframes[getFrameIndex(animation)]
 
         try {
@@ -92,11 +92,11 @@ class AnimationHandler(private val context: RenderContext) {
         }
     }
 
-    fun getAnimation(useCurrent: Boolean = false): Animation? {
+    fun getAnimationOrCopy(): Animation? {
         val current = currentAnimation?: return null
 
         // Not original animation so no need to copy
-        if (current.modified || useCurrent) {
+        if (current.modified) {
             return current
         }
 

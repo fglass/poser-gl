@@ -1,31 +1,25 @@
 package animation
 
+import animation.command.*
 import render.SPRITE_PATH
 import render.RenderContext
 import org.liquidengine.legui.image.BufferedImage
 import kotlin.reflect.KFunction1
 
-enum class KeyframeAction(private val action: KFunction1<Animation, Unit>, private val iconPath: String,
-                          private val hoveredPath: String) { // TODO: refactor; command pattern
+enum class KeyframeAction(private val commandReference: KFunction1<RenderContext, Command>, iconName: String,
+                          hoveredIconName: String) {
 
-    ADD(Animation::addKeyframe, "add", "add-hovered"),
-    COPY(Animation::copyKeyframe, "copy", "copy-hovered"),
-    PASTE(Animation::pasteKeyframe, "paste", "paste-hovered"),
-    INTERPOLATE(Animation::interpolateKeyframes, "interpolate", "interpolate-hovered"),
-    DELETE(Animation::deleteKeyframe, "trash", "trash-hovered");
+    ADD(::AddKeyframeCommand, "add", "add-hovered"),
+    COPY(::CopyKeyframeCommand, "copy", "copy-hovered"),
+    PASTE(::PasteKeyframeCommand, "paste", "paste-hovered"),
+    INTERPOLATE(::InterpolateKeyframeCommand, "interpolate", "interpolate-hovered"),
+    DELETE(::DeleteKeyframeCommand, "trash", "trash-hovered");
 
     fun apply(context: RenderContext) {
-        val current = context.animationHandler.currentAnimation?: return
-        val useCurrent = this == COPY || this == DELETE && current.keyframes.size <= 1 ||
-                         this == PASTE && context.animationHandler.copiedFrame.id == -1 ||
-                         this == INTERPOLATE && current.keyframes.size < 2
-
-        val animation = context.animationHandler.getAnimation(useCurrent)?: return
-        action.invoke(animation)
+        val command = commandReference.invoke(context)
+        command.execute()
     }
 
-    fun getIcon(hovered: Boolean): BufferedImage {
-        val path = if (hovered) hoveredPath else iconPath
-        return BufferedImage("$SPRITE_PATH$path.png")
-    }
+    val icon = BufferedImage("$SPRITE_PATH$iconName.png")
+    val hoveredIcon = BufferedImage("$SPRITE_PATH$hoveredIconName.png")
 }

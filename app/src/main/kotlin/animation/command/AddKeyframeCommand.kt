@@ -1,14 +1,15 @@
 package animation.command
 
+import animation.Keyframe
 import render.RenderContext
 
-class AddKeyframeCommand(private val context: RenderContext) : AnimationCommand {
+class AddKeyframeCommand(private val context: RenderContext) : Command {
 
     override fun execute() {
-        val animation = context.animationHandler.getAnimation(useCurrent = true)?: return
-        val newIndex = context.animationHandler.getFrameIndex(this) + 1
-        val keyframe = Keyframe(keyframes.size, keyframes[newIndex - 1]) // Copy previous TODO: range checks
-        insertKeyframe(newIndex, keyframe)
+        val animation = context.animationHandler.getAnimationOrCopy()?: return
+        val newIndex = context.animationHandler.getFrameIndex(animation) + 1
+        val keyframe = Keyframe(animation.keyframes.size, animation.keyframes[newIndex - 1]) // Copy previous TODO: range checks
+        animation.insertKeyframe(newIndex, keyframe)
     }
 
     override fun unexecute() {

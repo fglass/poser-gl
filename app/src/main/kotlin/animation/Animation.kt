@@ -179,73 +179,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         return keyframes.first().frameMap
     }
 
-    fun addKeyframe() {
-        val newIndex = context.animationHandler.getFrameIndex(this) + 1
-        val keyframe = Keyframe(keyframes.size, keyframes[newIndex - 1]) // Copy previous
-        insertKeyframe(newIndex, keyframe)
-    }
-
-    fun copyKeyframe() {
-        val index = context.animationHandler.getFrameIndex(this)
-        val keyframe = keyframes[index]
-        context.animationHandler.copiedFrame = keyframe
-        Dialog("Keyframe Action", "Successfully copied keyframe ${keyframe.id}", context, 200f, 70f).display()
-    }
-
-    fun pasteKeyframe() {
-        val copied = context.animationHandler.copiedFrame
-        if (copied.frameMap.id != getFrameMap().id) { // TODO: prevent animation copy
-            Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
-            return
-        }
-
-        if (copied.id != -1) {
-            val keyframe = Keyframe(keyframes.size, copied) // Copy after to avoid shared references
-            val newIndex = context.animationHandler.getFrameIndex(this) + 1
-            insertKeyframe(newIndex, keyframe)
-        }
-    }
-
-    fun interpolateKeyframes() { // TODO: prevent animation copy
-        if (keyframes.size < 2) {
-            Dialog("Invalid Operation", "Insufficient number of keyframes", context, 200f, 70f).display()
-            return
-        }
-
-        val index = context.animationHandler.getFrameIndex(this)
-        if (index >= keyframes.size - 1) {
-            Dialog("Invalid Operation", "No subsequent keyframe to interpolate with", context, 250f, 70f).display()
-            return
-        }
-
-        val first = keyframes[index]
-        val second = keyframes[index + 1]
-        if (first.frameMap.id != second.frameMap.id) {
-            Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
-            return
-        }
-
-        val largest = if (first.transformations.size > second.transformations.size) first else second
-        val smallest = if (largest == first) second else first
-        val interpolated = Keyframe(keyframes.size, largest)
-
-        repeat(smallest.transformations.size) {
-            val delta = Vector3f(first.transformations[it].delta).lerp(Vector3f(second.transformations[it].delta), 0.5f)
-            interpolated.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
-        }
-        insertKeyframe(index + 1, interpolated)
-    }
-
-    fun deleteKeyframe() {
-        if (keyframes.size > 1) {
-            val index = context.animationHandler.getFrameIndex(this)
-            keyframes.remove(keyframes[index])
-            updateKeyframes()
-        } else {
-            Dialog("Invalid Operation", "Unable to delete the last keyframe", context, 200f, 70f).display()
-        }
-    }
-
     fun changeKeyframeLength(newLength: Int) {
         val index = context.animationHandler.getFrameIndex(this)
         val keyframe = keyframes[index]
@@ -257,13 +190,13 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    private fun insertKeyframe(index: Int, keyframe: Keyframe) {
+    fun insertKeyframe(index: Int, keyframe: Keyframe) {
         keyframes.add(index, keyframe)
         context.animationHandler.setFrame(index, 0)
         updateKeyframes()
     }
 
-    private fun updateKeyframes() {
+    fun updateKeyframes() {
         context.animationHandler.setPlay(false)
         length = calculateLength()
         context.gui.animationPanel.setTimeline()
