@@ -86,6 +86,7 @@ class StartDialog(private val context: RenderContext):
         }
         plugins.expandButton.style.border.isEnabled = false
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
+        plugins.visibleCount = 4
         container.add(plugins)
     }
 
