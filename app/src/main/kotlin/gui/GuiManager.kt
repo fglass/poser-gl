@@ -1,9 +1,6 @@
 package gui
 
-import gui.panel.AnimationPanel
-import gui.panel.EditorPanel
-import gui.panel.ListPanel
-import gui.panel.ManagerPanel
+import gui.panel.*
 import org.liquidengine.legui.component.LayerContainer
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.style.Style
@@ -14,6 +11,7 @@ import render.RenderContext
 class GuiManager(context: RenderContext) {
 
     val container: LayerContainer = context.frame.componentLayer.container
+    val menuPanel = MenuPanel(context)
     val listPanel = ListPanel(context)
     val managerPanel = ManagerPanel(context)
     val editorPanel = EditorPanel(context)
@@ -26,17 +24,17 @@ class GuiManager(context: RenderContext) {
         container.style.setBorderRadius(0f)
         container.style.focusedStrokeColor = null
 
-        val topPanel = Panel()
-        topPanel.style.display = Style.DisplayType.FLEX
-        topPanel.style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
-        topPanel.style.setBorderRadius(0f)
-        topPanel.style.focusedStrokeColor = null
-        topPanel.style.border.isEnabled = false
-        topPanel.style.position = Style.PositionType.RELATIVE
-        topPanel.style.flexStyle.flexGrow = 1
+        val mainPanel = Panel()
+        mainPanel.style.display = Style.DisplayType.FLEX
+        mainPanel.style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
+        mainPanel.style.setBorderRadius(0f)
+        mainPanel.style.focusedStrokeColor = null
+        mainPanel.style.border.isEnabled = false
+        mainPanel.style.position = Style.PositionType.RELATIVE
+        mainPanel.style.flexStyle.flexGrow = 1
 
-        topPanel.add(listPanel)
-        topPanel.add(context.framebuffer)
+        mainPanel.add(listPanel)
+        mainPanel.add(context.framebuffer)
 
         val rightPanel = Panel()
         rightPanel.style.display = Style.DisplayType.FLEX
@@ -50,9 +48,10 @@ class GuiManager(context: RenderContext) {
 
         rightPanel.add(managerPanel)
         rightPanel.add(editorPanel)
-        topPanel.add(rightPanel)
+        mainPanel.add(rightPanel)
 
-        container.add(topPanel)
+        container.add(menuPanel)
+        container.add(mainPanel)
         container.add(animationPanel)
     }
 }

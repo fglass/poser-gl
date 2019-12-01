@@ -71,30 +71,6 @@ class AnimationMenu(context: RenderContext): Panel() {
             }
         }
         add(nodeToggle)
-
-        val importButton = addMenuButton("import", context.importManager::import)
-        importButton.style.marginLeft = Auto.AUTO
-        addMenuButton("export", context.exportManager::openDialog)
-        
-        val packButton = addMenuButton("pack", context.cacheService::pack)
-        packButton.style.setMarginRight(10f)
-    }
-
-    private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
-        val button = ImageButton(Vector2f(), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
-        button.hoveredIcon = BufferedImage("$SPRITE_PATH$name-hovered.png")
-
-        button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                action.invoke()
-            }
-        }
-
-        button.setSizeLimits(23f, 23f)
-        button.style.setMarginTop(1f)
-        button.style.position = Style.PositionType.RELATIVE
-        add(button)
-        return button
     }
 
     fun updatePlayIcon(playing: Boolean) {
