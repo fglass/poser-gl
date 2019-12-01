@@ -6,7 +6,6 @@ import render.RenderContext
 import mu.KotlinLogging
 
 const val MAX_LENGTH = 999
-private val logger = KotlinLogging.logger {}
 
 class AnimationHandler(private val context: RenderContext) {
 
@@ -75,7 +74,7 @@ class AnimationHandler(private val context: RenderContext) {
     }
 
     fun getAnimationOrCopy(): Animation? {
-        val current = currentAnimation?: return null
+        val current = currentAnimation ?: return null
 
         // Not original animation so no need to copy
         if (current.modified) {
@@ -86,6 +85,7 @@ class AnimationHandler(private val context: RenderContext) {
         val newIndex = context.cacheService.animations.maxBy { it.key }!!.key + 1
         val copied = Animation(newIndex, current)
         addAnimation(copied)
+        copied.setRootNode()
         return copied
     }
 

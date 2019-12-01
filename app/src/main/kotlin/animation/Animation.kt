@@ -123,11 +123,11 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
     }
 
-    private fun setRootNode() { // TODO: on copy glitch - call in constructor?
+    fun setRootNode() {
         var root: ReferenceNode? = null
         for (transformation in keyframes.first().transformations) {
             if (transformation is ReferenceNode) {
-                val rotation = transformation.getRotation()?: continue
+                val rotation = transformation.getRotation() ?: continue
                 if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
                     root = transformation
                 }
