@@ -22,17 +22,12 @@ class MenuPanel(context: RenderContext): Panel() {
     init {
         style.display = Style.DisplayType.FLEX
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.ROW
-        //style.setBorderRadius(0f)
-        style.focusedStrokeColor = null
-        //style.border.isEnabled = false
         style.position = Style.PositionType.RELATIVE
         style.flexStyle.flexGrow = 1
-        //style.border = SimpleLineBorder(ColorUtil.fromInt(35, 35, 35, 1f), 1f)
-        //style.background.color = ColorConstants.blue()
+        style.focusedStrokeColor = null
         style.background.color = ColorConstants.darkGray()
-        //style.setMarginBottom(1f)
-        setHeightLimit(24f)
         style.setMargin(5f, 5f, 1f, 5f)
+        setHeightLimit(24f)
 
         addMenuButton("pack", context.cacheService::pack)
         addMenuButton("export", context.exportManager::openDialog)

@@ -46,17 +46,17 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
         tooltip.textState.textColor = ColorConstants.white()
         tooltip.style.shadow = null
 
-        val charWidth = if (action.length < 10) 8f else 6f
         val y = 15f
-        tooltip.size = Vector2f(tooltip.textState.length() * charWidth, y)
+        tooltip.size.y = y
         tooltip.position.y -= y
+        updateTooltipWidth()
 
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
             if (event.isEntered) {
                 tooltip.style.display = Style.DisplayType.NONE
                 shiftTooltip()
                 GlobalScope.launch {
-                    delay(900) // Delay displaying
+                    delay(800) // Delay displaying
                     tooltip.style.display = Style.DisplayType.MANUAL
                 }
             }
@@ -72,9 +72,24 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
         val frameWidth = parent.size.x
         val offset = 6f
 
-        val delta = tooltip.absolutePosition.x + tooltip.size.x + offset - frameWidth // Shift if off screen
+        val delta = tooltip.absolutePosition.x + tooltip.size.x + offset - frameWidth // Shift if off right
         if (delta > 0) {
             tooltip.position.x -= delta
         }
+
+        if (tooltip.absolutePosition.y < 0 ) { // Shift if off top
+            tooltip.position.y = image.height / 2f
+        }
+    }
+
+    fun setTooltipText(text: String) {
+        tooltip.textState.text = text
+        updateTooltipWidth()
+    }
+
+    private fun updateTooltipWidth() {
+        val length = tooltip.textState.length()
+        val charWidth = if (length < 10) 8f else 6f
+        tooltip.size.x = length * charWidth
     }
 }

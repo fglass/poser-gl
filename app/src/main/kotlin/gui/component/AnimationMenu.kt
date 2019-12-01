@@ -36,7 +36,7 @@ class AnimationMenu(context: RenderContext): Panel() {
         style.border.isEnabled = false
         style.setBorderRadius(0f)
 
-        play = ImageButton(Vector2f(), playIcon)
+        play = ImageButton(Vector2f(), playIcon, "Play")
         play.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 context.animationHandler.togglePlay()
@@ -77,9 +77,12 @@ class AnimationMenu(context: RenderContext): Panel() {
         if (playing) {
             play.setIconImage(pauseIcon)
             play.hoveredIcon = pauseHoveredIcon
+            play.setTooltipText("Pause")
+            play
         } else {
             play.setIconImage(playIcon)
             play.hoveredIcon = playHoveredIcon
+            play.setTooltipText("Play")
         }
     }
 }
