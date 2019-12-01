@@ -14,17 +14,18 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
     protected val listX = 2f
     protected val listY = 3f
     protected val listYOffset = 18f
-    protected val containerX = 156f
+    protected val containerX = 163f
 
     init {
-        style.setMargin(43f, 0f, 5f, 5f)
+        style.setMargin(43f, 0f, 0f, 0f)
         style.position = Style.PositionType.RELATIVE
-        style.setMaxWidth(164f)
+        style.setMaxWidth(173f)
         style.flexStyle.flexGrow = 1
 
         this.remove(horizontalScrollBar)
         style.background.color = BG_COLOUR
 
+        style.border.isEnabled = false
         container.style.border.isEnabled = false
         viewport.style.border.isEnabled = false
         viewport.style.setBottom(0f)
@@ -96,7 +97,7 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
         container.size.y = listY + filteredSize * listYOffset // Adjust scroll size
     }
 
-    abstract class Element(x: Float, y: Float): Button(x, y, 151f, 15f) {
+    abstract class Element(x: Float, y: Float): Button(x, y, 160f, 15f) {
 
         init {
             style.background.color = ColorConstants.darkGray()

@@ -32,9 +32,10 @@ class ListPanel(context: RenderContext): Panel() {
         style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
 
         style.position = Style.PositionType.RELATIVE
-        style.setMaxWidth(174f)
+        style.setMaxWidth(173f)
         style.flexStyle.flexGrow = 1
-        style.border.isEnabled = false
+        style.background.color = ColorConstants.darkGray()
+        style.setMargin(5f, 5f, 5f, 5f)
 
         addSearch()
         addTabs()
@@ -59,6 +60,7 @@ class ListPanel(context: RenderContext): Panel() {
         search.setSizeLimits(164f, 15f)
         search.style.setMargin(5f, 0f, 0f, 5f)
         search.style.focusedStrokeColor = null
+        //search.style.border.isEnabled = false
         add(search)
     }
 
@@ -74,12 +76,12 @@ class ListPanel(context: RenderContext): Panel() {
 
     private fun addTabs() {
         val names = arrayOf("Entity", "Seq", "Item")
-        val offset = 55f
+        val offset = 58f
 
         for ((i, name) in names.withIndex()) {
             val tab = Button("")
             tab.setSizeLimits(offset - 1, 18f)
-            tab.style.setMargin(26f, 0f, 0f, 5f + i * offset)
+            tab.style.setMargin(26f, 0f, 0f, i * offset)
             tab.style.focusedStrokeColor = null
             tab.style.setBorderRadius(1f)
 
@@ -94,7 +96,7 @@ class ListPanel(context: RenderContext): Panel() {
 
             val label = Label(name) // For more flexible aligning
             label.setSizeLimits(30f, 15f)
-            label.style.setMargin(26f, 0f, 0f, 17f + i * offset)
+            label.style.setMargin(26f, 0f, 0f, 12f + i * offset)
             label.textState.horizontalAlign = HorizontalAlign.CENTER
             label.isFocusable = false
             add(label)
