@@ -17,7 +17,7 @@ import render.SPRITE_PATH
 import util.setHeightLimit
 import util.setSizeLimits
 
-class MenuPanel(context: RenderContext): Panel() {
+class MenuBar(context: RenderContext): Panel() {
     
     init {
         style.display = Style.DisplayType.FLEX
@@ -32,9 +32,11 @@ class MenuPanel(context: RenderContext): Panel() {
         addMenuButton("pack", context.cacheService::pack)
         addMenuButton("export", context.exportManager::openDialog)
         addMenuButton("import", context.importManager::import)
+        addMenuButton("undo", context.animationHandler.history::undo)
+        addMenuButton("redo", context.animationHandler.history::redo)
     }
 
-    private fun addMenuButton(name: String, action: () -> Unit): ImageButton {
+    private fun addMenuButton(name: String, action: () -> Unit) {
         val button = ImageButton(Vector2f(), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
         button.hoveredIcon = BufferedImage("$SPRITE_PATH$name-hovered.png")
 
@@ -48,7 +50,6 @@ class MenuPanel(context: RenderContext): Panel() {
         button.style.setMarginTop(1f)
         button.style.position = Style.PositionType.RELATIVE
         add(button)
-        return button
     }
 
 }

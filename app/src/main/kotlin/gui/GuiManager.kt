@@ -11,7 +11,7 @@ import render.RenderContext
 class GuiManager(context: RenderContext) {
 
     val container: LayerContainer = context.frame.componentLayer.container
-    val menuPanel = MenuPanel(context)
+    val menuBar = MenuBar(context)
     val listPanel = ListPanel(context)
     val managerPanel = ManagerPanel(context)
     val editorPanel = EditorPanel(context)
@@ -50,7 +50,7 @@ class GuiManager(context: RenderContext) {
         rightPanel.add(editorPanel)
         mainPanel.add(rightPanel)
 
-        container.add(menuPanel)
+        container.add(menuBar)
         container.add(mainPanel)
         container.add(animationPanel)
     }
