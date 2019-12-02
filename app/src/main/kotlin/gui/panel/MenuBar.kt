@@ -29,14 +29,14 @@ class MenuBar(context: RenderContext): Panel() {
         style.setMargin(5f, 5f, 1f, 5f)
         setHeightLimit(24f)
 
-        addMenuButton("pack", context.cacheService::pack)
+        addMenuButton("pack", context.cacheService::pack, marginLeft = 2f)
         addMenuButton("export", context.exportManager::openDialog)
         addMenuButton("import", context.importManager::import)
         addMenuButton("undo", context.animationHandler.history::undo)
         addMenuButton("redo", context.animationHandler.history::redo)
     }
 
-    private fun addMenuButton(name: String, action: () -> Unit) {
+    private fun addMenuButton(name: String, action: () -> Unit, marginLeft: Float = 1f) {
         val button = ImageButton(Vector2f(), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
         button.hoveredIcon = BufferedImage("$SPRITE_PATH$name-hovered.png")
 
@@ -48,8 +48,8 @@ class MenuBar(context: RenderContext): Panel() {
 
         button.setSizeLimits(23f, 23f)
         button.style.setMarginTop(1f)
+        button.style.setMarginLeft(marginLeft)
         button.style.position = Style.PositionType.RELATIVE
         add(button)
     }
-
 }

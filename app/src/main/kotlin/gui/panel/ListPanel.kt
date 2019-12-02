@@ -53,14 +53,14 @@ class ListPanel(context: RenderContext): Panel() {
         }
         search.listenerMap.addListener(KeyEvent::class.java) { event ->
             if (event.action == GLFW.GLFW_RELEASE) {
-                lists.first { contains(it) }.search(search.textState.text)
+                lists.first(::contains).search(search.textState.text)
             }
         }
 
         search.setSizeLimits(164f, 15f)
         search.style.setMargin(5f, 0f, 0f, 5f)
         search.style.focusedStrokeColor = null
-        //search.style.border.isEnabled = false
+        search.style.border.isEnabled = false
         add(search)
     }
 
