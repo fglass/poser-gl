@@ -37,6 +37,7 @@ data/saves/
 /repository/
 /release/
 app.log
+.settings
 
 # IntelliJ
 out/

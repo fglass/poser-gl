@@ -18,6 +18,8 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         container.style.display = Style.DisplayType.FLEX
         container.style.flexStyle.flexDirection = FlexStyle.FlexDirection.COLUMN
         addComponents()
+
+        addWidgetCloseEventListener { context.settingsManager.save() }
     }
 
     private fun addComponents() {
