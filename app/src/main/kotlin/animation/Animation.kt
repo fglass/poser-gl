@@ -46,7 +46,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
     private fun parseSequence() {
         val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
-        val references = TreeSet<Int>() // Sorted by values
+        val indices = TreeSet<Int>() // Sorted by values
 
         // Pre-process sequence frames
         for ((index, frameId) in sequence.frameIDs.withIndex()) {
@@ -58,17 +58,20 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             try {
                 frame = frameArchive.first { f -> f.id == frameFileId }
             } catch (e: NoSuchElementException) {
-                logger.info { "Failed to load frame $frameFileId in archive $archiveId" }
+                logger.warn { "Failed to load frame $frameFileId in archive $archiveId" }
                 continue
             }
 
-            val indices = if (context.settingsManager.advancedMode) {
-                val max = frame.indexFrameIds.max() ?: return
-                (0..max).toList()
+            val frameIndices = if (context.settingsManager.advancedMode) {
+                // Use all possible indices
+                val maxId = frame.indexFrameIds.max() ?: continue
+                (0..maxId).toList()
             } else {
+                // Accumulate reference indices across animation
                 frame.indexFrameIds.filter { frame.framemap.types[it] == TransformationType.REFERENCE.id }
             }
-            references.addAll(indices) // Accumulate reference indices across animation
+
+            indices.addAll(frameIndices)
             frames[index] = frame // Preserve index in case frame fails to load
         }
 
@@ -76,16 +79,21 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             val frameMap = frame.value.framemap
             val keyframe = Keyframe(frame.key, sequence.frameIDs[frame.key], sequence.frameLenghts[frame.key], frameMap)
 
-            for (id in references) {
-                val type = TransformationType.REFERENCE
-                val transformation = Transformation(id, type, frameMap.frameMaps[id], getDelta(frame.value, id, type))
-                val reference = ReferenceNode(transformation)
-                reference.findChildren(id, frame.value)
+            for (index in indices) {
+                val type = TransformationType.fromId(frame.value.framemap.types[index]) ?: continue
+                val transformation = Transformation(
+                    index, type, frameMap.frameMaps[index], getDelta(frame.value, index, type)
+                )
 
-                if (reference.children.size > 0) { // Ignore lone references
-                    keyframe.transformations.add(reference)
-                    reference.children.forEach {
-                        keyframe.transformations.add(it.value)
+                if (type == TransformationType.REFERENCE) {
+                    val reference = ReferenceNode(transformation)
+                    reference.findChildren(index, frame.value)
+
+                    if (reference.children.size > 0) { // Ignore lone references
+                        keyframe.transformations.add(reference)
+                        reference.children.forEach {
+                            keyframe.transformations.add(it.value)
+                        }
                     }
                 }
             }
