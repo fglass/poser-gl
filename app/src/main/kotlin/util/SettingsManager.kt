@@ -16,6 +16,7 @@ class SettingsManager(private val context: RenderContext) {
     var background = Colour.GRAY
     var sensitivityMultiplier = 1f
     var gridActive = true
+    var jointsActive = true
     var advancedMode = false
 
     fun save() {
@@ -24,6 +25,7 @@ class SettingsManager(private val context: RenderContext) {
         properties["background"] = background.toString()
         properties["sensitivity"] = sensitivityMultiplier.toString()
         properties["grid"] = gridActive.toString()
+        properties["joints"] = jointsActive.toString()
         properties["advanced"] = advancedMode.toString()
 
         val fileWriter = FileWriter(SETTINGS_FILE)
@@ -42,10 +44,13 @@ class SettingsManager(private val context: RenderContext) {
             properties.getProperty("sensitivity")?.let {
                 sensitivityMultiplier = it.toFloat()
             }
-            properties.getProperty("grid", "true")?.let {
+            properties.getProperty("grid")?.let {
                 gridActive = it.toBoolean()
             }
-            properties.getProperty("advanced", "false")?.let {
+            properties.getProperty("joints")?.let {
+                jointsActive = it.toBoolean()
+            }
+            properties.getProperty("advanced")?.let {
                 advancedMode = it.toBoolean()
             }
         } catch (e: Exception) {

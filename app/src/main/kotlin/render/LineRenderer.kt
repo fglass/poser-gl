@@ -58,9 +58,14 @@ class LineRenderer(private val context: RenderContext) {
 
     fun renderSkeleton(nodes: Set<ReferenceNode>, root: ReferenceNode?, viewMatrix: Matrix4f) {
         skeletonLoader.cleanUp()
+
+        if (!context.settingsManager.jointsActive) {
+            return
+        }
+
         for (node in nodes) {
             val parent = node.parent?: continue
-            node.parent = nodes.firstOrNull { it.id == parent.id }?: continue // Update parent reference
+            node.parent = nodes.firstOrNull { it.id == parent.id } ?: continue // Update parent reference
 
             if (node.id == root?.id || parent.id == root?.id || !parent.hasType(TransformationType.ROTATION)) {
                 continue

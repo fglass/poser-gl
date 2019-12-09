@@ -1,6 +1,8 @@
 package gui.component
 
 import org.liquidengine.legui.component.*
+import org.liquidengine.legui.component.event.checkbox.CheckBoxChangeValueEvent
+import org.liquidengine.legui.listener.EventListener
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
@@ -9,7 +11,7 @@ import util.Colour
 import util.setSizeLimits
 import kotlin.math.max
 
-class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 121f) {
+class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 146f) {
 
     init {
         isDraggable = false
@@ -24,6 +26,7 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         addSensitivitySlider()
         addBackgroundPicker()
         addGridToggle()
+        addJointsToggle()
         addAdvancedToggle()
     }
 
@@ -65,31 +68,35 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     }
 
     private fun addGridToggle() {
-        val row = getRow()
-        val label = Label("Grid:", 5f, 5f, 20f, 15f)
-
-        val checkbox = CheckBox("", 135f, 5f, 20f, 15f)
-        checkbox.style.focusedStrokeColor = null
-        checkbox.isChecked = context.settingsManager.gridActive
-        checkbox.addCheckBoxChangeValueListener {
+        val listener = EventListener<CheckBoxChangeValueEvent<CheckBox>> {
             context.settingsManager.gridActive = it.targetComponent.isChecked
         }
+        addToggle("Grid", context.settingsManager.gridActive, listener)
+    }
 
-        row.add(label)
-        row.add(checkbox)
-        container.add(row)
+    private fun addJointsToggle() {
+        val listener = EventListener<CheckBoxChangeValueEvent<CheckBox>> {
+            context.settingsManager.jointsActive = it.targetComponent.isChecked
+        }
+        addToggle("Joints", context.settingsManager.jointsActive, listener)
     }
 
     private fun addAdvancedToggle() {
-        val row = getRow()
-        val label = Label("Advanced:", 5f, 5f, 20f, 15f)
-
-        val checkbox = CheckBox("", 135f, 5f, 20f, 15f)
-        checkbox.style.focusedStrokeColor = null
-        checkbox.isChecked = context.settingsManager.advancedMode
-        checkbox.addCheckBoxChangeValueListener {
+        val listener = EventListener<CheckBoxChangeValueEvent<CheckBox>> {
             context.settingsManager.advancedMode = it.targetComponent.isChecked
+            context.animationHandler.currentAnimation?.reload()
         }
+        addToggle("Advanced", context.settingsManager.advancedMode, listener)
+    }
+
+    private fun addToggle(name: String, default: Boolean, onToggle: EventListener<CheckBoxChangeValueEvent<CheckBox>>) {
+        val row = getRow()
+        val label = Label("$name:", 5f, 5f, 20f, 15f)
+
+        val checkbox = CheckBox("", 178f, 5f, 20f, 15f)
+        checkbox.style.focusedStrokeColor = null
+        checkbox.isChecked = default
+        checkbox.addCheckBoxChangeValueListener(onToggle)
 
         row.add(label)
         row.add(checkbox)

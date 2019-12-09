@@ -3,7 +3,6 @@ package animation
 import animation.command.Command
 import animation.command.CommandHistory
 import render.RenderContext
-import mu.KotlinLogging
 
 const val MAX_LENGTH = 999
 

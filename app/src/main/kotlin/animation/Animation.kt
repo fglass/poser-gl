@@ -39,6 +39,11 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         setRootNode()
     }
 
+    fun reload() {
+        keyframes.clear()
+        load()
+    }
+
     private fun parseSequence() {
         val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
         val references = TreeSet<Int>() // Sorted by values
@@ -57,9 +62,14 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
                 continue
             }
 
-            val indices = frame.indexFrameIds.filter { frame.framemap.types[it] == TransformationType.REFERENCE.id }
+            val indices = if (context.settingsManager.advancedMode) {
+                val max = frame.indexFrameIds.max() ?: return
+                (0..max).toList()
+            } else {
+                frame.indexFrameIds.filter { frame.framemap.types[it] == TransformationType.REFERENCE.id }
+            }
             references.addAll(indices) // Accumulate reference indices across animation
-            frames[index] = frame // Keep index in case frame fails to load
+            frames[index] = frame // Preserve index in case frame fails to load
         }
 
         for (frame in frames) {
@@ -96,6 +106,9 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
     private fun ReferenceNode.findChildren(id: Int, frame: FrameDefinition) { // Allows additional children to be found
         val frameMap = frame.framemap
         var childId = id + 1
+        if (childId >= frameMap.types.size) {
+            return
+        }
         var childType = frameMap.types[childId]
 
         // Search transformations until encounter next reference
@@ -167,17 +180,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
     fun getFrameMap(): FramemapDefinition {
         return keyframes.first().frameMap
-    }
-
-    fun changeKeyframeLength(newLength: Int) {
-        val index = context.animationHandler.getCurrentFrameIndex(this)
-        val keyframe = keyframes[index]
-        keyframe.length = newLength
-        keyframe.modified = true
-        length = calculateLength()
-
-        context.animationHandler.setCurrentFrame(context.animationHandler.frameCount, 0) // Restart frame
-        context.gui.animationPanel.setTimeline()
     }
 
     fun insertKeyframe(keyframe: Keyframe, index: Int) {
