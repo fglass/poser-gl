@@ -2,11 +2,11 @@ package gui.component
 
 import render.RenderContext
 import animation.Animation
-import gui.BACKGROUND
 import org.displee.CacheLibrary
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import util.Colour
 
 class DatDialog(private val context: RenderContext, private val animation: Animation):
       Dialog("Sequence Information", "", context, 260f, 80f) {
@@ -46,7 +46,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
         framePanel.horizontalScrollBar.style.setRight(0f)
         framePanel.viewport.style.setRight(0f)
         framePanel.container.style.focusedStrokeColor = null
-        framePanel.style.background.color = BACKGROUND
+        framePanel.style.background.color = Colour.GRAY.rgba
         container.add(framePanel)
         setFrames(archiveId)
     }

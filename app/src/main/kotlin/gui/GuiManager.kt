@@ -10,8 +10,6 @@ import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
 import render.RenderContext
 
-val BACKGROUND: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
-
 class GuiManager(context: RenderContext) {
 
     val container: LayerContainer = context.frame.componentLayer.container

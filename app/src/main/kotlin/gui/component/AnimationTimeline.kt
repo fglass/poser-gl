@@ -1,10 +1,10 @@
 package gui.component
 
-import gui.BACKGROUND
 import gui.panel.AnimationPanel
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
+import util.Colour
 import util.setHeightLimit
 
 class AnimationTimeline(private val parent: AnimationPanel): Panel() {
@@ -15,7 +15,7 @@ class AnimationTimeline(private val parent: AnimationPanel): Panel() {
         setHeightLimit(65f)
         style.flexStyle.flexGrow = 1
 
-        style.background.color = BACKGROUND
+        style.background.color = Colour.GRAY.rgba
         style.focusedStrokeColor = null
         style.setBorderRadius(0f)
 

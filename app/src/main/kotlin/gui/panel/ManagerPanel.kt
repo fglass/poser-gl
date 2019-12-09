@@ -4,7 +4,6 @@ import render.SPRITE_PATH
 
 import render.RenderContext
 import entity.Entity
-import gui.BACKGROUND
 import gui.component.ConfigGroup
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
@@ -21,6 +20,7 @@ import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
 import render.PolygonMode
 import shader.ShadingType
+import util.Colour
 import util.setSizeLimits
 
 class ManagerPanel(private val context: RenderContext): Panel() {
@@ -46,7 +46,7 @@ class ManagerPanel(private val context: RenderContext): Panel() {
 
         val title = Label("Entity Manager")
         title.setSizeLimits(maxWidth, 15f)
-        title.style.background.color = BACKGROUND
+        title.style.background.color = Colour.GRAY.rgba
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
@@ -146,7 +146,7 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         for ((i, component) in entity.composition.withIndex()) {
             val y = init + i * offset
             val background = Label("", 3f, y, 145f, 15f)
-            background.style.background.color = BACKGROUND
+            background.style.background.color = Colour.GRAY.rgba
 
             val label = Label("Model ${component.id}", 21f, y, 50f, 15f)
             val modelImage = ImageView(modelIcon)

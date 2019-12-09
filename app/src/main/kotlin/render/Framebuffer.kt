@@ -86,7 +86,7 @@ class Framebuffer(private val context: RenderContext, private val scaleFactor: I
         glBindFramebuffer(GL_FRAMEBUFFER, id)
         glViewport(0, 0, textureWidth, textureHeight)
 
-        val colour = context.settingsManager.background
+        val colour = context.settingsManager.background.rgba
         glClearColor(colour.x, colour.y, colour.z, colour.w)
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
         setGlState()

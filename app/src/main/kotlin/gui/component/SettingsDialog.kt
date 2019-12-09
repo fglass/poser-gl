@@ -1,13 +1,11 @@
 package gui.component
 
-import gui.BACKGROUND
-import org.joml.Vector4f
 import org.liquidengine.legui.component.*
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 import render.RenderContext
+import util.Colour
 import util.setSizeLimits
 import kotlin.math.max
 
@@ -51,14 +49,14 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         val row = getRow()
         val label = Label("Background:", 5f, 5f, 20f, 15f)
 
-        val colours = SelectBox<BackgroundColour>(138f, 5f, 95f, 15f)
+        val colours = SelectBox<Colour>(138f, 5f, 95f, 15f)
         colours.expandButton.style.border.isEnabled = false
         colours.childComponents.forEach { it.style.focusedStrokeColor = null }
 
-        BackgroundColour.values().forEach { colours.addElement(it) }
-        colours.setSelected(BackgroundColour[context.settingsManager.background], true)
+        Colour.values().forEach { colours.addElement(it) }
+        colours.setSelected(context.settingsManager.background, true)
         colours.addSelectBoxChangeSelectionEventListener {
-            context.settingsManager.background = it.newValue.colour
+            context.settingsManager.background = it.newValue
         }
 
         row.add(label)
@@ -105,21 +103,5 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         row.style.border.isEnabled = false
         row.style.focusedStrokeColor = null
         return row
-    }
-}
-
-enum class BackgroundColour(val colour: Vector4f) {
-    GRAY(BACKGROUND),
-    BLACK(ColorConstants.black()),
-    WHITE(ColorConstants.white()),
-    RED(ColorConstants.lightRed()),
-    GREEN(ColorConstants.lightGreen()),
-    BLUE(ColorConstants.lightBlue());
-
-    override fun toString() = super.toString().toLowerCase().capitalize()
-
-    companion object {
-        private val map = values().associateBy(BackgroundColour::colour)
-        operator fun get(color: Vector4f) = map[color] ?: error("Invalid color")
     }
 }

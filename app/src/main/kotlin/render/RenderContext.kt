@@ -5,16 +5,13 @@ import cache.CacheService
 import cache.PluginLoader
 import entity.Entity
 import entity.EntityHandler
-import gui.BACKGROUND
 import gui.GuiManager
 import gui.component.StartDialog
-import util.SettingsManager
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
-import org.joml.Vector4f
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.input.Mouse
@@ -36,9 +33,7 @@ import org.lwjgl.opengl.GL32
 import org.lwjgl.system.MemoryUtil
 import transfer.ExportManager
 import transfer.ImportManager
-import util.MatrixCreator
-import util.MouseButtonHandler
-import util.VSyncTimer
+import util.*
 import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
 
@@ -158,7 +153,8 @@ class RenderContext {
         while (running) {
             context.updateGlfwWindow()
 
-            glClearColor(BACKGROUND.x, BACKGROUND.y, BACKGROUND.z, BACKGROUND.w)
+            val colour = Colour.GRAY.rgba
+            glClearColor(colour.x, colour.y, colour.z, colour.w)
 
             val windowSize = context.framebufferSize
             glViewport(0, 0, windowSize.x, windowSize.y)

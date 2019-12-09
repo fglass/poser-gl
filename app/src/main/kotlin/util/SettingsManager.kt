@@ -1,8 +1,6 @@
 package util
 
-import gui.BACKGROUND
 import gui.component.SettingsDialog
-import org.joml.Vector4f
 import render.RenderContext
 import java.io.FileOutputStream
 import java.util.*
@@ -10,7 +8,7 @@ import java.util.*
 class SettingsManager(private val context: RenderContext) {
 
     private lateinit var dialog: SettingsDialog
-    var background: Vector4f = BACKGROUND // TODO: remove BACKGROUND and use BackgroundColour
+    var background = Colour.GRAY
     var sensitivityMultiplier = 1f
     var gridActive = true
     var advancedMode = false

@@ -1,11 +1,11 @@
 package gui.component
 
-import gui.BACKGROUND
 import org.liquidengine.legui.component.Button
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import util.Colour
 
 abstract class ElementList: ScrollablePanel() { // TODO: refactor
 
@@ -23,7 +23,7 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
         style.flexStyle.flexGrow = 1
 
         this.remove(horizontalScrollBar)
-        style.background.color = BACKGROUND
+        style.background.color = Colour.GRAY.rgba
 
         style.border.isEnabled = false
         container.style.border.isEnabled = false
