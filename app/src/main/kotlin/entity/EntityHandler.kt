@@ -9,7 +9,8 @@ import shader.ShadingType
 class EntityHandler(private val context: RenderContext) {
 
     fun loadPlayer() {
-        load(context.cacheService.entities[-1]!!)
+        val player = context.cacheService.entities.getOrElse(-1) { context.cacheService.entities.values.first() }
+        load(player)
     }
 
     fun load(def: NpcDefinition) {
@@ -30,8 +31,8 @@ class EntityHandler(private val context: RenderContext) {
     }
 
     fun process(name: String, size: Int, composition: HashSet<EntityComponent>) {
-        val def = when {
-            composition.size == 1 -> context.cacheService.loadModelDefinition(composition.first())
+        val def = when (composition.size) {
+            1 -> context.cacheService.loadModelDefinition(composition.first())
             else -> {
                 val defs = ArrayList<ModelDefinition>()
                 composition.forEach { defs.add(context.cacheService.loadModelDefinition(it)) }

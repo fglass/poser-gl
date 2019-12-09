@@ -4,15 +4,17 @@ import org.joml.*
 import util.MouseButtonHandler
 import org.liquidengine.legui.input.Mouse
 import render.RenderContext
+import util.SettingsManager
 import java.lang.Math
 import kotlin.math.*
 
 const val MIN_ZOOM = 100f
 const val MAX_ZOOM = 1600f
 const val ZOOM_SENSITIVITY = 8f
+const val CAMERA_SENSITIVITY = 0.5f
 
-class Camera(private val lmb: MouseButtonHandler, private val mmb: MouseButtonHandler,
-             private val rmb: MouseButtonHandler) {
+class Camera(private val settingsManager: SettingsManager, private val lmb: MouseButtonHandler,
+             private val mmb: MouseButtonHandler, private val rmb: MouseButtonHandler) {
 
     var pitch = -23f
     var yaw = 0f
@@ -39,7 +41,7 @@ class Camera(private val lmb: MouseButtonHandler, private val mmb: MouseButtonHa
 
     private fun calculateZoom() {
         if (zooming) {
-            val zoomLevel = dWheel * ZOOM_SENSITIVITY
+            val zoomLevel = dWheel * getZoomMultiplier()
             distance = max(distance - zoomLevel, MIN_ZOOM)
             distance = min(distance, MAX_ZOOM)
             zooming = false
@@ -53,13 +55,13 @@ class Camera(private val lmb: MouseButtonHandler, private val mmb: MouseButtonHa
 
     private fun calculatePitch(button: MouseButtonHandler) {
         if (button.pressed) {
-            pitch -= button.delta.y * 0.5f
+            pitch -= button.delta.y * getCameraMultiplier()
         }
     }
 
     private fun calculateAngle(button: MouseButtonHandler) {
         if (button.pressed) {
-            angle -= button.delta.x * 0.5f
+            angle -= button.delta.x * getCameraMultiplier()
         }
     }
 
@@ -81,14 +83,14 @@ class Camera(private val lmb: MouseButtonHandler, private val mmb: MouseButtonHa
     }
 
     private fun getCenterOffset(h: Float, v: Float, theta: Double) =
-        Vector3f((h * sin(Math.toRadians(theta))).toFloat(),  -v + 60, (h * cos(Math.toRadians(theta))).toFloat())
+        Vector3f((h * sin(Math.toRadians(theta))).toFloat(), -v + 60, (h * cos(Math.toRadians(theta))).toFloat())
 
 
     fun pan(viewMatrix: Matrix4f) {
         if (lmb.pressed) {
             val right = Vector3f(viewMatrix.m00(), viewMatrix.m10(), viewMatrix.m20()).mul(lmb.delta.x)
             val up = Vector3f(viewMatrix.m01(), viewMatrix.m11(), viewMatrix.m21()).mul(lmb.delta.y)
-            val delta = right.add(up)
+            val delta = right.add(up).mul(getCameraMultiplier()).mul(2f)
             center.sub(delta)
         }
     }
@@ -106,4 +108,8 @@ class Camera(private val lmb: MouseButtonHandler, private val mmb: MouseButtonHa
             )
         return Rayf(origin, dir)
     }
+
+    private fun getZoomMultiplier() = ZOOM_SENSITIVITY * settingsManager.sensitivityMultiplier
+
+    private fun getCameraMultiplier() = CAMERA_SENSITIVITY * settingsManager.sensitivityMultiplier
 }

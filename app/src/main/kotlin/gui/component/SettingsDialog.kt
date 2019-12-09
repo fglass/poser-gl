@@ -9,6 +9,7 @@ import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 import render.RenderContext
 import util.setSizeLimits
+import kotlin.math.max
 
 class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 121f) {
 
@@ -29,8 +30,16 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     private fun addSensitivitySlider() {
         val row = getRow()
         val label = Label("Sensitivity:", 5f, 5f, 20f, 15f)
-        val slider = Slider(135f, 7f, 100f, 10f, 50f)
+
+        val offset = 50f
+        val value = context.settingsManager.sensitivityMultiplier * offset
+        val slider = Slider(135f, 7f, 100f, 10f, value)
         slider.sliderActiveColor = ColorConstants.white()
+
+        slider.addSliderChangeValueEventListener {
+            context.settingsManager.sensitivityMultiplier = max(it.newValue / offset, 0.01f)
+        }
+
         row.add(label)
         row.add(slider)
         container.add(row)

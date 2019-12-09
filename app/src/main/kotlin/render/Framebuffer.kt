@@ -20,7 +20,7 @@ class Framebuffer(private val context: RenderContext, private val scaleFactor: I
     private var textureWidth = 0
     private var textureHeight = 0
     
-    private val camera = Camera(lmb=buttons[0], mmb=buttons[1], rmb=buttons[2])
+    private val camera = Camera(context.settingsManager, lmb=buttons[0], mmb=buttons[1], rmb=buttons[2])
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
     var activeDialog: Dialog? = null
