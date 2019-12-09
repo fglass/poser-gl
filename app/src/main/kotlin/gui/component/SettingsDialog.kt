@@ -45,6 +45,7 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         colours.childComponents.forEach { it.style.focusedStrokeColor = null }
 
         BackgroundColour.values().forEach { colours.addElement(it) }
+        colours.setSelected(BackgroundColour[context.settingsManager.background], true)
         colours.addSelectBoxChangeSelectionEventListener {
             context.settingsManager.background = it.newValue.colour
         }
@@ -59,9 +60,12 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         val label = Label("Grid:", 5f, 5f, 20f, 15f)
 
         val checkbox = CheckBox("", 135f, 5f, 20f, 15f)
-        checkbox.isChecked = true
         checkbox.style.focusedStrokeColor = null
-        
+        checkbox.isChecked = context.settingsManager.gridActive
+        checkbox.addCheckBoxChangeValueListener {
+            context.settingsManager.gridActive = it.targetComponent.isChecked
+        }
+
         row.add(label)
         row.add(checkbox)
         container.add(row)
@@ -70,8 +74,14 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     private fun addAdvancedToggle() {
         val row = getRow()
         val label = Label("Advanced:", 5f, 5f, 20f, 15f)
+
         val checkbox = CheckBox("", 135f, 5f, 20f, 15f)
         checkbox.style.focusedStrokeColor = null
+        checkbox.isChecked = context.settingsManager.advancedMode
+        checkbox.addCheckBoxChangeValueListener {
+            context.settingsManager.advancedMode = it.targetComponent.isChecked
+        }
+
         row.add(label)
         row.add(checkbox)
         container.add(row)
@@ -96,4 +106,9 @@ enum class BackgroundColour(val colour: Vector4f) {
     BLUE(ColorConstants.lightBlue());
 
     override fun toString() = super.toString().toLowerCase().capitalize()
+
+    companion object {
+        private val map = values().associateBy(BackgroundColour::colour)
+        operator fun get(color: Vector4f) = map[color] ?: error("Invalid color")
+    }
 }

@@ -46,11 +46,13 @@ class LineRenderer(private val context: RenderContext) {
     }
 
     fun renderGrid(viewMatrix: Matrix4f) {
-        if (grid != null) {
-            prepare(grid!!, false)
-            loadMatrices(viewMatrix, 75f)
-            glDrawArrays(GL_LINES, 0, grid!!.vertexCount)
-            finish()
+        if (context.settingsManager.gridActive) {
+            grid?.let {
+                prepare(it, false)
+                loadMatrices(viewMatrix, 75f)
+                glDrawArrays(GL_LINES, 0, it.vertexCount)
+                finish()
+            }
         }
     }
 

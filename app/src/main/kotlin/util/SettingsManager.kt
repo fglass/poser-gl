@@ -10,6 +10,7 @@ class SettingsManager(private val context: RenderContext) {
     private lateinit var dialog: SettingsDialog
     var background: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
     var gridActive = true
+    var advancedMode = false
 
     fun openDialog() {
         dialog = SettingsDialog(context)

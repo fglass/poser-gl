@@ -146,7 +146,6 @@ class RenderContext {
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         StartDialog(this).show(frame)
-        //gui = GuiManager(this)
 
         if (loaders.isEmpty() || packers.isEmpty()) {
             logger.error { "No plugins found" }
