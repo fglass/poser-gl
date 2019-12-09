@@ -140,6 +140,7 @@ class RenderContext {
         projectionMatrix = MatrixCreator.createProjectionMatrix(WIDTH, HEIGHT)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
+        settingsManager.load()
         StartDialog(this).show(frame)
 
         if (loaders.isEmpty() || packers.isEmpty()) {

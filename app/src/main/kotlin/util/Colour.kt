@@ -14,7 +14,7 @@ enum class Colour(val rgba: Vector4f) {
 
     override fun toString() = super.toString().toLowerCase().capitalize()
 
-    companion object {
+    companion object { // TODO: remove
         private val map = values().associateBy(Colour::rgba)
         operator fun get(color: Vector4f) = map[color] ?: error("Invalid color")
     }
