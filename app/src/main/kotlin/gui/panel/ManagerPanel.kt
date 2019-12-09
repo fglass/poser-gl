@@ -1,9 +1,10 @@
 package gui.panel
 
 import render.SPRITE_PATH
-import render.BG_COLOUR
+
 import render.RenderContext
 import entity.Entity
+import gui.BACKGROUND
 import gui.component.ConfigGroup
 import org.joml.Vector2f
 import org.liquidengine.legui.component.ImageView
@@ -45,7 +46,7 @@ class ManagerPanel(private val context: RenderContext): Panel() {
 
         val title = Label("Entity Manager")
         title.setSizeLimits(maxWidth, 15f)
-        title.style.background.color = BG_COLOUR
+        title.style.background.color = BACKGROUND
         title.textState.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
@@ -145,7 +146,7 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         for ((i, component) in entity.composition.withIndex()) {
             val y = init + i * offset
             val background = Label("", 3f, y, 145f, 15f)
-            background.style.background.color = BG_COLOUR
+            background.style.background.color = BACKGROUND
 
             val label = Label("Model ${component.id}", 21f, y, 50f, 15f)
             val modelImage = ImageView(modelIcon)

@@ -1,6 +1,5 @@
 package gui.panel
 
-import render.BG_COLOUR
 import render.RenderContext
 import render.SPRITE_PATH
 import animation.Keyframe
@@ -9,6 +8,7 @@ import animation.ReferenceNode
 import animation.TransformationType
 import animation.command.impl.ChangeLengthCommand
 import animation.command.impl.TransformNodeCommand
+import gui.BACKGROUND
 import gui.component.ButtonGroup
 import gui.component.ConfigGroup
 import gui.component.TextSlider
@@ -59,7 +59,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         add(framePanel)
 
         val frameTitle = Label("Keyframe Editor", 0f, 0f, sizeX, 16f)
-        frameTitle.style.background.color = BG_COLOUR
+        frameTitle.style.background.color = BACKGROUND
         frameTitle.textState.horizontalAlign = HorizontalAlign.CENTER
         framePanel.add(frameTitle)
 
@@ -102,7 +102,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
         add(nodePanel)
 
         val nodeTitle = Label("Node Transformer", 0f, 0f, sizeX, 16f)
-        nodeTitle.style.background.color = BG_COLOUR
+        nodeTitle.style.background.color = BACKGROUND
         nodeTitle.textState.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(nodeTitle)
 

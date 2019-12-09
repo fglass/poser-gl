@@ -5,9 +5,10 @@ import cache.CacheService
 import cache.PluginLoader
 import entity.Entity
 import entity.EntityHandler
+import gui.BACKGROUND
 import gui.GuiManager
-import gui.SettingsManager
 import gui.component.StartDialog
+import util.SettingsManager
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Matrix4f
@@ -31,6 +32,7 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL32
 import org.lwjgl.system.MemoryUtil
 import transfer.ExportManager
 import transfer.ImportManager
@@ -47,7 +49,6 @@ const val WIDTH = 800
 const val HEIGHT = 600
 
 private val logger = KotlinLogging.logger {}
-val BG_COLOUR: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
 
 class RenderContext {
 
@@ -144,9 +145,8 @@ class RenderContext {
         projectionMatrix = MatrixCreator.createProjectionMatrix(WIDTH, HEIGHT)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-        //StartDialog(this).show(frame)
-        running = true
-        gui = GuiManager(this)
+        StartDialog(this).show(frame)
+        //gui = GuiManager(this)
 
         if (loaders.isEmpty() || packers.isEmpty()) {
             logger.error { "No plugins found" }
@@ -158,10 +158,12 @@ class RenderContext {
         // Render loop
         while (running) {
             context.updateGlfwWindow()
-            val windowSize = context.framebufferSize
 
-            glClearColor(BG_COLOUR.x, BG_COLOUR.y, BG_COLOUR.z, BG_COLOUR.w)
+            glClearColor(BACKGROUND.x, BACKGROUND.y, BACKGROUND.z, BACKGROUND.w)
+
+            val windowSize = context.framebufferSize
             glViewport(0, 0, windowSize.x, windowSize.y)
+
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 

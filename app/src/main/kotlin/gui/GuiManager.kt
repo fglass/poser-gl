@@ -1,12 +1,16 @@
 package gui
 
 import gui.panel.*
+import org.joml.Vector4f
 import org.liquidengine.legui.component.LayerContainer
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
+import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
 import render.RenderContext
+
+val BACKGROUND: Vector4f = ColorUtil.fromInt(33, 33, 33, 1f)
 
 class GuiManager(context: RenderContext) {
 

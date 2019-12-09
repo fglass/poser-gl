@@ -1,5 +1,7 @@
 package gui.component
 
+import gui.BACKGROUND
+import org.joml.Vector4f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.style.Style
@@ -37,20 +39,29 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     private fun addBackgroundPicker() {
         val row = getRow()
         val label = Label("Background:", 5f, 5f, 20f, 15f)
-        val input = TextInput("#ffffff", 138f, 5f, 50f, 15f)
-        input.textState.horizontalAlign = HorizontalAlign.CENTER
-        input.style.focusedStrokeColor = null
+
+        val colours = SelectBox<BackgroundColour>(138f, 5f, 95f, 15f)
+        colours.expandButton.style.border.isEnabled = false
+        colours.childComponents.forEach { it.style.focusedStrokeColor = null }
+
+        BackgroundColour.values().forEach { colours.addElement(it) }
+        colours.addSelectBoxChangeSelectionEventListener {
+            context.settingsManager.background = it.newValue.colour
+        }
+
         row.add(label)
-        row.add(input)
+        row.add(colours)
         container.add(row)
     }
 
     private fun addGridToggle() {
         val row = getRow()
         val label = Label("Grid:", 5f, 5f, 20f, 15f)
+
         val checkbox = CheckBox("", 135f, 5f, 20f, 15f)
         checkbox.isChecked = true
         checkbox.style.focusedStrokeColor = null
+        
         row.add(label)
         row.add(checkbox)
         container.add(row)
@@ -74,4 +85,15 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         row.style.focusedStrokeColor = null
         return row
     }
+}
+
+enum class BackgroundColour(val colour: Vector4f) {
+    GRAY(BACKGROUND),
+    BLACK(ColorConstants.black()),
+    WHITE(ColorConstants.white()),
+    RED(ColorConstants.lightRed()),
+    GREEN(ColorConstants.lightGreen()),
+    BLUE(ColorConstants.lightBlue());
+
+    override fun toString() = super.toString().toLowerCase().capitalize()
 }

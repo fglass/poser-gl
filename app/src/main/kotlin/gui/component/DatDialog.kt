@@ -1,8 +1,8 @@
 package gui.component
 
-import render.BG_COLOUR
 import render.RenderContext
 import animation.Animation
+import gui.BACKGROUND
 import org.displee.CacheLibrary
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.ScrollablePanel
@@ -46,7 +46,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
         framePanel.horizontalScrollBar.style.setRight(0f)
         framePanel.viewport.style.setRight(0f)
         framePanel.container.style.focusedStrokeColor = null
-        framePanel.style.background.color = BG_COLOUR
+        framePanel.style.background.color = BACKGROUND
         container.add(framePanel)
         setFrames(archiveId)
     }
