@@ -6,9 +6,8 @@ import cache.PluginLoader
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
+import gui.SettingsManager
 import gui.component.StartDialog
-import java.lang.Boolean.TRUE
-import kotlin.system.exitProcess
 import model.ModelParser
 import mu.KotlinLogging
 import org.joml.Matrix4f
@@ -29,18 +28,17 @@ import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import org.lwjgl.glfw.GLFW.*
-import org.lwjgl.glfw.GLFWKeyCallback
-import org.lwjgl.glfw.GLFWKeyCallbackI
-import org.lwjgl.glfw.GLFWWindowCloseCallbackI
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import transfer.ExportManager
 import transfer.ImportManager
+import util.MatrixCreator
 import util.MouseButtonHandler
 import util.VSyncTimer
-import util.MatrixCreator
+import java.lang.Boolean.TRUE
+import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.3"
@@ -63,6 +61,7 @@ class RenderContext {
     lateinit var projectionMatrix: Matrix4f
 
     val cacheService = CacheService(this)
+    val settingsManager = SettingsManager(this)
     val importManager = ImportManager(this)
     val exportManager = ExportManager(this)
 
@@ -145,7 +144,9 @@ class RenderContext {
         projectionMatrix = MatrixCreator.createProjectionMatrix(WIDTH, HEIGHT)
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
-        StartDialog(this).show(frame)
+        //StartDialog(this).show(frame)
+        running = true
+        gui = GuiManager(this)
 
         if (loaders.isEmpty() || packers.isEmpty()) {
             logger.error { "No plugins found" }

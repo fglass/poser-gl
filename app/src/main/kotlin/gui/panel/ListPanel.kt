@@ -35,6 +35,7 @@ class ListPanel(context: RenderContext): Panel() {
         style.setMaxWidth(173f)
         style.flexStyle.flexGrow = 1
         style.background.color = ColorConstants.darkGray()
+        style.focusedStrokeColor = null
         style.setMargin(5f, 5f, 5f, 5f)
 
         addSearch()
@@ -60,7 +61,6 @@ class ListPanel(context: RenderContext): Panel() {
         search.setSizeLimits(164f, 15f)
         search.style.setMargin(5f, 0f, 0f, 5f)
         search.style.focusedStrokeColor = null
-        search.style.border.isEnabled = false
         add(search)
     }
 

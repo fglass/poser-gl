@@ -32,6 +32,7 @@ class GuiManager(context: RenderContext) {
         mainPanel.style.border.isEnabled = false
         mainPanel.style.position = Style.PositionType.RELATIVE
         mainPanel.style.flexStyle.flexGrow = 1
+        mainPanel.style.setMarginBottom(1f)
 
         mainPanel.add(listPanel)
         mainPanel.add(context.framebuffer)

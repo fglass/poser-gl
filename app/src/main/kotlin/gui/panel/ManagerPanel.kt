@@ -85,7 +85,7 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         val types = ConfigGroup(
             Vector2f(88f, 41f), Vector2f(22f, 22f),
             arrayOf(BufferedImage(SPRITE_PATH + "smooth-shading.png"), BufferedImage(SPRITE_PATH + "flat-shading.png"),
-                BufferedImage(SPRITE_PATH + "no-shading.png")), arrayOf("Smooth", "Flat", "None")
+                    BufferedImage(SPRITE_PATH + "no-shading.png")), arrayOf("Smooth", "Flat", "None")
         )
         for ((i, button) in types.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -113,11 +113,11 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         modelPanel.style.setMaxWidth(width)
         modelPanel.container.size.x = width - 8f
 
-        modelPanel.style.setMargin(79f, 0f, 6f, 6f)
+        modelPanel.style.setMargin(79f, 0f, 10f, 6f)
         modelPanel.style.position = Style.PositionType.RELATIVE
         modelPanel.style.flexStyle.flexGrow = 1
-        modelPanel.remove(modelPanel.horizontalScrollBar)
         modelPanel.viewport.style.setBottom(1f)
+        modelPanel.remove(modelPanel.horizontalScrollBar)
 
         modelPanel.verticalScrollBar.style.setBottom(0f)
         modelPanel.verticalScrollBar.style.setWidth(8f)

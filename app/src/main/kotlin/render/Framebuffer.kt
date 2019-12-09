@@ -101,7 +101,6 @@ class Framebuffer(private val context: RenderContext, private val scaleFactor: I
         context.nodeRenderer.render(viewMatrix, ray)
         context.lineRenderer.renderGrid(viewMatrix)
         context.nodeRenderer.renderSelected(viewMatrix, ray)
-        //buttons[0].clicked = false // Un-click lmb
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }

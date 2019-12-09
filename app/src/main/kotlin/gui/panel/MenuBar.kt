@@ -6,12 +6,8 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.border.SimpleLineBorder
 import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
-import org.liquidengine.legui.style.length.Auto
-import org.liquidengine.legui.style.length.LengthType
 import render.RenderContext
 import render.SPRITE_PATH
 import util.setHeightLimit
@@ -34,6 +30,7 @@ class MenuBar(context: RenderContext): Panel() {
         addMenuButton("import", context.importManager::import)
         addMenuButton("undo", context.animationHandler.history::undo)
         addMenuButton("redo", context.animationHandler.history::redo)
+        addMenuButton("settings", context.settingsManager::openDialog)
     }
 
     private fun addMenuButton(name: String, action: () -> Unit, marginLeft: Float = 1f) {
