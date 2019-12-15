@@ -29,7 +29,6 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL32
 import org.lwjgl.system.MemoryUtil
 import transfer.ExportManager
 import transfer.ImportManager
@@ -108,17 +107,7 @@ class RenderContext {
         CallbackKeeper.registerCallbacks(window, keeper)
 
         keeper.chainWindowCloseCallback.add { running = false }
-        keeper.chainKeyCallback.add { _, key, _, action, mods ->
-            val valid = action == GLFW_PRESS || action == GLFW_REPEAT
-            val mac = System.getProperty("os.name").startsWith("Mac")
-            val ctrl = if (mac) GLFW_MOD_SUPER else GLFW_MOD_CONTROL
-
-            if (valid && mods == ctrl && key == GLFW_KEY_Z) {
-                animationHandler.history.undo()
-            } else if (valid && mods == ctrl + GLFW_MOD_SHIFT && key == GLFW_KEY_Z) {
-                animationHandler.history.redo()
-            }
-        }
+        keeper.chainKeyCallback.add(KeyCallback(this))
 
         val systemEventProcessor = SystemEventProcessor()
         systemEventProcessor.addDefaultCallbacks(keeper)

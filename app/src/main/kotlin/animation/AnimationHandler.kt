@@ -42,28 +42,24 @@ class AnimationHandler(private val context: RenderContext) {
         }
 
         if (timer > MAX_LENGTH) {
-            setCurrentFrame(0, 0) // Restart animation
+            setCurrentFrame(0) // Restart animation
         }
 
         if (playing) {
             if (--frameLength <= 0) { // Traverse frame
                 frameCount++
-                frameLength = animation.keyframes[getCurrentFrameIndex(animation)].length
+                frameLength = animation.keyframes[animation.getFrameIndex(frameCount)].length
             }
             timer = ++timer % animation.length // Increment timer
         }
 
-        val keyframe = animation.keyframes[getCurrentFrameIndex(animation)]
+        val keyframe = animation.keyframes[animation.getFrameIndex(frameCount)]
         keyframe.apply(context)
 
         if (keyframe.id != previousFrame.id) {
             onNewFrame(keyframe)
         }
         context.gui.animationPanel.tickCursor(timer, animation.length)
-    }
-
-    fun getCurrentFrameIndex(animation: Animation): Int {
-        return frameCount % animation.keyframes.size // TODO: use current animation?
     }
 
     private fun onNewFrame(keyframe: Keyframe) {
@@ -107,12 +103,12 @@ class AnimationHandler(private val context: RenderContext) {
         context.gui.animationPanel.menu.updatePlayIcon(playing)
     }
 
-    fun setCurrentFrame(frame: Int, offset: Int) {
-        val animation = currentAnimation?: return
-        frameCount = frame
+    fun setCurrentFrame(frame: Int, offset: Int = 0) {
+        val animation = currentAnimation ?: return
+        frameCount = animation.getFrameIndex(frame)
 
         var cumulative = 0
-        val frameIndex = getCurrentFrameIndex(animation)
+        val frameIndex = animation.getFrameIndex(frameCount)
         repeat(frameIndex) {
             cumulative += animation.keyframes[it].length
         }
@@ -120,6 +116,14 @@ class AnimationHandler(private val context: RenderContext) {
         timer = cumulative + offset
         val keyframe = animation.keyframes[frameIndex]
         frameLength = keyframe.length - offset
+    }
+
+    fun setNextFrame() {
+        setCurrentFrame(++frameCount)
+    }
+
+    fun setPreviousFrame() {
+        setCurrentFrame(--frameCount)
     }
 
     fun executeCommand(command: Command) {

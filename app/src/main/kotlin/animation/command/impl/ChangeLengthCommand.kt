@@ -12,7 +12,7 @@ class ChangeLengthCommand(private val context: RenderContext, private val length
     override fun execute(): Boolean {
         val animation = context.animationHandler.getAnimationOrCopy() ?: return false
         if (index == UNSET) {
-            index = context.animationHandler.getCurrentFrameIndex(animation)
+            index = animation.getFrameIndex(context.animationHandler.frameCount)
         }
 
         val keyframe = animation.keyframes[index]
@@ -33,7 +33,7 @@ class ChangeLengthCommand(private val context: RenderContext, private val length
 
     private fun Animation.update() {
         length = calculateLength()
-        context.animationHandler.setCurrentFrame(context.animationHandler.frameCount, 0) // Restart frame
+        context.animationHandler.setCurrentFrame(context.animationHandler.frameCount) // Restart frame
         context.gui.animationPanel.setTimeline()
     }
 

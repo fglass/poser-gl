@@ -190,9 +190,11 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         return keyframes.first().frameMap
     }
 
+    fun getFrameIndex(index: Int) = Math.floorMod(index, keyframes.size)
+
     fun insertKeyframe(keyframe: Keyframe, index: Int) {
         keyframes.add(index, keyframe)
-        context.animationHandler.setCurrentFrame(index, 0)
+        context.animationHandler.setCurrentFrame(index)
         updateKeyframes()
     }
 
@@ -212,7 +214,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    override fun toSequence(archiveId: Int): SequenceDefinition {
+    override fun toSequence(archiveId: Int): SequenceDefinition { // TODO: move?
         val sequence = SequenceDefinition(sequence.id)
         sequence.leftHandItem = this.sequence.leftHandItem
         sequence.rightHandItem = this.sequence.rightHandItem

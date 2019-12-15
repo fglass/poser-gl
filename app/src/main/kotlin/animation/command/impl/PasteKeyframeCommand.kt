@@ -23,7 +23,7 @@ class PasteKeyframeCommand(private val context: RenderContext) : Command {
         val animation = context.animationHandler.getAnimationOrCopy()?: return false
 
         if (insertedIndex == UNSET) {
-            insertedIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
+            insertedIndex = animation.getFrameIndex(context.animationHandler.frameCount) + 1
         }
         val keyframe = Keyframe(animation.keyframes.size, copied) // Copy here to avoid shared references
         animation.insertKeyframe(keyframe, insertedIndex)

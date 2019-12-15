@@ -18,7 +18,7 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
             return false
         }
 
-        val index = context.animationHandler.getCurrentFrameIndex(animation)
+        val index = animation.getFrameIndex(context.animationHandler.frameCount)
         if (index >= animation.keyframes.size - 1) {
             Dialog("Invalid Operation", "No subsequent keyframe to interpolate with", context, 250f, 70f).display()
             return false

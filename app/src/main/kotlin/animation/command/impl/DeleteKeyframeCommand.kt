@@ -19,7 +19,7 @@ class DeleteKeyframeCommand(private val context: RenderContext) : Command {
 
         animation = context.animationHandler.getAnimationOrCopy() ?: return false
         if (removedIndex == UNSET) {
-            removedIndex = context.animationHandler.getCurrentFrameIndex(animation)
+            removedIndex = animation.getFrameIndex(context.animationHandler.frameCount)
         }
 
         deletedKeyframe = animation.keyframes[removedIndex]

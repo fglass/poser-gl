@@ -13,7 +13,7 @@ class AddKeyframeCommand(private val context: RenderContext) : Command {
     override fun execute(): Boolean {
         val animation = context.animationHandler.getAnimationOrCopy() ?: return false
         if (insertedIndex == UNSET) {
-            insertedIndex = context.animationHandler.getCurrentFrameIndex(animation) + 1
+            insertedIndex = animation.getFrameIndex(context.animationHandler.frameCount) + 1
         }
 
         val keyframe = Keyframe(animation.keyframes.size, animation.keyframes[insertedIndex - 1]) // Copy of previous

@@ -23,7 +23,7 @@ class TransformNodeCommand(private val context: RenderContext, private val coord
         val preCopy = selected.getTransformation(type) ?: return false
 
         val animation = context.animationHandler.getAnimationOrCopy() ?: return false
-        val index = context.animationHandler.getCurrentFrameIndex(animation)
+        val index = animation.getFrameIndex(context.animationHandler.frameCount)
         val keyframe = animation.keyframes[index]
 
         try {
