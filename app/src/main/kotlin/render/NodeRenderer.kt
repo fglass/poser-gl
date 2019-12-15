@@ -116,8 +116,8 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
 
     private fun handleClosestNode(node: ReferenceNode) {
         if (lmb.clicked) {
-            when {
-                selectedNode?.id == node.id -> reset(false) // Toggle off if already selected
+            when (selectedNode?.id) {
+                node.id -> reset(false) // Toggle off if already selected
                 else -> {
                     selectNode(node)
                     context.animationHandler.setPlay(false)

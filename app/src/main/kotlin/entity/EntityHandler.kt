@@ -23,7 +23,7 @@ class EntityHandler(private val context: RenderContext) {
         process(def.name, def.tileSpacesOccupied, composition)
     }
 
-    private fun matchAnimations(def: NpcDefinition) {
+    private fun matchAnimations(def: NpcDefinition) { // TODO: remove/adjust for higher rev
         val walk = context.cacheService.animations[def.walkAnimation]
         val siblings = walk?.findSiblings()?: emptyArray<Int>().toIntArray()
         context.gui.listPanel.animationList.highlighted = siblings

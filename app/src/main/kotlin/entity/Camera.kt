@@ -97,7 +97,7 @@ class Camera(private val settingsManager: SettingsManager, private val lmb: Mous
 
     fun calculateRay(context: RenderContext, viewMatrix: Matrix4f): Rayf {
         val mousePosition = Mouse.getCursorPosition()
-        mousePosition.sub(context.framebuffer.position)
+        mousePosition.sub(context.framebuffer.absolutePosition)
 
         val origin = Vector3f()
         val dir = Vector3f()
