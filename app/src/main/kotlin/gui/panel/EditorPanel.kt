@@ -1,7 +1,5 @@
 package gui.panel
 
-import render.RenderContext
-import render.SPRITE_PATH
 import animation.Keyframe
 import animation.KeyframeAction
 import animation.ReferenceNode
@@ -16,16 +14,17 @@ import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.style.flex.FlexStyle
+import render.RenderContext
 import util.Colour
+import util.ResourceMap
 import util.setSizeLimits
 
-// TODO: node position editing
+// TODO: reference node position editing - advanced mode
 
 class EditorPanel(private val context: RenderContext): Panel() {
 
@@ -78,7 +77,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
         val actions = ButtonGroup(Vector2f(23f, 59f), Vector2f(23f, 23f))
         KeyframeAction.values().forEach {
-            val button = actions.addButton(it.icon, it.name.toLowerCase().capitalize())
+            val button = actions.addButton(it.icon, it.toString())
             button.hoveredIcon = it.hoveredIcon
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
                 if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
@@ -112,11 +111,7 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
         transformations = ConfigGroup(
             Vector2f(), Vector2f(24f, 24f),
-            arrayOf(
-                BufferedImage("${SPRITE_PATH}translation.png"),
-                BufferedImage("${SPRITE_PATH}rotation.png"),
-                BufferedImage("${SPRITE_PATH}scale.png")
-            ),
+            arrayOf(ResourceMap["translation"], ResourceMap["rotation"], ResourceMap["scale"]),
             arrayOf("Translation", "Rotation", "Scale"),
             padding = 8
         )

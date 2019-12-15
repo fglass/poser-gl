@@ -2,7 +2,6 @@ package gui.component
 
 import api.ICacheLoader
 import gui.GuiManager
-import render.SPRITE_PATH
 import render.VERSION
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
@@ -13,16 +12,17 @@ import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import render.RenderContext
 import util.FileDialog
+import util.ResourceMap
 
 class StartDialog(private val context: RenderContext):
       Dialog("", "Backup your cache before making changes", context, 260f, 177f) {
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<ICacheLoader>
-    private val openIcon = BufferedImage(SPRITE_PATH + "open.png")
-    private val openHoveredIcon = BufferedImage(SPRITE_PATH + "open-hovered.png")
-    private val loadIcon = BufferedImage(SPRITE_PATH + "load.png")
-    private val loadHoveredIcon = BufferedImage(SPRITE_PATH + "load-hovered.png")
+    private val openIcon = ResourceMap["open"]
+    private val openHoveredIcon = ResourceMap["open-hovered"]
+    private val loadIcon = ResourceMap["load"]
+    private val loadHoveredIcon = ResourceMap["load-hovered"]
 
     init {
         isDraggable = false
@@ -39,7 +39,7 @@ class StartDialog(private val context: RenderContext):
     }
 
     private fun addTitle() {
-        val logo = ImageView(BufferedImage(SPRITE_PATH + "title.png"))
+        val logo = ImageView(ResourceMap["title"])
         logo.position = Vector2f(20f, 5f)
         logo.size = Vector2f(220f, 82f)
         logo.style.border.isEnabled = false

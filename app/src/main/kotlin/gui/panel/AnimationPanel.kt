@@ -1,7 +1,6 @@
 package gui.panel
 
 import render.RenderContext
-import render.SPRITE_PATH
 import animation.Keyframe
 import gui.component.AnimationMenu
 import gui.component.AnimationTimeline
@@ -12,10 +11,10 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import util.ResourceMap
 import util.setHeightLimit
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -28,11 +27,11 @@ class AnimationPanel(private val context: RenderContext): Panel() {
     private val times: Panel
     private var unitX = 0f
 
-    private val greyLine = BufferedImage(SPRITE_PATH + "grey-line.png")
-    private val yellowLine = BufferedImage(SPRITE_PATH + "yellow-line.png")
-    private val pinkLine = BufferedImage(SPRITE_PATH + "pink-line.png")
-    private val greenLine = BufferedImage(SPRITE_PATH + "green-line.png")
-    private val cursor = ImageButton(Vector2f(0f, 0f), greenLine)
+    private val greyLine = ResourceMap["grey-line"]
+    private val yellowLine = ResourceMap["yellow-line"]
+    private val pinkLine = ResourceMap["pink-line"]
+    private val greenLine = ResourceMap["green-line"]
+    private val cursor = ImageButton(Vector2f(), greenLine)
 
     init {
         style.background.color = ColorConstants.darkGray()

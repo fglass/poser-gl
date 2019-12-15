@@ -1,29 +1,27 @@
 package gui.component
 
-import render.SPRITE_PATH
 import render.RenderContext
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
-import org.liquidengine.legui.style.length.Auto
+import util.ResourceMap
 import util.setSizeLimits
 
 class AnimationMenu(context: RenderContext): Panel() {
 
     private val play: ImageButton
-    private val playIcon = BufferedImage(SPRITE_PATH + "play.png")
-    private val playHoveredIcon = BufferedImage(SPRITE_PATH + "play-hovered.png")
-    private val pauseIcon = BufferedImage(SPRITE_PATH + "pause.png")
-    private val pauseHoveredIcon = BufferedImage(SPRITE_PATH + "pause-hovered.png")
-    private val nodeIcon = BufferedImage(SPRITE_PATH + "node.png")
-    private val nodeToggledIcon = BufferedImage(SPRITE_PATH + "node-toggled.png")
-    private val infoIcon = BufferedImage(SPRITE_PATH + "info.png")
-    private val infoHoveredIcon = BufferedImage(SPRITE_PATH + "info-hovered.png")
+    private val playIcon = ResourceMap["play"]
+    private val playHoveredIcon = ResourceMap["play-hovered"]
+    private val pauseIcon = ResourceMap["pause"]
+    private val pauseHoveredIcon = ResourceMap["pause-hovered"]
+    private val infoIcon = ResourceMap["info"]
+    private val infoHoveredIcon = ResourceMap["info-hovered"]
+    private val nodeIcon = ResourceMap["node"]
+    private val nodeToggledIcon = ResourceMap["node-toggled"]
 
     init {
         style.display = Style.DisplayType.FLEX

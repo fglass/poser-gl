@@ -171,7 +171,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             return
         }
 
-        val item = context.cacheService.items[id - ITEM_OFFSET]?: return
+        val item = context.cacheService.items[id - ITEM_OFFSET] ?: return
         context.entity?.let {
             val action = if (equip) it::addItem else it::removeItem
             action.invoke(item, context.entityHandler)
@@ -180,7 +180,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
     fun findSiblings(): IntArray {
         load()
-        val matching = context.cacheService.frameMaps[getFrameMap().id]?: return emptyArray<Int>().toIntArray()
+        val matching = context.cacheService.frameMaps[getFrameMap().id] ?: return emptyArray<Int>().toIntArray()
         val siblings = matching.toIntArray()
         siblings.sort()
         return siblings

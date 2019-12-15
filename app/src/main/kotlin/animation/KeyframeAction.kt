@@ -2,25 +2,25 @@ package animation
 
 import animation.command.*
 import animation.command.impl.*
-import render.SPRITE_PATH
 import render.RenderContext
-import org.liquidengine.legui.image.BufferedImage
+import util.ResourceMap
 import kotlin.reflect.KFunction1
 
-enum class KeyframeAction(private val reference: KFunction1<RenderContext, Command>, iconName: String,
-                          hoveredIconName: String) {
+enum class KeyframeAction(private val reference: KFunction1<RenderContext, Command>, key: String) {
 
-    ADD(::AddKeyframeCommand, "add", "add-hovered"),
-    COPY(::CopyKeyframeCommand, "copy", "copy-hovered"),
-    PASTE(::PasteKeyframeCommand, "paste", "paste-hovered"),
-    INTERPOLATE(::LerpKeyframeCommand, "interpolate", "interpolate-hovered"),
-    DELETE(::DeleteKeyframeCommand, "trash", "trash-hovered");
+    ADD(::AddKeyframeCommand, "add"),
+    COPY(::CopyKeyframeCommand, "copy"),
+    PASTE(::PasteKeyframeCommand, "paste"),
+    INTERPOLATE(::LerpKeyframeCommand, "lerp"),
+    DELETE(::DeleteKeyframeCommand, "trash");
+
+    val icon = ResourceMap[key]
+    val hoveredIcon = ResourceMap["$key-hovered"]
 
     fun apply(context: RenderContext) {
         val command = reference.invoke(context)
         context.animationHandler.executeCommand(command)
     }
 
-    val icon = BufferedImage("$SPRITE_PATH$iconName.png")
-    val hoveredIcon = BufferedImage("$SPRITE_PATH$hoveredIconName.png")
+    override fun toString() = name.toLowerCase().capitalize()
 }

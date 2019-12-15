@@ -11,11 +11,7 @@ class KeyCallback(private val context: RenderContext) : GLFWKeyCallbackI {
     private val ctrl = if (mac) GLFW.GLFW_MOD_SUPER else GLFW.GLFW_MOD_CONTROL
 
     override fun invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int) {
-        if (action != GLFW.GLFW_PRESS && action != GLFW.GLFW_REPEAT) {
-            return
-        }
-
-        when {
+        when (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
             key == GLFW.GLFW_KEY_Z && mods == ctrl -> animationHandler.history.undo()
             key == GLFW.GLFW_KEY_Z && mods == ctrl + GLFW.GLFW_MOD_SHIFT -> animationHandler.history.redo()
             key == GLFW.GLFW_KEY_E && mods == ctrl -> context.exportManager.redo()

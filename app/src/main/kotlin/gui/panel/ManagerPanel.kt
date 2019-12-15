@@ -1,7 +1,5 @@
 package gui.panel
 
-import render.SPRITE_PATH
-
 import render.RenderContext
 import entity.Entity
 import gui.component.ConfigGroup
@@ -12,7 +10,6 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
@@ -21,6 +18,7 @@ import org.liquidengine.legui.style.flex.FlexStyle
 import render.PolygonMode
 import shader.ShadingType
 import util.Colour
+import util.ResourceMap
 import util.setSizeLimits
 
 class ManagerPanel(private val context: RenderContext): Panel() {
@@ -28,8 +26,8 @@ class ManagerPanel(private val context: RenderContext): Panel() {
     private val selectedEntity = Label("Selected: N/A")
     private lateinit var modelPanel: ScrollablePanel
 
-    private val modelIcon = BufferedImage(SPRITE_PATH + "model.png")
-    private val deleteIcon = BufferedImage(SPRITE_PATH + "delete.png")
+    private val modelIcon = ResourceMap["model"]
+    private val deleteIcon = ResourceMap["delete"]
 
     init {
         style.display = Style.DisplayType.FLEX
@@ -63,9 +61,8 @@ class ManagerPanel(private val context: RenderContext): Panel() {
     private fun addPolygonModes() {
         val modes = ConfigGroup(
             Vector2f(6f, 41f), Vector2f(22f, 22f),
-            arrayOf(
-                BufferedImage(SPRITE_PATH + "fill-cube.png"), BufferedImage(SPRITE_PATH + "line-cube.png"),
-                BufferedImage(SPRITE_PATH + "point-cube.png")), arrayOf("Fill", "Wireframe", "Vertices")
+            arrayOf(ResourceMap["fill-cube"], ResourceMap["line-cube"], ResourceMap["point-cube"]),
+            arrayOf("Fill", "Wireframe", "Vertices")
         )
         for ((i, button) in modes.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
@@ -85,8 +82,8 @@ class ManagerPanel(private val context: RenderContext): Panel() {
     private fun addShadingTypes() {
         val types = ConfigGroup(
             Vector2f(88f, 41f), Vector2f(22f, 22f),
-            arrayOf(BufferedImage(SPRITE_PATH + "smooth-shading.png"), BufferedImage(SPRITE_PATH + "flat-shading.png"),
-                    BufferedImage(SPRITE_PATH + "no-shading.png")), arrayOf("Smooth", "Flat", "None")
+            arrayOf(ResourceMap["smooth-shading"], ResourceMap["flat-shading"], ResourceMap["no-shading"]),
+            arrayOf("Smooth", "Flat", "None")
         )
         for ((i, button) in types.buttons.withIndex()) {
             button.listenerMap.addListener(MouseClickEvent::class.java) { event ->

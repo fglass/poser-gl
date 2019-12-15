@@ -18,16 +18,16 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
     }
 
     private fun addAttributes() {
-        val idInput = addAttribute("Id", animation.sequence.id, 7f)
+        val sequenceInput = addAttribute("Id", animation.sequence.id, 7f)
         val mainHandInput = addAttribute("Main Hand", getItemId(animation.sequence.leftHandItem), 27f)
         val offHandInput = addAttribute("Off Hand", getItemId(animation.sequence.rightHandItem), 47f)
 
         listenerMap.addListener(WidgetCloseEvent::class.java) {
-            modifyId(idInput)
-            animation.toggleItems(false) // Un-equip
-            animation.sequence.leftHandItem = modifyItem(mainHandInput)
-            animation.sequence.rightHandItem = modifyItem(offHandInput)
-            animation.toggleItems(true) // Equip
+            changeSequenceId(sequenceInput)
+            animation.toggleItems(equip = false)
+            animation.sequence.leftHandItem = getItem(mainHandInput)
+            animation.sequence.rightHandItem = getItem(offHandInput)
+            animation.toggleItems(equip = true)
         }
     }
 
@@ -47,8 +47,8 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
         return max(id - ITEM_OFFSET, -1)
     }
 
-    private fun modifyId(input: TextInput) {
-        val id = input.textState.text.toIntOrNull()?: return
+    private fun changeSequenceId(input: TextInput) {
+        val id = input.textState.text.toIntOrNull() ?: return
         if (context.cacheService.animations.contains(id)) { // Already in use
             return
         }
@@ -56,8 +56,8 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
         context.animationHandler.addAnimation(copied)
     }
 
-    private fun modifyItem(input: TextInput): Int {
-        val itemId = input.textState.text.toIntOrNull()?: return -1
+    private fun getItem(input: TextInput): Int {
+        val itemId = input.textState.text.toIntOrNull() ?: return -1
         val item = context.cacheService.items.getOrElse(itemId) { return -1 }
         return item.id + ITEM_OFFSET
     }

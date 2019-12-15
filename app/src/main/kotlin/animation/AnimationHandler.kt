@@ -27,7 +27,7 @@ class AnimationHandler(private val context: RenderContext) {
             return
         }
 
-        animation.toggleItems(true)
+        animation.toggleItems(equip = true)
         frameLength = animation.keyframes.first().length
         currentAnimation = animation
 
@@ -140,7 +140,7 @@ class AnimationHandler(private val context: RenderContext) {
         val previous = currentAnimation
         currentAnimation = null
         context.gui.listPanel.animationList.updateElement(previous)
-        previous?.toggleItems(false)
+        previous?.toggleItems(equip = false)
 
         timer = 0
         frameCount = 0

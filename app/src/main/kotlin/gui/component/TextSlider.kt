@@ -1,9 +1,5 @@
 package gui.component
 
-import render.SPRITE_PATH
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput
@@ -11,18 +7,18 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.KeyEvent
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.listener.CursorEnterEventListener
 import org.liquidengine.legui.listener.MouseClickEventListener
 import org.lwjgl.glfw.GLFW
+import util.ResourceMap
 
 class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
                  x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
 
     private val value = TextInput("", 12f, 0f, width - 24, height)
     private var adjusting = false
-    private val leftArrow = BufferedImage(SPRITE_PATH + "left.png")
-    private val rightArrow = BufferedImage(SPRITE_PATH + "right.png")
+    private val leftArrow = ResourceMap["left"]
+    private val rightArrow = ResourceMap["right"]
 
     init {
         isFocusable = false

@@ -4,12 +4,11 @@ import gui.component.ImageButton
 import org.joml.Vector2f
 import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
 import render.RenderContext
-import render.SPRITE_PATH
+import util.ResourceMap
 import util.setHeightLimit
 import util.setSizeLimits
 
@@ -34,8 +33,8 @@ class MenuBar(context: RenderContext): Panel() {
     }
 
     private fun addMenuButton(name: String, action: () -> Unit, marginLeft: Float = 1f) {
-        val button = ImageButton(Vector2f(), BufferedImage("$SPRITE_PATH$name.png"), name.capitalize())
-        button.hoveredIcon = BufferedImage("$SPRITE_PATH$name-hovered.png")
+        val button = ImageButton(Vector2f(), ResourceMap[name], name.capitalize())
+        button.hoveredIcon = ResourceMap["$name-hovered"]
 
         button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
