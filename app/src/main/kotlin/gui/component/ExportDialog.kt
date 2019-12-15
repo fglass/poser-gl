@@ -7,6 +7,7 @@ import org.liquidengine.legui.component.RadioButton
 import org.liquidengine.legui.component.RadioButtonGroup
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.MouseClickEvent
+import transfer.ExportFormat
 
 class ExportDialog(private val context: RenderContext): Dialog("Export Manager", "", context, 230f, 80f) {
 
@@ -15,8 +16,8 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
         container.remove(message)
 
         val group = RadioButtonGroup()
-        val pgl = RadioButton(".pgl", 68f, 9f, 37f, 15f)
-        val dat = RadioButton(".dat", 120f, 9f, 37f, 15f)
+        val pgl = RadioButton(".${ExportFormat.PGL.extension}}", 68f, 9f, 37f, 15f)
+        val dat = RadioButton(".${ExportFormat.DAT.extension}", 120f, 9f, 37f, 15f)
 
         val buttons = arrayOf(pgl, dat)
         buttons.forEach {
@@ -31,8 +32,9 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
         export.style.focusedStrokeColor = null
         export.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                val name = FileDialog.saveFile(if (pgl.isChecked) "pgl" else "dat")?: return@addListener
-                if (pgl.isChecked) context.exportManager.exportPgl(name) else context.exportManager.exportDat(name)
+                val format = if (pgl.isChecked) ExportFormat.PGL else ExportFormat.DAT
+                val name = FileDialog.saveFile(format.extension)?: return@addListener
+                format.export.invoke(context.exportManager, name)
             }
         }
         container.add(export)

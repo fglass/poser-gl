@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWKeyCallbackI
 import render.RenderContext
 
-class KeyCallback(context: RenderContext) : GLFWKeyCallbackI {
+class KeyCallback(private val context: RenderContext) : GLFWKeyCallbackI {
 
     private val animationHandler = context.animationHandler
     private val mac = System.getProperty("os.name").startsWith("Mac")
@@ -16,8 +16,9 @@ class KeyCallback(context: RenderContext) : GLFWKeyCallbackI {
         }
 
         when {
-            mods == ctrl && key == GLFW.GLFW_KEY_Z -> animationHandler.history.undo()
-            mods == ctrl + GLFW.GLFW_MOD_SHIFT && key == GLFW.GLFW_KEY_Z -> animationHandler.history.redo()
+            key == GLFW.GLFW_KEY_Z && mods == ctrl -> animationHandler.history.undo()
+            key == GLFW.GLFW_KEY_Z && mods == ctrl + GLFW.GLFW_MOD_SHIFT -> animationHandler.history.redo()
+            key == GLFW.GLFW_KEY_E && mods == ctrl -> context.exportManager.redo()
             key == GLFW.GLFW_KEY_RIGHT -> animationHandler.setNextFrame()
             key == GLFW.GLFW_KEY_LEFT -> animationHandler.setPreviousFrame()
         }

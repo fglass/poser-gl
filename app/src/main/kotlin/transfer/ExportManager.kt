@@ -12,10 +12,12 @@ import net.runelite.cache.definitions.FramemapDefinition
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
+import kotlin.reflect.KFunction2
 
 class ExportManager(private val context: RenderContext) {
 
     private lateinit var dialog: ExportDialog
+    private var lastExport = "" to ExportFormat.PGL
 
     fun openDialog() {
         context.animationHandler.currentAnimation?: return
@@ -27,6 +29,7 @@ class ExportManager(private val context: RenderContext) {
         val animation = context.animationHandler.currentAnimation ?: return
         val data = encodePgl(animation)
         File(name).writeBytes(data)
+        lastExport = name to ExportFormat.PGL
         dialog.close()
     }
 
@@ -99,6 +102,7 @@ class ExportManager(private val context: RenderContext) {
         val animation = context.animationHandler.currentAnimation ?: return
         val data = encodeAnimation317(animation) // TODO: use 317 plugin instead
         File(name).writeBytes(data)
+        lastExport = name to ExportFormat.DAT
         dialog.close()
         DatDialog(context, animation).display()
     }
@@ -186,4 +190,16 @@ class ExportManager(private val context: RenderContext) {
         os.close()
         return out.toByteArray()
     }
+
+    fun redo() {
+        val (name, format) = lastExport
+        if (!name.isBlank()) {
+            format.export.invoke(this, name)
+        }
+    }
+}
+
+enum class ExportFormat(val extension: String, val export: KFunction2<ExportManager, String, Unit>) {
+    PGL("pgl", ExportManager::exportPgl),
+    DAT("dat", ExportManager::exportDat)
 }
