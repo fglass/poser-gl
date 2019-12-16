@@ -99,9 +99,13 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun addPlayer() {
-        val player = NpcDefinition(-1) // TODO: reorder
+        val player = NpcDefinition(-1)
         player.name = "Player"
-        player.walkAnimation = 819
+        player.walkAnimation = 819 // TODO: higher rev only
+        player.stanceAnimation = 808
+        player.rotate90RightAnimation = 820
+        player.rotate90LeftAnimation = 821
+        player.rotate180Animation = 14
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
     }

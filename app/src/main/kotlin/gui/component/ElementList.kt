@@ -10,7 +10,7 @@ import util.Colour
 abstract class ElementList: ScrollablePanel() { // TODO: refactor
 
     var searchText = "Search"
-    var highlighted = emptyArray<Int>().toIntArray()
+    var highlighted = emptyList<Int>() // TODO: arraylist
     protected val listX = 2f
     protected val listY = 3f
     protected val listYOffset = 18f

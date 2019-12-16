@@ -178,12 +178,9 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
     }
 
-    fun findSiblings(): IntArray {
+    fun findSiblings(): Set<Int> {
         load()
-        val matching = context.cacheService.frameMaps[getFrameMap().id] ?: return emptyArray<Int>().toIntArray()
-        val siblings = matching.toIntArray()
-        siblings.sort()
-        return siblings
+        return context.cacheService.frameMaps[getFrameMap().id] ?: emptySet()
     }
 
     fun getFrameMap(): FramemapDefinition {
