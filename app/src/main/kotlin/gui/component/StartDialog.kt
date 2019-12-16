@@ -6,7 +6,6 @@ import render.VERSION
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
@@ -19,16 +18,13 @@ class StartDialog(private val context: RenderContext):
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<ICacheLoader>
-    private val openIcon = ResourceMap["open"]
-    private val openHoveredIcon = ResourceMap["open-hovered"]
-    private val loadIcon = ResourceMap["load"]
-    private val loadHoveredIcon = ResourceMap["load-hovered"]
 
     init {
         isDraggable = false
         isCloseable = false
 
         remove(titleContainer)
+        remove(message)
         container.style.background.color = ColorUtil.fromInt(35, 35, 35, 1f)
         message.position.y += 77f
 
@@ -63,14 +59,14 @@ class StartDialog(private val context: RenderContext):
         cache.style.focusedStrokeColor = null
         container.add(cache)
 
-        val open = ImageButton(Vector2f(175f, 122f), openIcon)
-        open.hoveredIcon = openHoveredIcon
+        val open = ImageButton(Vector2f(175f, 122f), ResourceMap["open"])
+        open.hoveredIcon = ResourceMap["open-hovered"]
         open.size = Vector2f(13f, 14f)
 
         open.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                cache.textState.text = FileDialog.openFile(folder = true)?: return@addListener
+                cache.textState.text = FileDialog.openFile(folder = true)
             }
         }
         container.add(open)
@@ -91,8 +87,8 @@ class StartDialog(private val context: RenderContext):
     }
 
     private fun addLoadButton() {
-        val load = ImageButton(Vector2f(232f, 150f), loadIcon)
-        load.hoveredIcon = loadHoveredIcon
+        val load = ImageButton(Vector2f(232f, 150f), ResourceMap["load"])
+        load.hoveredIcon = ResourceMap["load-hovered"]
         load.size = Vector2f(16f, 16f)
 
         load.listenerMap.addListener(MouseClickEvent::class.java) { event ->
