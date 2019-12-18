@@ -30,7 +30,7 @@ class CacheService(private val context: RenderContext) {
     var entities = HashMap<Int, NpcDefinition>()
     var items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
-    var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
+    private var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
     var frameMaps = HashMap<Int, HashSet<Int>>()
 
     fun init(path: String, loader: ICacheLoader) {
@@ -56,9 +56,6 @@ class CacheService(private val context: RenderContext) {
         items = loader.loadItemDefinitions(library)
         logger.info { "Loaded ${items.size} items" }
 
-        frames = loader.loadFrameArchives(library)
-        logger.info { "Loaded ${frames.keys().size} frames" }
-
         loadAnimations(library)
         logger.info { "Loaded ${animations.size} animations" }
 
@@ -77,14 +74,14 @@ class CacheService(private val context: RenderContext) {
                 it.frameIDs != null -> {
                     val animation = Animation(context, it)
                     animations[it.id] = animation
-                    addFrameMap(animation)
+                    // addFrameMap(animation)
                 }
                 else -> logger.error { "Sequence ${it.id} contains no frames" }
             }
         }
     }
 
-    fun addFrameMap(animation: Animation) {
+    fun addFrameMap(animation: Animation) { // TODO: remove?
         val frameMap = when {
             animation.keyframes.isNotEmpty() -> animation.getFrameMap()
             animation.sequence.frameIDs.isNotEmpty()  -> {
@@ -117,6 +114,20 @@ class CacheService(private val context: RenderContext) {
             }
         }
         return def
+    }
+
+    fun getFrameArchive(archiveId: Int): Set<FrameDefinition> {
+        val archive = frames.get(archiveId)
+        if (archive.isNotEmpty()) {
+            return archive
+        }
+
+        val library = CacheLibrary(path)
+        val loaded = loader.loadFrameArchive(library, archiveId)
+        library.close()
+
+        frames.putAll(archiveId, loaded) // Cache
+        return loaded
     }
 
     fun pack() {
