@@ -24,13 +24,8 @@ class EntityHandler(private val context: RenderContext) {
     }
 
     private fun matchAnimations(def: NpcDefinition) { // TODO: remove/adjust for higher rev
-        val animations = listOf(
-            def.walkAnimation, def.stanceAnimation, def.rotate90LeftAnimation,
-            def.rotate90RightAnimation, def.rotate180Animation
-        )
-
-        val siblings = animations.flatMap { context.cacheService.animations[it]?.findSiblings() ?: emptySet() }
-        context.gui.listPanel.animationList.highlighted = siblings.distinct().sorted()
+        val siblings = context.cacheService.animations[def.walkAnimation]?.findSiblings() ?: emptySet()
+        context.gui.listPanel.animationList.highlighted = siblings.sorted()
         context.gui.listPanel.animationList.reset()
     }
 
