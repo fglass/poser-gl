@@ -9,7 +9,7 @@ class ModelParser {
 
     private val loader = Loader()
 
-    fun parse(def: ModelDefinition, flatShading: Boolean): Model {
+    fun parse(def: ModelDefinition, flatShading: Boolean): Model { // TODO: scale based on max vertex positions
         val nPosition = 4
         val nNormal = 3
 

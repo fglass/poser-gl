@@ -81,7 +81,7 @@ class CacheService(private val context: RenderContext) {
         }
     }
 
-    fun addFrameMap(animation: Animation) { // TODO: remove?
+    fun addFrameMap(animation: Animation) { // TODO: remove or redo
         val frameMap = when {
             animation.keyframes.isNotEmpty() -> animation.getFrameMap()
             animation.sequence.frameIDs.isNotEmpty()  -> {
@@ -95,7 +95,7 @@ class CacheService(private val context: RenderContext) {
         frameMaps[frameMap.id]?.add(animation.sequence.id)
     }
 
-    private fun addPlayer() { // TODO: higher rev support
+    private fun addPlayer() {
         val player = NpcDefinition(-1)
         player.name = "Player"
         player.walkAnimation = 819
