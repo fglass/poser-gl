@@ -31,7 +31,6 @@ class CacheService(private val context: RenderContext) {
     var items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
     private var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
-    var frameMaps = HashMap<Int, HashSet<Int>>()
 
     fun init(path: String, loader: ICacheLoader) {
         this.path = path
@@ -67,38 +66,17 @@ class CacheService(private val context: RenderContext) {
 
     private fun loadAnimations(library: CacheLibrary) {
         animations.clear()
-        frameMaps.clear()
-        val sequences = loader.loadSequences(library)
-        sequences.forEach {
+        loader.loadSequences(library).forEach {
             when {
-                it.frameIDs != null -> {
-                    val animation = Animation(context, it)
-                    animations[it.id] = animation
-                    // addFrameMap(animation)
-                }
+                it.frameIDs != null -> animations[it.id] = Animation(context, it)
                 else -> logger.error { "Sequence ${it.id} contains no frames" }
             }
         }
     }
 
-    fun addFrameMap(animation: Animation) { // TODO: remove or redo
-        val frameMap = when {
-            animation.keyframes.isNotEmpty() -> animation.getFrameMap()
-            animation.sequence.frameIDs.isNotEmpty()  -> {
-                val archiveId = animation.sequence.frameIDs.first() ushr 16
-                val frames = frames[archiveId]
-                frames.firstOrNull()?.framemap?: return
-            }
-            else -> return
-        }
-        frameMaps.putIfAbsent(frameMap.id, HashSet())
-        frameMaps[frameMap.id]?.add(animation.sequence.id)
-    }
-
     private fun addPlayer() {
         val player = NpcDefinition(-1)
         player.name = "Player"
-        player.walkAnimation = 819
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
     }

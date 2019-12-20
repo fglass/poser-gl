@@ -87,7 +87,6 @@ class AnimationHandler(private val context: RenderContext) {
     fun addAnimation(animation: Animation) {
         currentAnimation = animation
         context.cacheService.animations[animation.sequence.id] = animation
-        context.cacheService.addFrameMap(animation)
         context.gui.listPanel.animationList.addElement(animation)
     }
 

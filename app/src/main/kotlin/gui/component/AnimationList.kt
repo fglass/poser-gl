@@ -39,12 +39,7 @@ class AnimationList(private val context: RenderContext): ElementList() {
         verticalScrollBar.curValue = verticalScrollBar.maxValue * offset
     }
 
-    private fun isHighlighted(animation: Animation): Boolean {
-        val first = context.cacheService.animations[highlighted.first()]!!
-        first.load()
-        val frameMap = first.getFrameMap()
-        return context.cacheService.frameMaps[frameMap.id]!!.contains(animation.sequence.id)
-    }
+    private fun isHighlighted(animation: Animation) = false // TODO: remove
 
     fun updateElement(animation: Animation?) {
         if (animation != null) {
@@ -85,8 +80,7 @@ class AnimationList(private val context: RenderContext): ElementList() {
             textState.text = animation.sequence.id.toString()
             textState.textColor = when {
                 animation.modified -> ColorConstants.lightRed()
-                highlighted -> ColorConstants.white()
-                else -> ColorConstants.lightGray()
+                else -> ColorConstants.white()
             }
             isEnabled = true
         }

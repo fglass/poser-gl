@@ -178,11 +178,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
     }
 
-    fun findSiblings(): Set<Int>? {
-        load()
-        return context.cacheService.frameMaps[getFrameMap().id]
-    }
-
     fun getFrameMap(): FramemapDefinition {
         return keyframes.first().frameMap
     }

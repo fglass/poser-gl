@@ -19,14 +19,7 @@ class EntityHandler(private val context: RenderContext) {
             composition.add(EntityComponent(it, def.recolorToFind, def.recolorToReplace))
         }
         clear()
-        matchAnimations(def)
         process(def.name, def.tileSpacesOccupied, composition)
-    }
-
-    private fun matchAnimations(def: NpcDefinition) { // TODO: remove/adjust for higher rev
-        val siblings = context.cacheService.animations[def.walkAnimation]?.findSiblings() ?: emptySet()
-        context.gui.listPanel.animationList.highlighted = siblings.sorted()
-        context.gui.listPanel.animationList.reset()
     }
 
     fun process(name: String, size: Int, composition: HashSet<EntityComponent>) {
