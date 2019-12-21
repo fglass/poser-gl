@@ -12,7 +12,7 @@ import util.ResourceMap
 import util.setHeightLimit
 import util.setSizeLimits
 
-class MenuBar(context: RenderContext): Panel() {
+class MenuBar(context: RenderContext): Panel() { // TODO: home button
     
     init {
         style.display = Style.DisplayType.FLEX

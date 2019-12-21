@@ -6,9 +6,9 @@ import org.joml.Vector3f
 import java.util.*
 import kotlin.collections.HashSet
 
-val ENTITY_POS = Vector3f(0f, 0f, 0f)
-val ENTITY_ROT = Vector3f(0f, 0f, 0f)
-const val ENTITY_SCALE = 1f
+val ENTITY_POS = Vector3f()
+val ENTITY_ROT = Vector3f()
+var ENTITY_SCALE = 1f
 
 class Entity(val name: String, val size: Int, var model: Model, val composition: HashSet<EntityComponent>) {
 

@@ -10,10 +10,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import api.ICacheLoader
 import api.ICachePacker
+import entity.ENTITY_SCALE
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
-import java.util.HashSet
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.NpcDefinition
@@ -24,6 +24,7 @@ class CacheService(private val context: RenderContext) {
 
     var path = ""
     var loaded = false
+    var isHigherRev = false
     lateinit var loader: ICacheLoader
     lateinit var packer: ICachePacker
 
@@ -50,6 +51,7 @@ class CacheService(private val context: RenderContext) {
 
     private fun load(library: CacheLibrary) {
         entities = loader.loadNpcDefinitions(library)
+        ENTITY_SCALE = if (library.is317 || library.isOSRS) 1f else 0.25f // Downscale for higher revs
         logger.info { "Loaded ${entities.size} npcs" }
 
         items = loader.loadItemDefinitions(library)
