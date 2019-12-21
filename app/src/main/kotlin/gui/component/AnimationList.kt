@@ -30,16 +30,9 @@ class AnimationList(private val context: RenderContext): ElementList() {
         container.add(element)
         container.size.y += listYOffset
 
-        var offset = 1f // Scroll to bottom
-        if (isHighlighted(animation)) {
-            offset = highlighted.size / elements.size.toFloat() // Scroll to where inserted
-            highlighted = highlighted + animation.sequence.id
-        }
         reset() // Reorder list
-        verticalScrollBar.curValue = verticalScrollBar.maxValue * offset
+        verticalScrollBar.curValue = verticalScrollBar.maxValue // Scroll to bottom
     }
-
-    private fun isHighlighted(animation: Animation) = false // TODO: remove
 
     fun updateElement(animation: Animation?) {
         if (animation != null) {

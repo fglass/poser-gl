@@ -1,5 +1,6 @@
 package entity
 
+import gui.panel.ManagerPanel
 import render.RenderContext
 import model.ModelMerger.Companion.merge
 import net.runelite.cache.definitions.ModelDefinition
@@ -14,10 +15,9 @@ class EntityHandler(private val context: RenderContext) {
     }
 
     fun load(def: NpcDefinition) {
+        val components = def.models.map { EntityComponent(it, def.recolorToFind, def.recolorToReplace) }
         val composition = HashSet<EntityComponent>()
-        def.models.forEach {
-            composition.add(EntityComponent(it, def.recolorToFind, def.recolorToReplace))
-        }
+        composition.addAll(components)
         clear()
         process(def.name, def.tileSpacesOccupied, composition)
     }
@@ -27,7 +27,7 @@ class EntityHandler(private val context: RenderContext) {
             1 -> context.cacheService.loadModelDefinition(composition.first())
             else -> {
                 val defs = ArrayList<ModelDefinition>()
-                composition.forEach { defs.add(context.cacheService.loadModelDefinition(it)) }
+                defs.addAll(composition.map(context.cacheService::loadModelDefinition))
                 merge(defs)
             }
         }
@@ -36,7 +36,7 @@ class EntityHandler(private val context: RenderContext) {
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
         context.entity = Entity(name, size, model, composition)
         context.lineRenderer.setGrid(size)
-        context.gui.managerPanel.update(context.entity!!)
+        context.entity?.let(context.gui.managerPanel::update)
         context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll
     }
 
