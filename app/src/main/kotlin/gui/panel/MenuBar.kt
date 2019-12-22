@@ -24,7 +24,7 @@ class MenuBar(context: RenderContext): Panel() { // TODO: home button
         style.setMargin(5f, 5f, 1f, 5f)
         setHeightLimit(24f)
 
-        addMenuButton("pack", context.cacheService::pack, marginLeft = 2f)
+        addMenuButton("pack", context.cacheService.packManager::pack, marginLeft = 2f)
         addMenuButton("export", context.exportManager::openDialog)
         addMenuButton("import", context.importManager::import)
         addMenuButton("undo", context.animationHandler.history::undo)

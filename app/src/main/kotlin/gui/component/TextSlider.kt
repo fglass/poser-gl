@@ -13,7 +13,7 @@ import org.lwjgl.glfw.GLFW
 import util.ResourceMap
 
 class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
-                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
+                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) { // TODO: text editing
 
     private val value = TextInput("", 12f, 0f, width - 24, height)
     private var adjusting = false

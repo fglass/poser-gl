@@ -24,7 +24,7 @@ interface ITransformation {
     val delta: Vector3i
 }
 
-abstract class ProgressListenerWrapper: AbstractProgressListener()
+abstract class ProgressListenerWrapper: AbstractProgressListener() // TODO: remove
 
 fun getMask(delta: Vector3i): Int {
     val x = if (delta.x != 0) 1 else 0

@@ -15,7 +15,7 @@ class KeyCallback(private val context: RenderContext) : GLFWKeyCallbackI {
             key == GLFW.GLFW_KEY_Z && mods == ctrl -> animationHandler.history.undo()
             key == GLFW.GLFW_KEY_Z && mods == ctrl + GLFW.GLFW_MOD_SHIFT -> animationHandler.history.redo()
             key == GLFW.GLFW_KEY_E && mods == ctrl -> context.exportManager.redo()
-            key == GLFW.GLFW_KEY_RIGHT -> animationHandler.setNextFrame()
+            key == GLFW.GLFW_KEY_RIGHT -> animationHandler.setNextFrame() // TODO: only if framebuffer focused
             key == GLFW.GLFW_KEY_LEFT -> animationHandler.setPreviousFrame()
         }
     }

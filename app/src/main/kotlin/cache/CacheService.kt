@@ -1,22 +1,17 @@
 package cache
 
-import render.RenderContext
 import animation.Animation
+import api.ICacheLoader
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
-import gui.component.Dialog
-import gui.component.ProgressDialog
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import api.ICacheLoader
-import api.ICachePacker
 import entity.HIGHER_REV_SCALE
 import mu.KotlinLogging
-import net.runelite.cache.definitions.*
-import org.displee.CacheLibrary
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ItemDefinition
+import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
+import org.displee.CacheLibrary
+import render.RenderContext
 
 private val logger = KotlinLogging.logger {}
 var isHigherRev = false
@@ -26,7 +21,7 @@ class CacheService(private val context: RenderContext) {
     var path = ""
     var loaded = false
     lateinit var loader: ICacheLoader
-    lateinit var packer: ICachePacker
+    lateinit var packManager: PackManager
 
     var entities = HashMap<Int, NpcDefinition>()
     var items = HashMap<Int, ItemDefinition>()
@@ -36,7 +31,7 @@ class CacheService(private val context: RenderContext) {
     fun init(path: String, loader: ICacheLoader) {
         this.path = path
         this.loader = loader
-        packer = context.packers.first { it.toString() == loader.toString() } // TODO: couple better
+        packManager = PackManager(context, context.packers.first { it.toString() == loader.toString() }) // TODO: couple better
 
         try {
             val library = CacheLibrary(path)
@@ -110,35 +105,5 @@ class CacheService(private val context: RenderContext) {
 
         frames.putAll(archiveId, loaded) // Cache
         return loaded
-    }
-
-    fun pack() {
-        val animation = context.animationHandler.currentAnimation?: return
-        if (animation.modified) {
-            val dialog = ProgressDialog("Packing Animation", "Packing sequence ${animation.sequence.id}...", context)
-            val listener = ProgressListener(dialog)
-            dialog.display()
-            invokePacker(animation, listener, dialog)
-        } else {
-            Dialog("Invalid Operation", "This animation has not been modified yet", context, 260f, 70f).display()
-        }
-    }
-
-    private fun invokePacker(animation: Animation, listener: ProgressListener, dialog: ProgressDialog) {
-        val library = CacheLibrary(path)
-        GlobalScope.launch {
-            try {
-                val maxAnimationId = animations.keys.max() ?: throw Exception()  // Only used in 317 plugins
-                packer.packAnimation(animation, library, listener, maxAnimationId)
-
-                dialog.finish(animation.sequence.id)
-                animation.modified = false
-                context.gui.listPanel.animationList.updateElement(animation)
-            } catch (e: Exception) {
-                logger.error(e) { "Exception encountered during packing" }
-            } finally {
-                library.close()
-            }
-        }
     }
 }
