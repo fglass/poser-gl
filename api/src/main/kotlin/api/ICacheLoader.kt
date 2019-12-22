@@ -15,4 +15,6 @@ interface ICacheLoader {
     fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition
 
     fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDefinition>
+
+    fun getFrameIndex(): Int
 }

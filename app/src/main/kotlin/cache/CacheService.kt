@@ -40,7 +40,6 @@ class CacheService(private val context: RenderContext) {
 
         try {
             val library = CacheLibrary(path)
-            isHigherRev = !library.is317 && !library.isOSRS
             load(library)
             library.close()
             logger.info { "Loaded cache $path with $loader plugin" }
@@ -50,9 +49,11 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun load(library: CacheLibrary) {
+        isHigherRev = !library.is317 && !library.isOSRS
+        context.entityHandler.scale = if (isHigherRev) 1 / HIGHER_REV_SCALE else 1f // Downscale for higher revs
+
         entities = loader.loadNpcDefinitions(library)
         logger.info { "Loaded ${entities.size} npcs" }
-        context.entityHandler.scale = if (isHigherRev) 1 / HIGHER_REV_SCALE else 1f // Downscale for higher revs
         addPlayer()
 
         items = loader.loadItemDefinitions(library)
@@ -127,8 +128,8 @@ class CacheService(private val context: RenderContext) {
         val library = CacheLibrary(path)
         GlobalScope.launch {
             try {
-                val maxAnimationId = animations.keys.max()?: throw Exception()  // Only used in 317 plugins
-                packer.packAnimation(animation, library, listener, maxAnimationId)
+                val maxAnimationId = animations.keys.max() ?: throw Exception()  // Only used in 317 plugins
+                packer.packAnimation(animation, library, listener, maxAnimationId) // TODO: close library here
 
                 dialog.finish(animation.sequence.id)
                 animation.modified = false
