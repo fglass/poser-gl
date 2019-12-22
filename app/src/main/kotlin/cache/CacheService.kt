@@ -129,7 +129,7 @@ class CacheService(private val context: RenderContext) {
         GlobalScope.launch {
             try {
                 val maxAnimationId = animations.keys.max() ?: throw Exception()  // Only used in 317 plugins
-                packer.packAnimation(animation, library, listener, maxAnimationId) // TODO: close library here
+                packer.packAnimation(animation, library, listener, maxAnimationId)
 
                 dialog.finish(animation.sequence.id)
                 animation.modified = false
