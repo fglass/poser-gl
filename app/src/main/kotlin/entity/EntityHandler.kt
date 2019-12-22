@@ -1,6 +1,5 @@
 package entity
 
-import gui.panel.ManagerPanel
 import render.RenderContext
 import model.ModelMerger.Companion.merge
 import net.runelite.cache.definitions.ModelDefinition
@@ -8,6 +7,8 @@ import net.runelite.cache.definitions.NpcDefinition
 import shader.ShadingType
 
 class EntityHandler(private val context: RenderContext) {
+
+    var scale = 1f
 
     fun loadPlayer() {
         val player = context.cacheService.entities.getOrElse(-1) { context.cacheService.entities.values.first() }
@@ -34,7 +35,7 @@ class EntityHandler(private val context: RenderContext) {
         def.computeAnimationTables()
 
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-        context.entity = Entity(name, size, model, composition)
+        context.entity = Entity(name, size, scale, model, composition)
         context.lineRenderer.setGrid(size)
         context.entity?.let(context.gui.managerPanel::update)
         context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll

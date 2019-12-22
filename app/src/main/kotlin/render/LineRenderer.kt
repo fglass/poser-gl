@@ -2,15 +2,14 @@ package render
 
 import animation.ReferenceNode
 import animation.TransformationType
-import entity.Camera
+import cache.isHigherRev
 import entity.ENTITY_POS
 import entity.ENTITY_ROT
-import entity.ENTITY_SCALE
+import entity.HIGHER_REV_SCALE
 import model.Model
 import org.joml.Matrix4f
-import org.lwjgl.opengl.GL11
-import shader.LineShader
 import org.lwjgl.opengl.GL30.*
+import shader.LineShader
 import util.MatrixCreator
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -78,7 +77,9 @@ class LineRenderer(private val context: RenderContext) {
             val line = skeletonLoader.loadToVao(vertices)
 
             prepare(line)
-            loadMatrices(viewMatrix, ENTITY_SCALE)
+
+            val multiplier = if (isHigherRev) HIGHER_REV_SCALE else 1f
+            loadMatrices(viewMatrix, context.entityHandler.scale * multiplier)
             glDrawArrays(GL_LINES, 0, line.vertexCount)
             finish()
         }

@@ -1,5 +1,7 @@
 package animation
 
+import cache.isHigherRev
+import entity.HIGHER_REV_SCALE
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Vector3f
 import java.util.*
@@ -62,7 +64,8 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         }
 
         position.x = -position.x // Flip
-        this.position = position
+        val multiplier = if (isHigherRev) HIGHER_REV_SCALE else 1f
+        this.position = position.div(multiplier)
     }
 
     fun trySetParent(node: ReferenceNode) {

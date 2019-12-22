@@ -8,13 +8,13 @@ import kotlin.collections.HashSet
 
 val ENTITY_POS = Vector3f()
 val ENTITY_ROT = Vector3f()
-var ENTITY_SCALE = 1f
+const val HIGHER_REV_SCALE = 4f
 
-class Entity(val name: String, val size: Int, var model: Model, val composition: HashSet<EntityComponent>) {
+class Entity(val name: String, val size: Int, val scale: Float, var model: Model,
+             val composition: HashSet<EntityComponent>) {
 
     val position = ENTITY_POS
     val rotation = ENTITY_ROT
-    val scale = ENTITY_SCALE
 
     fun addItem(item: ItemDefinition, entityHandler: EntityHandler) {
         val size = composition.size

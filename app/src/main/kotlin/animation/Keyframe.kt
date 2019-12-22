@@ -7,7 +7,7 @@ import render.RenderContext
 import shader.ShadingType
 
 class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
-               override val frameMap: FramemapDefinition = FramemapDefinition()): IKeyframe {
+               override val frameMap: FramemapDefinition = FramemapDefinition()) : IKeyframe {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {

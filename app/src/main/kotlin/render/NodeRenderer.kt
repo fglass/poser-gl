@@ -2,11 +2,14 @@ package render
 
 import animation.ReferenceNode
 import animation.TransformationType
+import entity.ENTITY_POS
+import entity.ENTITY_ROT
 import model.Model
 import shader.NodeShader
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
 import org.lwjgl.opengl.GL30.*
+import util.MatrixCreator
 import util.MouseButtonHandler
 
 class NodeRenderer(private val context: RenderContext, private val lmb: MouseButtonHandler) {
@@ -39,8 +42,9 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
 
         node.setPosition(def)
-        // Ignore origin and a certain player node TODO: remove hardcoding
-        if (node.position != Vector3f(-0f, 0f, 0f) && !(node.id == 44 && context.entity?.name == "Player")) {
+        val blacklist = node.id == 44 && context.entity?.name == "Player" // Hardcoded
+
+        if (node.position != Vector3f(-0f, 0f, 0f) && !blacklist) { // Ignore origin
             node.highlighted = false
             nodes.add(node)
         }
