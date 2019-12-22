@@ -5,6 +5,8 @@ import org.displee.CacheLibrary
 
 interface ICachePacker {
 
+    val sequenceConfigIndex: Int
+
     fun packFrames(library: CacheLibrary, animation: IAnimation): Int
 
     fun packSequence(library: CacheLibrary, sequence: SequenceDefinition) {
@@ -14,6 +16,4 @@ interface ICachePacker {
     fun packSequence(library: CacheLibrary, sequence: SequenceDefinition, maxAnimationId: Int) {
         error("Method not implemented")
     }
-
-    fun getSequenceConfigIndex(): Int
 }

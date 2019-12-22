@@ -6,6 +6,8 @@ import java.util.*
 
 interface ICacheLoader {
 
+    val frameIndex: Int
+
     fun loadSequences(library: CacheLibrary): List<SequenceDefinition>
 
     fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition>
@@ -15,6 +17,4 @@ interface ICacheLoader {
     fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition
 
     fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDefinition>
-
-    fun getFrameIndex(): Int
 }

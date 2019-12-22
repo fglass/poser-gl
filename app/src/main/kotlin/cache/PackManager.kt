@@ -54,8 +54,8 @@ class PackManager(private val context: RenderContext, private val packer: ICache
     }
 
     private fun updateIndices(library: CacheLibrary, listener: ProgressListener) {
-        library.getIndex(context.cacheService.loader.getFrameIndex()).update(listener)
-        library.getIndex(packer.getSequenceConfigIndex()).update(listener)
+        library.getIndex(context.cacheService.loader.frameIndex).update(listener)
+        library.getIndex(packer.sequenceConfigIndex).update(listener)
     }
 
     private fun onFinish(animation: Animation, dialog: ProgressDialog) {

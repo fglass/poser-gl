@@ -25,7 +25,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
 
         val archiveId = if (animation.modified) {
             val library = CacheLibrary(context.cacheService.path)
-            val newId = library.getIndex(context.cacheService.loader.getFrameIndex()).lastArchive.id + 1
+            val newId = library.getIndex(context.cacheService.loader.frameIndex).lastArchive.id + 1
             library.close()
             newId
         } else {

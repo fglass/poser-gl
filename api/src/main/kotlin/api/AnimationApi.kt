@@ -6,20 +6,17 @@ import org.displee.progress.AbstractProgressListener
 import org.joml.Vector3i
 
 interface IAnimation {
-
     val keyframes: List<IKeyframe>
     fun toSequence(archiveId: Int): SequenceDefinition
 }
 
 interface IKeyframe {
-
     val modified: Boolean
     val frameMap: FramemapDefinition
     val transformations: List<ITransformation>
 }
 
 interface ITransformation {
-
     val id: Int
     val delta: Vector3i
 }
