@@ -47,6 +47,7 @@ object ResourceMap {
         put("load", hovered = true)
         put("title")
 
+        put("home", hovered = true)
         put("pack", hovered = true)
         put("export", hovered = true)
         put("import", hovered = true)

@@ -6,6 +6,8 @@ import cache.PluginLoader
 import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
+import gui.component.ConfirmDialog
+import gui.component.Dialog
 import gui.component.StartDialog
 import model.ModelParser
 import mu.KotlinLogging
@@ -196,5 +198,12 @@ class RenderContext {
 
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
         return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
+    }
+
+    fun reset() {
+        ConfirmDialog(this, "Warning", "Any unsaved changes will be lost", "Continue") {
+            gui.container.clearChildComponents()
+            StartDialog(this).show(frame)
+        }.show(frame)
     }
 }

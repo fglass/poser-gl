@@ -13,7 +13,7 @@ import render.RenderContext
 class GuiManager(context: RenderContext) {
 
     val container: LayerContainer = context.frame.componentLayer.container
-    val menuBar = MenuBar(context)
+    private val menuBar = MenuBar(context)
     val listPanel = ListPanel(context)
     val managerPanel = ManagerPanel(context)
     val editorPanel = EditorPanel(context)

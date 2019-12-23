@@ -12,7 +12,7 @@ import util.ResourceMap
 import util.setHeightLimit
 import util.setSizeLimits
 
-class MenuBar(context: RenderContext): Panel() { // TODO: home button
+class MenuBar(context: RenderContext) : Panel() {
     
     init {
         style.display = Style.DisplayType.FLEX
@@ -24,7 +24,8 @@ class MenuBar(context: RenderContext): Panel() { // TODO: home button
         style.setMargin(5f, 5f, 1f, 5f)
         setHeightLimit(24f)
 
-        addMenuButton("pack", context.cacheService.packManager::pack, marginLeft = 2f)
+        addMenuButton("home", context::reset)
+        addMenuButton("pack", context.cacheService.packManager::pack)
         addMenuButton("export", context.exportManager::openDialog)
         addMenuButton("import", context.importManager::import)
         addMenuButton("undo", context.animationHandler.history::undo)
@@ -32,10 +33,9 @@ class MenuBar(context: RenderContext): Panel() { // TODO: home button
         addMenuButton("settings", context.settingsManager::openDialog)
     }
 
-    private fun addMenuButton(name: String, action: () -> Unit, marginLeft: Float = 1f) {
+    private fun addMenuButton(name: String, action: () -> Unit) {
         val button = ImageButton(Vector2f(), ResourceMap[name], name.capitalize())
         button.hoveredIcon = ResourceMap["$name-hovered"]
-
         button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {
                 action.invoke()
@@ -44,7 +44,7 @@ class MenuBar(context: RenderContext): Panel() { // TODO: home button
 
         button.setSizeLimits(23f, 23f)
         button.style.setMarginTop(1f)
-        button.style.setMarginLeft(marginLeft)
+        button.style.setMarginLeft(2.5f)
         button.style.position = Style.PositionType.RELATIVE
         add(button)
     }

@@ -89,7 +89,7 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
 
     private fun updateTooltipWidth() {
         val length = tooltip.textState.length()
-        val charWidth = if (length < 10) 8f else 6f
+        val charWidth = if (length < 10) 8.5f else 6f // TODO: adjust
         tooltip.size.x = length * charWidth
     }
 }
