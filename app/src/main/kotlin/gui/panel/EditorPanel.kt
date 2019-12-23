@@ -3,7 +3,7 @@ package gui.panel
 import animation.Keyframe
 import animation.KeyframeAction
 import animation.ReferenceNode
-import animation.TransformationType
+import api.TransformationType
 import animation.command.impl.ChangeLengthCommand
 import animation.command.impl.TransformNodeCommand
 import gui.component.ButtonGroup

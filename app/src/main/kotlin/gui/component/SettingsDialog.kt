@@ -106,6 +106,7 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     private fun getRow(): Panel {
         val row = Panel()
         row.setSizeLimits(size.x, 25f)
+        row.style.setMarginLeft(5f)
         row.style.position = Style.PositionType.RELATIVE
         row.style.border.isEnabled = false
         row.style.focusedStrokeColor = null

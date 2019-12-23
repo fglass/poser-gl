@@ -11,6 +11,7 @@ class ConfirmDialog(context: RenderContext, title: String, message: String, butt
     init {
         val width = 60f
         val confirm = Button(button, size.x / 2 - width / 2, 45f, width, 15f)
+        confirm.style.focusedStrokeColor = null
         confirm.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {

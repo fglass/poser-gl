@@ -2,7 +2,6 @@ package api
 
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
-import org.displee.progress.AbstractProgressListener
 import org.joml.Vector3i
 
 interface IAnimation {
@@ -18,10 +17,9 @@ interface IKeyframe {
 
 interface ITransformation {
     val id: Int
+    val type: TransformationType
     val delta: Vector3i
 }
-
-abstract class ProgressListenerWrapper: AbstractProgressListener() // TODO: remove
 
 fun getMask(delta: Vector3i): Int {
     val x = if (delta.x != 0) 1 else 0

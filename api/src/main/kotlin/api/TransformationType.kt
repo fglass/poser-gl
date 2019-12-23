@@ -1,4 +1,4 @@
-package animation
+package api
 
 import org.joml.Vector3i
 

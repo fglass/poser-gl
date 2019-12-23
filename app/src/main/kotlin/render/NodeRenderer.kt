@@ -1,15 +1,12 @@
 package render
 
 import animation.ReferenceNode
-import animation.TransformationType
-import entity.ENTITY_POS
-import entity.ENTITY_ROT
+import api.TransformationType
 import model.Model
 import shader.NodeShader
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
 import org.lwjgl.opengl.GL30.*
-import util.MatrixCreator
 import util.MouseButtonHandler
 
 class NodeRenderer(private val context: RenderContext, private val lmb: MouseButtonHandler) {
