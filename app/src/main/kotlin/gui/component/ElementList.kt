@@ -10,7 +10,6 @@ import util.Colour
 abstract class ElementList: ScrollablePanel() { // TODO: refactor
 
     var searchText = "Search"
-    var highlighted = emptyList<Int>()
     protected val listX = 2f
     protected val listY = 3f
     protected val listYOffset = 18f
@@ -46,21 +45,17 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
     fun search(input: String) {
         val filtered = getFiltered(input)
         val elements = getElements()
-        adjustScroll(filtered.size)
 
         if (filtered.size >= elements.size) { // No matches
             reset()
             return
         }
 
+        adjustScroll(filtered.size)
         var index = 0
         for (element in elements) {
             when {
-                index < filtered.size -> {
-                    val key = filtered[index]
-                    element.value.highlighted = highlighted.contains(key)
-                    handleElement(key, element.value) // Shift matches up
-                }
+                index < filtered.size -> handleElement(filtered[index], element.value) // Shift matches up
                 else -> element.value.isEnabled = false // Hide filtered
             }
             index++
@@ -68,22 +63,9 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
     }
 
     fun reset() {
-        var index = 0
         val elements = getElements()
-        val start = if (this is EntityList) -1 else 0 // Account for player
-        val regular = (start..elements.size).filter { !highlighted.contains(it) } // Exclude any highlighted elements
-
-        for (element in elements) {
-            element.value.highlighted = false // Reset highlighting
-            when {
-                index < highlighted.size -> { // Only applies to animation list
-                    element.value.highlighted = true
-                    handleElement(highlighted[index], element.value)
-                }
-                else -> handleElement(regular[index - highlighted.size], element.value)
-            }
-            index++
-        }
+        elements.forEach { (key, value) -> handleElement(key, value)}
+        adjustScroll(elements.size)
     }
 
     abstract fun getFiltered(input: String): List<Int>
@@ -103,8 +85,6 @@ abstract class ElementList: ScrollablePanel() { // TODO: refactor
             style.background.color = ColorConstants.darkGray()
             style.border.isEnabled = false
         }
-
-        var highlighted = false
 
         abstract fun updateText()
 

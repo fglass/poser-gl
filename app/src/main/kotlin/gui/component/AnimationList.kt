@@ -22,15 +22,13 @@ class AnimationList(private val context: RenderContext): ElementList() {
     }
 
     fun addElement(animation: Animation) {
-        search("") // Reset search
+        reset() // Reorder list
         val element = AnimationElement(animation, context, listX, container.size.y)
         element.addClickListener()
 
         elements[animation.sequence.id] = element
         container.add(element)
         container.size.y += listYOffset
-
-        reset() // Reorder list
         verticalScrollBar.curValue = verticalScrollBar.maxValue // Scroll to bottom
     }
 
@@ -51,7 +49,7 @@ class AnimationList(private val context: RenderContext): ElementList() {
     }
 
     override fun handleElement(index: Int, element: Element) {
-        val animation = context.cacheService.animations[index]?: return
+        val animation = context.cacheService.animations[index] ?: return
         if (element is AnimationElement) {
             element.animation = animation
             element.updateText()
