@@ -62,5 +62,6 @@ class PackManager(private val context: RenderContext, private val packer: ICache
         dialog.finish(animation.sequence.id)
         animation.modified = false
         context.gui.listPanel.animationList.updateElement(animation)
+        logger.info { "Packed animation ${animation.sequence.id}" }
     }
 }
