@@ -6,9 +6,9 @@ import animation.Keyframe
 import animation.ReferenceNode
 import api.animation.IKeyframe
 import api.animation.getMask
+import api.definition.FrameMapDef
 import gui.component.DatDialog
 import gui.component.ExportDialog
-import net.runelite.cache.definitions.FramemapDefinition
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -54,7 +54,7 @@ class ExportManager(private val context: RenderContext) {
         return out.toByteArray()
     }
 
-    private fun encodeFrameMap(frameMap: FramemapDefinition, stream: DataOutputStream) {
+    private fun encodeFrameMap(frameMap: FrameMapDef, stream: DataOutputStream) {
         stream.writeByte(frameMap.length)
 
         repeat(frameMap.length) {
@@ -125,7 +125,7 @@ class ExportManager(private val context: RenderContext) {
         return out.toByteArray()
     }
 
-    private fun encodeFrameMap317(def: FramemapDefinition): ByteArray {
+    private fun encodeFrameMap317(def: FrameMapDef): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 

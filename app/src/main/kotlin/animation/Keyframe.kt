@@ -1,13 +1,13 @@
 package animation
 
 import api.animation.IKeyframe
-import net.runelite.cache.definitions.FramemapDefinition
+import api.definition.FrameMapDef
 import net.runelite.cache.definitions.ModelDefinition.*
 import render.RenderContext
 import shader.ShadingType
 
 class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
-               override val frameMap: FramemapDefinition = FramemapDefinition()) : IKeyframe {
+               override val frameMap: FrameMapDef = FrameMapDef()) : IKeyframe {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {

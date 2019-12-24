@@ -3,6 +3,7 @@ package animation
 import api.animation.IAnimation
 import api.animation.TransformationType
 import api.definition.FrameDef
+import api.definition.FrameMapDef
 import api.definition.SequenceDef
 import render.RenderContext
 import mu.KotlinLogging
@@ -181,7 +182,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         }
     }
 
-    fun getFrameMap(): FramemapDefinition {
+    fun getFrameMap(): FrameMapDef {
         return keyframes.first().frameMap
     }
 

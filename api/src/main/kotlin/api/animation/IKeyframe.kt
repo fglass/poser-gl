@@ -1,9 +1,9 @@
 package api.animation
 
-import net.runelite.cache.definitions.FramemapDefinition
+import api.definition.FrameMapDef
 
 interface IKeyframe {
     val modified: Boolean
-    val frameMap: FramemapDefinition
+    val frameMap: FrameMapDef
     val transformations: List<ITransformation>
 }

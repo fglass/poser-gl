@@ -3,8 +3,8 @@ package transfer
 import render.RenderContext
 import animation.*
 import api.animation.TransformationType
+import api.definition.FrameMapDef
 import api.definition.SequenceDef
-import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.io.InputStream
 import org.joml.Vector3i
 import util.FileDialog
@@ -38,7 +38,7 @@ class ImportManager(private val context: RenderContext) {
 
         repeat(n) {
             val length = stream.readUnsignedShort()
-            val frameMap = FramemapDefinition()
+            val frameMap = FrameMapDef()
             frameMap.decode(stream)
 
             val keyframe = Keyframe(it, -1, length, frameMap)
@@ -52,11 +52,10 @@ class ImportManager(private val context: RenderContext) {
         return animation
     }
 
-    private fun FramemapDefinition.decode(stream: InputStream) {
-        id = -1
+    private fun FrameMapDef.decode(stream: InputStream) {
         length = stream.readUnsignedByte()
         types = IntArray(length)
-        frameMaps = arrayOfNulls<IntArray>(length)
+        frameMaps = Array(length) { IntArray(0) }
 
         repeat(length) {
             types[it] = stream.readUnsignedByte()
