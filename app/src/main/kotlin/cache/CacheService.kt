@@ -1,7 +1,7 @@
 package cache
 
 import animation.Animation
-import api.ICacheLoader
+import api.cache.ICacheLoader
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE

@@ -1,5 +1,6 @@
-package api
+package api.cache
 
+import api.animation.IAnimation
 import net.runelite.cache.definitions.SequenceDefinition
 import org.displee.CacheLibrary
 

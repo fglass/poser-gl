@@ -1,6 +1,6 @@
 package animation
 
-import api.TransformationType
+import api.animation.TransformationType
 import cache.isHigherRev
 import entity.HIGHER_REV_SCALE
 import net.runelite.cache.definitions.ModelDefinition

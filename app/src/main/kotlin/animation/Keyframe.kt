@@ -1,6 +1,6 @@
 package animation
 
-import api.IKeyframe
+import api.animation.IKeyframe
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.ModelDefinition.*
 import render.RenderContext

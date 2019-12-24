@@ -1,7 +1,7 @@
 package animation
 
-import api.IAnimation
-import api.TransformationType
+import api.animation.IAnimation
+import api.animation.TransformationType
 import render.RenderContext
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*

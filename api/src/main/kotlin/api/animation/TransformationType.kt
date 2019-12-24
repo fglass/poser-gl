@@ -1,8 +1,8 @@
-package api
+package api.animation
 
 import org.joml.Vector3i
 
-enum class TransformationType(val id: Int) { // Alpha transformations unsupported
+enum class TransformationType(val id: Int) { // Alpha transformations (5) currently unsupported
 
     REFERENCE(0),
     TRANSLATION(1),

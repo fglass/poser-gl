@@ -1,7 +1,7 @@
 package render
 
 import animation.ReferenceNode
-import api.TransformationType
+import api.animation.TransformationType
 import cache.isHigherRev
 import entity.ENTITY_POS
 import entity.ENTITY_ROT

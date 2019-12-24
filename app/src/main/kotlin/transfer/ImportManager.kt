@@ -2,7 +2,7 @@ package transfer
 
 import render.RenderContext
 import animation.*
-import api.TransformationType
+import api.animation.TransformationType
 import net.runelite.cache.definitions.FramemapDefinition
 import net.runelite.cache.definitions.SequenceDefinition
 import net.runelite.cache.io.InputStream

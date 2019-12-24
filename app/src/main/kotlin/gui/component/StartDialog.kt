@@ -1,6 +1,6 @@
 package gui.component
 
-import api.ICacheLoader
+import api.cache.ICacheLoader
 import gui.GuiManager
 import render.VERSION
 import org.joml.Vector2f

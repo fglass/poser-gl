@@ -1,7 +1,7 @@
 package render
 
 import animation.ReferenceNode
-import api.TransformationType
+import api.animation.TransformationType
 import model.Model
 import shader.NodeShader
 import net.runelite.cache.definitions.ModelDefinition

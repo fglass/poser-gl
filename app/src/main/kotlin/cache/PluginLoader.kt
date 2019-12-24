@@ -1,7 +1,7 @@
 package cache
 
-import api.ICacheLoader
-import api.ICachePacker
+import api.cache.ICacheLoader
+import api.cache.ICachePacker
 import java.io.File
 import java.net.URLClassLoader
 import java.util.ServiceLoader

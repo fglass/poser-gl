@@ -1,7 +1,7 @@
 package cache
 
 import animation.Animation
-import api.ICachePacker
+import api.cache.ICachePacker
 import gui.component.Dialog
 import gui.component.ProgressDialog
 import kotlinx.coroutines.GlobalScope

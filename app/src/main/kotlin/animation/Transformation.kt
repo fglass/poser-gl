@@ -1,7 +1,7 @@
 package animation
 
-import api.ITransformation
-import api.TransformationType
+import api.animation.ITransformation
+import api.animation.TransformationType
 import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Vector3i
 

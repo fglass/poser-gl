@@ -1,4 +1,4 @@
-package api
+package api.cache
 
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary

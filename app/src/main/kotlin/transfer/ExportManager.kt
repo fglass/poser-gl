@@ -4,8 +4,8 @@ import render.RenderContext
 import animation.Animation
 import animation.Keyframe
 import animation.ReferenceNode
-import api.IKeyframe
-import api.getMask
+import api.animation.IKeyframe
+import api.animation.getMask
 import gui.component.DatDialog
 import gui.component.ExportDialog
 import net.runelite.cache.definitions.FramemapDefinition
@@ -98,9 +98,9 @@ class ExportManager(private val context: RenderContext) {
         }
     }
 
-    fun exportDat(name: String) {
+    fun exportDat(name: String) { // TODO: use plugin instead and don't tie to 317
         val animation = context.animationHandler.currentAnimation ?: return
-        val data = encodeAnimation317(animation) // TODO: use 317 plugin instead
+        val data = encodeAnimation317(animation)
         File(name).writeBytes(data)
         lastExport = name to ExportFormat.DAT
         dialog.close()
@@ -153,20 +153,17 @@ class ExportManager(private val context: RenderContext) {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
-        os.writeShort(id) // TODO: keyframe.id instead?
+        os.writeShort(id)
         os.writeByte(keyframe.transformations.size)
 
         // Write transformation values
         var index = 0
         for (transformation in keyframe.transformations) {
-
-            if (index < transformation.id) {
-                repeat(transformation.id - index) {
-                    os.writeByte(0) // Insert ignored transformations to preserve indices TODO: refactor?
-                }
-                index = transformation.id
+            // Insert ignored masks to preserve transformation indices
+            repeat(transformation.id - index) {
+                os.writeByte(0)
             }
-            index++
+            index = transformation.id + 1
 
             val mask = getMask(transformation.delta)
             os.writeByte(mask)
@@ -176,7 +173,7 @@ class ExportManager(private val context: RenderContext) {
             }
 
             if (mask and 1 != 0) {
-                os.writeShort(transformation.delta.x) // TODO: slightly off as readShort2 not readShort
+                os.writeShort(transformation.delta.x)
             }
 
             if (mask and 2 != 0) {

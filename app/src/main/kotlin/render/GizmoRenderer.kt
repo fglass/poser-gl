@@ -1,7 +1,7 @@
 package render
 
 import animation.ReferenceNode
-import api.TransformationType
+import api.animation.TransformationType
 import gizmo.Gizmo
 import gizmo.TranslationGizmo
 import gizmo.RotationGizmo
