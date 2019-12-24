@@ -2,12 +2,12 @@ package cache
 
 import animation.Animation
 import api.cache.ICacheLoader
+import api.definition.ItemDef
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE
 import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
-import net.runelite.cache.definitions.ItemDefinition
 import net.runelite.cache.definitions.ModelDefinition
 import net.runelite.cache.definitions.NpcDefinition
 import org.displee.CacheLibrary
@@ -24,7 +24,7 @@ class CacheService(private val context: RenderContext) {
     lateinit var packManager: PackManager
 
     var entities = HashMap<Int, NpcDefinition>()
-    var items = HashMap<Int, ItemDefinition>()
+    var items = HashMap<Int, ItemDef>()
     var animations = HashMap<Int, Animation>()
     private var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
@@ -51,7 +51,7 @@ class CacheService(private val context: RenderContext) {
         logger.info { "Loaded ${entities.size} npcs" }
         addPlayer()
 
-        items = loader.loadItemDefinitions(library)
+        items = loader.loadItemDefs(library)
         logger.info { "Loaded ${items.size} items" }
 
         loadAnimations(library)

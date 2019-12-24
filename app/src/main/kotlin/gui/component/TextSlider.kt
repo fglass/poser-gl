@@ -12,7 +12,7 @@ import org.liquidengine.legui.listener.MouseClickEventListener
 import util.ResourceMap
 
 class TextSlider(private val onChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
-                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) { // TODO: text editing
+                 x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) {
 
     private val value = TextInput("", 12f, 0f, width - 24, height)
     private var previous = 0

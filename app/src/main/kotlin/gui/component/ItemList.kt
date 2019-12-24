@@ -1,7 +1,7 @@
 package gui.component
 
+import api.definition.ItemDef
 import render.RenderContext
-import net.runelite.cache.definitions.ItemDefinition
 
 class ItemList(context: RenderContext): ElementList() {
 
@@ -38,7 +38,7 @@ class ItemList(context: RenderContext): ElementList() {
         }
     }
 
-    class ItemElement(var item: ItemDefinition, private val context: RenderContext, x: Float, y: Float): Element(x, y) {
+    class ItemElement(var item: ItemDef, private val context: RenderContext, x: Float, y: Float): Element(x, y) {
         init {
             updateText()
         }

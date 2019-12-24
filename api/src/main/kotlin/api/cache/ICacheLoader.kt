@@ -1,5 +1,6 @@
 package api.cache
 
+import api.definition.ItemDef
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 import java.util.*
@@ -12,7 +13,7 @@ interface ICacheLoader {
 
     fun loadNpcDefinitions(library: CacheLibrary): HashMap<Int, NpcDefinition>
 
-    fun loadItemDefinitions(library: CacheLibrary): HashMap<Int, ItemDefinition>
+    fun loadItemDefs(library: CacheLibrary): HashMap<Int, ItemDef>
 
     fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition
 

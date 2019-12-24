@@ -1,7 +1,7 @@
 package entity
 
+import api.definition.ItemDef
 import model.Model
-import net.runelite.cache.definitions.ItemDefinition
 import org.joml.Vector3f
 import java.util.*
 import kotlin.collections.HashSet
@@ -16,7 +16,7 @@ class Entity(val name: String, val size: Int, val scale: Float, var model: Model
     val position = ENTITY_POS
     val rotation = ENTITY_ROT
 
-    fun addItem(item: ItemDefinition, entityHandler: EntityHandler) {
+    fun addItem(item: ItemDef, entityHandler: EntityHandler) {
         val size = composition.size
         val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
         models.filter { it > 0 }.forEach { composition.add((EntityComponent(it, item.colorFind, item.colorReplace))) }
@@ -26,7 +26,7 @@ class Entity(val name: String, val size: Int, val scale: Float, var model: Model
         }
     }
 
-    fun removeItem(item: ItemDefinition, entityHandler: EntityHandler) {
+    fun removeItem(item: ItemDef, entityHandler: EntityHandler) {
         val size = composition.size
         val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
         composition.removeIf { models.contains(it.id) }
