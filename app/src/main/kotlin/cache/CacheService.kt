@@ -2,6 +2,7 @@ package cache
 
 import animation.Animation
 import api.cache.ICacheLoader
+import api.definition.FrameDef
 import api.definition.ItemDef
 import api.definition.NpcDef
 import api.definition.SequenceDef
@@ -9,7 +10,6 @@ import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE
 import mu.KotlinLogging
-import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ModelDefinition
 import org.displee.CacheLibrary
 import render.RenderContext
@@ -27,7 +27,7 @@ class CacheService(private val context: RenderContext) {
     var entities = HashMap<Int, NpcDef>()
     var items = HashMap<Int, ItemDef>()
     var animations = HashMap<Int, Animation>()
-    private var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
+    private var frames: HashMultimap<Int, FrameDef> = HashMultimap.create()
 
     fun init(path: String, loader: ICacheLoader) {
         this.path = path
@@ -85,7 +85,7 @@ class CacheService(private val context: RenderContext) {
         return def
     }
 
-    fun getFrameArchive(archiveId: Int): Set<FrameDefinition> {
+    fun getFrameArchive(archiveId: Int): Set<FrameDef> {
         val archive = frames.get(archiveId)
         if (archive.isNotEmpty()) {
             return archive

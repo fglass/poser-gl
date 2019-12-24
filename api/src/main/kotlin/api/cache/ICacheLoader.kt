@@ -1,5 +1,6 @@
 package api.cache
 
+import api.definition.FrameDef
 import api.definition.ItemDef
 import api.definition.NpcDef
 import api.definition.SequenceDef
@@ -19,5 +20,5 @@ interface ICacheLoader {
 
     fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition
 
-    fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDefinition>
+    fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDef>
 }

@@ -2,6 +2,7 @@ package animation
 
 import api.animation.IAnimation
 import api.animation.TransformationType
+import api.definition.FrameDef
 import api.definition.SequenceDef
 import render.RenderContext
 import mu.KotlinLogging
@@ -47,7 +48,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
     }
 
     private fun parseSequence() {
-        val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
+        val frames = LinkedHashMap<Int, FrameDef>() // Preserve insertion order
         val indices = TreeSet<Int>() // Sorted by values
 
         // Pre-process sequence frames
@@ -56,7 +57,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
             val frameArchive = context.cacheService.getFrameArchive(archiveId)
             val frameFileId = frameId and 0xFFFF
 
-            val frame: FrameDefinition
+            val frame: FrameDef
             try {
                 frame = frameArchive.first { f -> f.id == frameFileId }
             } catch (e: NoSuchElementException) {
@@ -105,7 +106,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         }
     }
 
-    private fun getDelta(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
+    private fun getDelta(frame: FrameDef, id: Int, type: TransformationType): Vector3i {
         val index = frame.indexFrameIds.indexOf(id)
         return when {
                 index != -1 -> Vector3i(frame.translator_x[index], frame.translator_y[index], frame.translator_z[index])
@@ -113,7 +114,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         }
     }
 
-    private fun ReferenceNode.findChildren(id: Int, frame: FrameDefinition) { // Allows additional children to be found
+    private fun ReferenceNode.findChildren(id: Int, frame: FrameDef) { // Allows additional children to be found
         val frameMap = frame.framemap
         var childId = id + 1
         if (childId >= frameMap.types.size) {
