@@ -19,7 +19,7 @@ class ChangeLengthCommand(private val context: RenderContext, private val length
         previousLength = keyframe.length
         keyframe.length = length
         keyframe.modified = true
-        context.gui.editorPanel.frameLength.setValue(length)
+        context.gui.editorPanel.frameLength.setValue(length) // For redo
         animation.update()
         return true
     }

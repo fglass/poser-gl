@@ -5,17 +5,17 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.TextInput
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
-import org.liquidengine.legui.event.KeyEvent
+import org.liquidengine.legui.event.FocusEvent
 import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.listener.CursorEnterEventListener
 import org.liquidengine.legui.listener.MouseClickEventListener
-import org.lwjgl.glfw.GLFW
 import util.ResourceMap
 
-class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
+class TextSlider(private val onChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
                  x: Float, y: Float, width: Float, height: Float): Panel(x, y, width, height) { // TODO: text editing
 
     private val value = TextInput("", 12f, 0f, width - 24, height)
+    private var previous = 0
     private var adjusting = false
     private val leftArrow = ResourceMap["left"]
     private val rightArrow = ResourceMap["right"]
@@ -26,14 +26,15 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         value.style.setBorderRadius(0f)
         value.style.focusedStrokeColor = null
 
-        value.listenerMap.addListener(KeyEvent::class.java) { event ->
-            if (event.action == GLFW.GLFW_RELEASE) {
-                val current = getValue() ?: return@addListener
-                val limited = limit(current)
-                if (current != limited) { // Only set if different
-                    setValue(limited)
+        value.listenerMap.addListener(FocusEvent::class.java) { event ->
+            if (!event.isFocused) {
+                getValue()?.let {
+                    if (it != previous) {
+                        val limited = limit(it)
+                        setValue(limited)
+                        onChange(limited)
+                    }
                 }
-                onValueChange(limited)
             }
         }
 
@@ -72,6 +73,7 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
 
     fun setValue(newValue: Int) {
         value.textState.text = newValue.toString()
+        previous = newValue
     }
 
     fun setLimitedValue(newValue: Int) {
@@ -95,6 +97,6 @@ class TextSlider(private val onValueChange: (Int) -> Unit, private val limits: P
         val newValue = value.textState.text.toInt() + delta
         val limited = limit(newValue, cyclic)
         setValue(limited)
-        onValueChange(limited)
+        onChange(limited)
     }
 }
