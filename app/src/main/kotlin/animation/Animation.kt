@@ -175,7 +175,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
 
         val item = context.cacheService.items[id - ITEM_OFFSET] ?: return
-        context.entity?.let {
+        context.entityHandler.entity?.let {
             val action = if (equip) it::addItem else it::removeItem
             action.invoke(item, context.entityHandler)
         }

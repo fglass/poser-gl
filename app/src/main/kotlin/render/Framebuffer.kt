@@ -98,7 +98,7 @@ class Framebuffer(private val context: RenderContext, private val scaleFactor: I
         val ray = camera.calculateRay(context, viewMatrix)
         camera.pan(viewMatrix)
 
-        context.entityRenderer.render(context.entity, viewMatrix, shadingType)
+        context.entityRenderer.render(context.entityHandler.entity, viewMatrix, shadingType)
         context.nodeRenderer.render(viewMatrix, ray)
         context.lineRenderer.renderGrid(viewMatrix)
         context.nodeRenderer.renderSelected(viewMatrix, ray)

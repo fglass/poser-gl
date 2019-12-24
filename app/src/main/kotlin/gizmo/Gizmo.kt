@@ -24,7 +24,7 @@ abstract class Gizmo(private val context: RenderContext, private val shader: Giz
 
     internal fun getModel(filename: String, loader: Loader) = GizmoLoader.load(filename, loader)
 
-    internal fun getRelativeScale() = scale * sqrt(context.entity!!.size.toFloat())
+    internal fun getRelativeScale() = context.entityHandler.entity?.let { scale * sqrt(it.size.toFloat()) } ?: 0f
 
     private fun prepare(context: RenderContext, model: Model, shader: GizmoShader, viewMatrix: Matrix4f) {
         glBindVertexArray(model.vaoId)

@@ -92,10 +92,10 @@ class ManagerPanel(private val context: RenderContext): Panel() {
                     when (i) {
                         0 -> {
                             context.framebuffer.shadingType = ShadingType.SMOOTH
-                            context.entity!!.reload(context.entityHandler)
+                            context.entityHandler.entity?.reload(context.entityHandler)
                         } 1 -> {
                             context.framebuffer.shadingType = ShadingType.FLAT
-                            context.entity!!.reload(context.entityHandler)
+                            context.entityHandler.entity?.reload(context.entityHandler)
                         } 2 -> context.framebuffer.shadingType = ShadingType.NONE
                     }
                 }

@@ -49,7 +49,7 @@ class ItemList(context: RenderContext): ElementList() {
         }
 
         override fun onClickEvent() {
-            context.entity?.addItem(item, context.entityHandler)
+            context.entityHandler.entity?.addItem(item, context.entityHandler)
         }
     }
 }

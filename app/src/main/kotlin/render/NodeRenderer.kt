@@ -39,7 +39,7 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
 
         node.setPosition(def)
-        val blacklist = node.id == 44 && context.entity?.name == "Player" // Hardcoded
+        val blacklist = node.id == 44 && context.entityHandler.entity?.name == "Player" // Hardcoded
 
         if (node.position != Vector3f(-0f, 0f, 0f) && !blacklist) { // Ignore origin
             node.highlighted = false
@@ -175,8 +175,10 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
     }
 
     private fun getNodeScale(): Float {
-        val base = 2.5f
-        return base + context.entity!!.size
+        return context.entityHandler.entity?.let {
+            val base = 2.5f
+            base + it.size
+        } ?: 0f
     }
 
     private fun finish() {

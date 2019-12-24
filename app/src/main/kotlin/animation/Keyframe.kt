@@ -34,7 +34,7 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         animOffsetY = 0
         animOffsetZ = 0
 
-        val entity = context.entity?: return
+        val entity = context.entityHandler.entity?: return
         val def = entity.model.definition
         def.resetAnim()
 

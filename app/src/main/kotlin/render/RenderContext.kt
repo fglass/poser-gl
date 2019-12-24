@@ -66,7 +66,6 @@ class RenderContext {
     val packers = plugins.second
 
     val modelParser = ModelParser()
-    var entity: Entity? = null
     val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
 
@@ -203,7 +202,7 @@ class RenderContext {
     fun reset() {
         ConfirmDialog(this, "Warning", "Any unsaved changes will be lost", "Continue") {
             nodeRenderer.enabled = false
-            animationHandler.resetAnimation()
+            entityHandler.clear()
             gui.container.clearChildComponents()
             StartDialog(this).show(frame)
         }.show(frame)

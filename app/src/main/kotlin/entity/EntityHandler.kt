@@ -8,6 +8,7 @@ import shader.ShadingType
 
 class EntityHandler(private val context: RenderContext) {
 
+    var entity: Entity? = null
     var scale = 1f
 
     fun loadPlayer() {
@@ -36,9 +37,9 @@ class EntityHandler(private val context: RenderContext) {
         def.computeAnimationTables()
 
         val model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
-        context.entity = Entity(name, size, scale, model, composition)
+        entity = Entity(name, size, scale, model, composition)
         context.lineRenderer.setGrid(size)
-        context.entity?.let(context.gui.managerPanel::update)
+        entity?.let(context.gui.managerPanel::update)
         context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll
     }
 
@@ -69,8 +70,8 @@ class EntityHandler(private val context: RenderContext) {
         }
     }
 
-    private fun clear() {
-        context.entity = null
+    fun clear() {
+        entity = null
         context.animationHandler.resetAnimation()
         context.modelParser.cleanUp()
     }

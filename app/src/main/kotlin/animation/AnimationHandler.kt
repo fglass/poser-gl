@@ -37,7 +37,7 @@ class AnimationHandler(private val context: RenderContext) {
 
     fun tick() {
         val animation = currentAnimation
-        if (animation == null || context.entity == null) {
+        if (animation == null || context.entityHandler.entity == null) {
             return
         }
 
