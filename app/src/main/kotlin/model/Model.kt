@@ -1,5 +1,5 @@
 package model
 
-import net.runelite.cache.definitions.ModelDefinition
+import api.definition.ModelDef
 
-class Model(val vaoId: Int, val vertexCount: Int, val definition: ModelDefinition)
+class Model(val vaoId: Int, val vertexCount: Int, val definition: ModelDef)

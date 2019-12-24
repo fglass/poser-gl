@@ -1,6 +1,6 @@
 package model
 
-import net.runelite.cache.definitions.ModelDefinition
+import api.definition.ModelDef
 
 /**
  * Originates from OSRS 179 deob TODO: Clean-up
@@ -9,8 +9,8 @@ class ModelMerger {
 
     companion object {
 
-        fun merge(models: ArrayList<ModelDefinition>): ModelDefinition {
-            val newDef = ModelDefinition()
+        fun merge(models: ArrayList<ModelDef>): ModelDef {
+            val newDef = ModelDef()
             newDef.vertexCount = 0
             newDef.faceCount = 0
             newDef.priority = 0
@@ -21,7 +21,7 @@ class ModelMerger {
             newDef.faceCount = 0
             newDef.priority = -1
 
-            var current: ModelDefinition?
+            var current: ModelDef?
             var i = 0
             while (i < models.size) {
                 current = models[i]
@@ -30,7 +30,7 @@ class ModelMerger {
                 if (current.faceRenderPriorities != null) {
                     var4 = true
                 } else {
-                    if (newDef.priority.toInt() == -1) {
+                    if (newDef.priority == -1) {
                         newDef.priority = current.priority
                     }
 
@@ -72,20 +72,22 @@ class ModelMerger {
                 current = models[i]
                 var var11 = 0
                 while (var11 < current.faceCount) {
-                    if (var3 && current.faceRenderTypes != null) {
-                        newDef.faceRenderTypes[newDef.faceCount] = current.faceRenderTypes[var11]
-                    }
-
-                    if (var4) {
-                        if (current.faceRenderPriorities != null) {
-                            newDef.faceRenderPriorities[newDef.faceCount] = current.faceRenderPriorities[var11]
-                        } else {
-                            newDef.faceRenderPriorities[newDef.faceCount] = current.priority
+                    if (var3) {
+                        current.faceRenderTypes?.let {
+                            newDef.faceRenderTypes?.set(newDef.faceCount, it[var11])
                         }
                     }
 
-                    if (var5 && current.faceAlphas != null) {
-                        newDef.faceAlphas[newDef.faceCount] = current.faceAlphas[var11]
+                    if (var4) {
+                        newDef.faceRenderPriorities?.set(
+                            newDef.faceCount, current.faceRenderPriorities?.get(var11) ?: current.priority.toByte()
+                        )
+                    }
+
+                    if (var5) {
+                        current.faceAlphas?.let {
+                            newDef.faceAlphas?.set(newDef.faceCount, it[var11])
+                        }
                     }
 
                     newDef.faceColors[newDef.faceCount] = current.faceColors[var11]
@@ -104,7 +106,7 @@ class ModelMerger {
             return newDef
         }
 
-        private fun increment(newDef: ModelDefinition, current: ModelDefinition, var2: Int): Int {
+        private fun increment(newDef: ModelDef, current: ModelDef, var2: Int): Int {
             var var3 = -1
             val var4 = current.vertexPositionsX[var2]
             val var5 = current.vertexPositionsY[var2]
@@ -121,8 +123,8 @@ class ModelMerger {
                 newDef.vertexPositionsX[newDef.vertexCount] = var4
                 newDef.vertexPositionsY[newDef.vertexCount] = var5
                 newDef.vertexPositionsZ[newDef.vertexCount] = var6
-                if (current.vertexSkins != null) {
-                    newDef.vertexSkins[newDef.vertexCount] = current.vertexSkins[var2]
+                current.vertexSkins?.let {
+                    newDef.vertexSkins?.set(newDef.vertexCount, it[var2])
                 }
                 var3 = newDef.vertexCount++
             }

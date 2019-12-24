@@ -1,9 +1,9 @@
 package animation
 
 import api.animation.TransformationType
+import api.definition.ModelDef
 import cache.isHigherRev
 import entity.HIGHER_REV_SCALE
-import net.runelite.cache.definitions.ModelDefinition
 import org.joml.Vector3f
 import java.util.*
 
@@ -39,7 +39,7 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         return children[TransformationType.ROTATION]
     }
 
-    fun setPosition(def: ModelDefinition) {
+    fun setPosition(def: ModelDef) {
         var index = 0f
         val position = Vector3f(delta)
 

@@ -2,9 +2,9 @@ package render
 
 import animation.ReferenceNode
 import api.animation.TransformationType
+import api.definition.ModelDef
 import model.Model
 import shader.NodeShader
-import net.runelite.cache.definitions.ModelDefinition
 import org.joml.*
 import org.lwjgl.opengl.GL30.*
 import util.MouseButtonHandler
@@ -33,7 +33,7 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
     }
 
-    fun addNode(node: ReferenceNode, def: ModelDefinition) {
+    fun addNode(node: ReferenceNode, def: ModelDef) {
         if (!enabled) {
             return
         }

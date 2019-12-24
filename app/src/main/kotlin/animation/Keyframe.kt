@@ -2,7 +2,10 @@ package animation
 
 import api.animation.IKeyframe
 import api.definition.FrameMapDef
-import net.runelite.cache.definitions.ModelDefinition.*
+import api.definition.ModelDef
+import api.definition.ModelDef.Companion.animOffsetX
+import api.definition.ModelDef.Companion.animOffsetY
+import api.definition.ModelDef.Companion.animOffsetZ
 import render.RenderContext
 import shader.ShadingType
 
@@ -45,5 +48,13 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         // Load transformed model
         context.modelParser.cleanUp()
         entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
+    }
+
+    private fun ModelDef.resetAnim() {
+        if (origVX != null) {
+            System.arraycopy(origVX!!, 0, this.vertexPositionsX, 0, origVX!!.size)
+            System.arraycopy(origVY!!, 0, this.vertexPositionsY, 0, origVY!!.size)
+            System.arraycopy(origVZ!!, 0, this.vertexPositionsZ, 0, origVZ!!.size)
+        }
     }
 }

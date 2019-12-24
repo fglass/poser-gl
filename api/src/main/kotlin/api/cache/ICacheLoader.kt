@@ -1,10 +1,6 @@
 package api.cache
 
-import api.definition.FrameDef
-import api.definition.ItemDef
-import api.definition.NpcDef
-import api.definition.SequenceDef
-import net.runelite.cache.definitions.*
+import api.definition.*
 import org.displee.CacheLibrary
 import java.util.*
 
@@ -18,7 +14,7 @@ interface ICacheLoader {
 
     fun loadItemDefs(library: CacheLibrary): HashMap<Int, ItemDef>
 
-    fun loadModelDefinition(library: CacheLibrary, modelId: Int): ModelDefinition
+    fun loadModelDef(library: CacheLibrary, modelId: Int): ModelDef
 
     fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDef>
 }

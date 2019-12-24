@@ -1,7 +1,7 @@
 package render
 
+import api.definition.ModelDef
 import model.Model
-import net.runelite.cache.definitions.ModelDefinition
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
@@ -15,7 +15,7 @@ class Loader {
     private val vaos = ArrayList<Int>()
     private val vbos = ArrayList<Int>()
 
-    fun loadToVao(positions: IntArray, normals: IntArray, definition: ModelDefinition): Model {
+    fun loadToVao(positions: IntArray, normals: IntArray, definition: ModelDef): Model {
         val vaoId = createVao()
         storeIntData(0, 4, positions)
         storeIntData(1, 3, normals)
@@ -27,7 +27,7 @@ class Loader {
         val vaoId = createVao()
         storeFloatData(0, size, positions)
         unbindVao()
-        return Model(vaoId, positions.size / size, ModelDefinition())
+        return Model(vaoId, positions.size / size, ModelDef())
     }
 
     private fun createVao(): Int {

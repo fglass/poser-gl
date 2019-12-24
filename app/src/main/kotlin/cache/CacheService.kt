@@ -2,15 +2,11 @@ package cache
 
 import animation.Animation
 import api.cache.ICacheLoader
-import api.definition.FrameDef
-import api.definition.ItemDef
-import api.definition.NpcDef
-import api.definition.SequenceDef
+import api.definition.*
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE
 import mu.KotlinLogging
-import net.runelite.cache.definitions.ModelDefinition
 import org.displee.CacheLibrary
 import render.RenderContext
 
@@ -72,17 +68,25 @@ class CacheService(private val context: RenderContext) {
         entities[player.id] = player
     }
 
-    fun loadModelDefinition(component: EntityComponent): ModelDefinition {
+    fun loadModelDef(component: EntityComponent): ModelDef {
         val library = CacheLibrary(path)
-        val def = loader.loadModelDefinition(library, component.id)
+        val def = loader.loadModelDef(library, component.id)
         library.close()
 
         if (component.originalColours != null && component.newColours != null) {
             for (i in component.originalColours.indices) {
-                def.recolor(component.originalColours[i], component.newColours[i])
+                def.recolour(component.originalColours[i], component.newColours[i])
             }
         }
         return def
+    }
+
+    private fun ModelDef.recolour(old: Short, new: Short) {
+        repeat(faceCount) {
+            if (faceColors[it] == old) {
+                faceColors[it] = new
+            }
+        }
     }
 
     fun getFrameArchive(archiveId: Int): Set<FrameDef> {

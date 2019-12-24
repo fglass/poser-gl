@@ -1,9 +1,9 @@
 package entity
 
+import api.definition.ModelDef
 import api.definition.NpcDef
-import render.RenderContext
 import model.ModelMerger.Companion.merge
-import net.runelite.cache.definitions.ModelDefinition
+import render.RenderContext
 import shader.ShadingType
 
 class EntityHandler(private val context: RenderContext) {
@@ -26,10 +26,10 @@ class EntityHandler(private val context: RenderContext) {
 
     fun process(name: String, size: Int, composition: HashSet<EntityComponent>) {
         val def = when (composition.size) {
-            1 -> context.cacheService.loadModelDefinition(composition.first())
+            1 -> context.cacheService.loadModelDef(composition.first())
             else -> {
-                val defs = ArrayList<ModelDefinition>()
-                defs.addAll(composition.map(context.cacheService::loadModelDefinition))
+                val defs = ArrayList<ModelDef>()
+                defs.addAll(composition.map(context.cacheService::loadModelDef))
                 merge(defs)
             }
         }
@@ -40,6 +40,33 @@ class EntityHandler(private val context: RenderContext) {
         context.lineRenderer.setGrid(size)
         context.entity?.let(context.gui.managerPanel::update)
         context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll
+    }
+
+    private fun ModelDef.computeAnimationTables() {
+        vertexSkins?.let { skins ->
+            val groupCounts = IntArray(256)
+            var numGroups = 0
+
+            repeat(vertexCount) {
+                val temp = skins[it]
+                groupCounts[temp]++
+                if (temp > numGroups) {
+                    numGroups = temp
+                }
+            }
+
+            vertexGroups = Array(numGroups + 1) { IntArray(0) }
+            repeat(numGroups + 1) {
+                vertexGroups[it] = IntArray(groupCounts[it])
+                groupCounts[it] = 0
+            }
+
+            repeat(vertexCount) {
+                val temp = skins[it]
+                vertexGroups[temp][groupCounts[temp]++] = it
+            }
+            vertexSkins = null
+        }
     }
 
     private fun clear() {
