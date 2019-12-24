@@ -107,7 +107,7 @@ class RenderContext {
         CallbackKeeper.registerCallbacks(window, keeper)
 
         keeper.chainWindowCloseCallback.add { running = false }
-        keeper.chainKeyCallback.add(KeyCallback(this))
+        keeper.chainKeyCallback.add(KeyCallback(this, context))
 
         val systemEventProcessor = SystemEventProcessor()
         systemEventProcessor.addDefaultCallbacks(keeper)
