@@ -2,7 +2,7 @@ package render
 
 import animation.ReferenceNode
 import api.animation.TransformationType
-import api.definition.ModelDef
+import api.definition.ModelDefinition
 import model.Model
 import shader.NodeShader
 import org.joml.*
@@ -33,7 +33,7 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
     }
 
-    fun addNode(node: ReferenceNode, def: ModelDef) {
+    fun addNode(node: ReferenceNode, def: ModelDefinition) {
         if (!enabled) {
             return
         }

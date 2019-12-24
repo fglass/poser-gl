@@ -1,6 +1,6 @@
 package model
 
-import api.definition.ModelDef
+import api.definition.ModelDefinition
 
 /**
  * Originates from OSRS 179 deob TODO: Clean-up
@@ -9,8 +9,8 @@ class ModelMerger {
 
     companion object {
 
-        fun merge(models: ArrayList<ModelDef>): ModelDef {
-            val newDef = ModelDef()
+        fun merge(models: ArrayList<ModelDefinition>): ModelDefinition {
+            val newDef = ModelDefinition()
             newDef.vertexCount = 0
             newDef.faceCount = 0
             newDef.priority = 0
@@ -21,7 +21,7 @@ class ModelMerger {
             newDef.faceCount = 0
             newDef.priority = -1
 
-            var current: ModelDef?
+            var current: ModelDefinition?
             var i = 0
             while (i < models.size) {
                 current = models[i]
@@ -106,7 +106,7 @@ class ModelMerger {
             return newDef
         }
 
-        private fun increment(newDef: ModelDef, current: ModelDef, var2: Int): Int {
+        private fun increment(newDef: ModelDefinition, current: ModelDefinition, var2: Int): Int {
             var var3 = -1
             val var4 = current.vertexPositionsX[var2]
             val var5 = current.vertexPositionsY[var2]

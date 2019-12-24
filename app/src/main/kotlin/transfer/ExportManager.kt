@@ -6,7 +6,7 @@ import animation.Keyframe
 import animation.ReferenceNode
 import api.animation.IKeyframe
 import api.animation.getMask
-import api.definition.FrameMapDef
+import api.definition.FrameMapDefinition
 import gui.component.DatDialog
 import gui.component.ExportDialog
 import java.io.ByteArrayOutputStream
@@ -54,7 +54,7 @@ class ExportManager(private val context: RenderContext) {
         return out.toByteArray()
     }
 
-    private fun encodeFrameMap(frameMap: FrameMapDef, stream: DataOutputStream) {
+    private fun encodeFrameMap(frameMap: FrameMapDefinition, stream: DataOutputStream) {
         stream.writeByte(frameMap.length)
 
         repeat(frameMap.length) {
@@ -62,12 +62,12 @@ class ExportManager(private val context: RenderContext) {
         }
 
         repeat(frameMap.length) {
-            stream.writeByte(frameMap.frameMaps[it].size)
+            stream.writeByte(frameMap.maps[it].size)
         }
 
         repeat(frameMap.length) {
-            repeat(frameMap.frameMaps[it].size) { index ->
-                stream.writeByte(frameMap.frameMaps[it][index])
+            repeat(frameMap.maps[it].size) { index ->
+                stream.writeByte(frameMap.maps[it][index])
             }
         }
     }
@@ -125,7 +125,7 @@ class ExportManager(private val context: RenderContext) {
         return out.toByteArray()
     }
 
-    private fun encodeFrameMap317(def: FrameMapDef): ByteArray {
+    private fun encodeFrameMap317(def: FrameMapDefinition): ByteArray {
         val out = ByteArrayOutputStream()
         val os = DataOutputStream(out)
 
@@ -136,11 +136,11 @@ class ExportManager(private val context: RenderContext) {
         }
 
         for (i in 0 until def.length) {
-            os.writeShort(def.frameMaps[i].size)
+            os.writeShort(def.maps[i].size)
         }
 
         for (i in 0 until def.length) {
-            for (j in def.frameMaps[i]) {
+            for (j in def.maps[i]) {
                 os.writeShort(j)
             }
         }

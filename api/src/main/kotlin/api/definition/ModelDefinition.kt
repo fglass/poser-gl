@@ -1,6 +1,6 @@
 package api.definition
 
-data class ModelDef(val id: Int = -1) {
+data class ModelDefinition(val id: Int = -1) {
 
     companion object {
         var animOffsetX = 0

@@ -2,8 +2,7 @@ package animation
 
 import api.animation.ITransformation
 import api.animation.TransformationType
-import api.definition.ModelDef
-import net.runelite.cache.definitions.ModelDefinition
+import api.definition.ModelDefinition
 import net.runelite.cache.models.CircularAngle
 import org.joml.Vector3i
 
@@ -15,11 +14,11 @@ open class Transformation(override var id: Int, override val type: Transformatio
         transformation.frameMap, Vector3i(transformation.delta)
     )
 
-    fun apply(def: ModelDef) {
+    fun apply(def: ModelDefinition) {
         def.animate(type.id, frameMap, delta.x, delta.y, delta.z)
     }
 
-    private fun ModelDef.animate(type: Int, frameMap: IntArray, dx: Int, dy: Int, dz: Int) { // From deob
+    private fun ModelDefinition.animate(type: Int, frameMap: IntArray, dx: Int, dy: Int, dz: Int) { // From deob
         if (this.origVX == null) {
             this.origVX = this.vertexPositionsX.copyOf(this.vertexPositionsX.size)
             this.origVY = this.vertexPositionsY.copyOf(this.vertexPositionsY.size)

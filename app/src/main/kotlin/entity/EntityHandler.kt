@@ -1,7 +1,7 @@
 package entity
 
-import api.definition.ModelDef
-import api.definition.NpcDef
+import api.definition.ModelDefinition
+import api.definition.NpcDefinition
 import model.ModelMerger.Companion.merge
 import render.RenderContext
 import shader.ShadingType
@@ -15,12 +15,12 @@ class EntityHandler(private val context: RenderContext) {
         load(player)
     }
 
-    fun load(def: NpcDef) {
+    fun load(def: NpcDefinition) {
         def.models?.let { models ->
             val composition = HashSet<EntityComponent>()
-            composition.addAll(models.map { EntityComponent(it, def.recolorToFind, def.recolorToReplace) })
+            composition.addAll(models.map { EntityComponent(it, def.originalColours, def.newColours) })
             clear()
-            process(def.name, def.tileSpacesOccupied, composition)
+            process(def.name, def.spaces, composition)
         }
     }
 
@@ -28,7 +28,7 @@ class EntityHandler(private val context: RenderContext) {
         val def = when (composition.size) {
             1 -> context.cacheService.loadModelDef(composition.first())
             else -> {
-                val defs = ArrayList<ModelDef>()
+                val defs = ArrayList<ModelDefinition>()
                 defs.addAll(composition.map(context.cacheService::loadModelDef))
                 merge(defs)
             }
@@ -42,7 +42,7 @@ class EntityHandler(private val context: RenderContext) {
         context.gui.listPanel.animationList.verticalScrollBar.curValue = 0f // Reset scroll
     }
 
-    private fun ModelDef.computeAnimationTables() {
+    private fun ModelDefinition.computeAnimationTables() {
         vertexSkins?.let { skins ->
             val groupCounts = IntArray(256)
             var numGroups = 0

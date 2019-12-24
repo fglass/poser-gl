@@ -2,12 +2,11 @@ package animation
 
 import api.animation.IAnimation
 import api.animation.TransformationType
-import api.definition.FrameDef
-import api.definition.FrameMapDef
-import api.definition.SequenceDef
+import api.definition.FrameDefinition
+import api.definition.FrameMapDefinition
+import api.definition.SequenceDefinition
 import render.RenderContext
 import mu.KotlinLogging
-import net.runelite.cache.definitions.*
 import org.joml.Vector3i
 import java.util.*
 import kotlin.collections.ArrayList
@@ -17,14 +16,14 @@ import kotlin.math.min
 private val logger = KotlinLogging.logger {}
 const val ITEM_OFFSET = 512
 
-class Animation(private val context: RenderContext, var sequence: SequenceDef): IAnimation {
+class Animation(private val context: RenderContext, var sequence: SequenceDefinition): IAnimation {
 
     // Copy constructor
-    constructor(newId: Int, animation: Animation): this(animation.context, SequenceDef(newId)) {
+    constructor(newId: Int, animation: Animation): this(animation.context, SequenceDefinition(newId)) {
         animation.keyframes.forEach {
             keyframes.add(Keyframe(it.id, it))
         }
-        sequence.frameIDs = animation.sequence.frameIDs
+        sequence.frameIds = animation.sequence.frameIds
         sequence.leftHandItem = animation.sequence.leftHandItem
         sequence.rightHandItem = animation.sequence.rightHandItem
         length = calculateLength()
@@ -49,16 +48,16 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
     }
 
     private fun parseSequence() {
-        val frames = LinkedHashMap<Int, FrameDef>() // Preserve insertion order
+        val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
         val indices = TreeSet<Int>() // Sorted by values
 
         // Pre-process sequence frames
-        for ((index, frameId) in sequence.frameIDs.withIndex()) {
+        for ((index, frameId) in sequence.frameIds.withIndex()) {
             val archiveId = frameId ushr 16
             val frameArchive = context.cacheService.getFrameArchive(archiveId)
             val frameFileId = frameId and 0xFFFF
 
-            val frame: FrameDef
+            val frame: FrameDefinition
             try {
                 frame = frameArchive.first { f -> f.id == frameFileId }
             } catch (e: NoSuchElementException) {
@@ -68,11 +67,11 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
 
             val frameIndices = if (context.settingsManager.advancedMode) {
                 // Use all possible indices
-                val maxId = frame.indexFrameIds.max() ?: continue
+                val maxId = frame.indices.max() ?: continue
                 (0..maxId).toList()
             } else {
                 // Accumulate reference indices across animation
-                frame.indexFrameIds.filter { frame.framemap.types[it] == TransformationType.REFERENCE.id }
+                frame.indices.filter { frame.frameMap.types[it] == TransformationType.REFERENCE.id }
             }
 
             indices.addAll(frameIndices)
@@ -80,13 +79,13 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         }
 
         for (frame in frames) {
-            val frameMap = frame.value.framemap
-            val keyframe = Keyframe(frame.key, sequence.frameIDs[frame.key], sequence.frameLenghts[frame.key], frameMap)
+            val frameMap = frame.value.frameMap
+            val keyframe = Keyframe(frame.key, sequence.frameIds[frame.key], sequence.frameLengths[frame.key], frameMap)
 
             for (index in indices) {
-                val type = TransformationType.fromId(frame.value.framemap.types[index]) ?: continue
+                val type = TransformationType.fromId(frame.value.frameMap.types[index]) ?: continue
                 val transformation = Transformation(
-                    index, type, frameMap.frameMaps[index], getDelta(frame.value, index, type)
+                    index, type, frameMap.maps[index], getDelta(frame.value, index, type)
                 )
 
                 if (type == TransformationType.REFERENCE) {
@@ -107,16 +106,16 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         }
     }
 
-    private fun getDelta(frame: FrameDef, id: Int, type: TransformationType): Vector3i {
-        val index = frame.indexFrameIds.indexOf(id)
+    private fun getDelta(frame: FrameDefinition, id: Int, type: TransformationType): Vector3i {
+        val index = frame.indices.indexOf(id)
         return when {
-                index != -1 -> Vector3i(frame.translator_x[index], frame.translator_y[index], frame.translator_z[index])
+                index != -1 -> Vector3i(frame.deltaX[index], frame.deltaY[index], frame.deltaZ[index])
                 else -> type.getDefaultOffset()
         }
     }
 
-    private fun ReferenceNode.findChildren(id: Int, frame: FrameDef) { // Allows additional children to be found
-        val frameMap = frame.framemap
+    private fun ReferenceNode.findChildren(id: Int, frame: FrameDefinition) { // Allows additional children to be found
+        val frameMap = frame.frameMap
         var childId = id + 1
         if (childId >= frameMap.types.size) {
             return
@@ -126,7 +125,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         // Search transformations until encounter next reference
         while (childType != TransformationType.REFERENCE.id) {
             TransformationType.fromId(childType)?.let {
-                val child = Transformation(childId, it, frameMap.frameMaps[childId], getDelta(frame, childId, it))
+                val child = Transformation(childId, it, frameMap.maps[childId], getDelta(frame, childId, it))
                 children[it] = child
             }
 
@@ -182,7 +181,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         }
     }
 
-    fun getFrameMap(): FrameMapDef {
+    fun getFrameMap(): FrameMapDefinition {
         return keyframes.first().frameMap
     }
 
@@ -210,20 +209,20 @@ class Animation(private val context: RenderContext, var sequence: SequenceDef): 
         context.gui.animationPanel.setTimeline()
     }
 
-    override fun toSequence(archiveId: Int): SequenceDef { // TODO: move?
-        val sequence = SequenceDef(sequence.id)
+    override fun toSequence(archiveId: Int): SequenceDefinition { // TODO: move?
+        val sequence = SequenceDefinition(sequence.id)
         sequence.leftHandItem = this.sequence.leftHandItem
         sequence.rightHandItem = this.sequence.rightHandItem
 
-        sequence.frameLenghts = IntArray(keyframes.size)
-        sequence.frameIDs = IntArray(keyframes.size)
+        sequence.frameLengths = IntArray(keyframes.size)
+        sequence.frameIds = IntArray(keyframes.size)
 
         var modified = 0 // To decrement keyframe id's if necessary
         for (i in 0 until keyframes.size) {
             val keyframe = keyframes[i]
-            sequence.frameLenghts[i] = keyframe.length
+            sequence.frameLengths[i] = keyframe.length
 
-            sequence.frameIDs[i] = if (keyframe.modified) {
+            sequence.frameIds[i] = if (keyframe.modified) {
                 ((archiveId and 0xFFFF) shl 16) or (modified++ and 0xFFFF) // New frame id
             } else {
                 keyframe.frameId // Original frame id

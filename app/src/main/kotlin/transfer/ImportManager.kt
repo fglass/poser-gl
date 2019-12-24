@@ -3,8 +3,8 @@ package transfer
 import render.RenderContext
 import animation.*
 import api.animation.TransformationType
-import api.definition.FrameMapDef
-import api.definition.SequenceDef
+import api.definition.FrameMapDefinition
+import api.definition.SequenceDefinition
 import net.runelite.cache.io.InputStream
 import org.joml.Vector3i
 import util.FileDialog
@@ -28,7 +28,7 @@ class ImportManager(private val context: RenderContext) {
     private fun decodePgl(data: ByteArray): Animation {
         val stream = InputStream(data)
         val newId = context.cacheService.animations.keys.max()!! + 1
-        val sequence = SequenceDef(newId)
+        val sequence = SequenceDefinition(newId)
 
         val animation = Animation(context, sequence)
         animation.modified = true
@@ -38,7 +38,7 @@ class ImportManager(private val context: RenderContext) {
 
         repeat(n) {
             val length = stream.readUnsignedShort()
-            val frameMap = FrameMapDef()
+            val frameMap = FrameMapDefinition()
             frameMap.decode(stream)
 
             val keyframe = Keyframe(it, -1, length, frameMap)
@@ -52,22 +52,22 @@ class ImportManager(private val context: RenderContext) {
         return animation
     }
 
-    private fun FrameMapDef.decode(stream: InputStream) {
+    private fun FrameMapDefinition.decode(stream: InputStream) {
         length = stream.readUnsignedByte()
         types = IntArray(length)
-        frameMaps = Array(length) { IntArray(0) }
+        maps = Array(length) { IntArray(0) }
 
         repeat(length) {
             types[it] = stream.readUnsignedByte()
         }
 
         repeat(length) {
-            frameMaps[it] = IntArray(stream.readUnsignedByte())
+            maps[it] = IntArray(stream.readUnsignedByte())
         }
 
         repeat(length) {
-            repeat (frameMaps[it].size) { index ->
-                frameMaps[it][index] = stream.readUnsignedByte()
+            repeat (maps[it].size) { index ->
+                maps[it][index] = stream.readUnsignedByte()
             }
         }
     }
@@ -82,7 +82,7 @@ class ImportManager(private val context: RenderContext) {
             val y = stream.readShort().toInt()
             val z = stream.readShort().toInt()
 
-            val tf = Transformation(id, TransformationType.REFERENCE, frameMap.frameMaps[id], Vector3i(x, y, z))
+            val tf = Transformation(id, TransformationType.REFERENCE, frameMap.maps[id], Vector3i(x, y, z))
             val reference = ReferenceNode(tf)
             transformations.add(reference)
 
@@ -95,7 +95,7 @@ class ImportManager(private val context: RenderContext) {
                 val childZ = stream.readShort().toInt()
 
                 val type = TransformationType.fromId(childType)?: continue
-                val child = Transformation(childId, type, frameMap.frameMaps[childId], Vector3i(childX, childY, childZ))
+                val child = Transformation(childId, type, frameMap.maps[childId], Vector3i(childX, childY, childZ))
                 reference.children[type] = child
                 transformations.add(child)
             }

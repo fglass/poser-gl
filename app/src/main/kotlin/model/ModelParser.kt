@@ -1,6 +1,6 @@
 package model
 
-import api.definition.ModelDef
+import api.definition.ModelDefinition
 import org.joml.Vector3f
 import org.joml.Vector3i
 import render.Loader
@@ -9,7 +9,7 @@ class ModelParser {
 
     private val loader = Loader()
 
-    fun parse(def: ModelDef, flatShading: Boolean): Model { // TODO: scale based on max vertex positions
+    fun parse(def: ModelDefinition, flatShading: Boolean): Model { // TODO: scale based on max vertex positions
         val nPosition = 4
         val nNormal = 3
 
@@ -48,7 +48,7 @@ class ModelParser {
         return loader.loadToVao(positions, normals, def)
     }
 
-    private fun computeNormals(def: ModelDef): Array<Vector3f> {
+    private fun computeNormals(def: ModelDefinition): Array<Vector3f> {
         val normals = Array(def.vertexCount) { Vector3f(0f, 0f, 0f) }
         for (i in 0 until def.vertexCount) {
             val vertex = Vector3i(def.vertexPositionsX[i], def.vertexPositionsY[i], def.vertexPositionsZ[i])

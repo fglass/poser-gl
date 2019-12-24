@@ -131,7 +131,7 @@ class AnimationHandler(private val context: RenderContext) {
         }
     }
 
-    fun resetAnimation() {
+    fun resetAnimation() { // TODO: use events
         if (currentAnimation == null) {
             return
         }
@@ -147,7 +147,7 @@ class AnimationHandler(private val context: RenderContext) {
         previousFrame = Keyframe()
 
         history.reset()
-        context.nodeRenderer.reset() // TODO: use events
+        context.nodeRenderer.reset()
         context.gui.editorPanel.reset()
         context.gui.animationPanel.reset()
     }

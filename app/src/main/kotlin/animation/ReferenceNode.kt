@@ -1,7 +1,7 @@
 package animation
 
 import api.animation.TransformationType
-import api.definition.ModelDef
+import api.definition.ModelDefinition
 import cache.isHigherRev
 import entity.HIGHER_REV_SCALE
 import org.joml.Vector3f
@@ -39,7 +39,7 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         return children[TransformationType.ROTATION]
     }
 
-    fun setPosition(def: ModelDef) {
+    fun setPosition(def: ModelDefinition) {
         var index = 0f
         val position = Vector3f(delta)
 

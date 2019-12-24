@@ -203,6 +203,7 @@ class RenderContext {
     fun reset() {
         ConfirmDialog(this, "Warning", "Any unsaved changes will be lost", "Continue") {
             nodeRenderer.enabled = false
+            animationHandler.resetAnimation()
             gui.container.clearChildComponents()
             StartDialog(this).show(frame)
         }.show(frame)

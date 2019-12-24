@@ -1,9 +1,9 @@
 package api.animation
 
-import api.definition.FrameMapDef
+import api.definition.FrameMapDefinition
 
 interface IKeyframe {
     val modified: Boolean
-    val frameMap: FrameMapDef
+    val frameMap: FrameMapDefinition
     val transformations: List<ITransformation>
 }

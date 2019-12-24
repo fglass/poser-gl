@@ -29,7 +29,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
             library.close()
             newId
         } else {
-            animation.sequence.frameIDs.first() ushr 16
+            animation.sequence.frameIds.first() ushr 16
         }
 
         val archiveSlider = TextSlider({ setFrames(it) }, 0 to 999, 66f, 7f, 65f, 15f)
@@ -53,7 +53,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
 
     private fun setFrames(archiveId: Int) {
         val sequence = if (animation.modified) animation.toSequence(archiveId) else animation.sequence
-        val list = sequence.frameIDs.joinToString()
+        val list = sequence.frameIds.joinToString()
         val charWidth = 6.5f
         val width = list.length * charWidth
         val frameList = Label(list, 2f, 1f, width, 15f)

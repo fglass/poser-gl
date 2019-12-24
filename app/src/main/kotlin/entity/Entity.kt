@@ -1,6 +1,6 @@
 package entity
 
-import api.definition.ItemDef
+import api.definition.ItemDefinition
 import model.Model
 import org.joml.Vector3f
 import java.util.*
@@ -16,19 +16,19 @@ class Entity(val name: String, val size: Int, val scale: Float, var model: Model
     val position = ENTITY_POS
     val rotation = ENTITY_ROT
 
-    fun addItem(item: ItemDef, entityHandler: EntityHandler) {
+    fun addItem(item: ItemDefinition, entityHandler: EntityHandler) {
         val size = composition.size
-        val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
-        models.filter { it > 0 }.forEach { composition.add((EntityComponent(it, item.colorFind, item.colorReplace))) }
+        val models = intArrayOf(item.model0, item.model1, item.model2)
+        models.filter { it > 0 }.forEach { composition.add((EntityComponent(it, item.originalColours, item.newColours))) }
 
         if (composition.size > size) { // Only reload if composition has changed
             reload(entityHandler)
         }
     }
 
-    fun removeItem(item: ItemDef, entityHandler: EntityHandler) {
+    fun removeItem(item: ItemDefinition, entityHandler: EntityHandler) {
         val size = composition.size
-        val models = intArrayOf(item.maleModel0, item.maleModel1, item.maleModel2)
+        val models = intArrayOf(item.model0, item.model1, item.model2)
         composition.removeIf { models.contains(it.id) }
 
         if (composition.size < size) {

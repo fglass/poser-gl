@@ -20,10 +20,10 @@ class CacheService(private val context: RenderContext) {
     lateinit var loader: ICacheLoader
     lateinit var packManager: PackManager
 
-    var entities = HashMap<Int, NpcDef>()
-    var items = HashMap<Int, ItemDef>()
+    var entities = HashMap<Int, NpcDefinition>()
+    var items = HashMap<Int, ItemDefinition>()
     var animations = HashMap<Int, Animation>()
-    private var frames: HashMultimap<Int, FrameDef> = HashMultimap.create()
+    private var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
 
     fun init(path: String, loader: ICacheLoader) {
         this.path = path
@@ -52,7 +52,7 @@ class CacheService(private val context: RenderContext) {
         logger.info { "Loaded ${items.size} items" }
 
         val sequences = loader.loadSequences(library)
-        animations = HashMap(sequences.associateBy(SequenceDef::id) { Animation(context, it) })
+        animations = HashMap(sequences.associateBy(SequenceDefinition::id) { Animation(context, it) })
         logger.info { "Loaded ${animations.size} animations" }
 
         if (entities.size <= 1) {
@@ -62,13 +62,13 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun addPlayer() {
-        val player = NpcDef(-1)
+        val player = NpcDefinition(-1)
         player.name = "Player"
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
     }
 
-    fun loadModelDef(component: EntityComponent): ModelDef {
+    fun loadModelDef(component: EntityComponent): ModelDefinition {
         val library = CacheLibrary(path)
         val def = loader.loadModelDef(library, component.id)
         library.close()
@@ -81,7 +81,7 @@ class CacheService(private val context: RenderContext) {
         return def
     }
 
-    private fun ModelDef.recolour(old: Short, new: Short) {
+    private fun ModelDefinition.recolour(old: Short, new: Short) {
         repeat(faceCount) {
             if (faceColors[it] == old) {
                 faceColors[it] = new
@@ -89,7 +89,7 @@ class CacheService(private val context: RenderContext) {
         }
     }
 
-    fun getFrameArchive(archiveId: Int): Set<FrameDef> {
+    fun getFrameArchive(archiveId: Int): Set<FrameDefinition> {
         val archive = frames.get(archiveId)
         if (archive.isNotEmpty()) {
             return archive

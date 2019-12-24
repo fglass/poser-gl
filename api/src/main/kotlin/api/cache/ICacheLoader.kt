@@ -8,13 +8,13 @@ interface ICacheLoader {
 
     val frameIndex: Int
 
-    fun loadSequences(library: CacheLibrary): List<SequenceDef>
+    fun loadSequences(library: CacheLibrary): List<SequenceDefinition>
 
-    fun loadNpcDefs(library: CacheLibrary): HashMap<Int, NpcDef>
+    fun loadNpcDefs(library: CacheLibrary): HashMap<Int, NpcDefinition>
 
-    fun loadItemDefs(library: CacheLibrary): HashMap<Int, ItemDef>
+    fun loadItemDefs(library: CacheLibrary): HashMap<Int, ItemDefinition>
 
-    fun loadModelDef(library: CacheLibrary, modelId: Int): ModelDef
+    fun loadModelDef(library: CacheLibrary, modelId: Int): ModelDefinition
 
-    fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDef>
+    fun loadFrameArchive(library: CacheLibrary, archiveId: Int): Set<FrameDefinition>
 }

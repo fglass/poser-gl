@@ -1,6 +1,6 @@
 package render
 
-import api.definition.ModelDef
+import api.definition.ModelDefinition
 import model.Model
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
@@ -15,7 +15,7 @@ class Loader {
     private val vaos = ArrayList<Int>()
     private val vbos = ArrayList<Int>()
 
-    fun loadToVao(positions: IntArray, normals: IntArray, definition: ModelDef): Model {
+    fun loadToVao(positions: IntArray, normals: IntArray, definition: ModelDefinition): Model {
         val vaoId = createVao()
         storeIntData(0, 4, positions)
         storeIntData(1, 3, normals)
@@ -27,7 +27,7 @@ class Loader {
         val vaoId = createVao()
         storeFloatData(0, size, positions)
         unbindVao()
-        return Model(vaoId, positions.size / size, ModelDef())
+        return Model(vaoId, positions.size / size, ModelDefinition())
     }
 
     private fun createVao(): Int {
