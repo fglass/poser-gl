@@ -3,8 +3,8 @@ package transfer
 import render.RenderContext
 import animation.*
 import api.animation.TransformationType
+import api.definition.SequenceDef
 import net.runelite.cache.definitions.FramemapDefinition
-import net.runelite.cache.definitions.SequenceDefinition
 import net.runelite.cache.io.InputStream
 import org.joml.Vector3i
 import util.FileDialog
@@ -28,7 +28,7 @@ class ImportManager(private val context: RenderContext) {
     private fun decodePgl(data: ByteArray): Animation {
         val stream = InputStream(data)
         val newId = context.cacheService.animations.keys.max()!! + 1
-        val sequence = SequenceDefinition(newId)
+        val sequence = SequenceDef(newId)
 
         val animation = Animation(context, sequence)
         animation.modified = true

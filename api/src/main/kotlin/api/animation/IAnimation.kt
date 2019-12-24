@@ -1,8 +1,8 @@
 package api.animation
 
-import net.runelite.cache.definitions.SequenceDefinition
+import api.definition.SequenceDef
 
 interface IAnimation {
     val keyframes: List<IKeyframe>
-    fun toSequence(archiveId: Int): SequenceDefinition
+    fun toSequence(archiveId: Int): SequenceDef
 }

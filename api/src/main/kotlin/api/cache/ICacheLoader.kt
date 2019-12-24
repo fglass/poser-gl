@@ -2,6 +2,7 @@ package api.cache
 
 import api.definition.ItemDef
 import api.definition.NpcDef
+import api.definition.SequenceDef
 import net.runelite.cache.definitions.*
 import org.displee.CacheLibrary
 import java.util.*
@@ -10,7 +11,7 @@ interface ICacheLoader {
 
     val frameIndex: Int
 
-    fun loadSequences(library: CacheLibrary): List<SequenceDefinition>
+    fun loadSequences(library: CacheLibrary): List<SequenceDef>
 
     fun loadNpcDefs(library: CacheLibrary): HashMap<Int, NpcDef>
 

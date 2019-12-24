@@ -4,6 +4,7 @@ import animation.Animation
 import api.cache.ICacheLoader
 import api.definition.ItemDef
 import api.definition.NpcDef
+import api.definition.SequenceDef
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE
@@ -54,23 +55,14 @@ class CacheService(private val context: RenderContext) {
         items = loader.loadItemDefs(library)
         logger.info { "Loaded ${items.size} items" }
 
-        loadAnimations(library)
+        val sequences = loader.loadSequences(library)
+        animations = HashMap(sequences.associateBy(SequenceDef::id) { Animation(context, it) })
         logger.info { "Loaded ${animations.size} animations" }
 
         if (entities.size <= 1) {
             throw Exception("Cache loaded incorrectly")
         }
         loaded = true
-    }
-
-    private fun loadAnimations(library: CacheLibrary) {
-        animations.clear()
-        loader.loadSequences(library).forEach {
-            when {
-                it.frameIDs != null -> animations[it.id] = Animation(context, it)
-                else -> logger.error { "Sequence ${it.id} contains no frames" }
-            }
-        }
     }
 
     private fun addPlayer() {

@@ -2,6 +2,7 @@ package animation
 
 import api.animation.IAnimation
 import api.animation.TransformationType
+import api.definition.SequenceDef
 import render.RenderContext
 import mu.KotlinLogging
 import net.runelite.cache.definitions.*
@@ -14,10 +15,10 @@ import kotlin.math.min
 private val logger = KotlinLogging.logger {}
 const val ITEM_OFFSET = 512
 
-class Animation(private val context: RenderContext, var sequence: SequenceDefinition): IAnimation {
+class Animation(private val context: RenderContext, var sequence: SequenceDef): IAnimation {
 
     // Copy constructor
-    constructor(newId: Int, animation: Animation): this(animation.context, SequenceDefinition(newId)) {
+    constructor(newId: Int, animation: Animation): this(animation.context, SequenceDef(newId)) {
         animation.keyframes.forEach {
             keyframes.add(Keyframe(it.id, it))
         }
@@ -207,8 +208,8 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         context.gui.animationPanel.setTimeline()
     }
 
-    override fun toSequence(archiveId: Int): SequenceDefinition { // TODO: move?
-        val sequence = SequenceDefinition(sequence.id)
+    override fun toSequence(archiveId: Int): SequenceDef { // TODO: move?
+        val sequence = SequenceDef(sequence.id)
         sequence.leftHandItem = this.sequence.leftHandItem
         sequence.rightHandItem = this.sequence.rightHandItem
 
