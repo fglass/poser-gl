@@ -1,7 +1,7 @@
 package gui.component
 
+import api.definition.NpcDef
 import render.RenderContext
-import net.runelite.cache.definitions.NpcDefinition
 
 class EntityList(context: RenderContext): ElementList() {
 
@@ -38,7 +38,7 @@ class EntityList(context: RenderContext): ElementList() {
         }
     }
 
-    class EntityElement(var entity: NpcDefinition, private val context: RenderContext, x: Float, y: Float): Element(x, y) {
+    class EntityElement(var entity: NpcDef, private val context: RenderContext, x: Float, y: Float): Element(x, y) {
         init {
             updateText()
         }

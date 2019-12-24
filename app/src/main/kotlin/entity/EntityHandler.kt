@@ -1,9 +1,9 @@
 package entity
 
+import api.definition.NpcDef
 import render.RenderContext
 import model.ModelMerger.Companion.merge
 import net.runelite.cache.definitions.ModelDefinition
-import net.runelite.cache.definitions.NpcDefinition
 import shader.ShadingType
 
 class EntityHandler(private val context: RenderContext) {
@@ -15,12 +15,13 @@ class EntityHandler(private val context: RenderContext) {
         load(player)
     }
 
-    fun load(def: NpcDefinition) {
-        val components = def.models.map { EntityComponent(it, def.recolorToFind, def.recolorToReplace) }
-        val composition = HashSet<EntityComponent>()
-        composition.addAll(components)
-        clear()
-        process(def.name, def.tileSpacesOccupied, composition)
+    fun load(def: NpcDef) {
+        def.models?.let { models ->
+            val composition = HashSet<EntityComponent>()
+            composition.addAll(models.map { EntityComponent(it, def.recolorToFind, def.recolorToReplace) })
+            clear()
+            process(def.name, def.tileSpacesOccupied, composition)
+        }
     }
 
     fun process(name: String, size: Int, composition: HashSet<EntityComponent>) {

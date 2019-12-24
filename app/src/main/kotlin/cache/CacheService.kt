@@ -3,13 +3,13 @@ package cache
 import animation.Animation
 import api.cache.ICacheLoader
 import api.definition.ItemDef
+import api.definition.NpcDef
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE
 import mu.KotlinLogging
 import net.runelite.cache.definitions.FrameDefinition
 import net.runelite.cache.definitions.ModelDefinition
-import net.runelite.cache.definitions.NpcDefinition
 import org.displee.CacheLibrary
 import render.RenderContext
 
@@ -23,7 +23,7 @@ class CacheService(private val context: RenderContext) {
     lateinit var loader: ICacheLoader
     lateinit var packManager: PackManager
 
-    var entities = HashMap<Int, NpcDefinition>()
+    var entities = HashMap<Int, NpcDef>()
     var items = HashMap<Int, ItemDef>()
     var animations = HashMap<Int, Animation>()
     private var frames: HashMultimap<Int, FrameDefinition> = HashMultimap.create()
@@ -47,7 +47,7 @@ class CacheService(private val context: RenderContext) {
         isHigherRev = !library.is317 && !library.isOSRS
         context.entityHandler.scale = if (isHigherRev) 1 / HIGHER_REV_SCALE else 1f // Downscale for higher revs
 
-        entities = loader.loadNpcDefinitions(library)
+        entities = loader.loadNpcDefs(library)
         logger.info { "Loaded ${entities.size} npcs" }
         addPlayer()
 
@@ -74,7 +74,7 @@ class CacheService(private val context: RenderContext) {
     }
 
     private fun addPlayer() {
-        val player = NpcDefinition(-1)
+        val player = NpcDef(-1)
         player.name = "Player"
         player.models = intArrayOf(230, 249, 292, 151, 176, 254, 181)
         entities[player.id] = player
