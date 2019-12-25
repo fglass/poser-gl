@@ -24,7 +24,7 @@ import util.Colour
 import util.ResourceMap
 import util.setSizeLimits
 
-// TODO: reference node position editing - advanced mode
+// TODO: reference node position editing in advanced mode
 
 class EditorPanel(private val context: RenderContext): Panel() {
 
