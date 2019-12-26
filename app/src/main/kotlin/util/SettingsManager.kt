@@ -54,7 +54,7 @@ class SettingsManager(private val context: RenderContext) {
                 advancedMode = it.toBoolean()
             }
         } catch (e: Exception) {
-            logger.error(e) { "Failed to load user settings" }
+            logger.warn(e) { "Failed to load user settings" }
         }
     }
 
