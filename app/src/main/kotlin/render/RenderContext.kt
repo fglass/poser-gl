@@ -3,11 +3,9 @@ package render
 import animation.AnimationHandler
 import cache.CacheService
 import cache.PluginLoader
-import entity.Entity
 import entity.EntityHandler
 import gui.GuiManager
 import gui.component.ConfirmDialog
-import gui.component.Dialog
 import gui.component.StartDialog
 import model.ModelParser
 import mu.KotlinLogging
@@ -39,7 +37,7 @@ import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.3"
+const val VERSION = "1.3.1"
 const val WIDTH = 800
 const val HEIGHT = 600
 
@@ -61,13 +59,13 @@ class RenderContext {
     val importManager = ImportManager(this)
     val exportManager = ExportManager(this)
 
-    private val plugins = PluginLoader.load()
-    val loaders = plugins.first
-    val packers = plugins.second
-
     val modelParser = ModelParser()
     val entityHandler = EntityHandler(this)
     val animationHandler = AnimationHandler(this)
+
+    private val plugins = PluginLoader.load()
+    val loaders = plugins.first
+    val packers = plugins.second
 
     fun run() {
         var running = true
@@ -84,6 +82,10 @@ class RenderContext {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
 
         val window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, MemoryUtil.NULL, MemoryUtil.NULL)
+        if (window == MemoryUtil.NULL) {
+            throw RuntimeException("Failed to create GLFW window")
+        }
+
         glfwSetWindowSizeLimits(window, WIDTH, HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE)
         glfwShowWindow(window)
         glfwMakeContextCurrent(window)

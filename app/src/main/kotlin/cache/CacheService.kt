@@ -1,13 +1,13 @@
 package cache
 
 import animation.Animation
+import api.cache.ICacheLibrary
 import api.cache.ICacheLoader
 import api.definition.*
 import com.google.common.collect.HashMultimap
 import entity.EntityComponent
 import entity.HIGHER_REV_SCALE
 import mu.KotlinLogging
-import org.displee.CacheLibrary
 import render.RenderContext
 
 private val logger = KotlinLogging.logger {}
@@ -40,15 +40,15 @@ class CacheService(private val context: RenderContext) {
         }
     }
 
-    private fun load(library: CacheLibrary) {
-        isHigherRev = !library.is317 && !library.isOSRS
+    private fun load(library: ICacheLibrary) {
+        isHigherRev = library.isHigherRev
         context.entityHandler.scale = if (isHigherRev) 1 / HIGHER_REV_SCALE else 1f // Downscale for higher revs
 
-        entities = loader.loadNpcDefs(library)
+        entities = loader.loadNpcDefs(library) as HashMap<Int, NpcDefinition>
         logger.info { "Loaded ${entities.size} npcs" }
         addPlayer()
 
-        items = loader.loadItemDefs(library)
+        items = loader.loadItemDefs(library) as HashMap<Int, ItemDefinition>
         logger.info { "Loaded ${items.size} items" }
 
         val sequences = loader.loadSequences(library)

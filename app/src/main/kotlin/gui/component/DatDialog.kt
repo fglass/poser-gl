@@ -2,7 +2,7 @@ package gui.component
 
 import render.RenderContext
 import animation.Animation
-import org.displee.CacheLibrary
+import com.displee.cache.CacheLibrary
 import org.liquidengine.legui.component.Label
 import org.liquidengine.legui.component.ScrollablePanel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
@@ -25,9 +25,9 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
 
         val archiveId = if (animation.modified) {
             val library = CacheLibrary(context.cacheService.path)
-            val newId = library.getIndex(context.cacheService.loader.frameIndex).lastArchive.id + 1
+            val lastId = library.index(context.cacheService.loader.frameIndex).last()?.id ?: -1
             library.close()
-            newId
+            lastId + 1
         } else {
             animation.sequence.frameIds.first() ushr 16
         }
