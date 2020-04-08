@@ -9,7 +9,7 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.WindowSizeEvent
 import org.liquidengine.legui.style.color.ColorConstants
 
-open class Dialog(title: String, text: String, private val context: RenderContext, width: Float, height: Float):
+open class Dialog(title: String, text: String, private val context: RenderContext, width: Float, height: Float) :
            Dialog(title, width, height) {
 
     val message = Label(text, 0f, 15f, size.x, 15f)

@@ -42,6 +42,8 @@ object ResourceMap {
         put("yellow-line")
         put("pink-line")
         put("green-line")
+        put("blue-line")
+        put("red-line")
 
         put("open", hovered = true)
         put("load", hovered = true)

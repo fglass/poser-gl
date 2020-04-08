@@ -11,9 +11,11 @@ import org.liquidengine.legui.component.Panel
 import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import org.liquidengine.legui.event.CursorEnterEvent
 import org.liquidengine.legui.event.MouseClickEvent
+import org.liquidengine.legui.image.BufferedImage
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.flex.FlexStyle
+import util.Colour
 import util.ResourceMap
 import util.setHeightLimit
 import kotlin.math.max
@@ -31,7 +33,9 @@ class AnimationPanel(private val context: RenderContext): Panel() {
     private val yellowLine = ResourceMap["yellow-line"]
     private val pinkLine = ResourceMap["pink-line"]
     private val greenLine = ResourceMap["green-line"]
-    private val cursor = ImageButton(Vector2f(), greenLine)
+    private val blueLine = ResourceMap["blue-line"]
+    private val redLine = ResourceMap["red-line"]
+    private val cursor = ImageButton(Vector2f(), getCursorColour(context.settingsManager.cursorColour))
 
     init {
         style.background.color = ColorConstants.darkGray()
@@ -161,5 +165,17 @@ class AnimationPanel(private val context: RenderContext): Panel() {
             }
             cumulative += frame.length
         }
+    }
+
+    private fun getCursorColour(colour: Colour): BufferedImage {
+        return when (colour) {
+            Colour.RED -> redLine
+            Colour.BLUE -> blueLine
+            else -> greenLine
+        }
+    }
+
+    fun setCursorColour(colour: Colour) {
+        cursor.setIconImage(getCursorColour(colour))
     }
 }

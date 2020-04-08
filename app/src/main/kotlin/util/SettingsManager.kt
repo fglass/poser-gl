@@ -14,6 +14,7 @@ const val SETTINGS_FILE = "app.settings"
 class SettingsManager(private val context: RenderContext) {
 
     var background = Colour.GRAY
+    var cursorColour = Colour.GREEN
     var sensitivityMultiplier = 1f
     var gridActive = true
     var jointsActive = true
@@ -23,6 +24,7 @@ class SettingsManager(private val context: RenderContext) {
         val properties = Properties()
 
         properties["background"] = background.toString()
+        properties["cursorColour"] = cursorColour.toString()
         properties["sensitivity"] = sensitivityMultiplier.toString()
         properties["grid"] = gridActive.toString()
         properties["joints"] = jointsActive.toString()
@@ -40,6 +42,9 @@ class SettingsManager(private val context: RenderContext) {
 
             properties.getProperty("background")?.let {
                 background = Colour.valueOf(it.toUpperCase())
+            }
+            properties.getProperty("cursorColour")?.let {
+                cursorColour = Colour.valueOf(it.toUpperCase())
             }
             properties.getProperty("sensitivity")?.let {
                 sensitivityMultiplier = it.toFloat()

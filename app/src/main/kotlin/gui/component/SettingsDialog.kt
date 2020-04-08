@@ -11,7 +11,7 @@ import util.Colour
 import util.setSizeLimits
 import kotlin.math.max
 
-class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 154f) {
+class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 184f) {
 
     init {
         isDraggable = false
@@ -23,6 +23,7 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
 
     private fun addComponents() {
         addBackgroundPicker()
+        addCursorPicker()
         addSensitivitySlider()
         addGridToggle()
         addJointsToggle()
@@ -30,22 +31,37 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     }
 
     private fun addBackgroundPicker() {
+        addColourPicker(
+            field = "Background", colours = Colour.values(), default = context.settingsManager.background,
+            onSelect = { context.settingsManager.background = it }
+        )
+    }
+
+    private fun addCursorPicker() {
+        addColourPicker(
+            field = "Cursor", colours = arrayOf(Colour.RED, Colour.GREEN, Colour.BLUE),
+            default = context.settingsManager.cursorColour, onSelect = {
+                context.settingsManager.cursorColour = it
+                context.gui.animationPanel.setCursorColour(it)
+            }
+        )
+    }
+
+    private fun addColourPicker(field: String, colours: Array<Colour>, default: Colour, onSelect: (Colour) -> Unit) {
         val row = getRow()
         row.style.setMarginTop(5f)
 
-        val label = Label("Background:", 5f, 5f, 20f, 15f)
-        val colours = SelectBox<Colour>(138f, 5f, 95f, 15f)
-        colours.expandButton.style.border.isEnabled = false
-        colours.childComponents.forEach { it.style.focusedStrokeColor = null }
+        val label = Label("$field:", 5f, 5f, 20f, 15f)
+        val dropdown = SelectBox<Colour>(138f, 5f, 95f, 15f)
+        dropdown.expandButton.style.border.isEnabled = false
+        dropdown.childComponents.forEach { it.style.focusedStrokeColor = null }
 
-        Colour.values().forEach { colours.addElement(it) }
-        colours.setSelected(context.settingsManager.background, true)
-        colours.addSelectBoxChangeSelectionEventListener {
-            context.settingsManager.background = it.newValue
-        }
+        colours.forEach { dropdown.addElement(it) }
+        dropdown.setSelected(default, true)
+        dropdown.addSelectBoxChangeSelectionEventListener( { onSelect(it.newValue) })
 
         row.add(label)
-        row.add(colours)
+        row.add(dropdown)
         container.add(row)
     }
 
