@@ -37,7 +37,7 @@ import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.3.1"
+const val VERSION = "1.3.2"
 const val WIDTH = 800
 const val HEIGHT = 600
 
@@ -202,7 +202,7 @@ class RenderContext {
     }
 
     fun reset() {
-        ConfirmDialog(this, "Warning", "Any unsaved changes will be lost", "Continue") {
+        ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Continue") {
             nodeRenderer.enabled = false
             entityHandler.clear()
             gui.container.clearChildComponents()

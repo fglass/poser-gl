@@ -73,7 +73,7 @@ class ImportManager(private val context: RenderContext) {
     }
 
     private fun Keyframe.decode(stream: InputStream) {
-        frameMap.id = stream.readShort().toInt()
+        frameMap.id = stream.readShort().toInt() // TODO: different between revisions
         val n = stream.readUnsignedByte()
 
         repeat(n) {
