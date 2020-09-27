@@ -19,9 +19,9 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
 
     private fun addAttributes() {
         val sequenceInput = addAttribute("Id", animation.sequence.id, 7f)
-        val mainHandInput = addAttribute("Main Hand", getItemId(animation.sequence.leftHandItem), 27f)
-        val offHandInput = addAttribute("Off Hand", getItemId(animation.sequence.rightHandItem), 47f)
-        val loopTypeInput = addAttribute("Loop Type", animation.sequence.loopType, 67f)
+        val loopOffsetInput = addAttribute("Loop Offset", animation.sequence.loopOffset, 27f)
+        val mainHandInput = addAttribute("Main Hand", getItemId(animation.sequence.leftHandItem), 47f)
+        val offHandInput = addAttribute("Off Hand", getItemId(animation.sequence.rightHandItem), 67f)
 
         listenerMap.addListener(WidgetCloseEvent::class.java) {
             changeSequenceId(sequenceInput)
@@ -29,7 +29,7 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
             animation.sequence.leftHandItem = getItem(mainHandInput)
             animation.sequence.rightHandItem = getItem(offHandInput)
             animation.toggleItems(equip = true)
-            animation.sequence.loopType = loopTypeInput.textState.text.toIntOrNull() ?: 2
+            animation.sequence.loopOffset = loopOffsetInput.textState.text.toIntOrNull() ?: -1
         }
     }
 
