@@ -202,7 +202,7 @@ class RenderContext {
     }
 
     fun reset() {
-        ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Continue") {
+        ConfirmDialog(this, "Warning", "Any unsaved changes will be lost", "Continue") {
             nodeRenderer.enabled = false
             entityHandler.clear()
             gui.container.clearChildComponents()
