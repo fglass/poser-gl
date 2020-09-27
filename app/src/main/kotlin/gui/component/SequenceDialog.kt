@@ -10,7 +10,7 @@ import org.liquidengine.legui.component.optional.align.HorizontalAlign
 import kotlin.math.max
 
 class SequenceDialog(private val context: RenderContext, private val animation: Animation):
-      Dialog("Sequence Manager", "", context, 260f, 89f) {
+      Dialog("Sequence Manager", "", context, 260f, 109f) {
 
     init {
         isDraggable = false
@@ -21,6 +21,7 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
         val sequenceInput = addAttribute("Id", animation.sequence.id, 7f)
         val mainHandInput = addAttribute("Main Hand", getItemId(animation.sequence.leftHandItem), 27f)
         val offHandInput = addAttribute("Off Hand", getItemId(animation.sequence.rightHandItem), 47f)
+        val loopTypeInput = addAttribute("Loop Type", animation.sequence.loopType, 67f)
 
         listenerMap.addListener(WidgetCloseEvent::class.java) {
             changeSequenceId(sequenceInput)
@@ -28,6 +29,7 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
             animation.sequence.leftHandItem = getItem(mainHandInput)
             animation.sequence.rightHandItem = getItem(offHandInput)
             animation.toggleItems(equip = true)
+            animation.sequence.loopType = loopTypeInput.textState.text.toIntOrNull() ?: 2
         }
     }
 
