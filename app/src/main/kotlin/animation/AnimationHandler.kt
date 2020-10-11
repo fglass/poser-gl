@@ -77,7 +77,7 @@ class AnimationHandler(private val context: RenderContext) {
         }
 
         // Copy animation as now modified
-        val maxId = context.cacheService.animations.keys.max() ?: error("No animations")
+        val maxId = context.cacheService.animations.keys.maxOrNull() ?: error("No animations")
         val copied = Animation(maxId + 1, current)
         addAnimation(copied)
         copied.setRootNode()
