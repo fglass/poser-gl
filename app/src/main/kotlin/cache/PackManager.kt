@@ -47,7 +47,7 @@ class PackManager(private val context: RenderContext, private val packer: ICache
         val sequence = animation.toSequence(archiveId)
 
         if (library.is317) {
-            context.cacheService.animations.keys.max()?.let { packer.packSequence(library, sequence, it) }
+            context.cacheService.animations.keys.maxOrNull()?.let { packer.packSequence(library, sequence, it) }
         } else {
             packer.packSequence(library, sequence)
         }

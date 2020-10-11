@@ -23,9 +23,12 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         animation.keyframes.forEach {
             keyframes.add(Keyframe(it.id, it))
         }
+
         sequence.frameIds = animation.sequence.frameIds
         sequence.leftHandItem = animation.sequence.leftHandItem
         sequence.rightHandItem = animation.sequence.rightHandItem
+        sequence.loopOffset = animation.sequence.loopOffset
+
         length = calculateLength()
         modified = true
     }
@@ -213,6 +216,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         val sequence = SequenceDefinition(sequence.id)
         sequence.leftHandItem = this.sequence.leftHandItem
         sequence.rightHandItem = this.sequence.rightHandItem
+        sequence.loopOffset = this.sequence.loopOffset
 
         sequence.frameLengths = IntArray(keyframes.size)
         sequence.frameIds = IntArray(keyframes.size)
