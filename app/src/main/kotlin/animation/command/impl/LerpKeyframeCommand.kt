@@ -13,7 +13,7 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
     override fun execute(): Boolean {
         val animation = context.animationHandler.currentAnimation ?: return false
-        
+
         if (animation.keyframes.size <= 1) {
             displayError("Insufficient number of keyframes")
             return false

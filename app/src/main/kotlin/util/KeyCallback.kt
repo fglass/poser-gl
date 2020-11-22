@@ -18,11 +18,12 @@ class KeyCallback(private val context: RenderContext, private val guiContext: Co
         }
 
         when {
+            key == GLFW.GLFW_KEY_SPACE -> animationHandler.togglePlay()
+            key == GLFW.GLFW_KEY_RIGHT -> animationHandler.setNextFrame()
+            key == GLFW.GLFW_KEY_LEFT -> animationHandler.setPreviousFrame()
             key == GLFW.GLFW_KEY_Z && mods == ctrl -> animationHandler.history.undo()
             key == GLFW.GLFW_KEY_Z && mods == ctrl + GLFW.GLFW_MOD_SHIFT -> animationHandler.history.redo()
             key == GLFW.GLFW_KEY_E && mods == ctrl -> context.exportManager.redo()
-            key == GLFW.GLFW_KEY_RIGHT -> animationHandler.setNextFrame()
-            key == GLFW.GLFW_KEY_LEFT -> animationHandler.setPreviousFrame()
         }
     }
 
