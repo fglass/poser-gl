@@ -13,36 +13,41 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
 
     override fun execute(): Boolean {
         val animation = context.animationHandler.currentAnimation ?: return false
+        
         if (animation.keyframes.size <= 1) {
-            Dialog("Invalid Operation", "Insufficient number of keyframes", context, 200f, 70f).display()
+            displayError("Insufficient number of keyframes")
             return false
         }
 
         val index = animation.getFrameIndex(context.animationHandler.frameCount)
-        if (index >= animation.keyframes.size - 1) {
-            Dialog("Invalid Operation", "No subsequent keyframe to interpolate with", context, 250f, 70f).display()
+        val firstKeyframe = animation.keyframes[index]
+
+        val nextIndex = (index + 1).rem(animation.keyframes.size)
+        val secondKeyframe = animation.keyframes[nextIndex]
+
+        if (firstKeyframe.frameMap.id != secondKeyframe.frameMap.id) {
+            displayError("Skeletons do not match")
             return false
         }
 
-        val first = animation.keyframes[index]
-        val second = animation.keyframes[index + 1]
-        if (first.frameMap.id != second.frameMap.id) {
-            Dialog("Invalid Operation", "Skeletons do not match", context, 200f, 70f).display()
-            return false
-        }
-
-        val largest = if (first.transformations.size > second.transformations.size) first else second
-        val smallest = if (largest == first) second else first
-        val keyframe = Keyframe(animation.keyframes.size, largest)
+        val largest = if (firstKeyframe.transformations.size > secondKeyframe.transformations.size) firstKeyframe else secondKeyframe
+        val smallest = if (largest == firstKeyframe) secondKeyframe else firstKeyframe
+        val newKeyframe = Keyframe(animation.keyframes.size, largest)
 
         repeat(smallest.transformations.size) {
-            val delta = Vector3f(first.transformations[it].delta).lerp(Vector3f(second.transformations[it].delta), 0.5f)
-            keyframe.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
+            val delta = Vector3f(firstKeyframe.transformations[it].delta).lerp(Vector3f(secondKeyframe.transformations[it].delta), 0.5f)
+            newKeyframe.transformations[it].delta = Vector3i(delta.x.toInt(), delta.y.toInt(), delta.z.toInt())
         }
 
         insertedIndex = index + 1
-        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(keyframe, insertedIndex)
+        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(newKeyframe, insertedIndex)
+
         return true
+    }
+
+    private fun displayError(message: String) {
+        Dialog("Invalid Operation", message, context, 200f, 70f).display()
+
     }
 
     override fun unexecute() {
