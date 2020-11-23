@@ -13,8 +13,12 @@ const val MAX_ZOOM = 1600f
 const val ZOOM_SENSITIVITY = 8f
 const val CAMERA_SENSITIVITY = 0.5f
 
-class Camera(private val settingsManager: SettingsManager, private val lmb: MouseButtonHandler,
-             private val mmb: MouseButtonHandler, private val rmb: MouseButtonHandler) {
+class Camera(
+    private val settingsManager: SettingsManager,
+    private val lmb: MouseButtonHandler,
+    private val mmb: MouseButtonHandler,
+    private val rmb: MouseButtonHandler
+) {
 
     var pitch = -23f
     var yaw = 0f
@@ -109,7 +113,7 @@ class Camera(private val settingsManager: SettingsManager, private val lmb: Mous
         return Rayf(origin, dir)
     }
 
-    private fun getZoomMultiplier() = ZOOM_SENSITIVITY * settingsManager.sensitivityMultiplier
+    private fun getZoomMultiplier() = ZOOM_SENSITIVITY * settingsManager.zoomSensitivityMultiplier
 
-    private fun getCameraMultiplier() = CAMERA_SENSITIVITY * settingsManager.sensitivityMultiplier
+    private fun getCameraMultiplier() = CAMERA_SENSITIVITY * settingsManager.cameraSensitivityMultiplier
 }

@@ -15,7 +15,8 @@ class SettingsManager(private val context: RenderContext) {
 
     var background = Colour.GRAY
     var cursorColour = Colour.GREEN
-    var sensitivityMultiplier = 1f
+    var cameraSensitivityMultiplier = 1f
+    var zoomSensitivityMultiplier = 1f
     var gridActive = true
     var jointsActive = true
     var advancedMode = false
@@ -25,7 +26,8 @@ class SettingsManager(private val context: RenderContext) {
 
         properties["background"] = background.toString()
         properties["cursorColour"] = cursorColour.toString()
-        properties["sensitivity"] = sensitivityMultiplier.toString()
+        properties["cameraSensitivity"] = cameraSensitivityMultiplier.toString()
+        properties["zoomSensitivity"] = zoomSensitivityMultiplier.toString()
         properties["grid"] = gridActive.toString()
         properties["joints"] = jointsActive.toString()
         properties["advanced"] = advancedMode.toString()
@@ -46,8 +48,11 @@ class SettingsManager(private val context: RenderContext) {
             properties.getProperty("cursorColour")?.let {
                 cursorColour = Colour.valueOf(it.toUpperCase())
             }
-            properties.getProperty("sensitivity")?.let {
-                sensitivityMultiplier = it.toFloat()
+            properties.getProperty("cameraSensitivity")?.let {
+                cameraSensitivityMultiplier = it.toFloat()
+            }
+            properties.getProperty("zoomSensitivity")?.let {
+                zoomSensitivityMultiplier = it.toFloat()
             }
             properties.getProperty("grid")?.let {
                 gridActive = it.toBoolean()

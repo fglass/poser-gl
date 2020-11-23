@@ -2,6 +2,7 @@ package gui.component
 
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.component.event.checkbox.CheckBoxChangeValueEvent
+import org.liquidengine.legui.component.event.slider.SliderChangeValueEvent
 import org.liquidengine.legui.listener.EventListener
 import org.liquidengine.legui.style.Style
 import org.liquidengine.legui.style.color.ColorConstants
@@ -11,7 +12,9 @@ import util.Colour
 import util.setSizeLimits
 import kotlin.math.max
 
-class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 184f) {
+private const val SLIDER_OFFSET = 50f
+
+class SettingsDialog(private val context: RenderContext): Dialog("Settings", "", context, 260f, 209f) {
 
     init {
         isDraggable = false
@@ -24,7 +27,8 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     private fun addComponents() {
         addBackgroundPicker()
         addCursorPicker()
-        addSensitivitySlider()
+        addZoomSensitivitySlider()
+        addCameraSensitivitySlider()
         addGridToggle()
         addJointsToggle()
         addAdvancedToggle()
@@ -58,26 +62,33 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
 
         colours.forEach { dropdown.addElement(it) }
         dropdown.setSelected(default, true)
-        dropdown.addSelectBoxChangeSelectionEventListener( { onSelect(it.newValue) })
+        dropdown.addSelectBoxChangeSelectionEventListener { onSelect(it.newValue) }
 
         row.add(label)
         row.add(dropdown)
         container.add(row)
     }
 
-    private fun addSensitivitySlider() {
-        val row = getRow()
-        val label = Label("Sensitivity:", 5f, 5f, 20f, 15f)
-
-        val offset = 50f
-        val value = context.settingsManager.sensitivityMultiplier * offset
-        val slider = Slider(135f, 7f, 100f, 10f, value)
-        slider.sliderActiveColor = ColorConstants.white()
-
-        slider.addSliderChangeValueEventListener {
-            context.settingsManager.sensitivityMultiplier = max(it.newValue / offset, 0.01f)
+    private fun addCameraSensitivitySlider() {
+        addSensitivitySlider("Camera", context.settingsManager.cameraSensitivityMultiplier) {
+            context.settingsManager.cameraSensitivityMultiplier = max(it.newValue / SLIDER_OFFSET, 0.01f)
         }
+    }
 
+    private fun addZoomSensitivitySlider() {
+        addSensitivitySlider("Zoom", context.settingsManager.zoomSensitivityMultiplier) {
+            context.settingsManager.zoomSensitivityMultiplier = max(it.newValue / SLIDER_OFFSET, 0.01f)
+        }
+    }
+
+    private fun addSensitivitySlider(type: String, value: Float, onChange: EventListener<SliderChangeValueEvent<Slider>>) {
+        val label = Label("$type Sensitivity:", 5f, 5f, 20f, 15f)
+
+        val slider = Slider(135f, 7f, 100f, 10f, value * SLIDER_OFFSET)
+        slider.sliderActiveColor = ColorConstants.white()
+        slider.addSliderChangeValueEventListener(onChange)
+
+        val row = getRow()
         row.add(label)
         row.add(slider)
         container.add(row)
@@ -106,7 +117,6 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
     }
 
     private fun addToggle(name: String, default: Boolean, onToggle: EventListener<CheckBoxChangeValueEvent<CheckBox>>) {
-        val row = getRow()
         val label = Label("$name:", 5f, 5f, 20f, 15f)
 
         val checkbox = CheckBox("", 178f, 5f, 20f, 15f)
@@ -114,6 +124,7 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         checkbox.isChecked = default
         checkbox.addCheckBoxChangeValueListener(onToggle)
 
+        val row = getRow()
         row.add(label)
         row.add(checkbox)
         container.add(row)

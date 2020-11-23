@@ -17,7 +17,6 @@ import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.listener.processor.EventProcessor
-import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
 import org.liquidengine.legui.system.context.Context
@@ -44,7 +43,16 @@ const val VERSION = "1.3.4"
 const val WIDTH = 800
 const val HEIGHT = 600
 
-private val logger = KotlinLogging.logger {}
+private val LOGGER = KotlinLogging.logger {}
+
+private val DEFAULT_THEME = FlatColoredTheme(
+    ColorUtil.fromInt(33, 33, 33, 1f),
+    ColorUtil.fromInt(97, 97, 97, 1f),
+    ColorUtil.fromInt(2, 119, 189, 1f),
+    ColorUtil.fromInt(27, 94, 32, 1f),
+    ColorUtil.fromInt(183, 28, 28, 1f),
+    null
+)
 
 class RenderContext {
 
@@ -98,16 +106,8 @@ class RenderContext {
         val context = Context(window)
         context.updateGlfwWindow()
 
-        val theme = FlatColoredTheme(
-            ColorUtil.fromInt(33, 33, 33, 1f),
-            ColorUtil.fromInt(97, 97, 97, 1f),
-            ColorUtil.fromInt(2, 119, 189, 1f),
-            ColorUtil.fromInt(27, 94, 32, 1f),
-            ColorUtil.fromInt(183, 28, 28, 1f),
-            null
-        )
-        Themes.setDefaultTheme(theme)
-        theme.applyAll(frame)
+        Themes.setDefaultTheme(DEFAULT_THEME)
+        DEFAULT_THEME.applyAll(frame)
 
         val keeper = DefaultCallbackKeeper()
         CallbackKeeper.registerCallbacks(window, keeper)
@@ -138,16 +138,16 @@ class RenderContext {
         settingsManager.load()
 
         if (loaders.isEmpty() || packers.isEmpty()) {
-            logger.error("No plugins found")
+            LOGGER.error("No plugins found")
             exitProcess(1)
         } else {
-            logger.info("Loaded ${loaders.size} plugins")
+            LOGGER.info("Loaded ${loaders.size} plugins")
         }
 
         val devMode = System.getenv("DEV_MODE")
 
         if (devMode.toBoolean()) {
-            logger.info("Running in development mode")
+            LOGGER.info("Running in development mode")
             val cachePath = System.getenv("DEV_CACHE")
             val plugin = loaders.first { it.toString() == System.getenv("DEV_PLUGIN") }
             loadCache(cachePath, plugin)
@@ -172,7 +172,7 @@ class RenderContext {
             try {
                 guiRenderer.render(frame, context)
             } catch (e: NullPointerException) {
-                logger.error(e) { "Render error" }
+                LOGGER.error(e) { "Render error" }
             }
 
             // Render fbo
@@ -190,7 +190,7 @@ class RenderContext {
             try {
                 LayoutManager.getInstance().layout(frame)
             } catch (e: NullPointerException) {
-                logger.error(e) { "Layout error" }
+                LOGGER.error(e) { "Layout error" }
             }
 
             // Run gui animations
