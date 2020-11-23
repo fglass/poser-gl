@@ -10,8 +10,12 @@ import entity.Entity
 import render.RenderContext
 import shader.ShadingType
 
-class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
-               override val frameMap: FrameMapDefinition = FrameMapDefinition()) : IKeyframe {
+class Keyframe(
+    val id: Int = -1,
+    val frameId: Int = -1,
+    var length: Int = -1,
+    override val frameMap: FrameMapDefinition = FrameMapDefinition()
+) : IKeyframe {
 
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {
@@ -33,7 +37,7 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
 
         val entity = context.entityHandler.entity ?: return
         val def = entity.model.definition
-        def.resetAnim()
+        def.resetTransformations()
 
         transformations.forEach { it.apply(def) }
 
@@ -44,7 +48,7 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
         loadTransformedModel(context, entity, def)
     }
 
-    private fun ModelDefinition.resetAnim() {
+    private fun ModelDefinition.resetTransformations() {
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0

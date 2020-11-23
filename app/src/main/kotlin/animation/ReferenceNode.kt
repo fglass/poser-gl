@@ -74,25 +74,19 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
     }
 
     fun trySetParent(node: ReferenceNode) {
-        if (id == node.id) {
+        if (id == node.id || getRotation() == null) {
             return
         }
 
-        // Parent only if its frame map is a superset
-        val rotation = node.getRotation()?: return
+        // Parent only if its rotation frame map is a superset TODO: better heuristic?
+        val rotation = node.getRotation() ?: return
         if (!rotation.frameMap.toSet().containsAll(frameMap.toSet())) {
             return
         }
 
-        // Set if no existing parent
-        if (parent == null) {
-            parent = node
-            return
-        }
-
-        // Set if closer relation (indicated by a smaller superset)
-        val parentRotation = parent!!.getRotation()?: return
-        if (rotation.frameMap.size < parentRotation.frameMap.size) {
+        // Set if does not exist or closer relation (indicated by a smaller superset)
+        val parentRotation = parent?.getRotation()
+        if (parentRotation == null || rotation.frameMap.size < parentRotation.frameMap.size) {
             parent = node
         }
     }

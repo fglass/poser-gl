@@ -81,19 +81,21 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             frames[index] = frame // Preserve index in case frame fails to load
         }
 
-        for (frame in frames) {
-            val frameMap = frame.value.frameMap
-            val keyframe = Keyframe(frame.key, sequence.frameIds[frame.key], sequence.frameLengths[frame.key], frameMap)
+        for ((frameIndex, frameDefinition) in frames) {
+            val frameMap = frameDefinition.frameMap
+            val keyframe = Keyframe(
+                frameIndex, sequence.frameIds[frameIndex], sequence.frameLengths[frameIndex], frameMap
+            )
 
             for (index in indices) {
-                val type = TransformationType.fromId(frame.value.frameMap.types[index]) ?: continue
-                val transformation = Transformation(
-                    index, type, frameMap.maps[index], getDelta(frame.value, index, type)
-                )
+                val type = TransformationType.fromId(frameDefinition.frameMap.types[index]) ?: continue
 
                 if (type == TransformationType.REFERENCE) {
-                    val reference = ReferenceNode(transformation)
-                    reference.findChildren(index, frame.value)
+                    val reference = ReferenceNode(
+                        Transformation(index, type, frameMap.maps[index], getDelta(frameDefinition, index, type))
+                    )
+
+                    reference.findChildren(index, frameDefinition)
 
                     if (reference.children.size > 0) { // Ignore lone references
                         keyframe.transformations.add(reference)
@@ -120,9 +122,11 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
     private fun ReferenceNode.findChildren(id: Int, frame: FrameDefinition) { // Allows additional children to be found
         val frameMap = frame.frameMap
         var childId = id + 1
+
         if (childId >= frameMap.types.size) {
             return
         }
+
         var childType = frameMap.types[childId]
 
         // Search transformations until encounter next reference
@@ -152,12 +156,10 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
     fun setRootNode() {
         var root: ReferenceNode? = null
-        for (transformation in keyframes.first().transformations) {
-            if (transformation is ReferenceNode) {
-                val rotation = transformation.getRotation() ?: continue
-                if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
-                    root = transformation
-                }
+        for (reference in keyframes.first().transformations.filterIsInstance<ReferenceNode>()) { // TODO: each keyframe
+            val rotation = reference.getRotation() ?: continue
+            if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
+                root = reference
             }
         }
         context.nodeRenderer.rootNode = root
