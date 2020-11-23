@@ -1,7 +1,6 @@
 package gui.component
 
 import api.cache.ICacheLoader
-import gui.GuiManager
 import render.VERSION
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
@@ -13,8 +12,9 @@ import render.RenderContext
 import util.FileDialog
 import util.ResourceMap
 
-class StartDialog(private val context: RenderContext):
-      Dialog("", "Backup your cache before making changes", context, 260f, 177f) {
+class StartDialog(
+    private val context: RenderContext
+) : Dialog("", "Backup your cache before making changes", context, 260f, 177f) {
 
     private lateinit var cache: TextInput
     private lateinit var plugins: SelectBox<ICacheLoader>
@@ -94,24 +94,16 @@ class StartDialog(private val context: RenderContext):
         load.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT &&
                 event.action == MouseClickEvent.MouseClickAction.CLICK) {
-                loadCache()
+                tryStartApplication()
             }
         }
         container.add(load)
     }
 
-    private fun loadCache() {
-        if (cache.textState.text.isEmpty()) {
-            message.textState.text = "Select a cache first"
-            return
-        }
-
-        // Try to load selected cache
-        context.cacheService.init(cache.textState.text, plugins.selection)
+    private fun tryStartApplication() {
+        context.loadCache(cache.textState.text, plugins.selection)
 
         if (context.cacheService.loaded) {
-            context.gui = GuiManager(context)
-            context.entityHandler.loadPlayer()
             close()
         } else {
             message.textState.text = "Unable to load a valid cache"

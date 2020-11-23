@@ -1,6 +1,7 @@
 package render
 
 import animation.AnimationHandler
+import api.cache.ICacheLoader
 import cache.CacheService
 import cache.PluginLoader
 import entity.EntityHandler
@@ -16,6 +17,7 @@ import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.input.Mouse
 import org.liquidengine.legui.listener.processor.EventProcessor
+import org.liquidengine.legui.style.color.ColorConstants
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
 import org.liquidengine.legui.system.context.Context
@@ -134,13 +136,23 @@ class RenderContext {
 
         glEnable(GL_PROGRAM_POINT_SIZE_EXT)
         settingsManager.load()
-        StartDialog(this).show(frame)
 
         if (loaders.isEmpty() || packers.isEmpty()) {
-            logger.error { "No plugins found" }
+            logger.error("No plugins found")
             exitProcess(1)
         } else {
-            logger.info { "Loaded ${loaders.size} plugins" }
+            logger.info("Loaded ${loaders.size} plugins")
+        }
+
+        val devMode = System.getenv("DEV_MODE")
+
+        if (devMode.toBoolean()) {
+            logger.info("Running in development mode")
+            val cachePath = System.getenv("DEV_CACHE")
+            val plugin = loaders.first { it.toString() == System.getenv("DEV_PLUGIN") }
+            loadCache(cachePath, plugin)
+        } else {
+            StartDialog(this).show(frame)
         }
 
         // Render loop
@@ -214,6 +226,19 @@ class RenderContext {
 
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {
         return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
+    }
+
+    fun loadCache(cachePath: String, plugin: ICacheLoader) {
+        cacheService.init(cachePath, plugin)
+
+        if (cacheService.loaded) {
+            startApplication()
+        }
+    }
+
+    private fun startApplication() {
+        gui = GuiManager(this)
+        entityHandler.loadPlayer()
     }
 
     fun reset() {
