@@ -45,18 +45,22 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
 
         // Average position over encompassing vertices
         for (i in frameMap) {
-            if (i < def.vertexGroups.size) {
-                val vertexGroup = def.vertexGroups[i]
-                index += vertexGroup.size
 
-                for (j in vertexGroup) {
-                    val pos = Vector3f(
-                        def.vertexPositionsX[j].toFloat(),
-                        def.vertexPositionsY[j].toFloat(),
-                        def.vertexPositionsZ[j].toFloat()
-                    )
-                    position.add(pos)
-                }
+            if (i >= def.vertexGroups.size) {
+                continue
+            }
+
+            val vertexGroup = def.vertexGroups[i]
+            index += vertexGroup.size
+
+            for (j in vertexGroup) {
+                val pos = Vector3f(
+                    def.vertexPositionsX[j].toFloat(),
+                    def.vertexPositionsY[j].toFloat(),
+                    def.vertexPositionsZ[j].toFloat()
+                )
+
+                position.add(pos)
             }
         }
 
@@ -70,7 +74,6 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
     }
 
     fun trySetParent(node: ReferenceNode) {
-        // Ignore self
         if (id == node.id) {
             return
         }

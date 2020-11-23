@@ -6,6 +6,7 @@ import api.definition.ModelDefinition
 import api.definition.ModelDefinition.Companion.animOffsetX
 import api.definition.ModelDefinition.Companion.animOffsetY
 import api.definition.ModelDefinition.Companion.animOffsetZ
+import entity.Entity
 import render.RenderContext
 import shader.ShadingType
 
@@ -28,33 +29,34 @@ class Keyframe(val id: Int = -1, val frameId: Int = -1, var length: Int = -1,
     override val transformations = ArrayList<Transformation>()
 
     fun apply(context: RenderContext) {
-        // Reset from last frame
         context.nodeRenderer.nodes.clear()
+
+        val entity = context.entityHandler.entity ?: return
+        val def = entity.model.definition
+        def.resetAnim()
+
+        transformations.forEach { it.apply(def) }
+
+        transformations.filterIsInstance<ReferenceNode>().forEach {
+            context.nodeRenderer.addNode(it, def) // After all transformations applied
+        }
+
+        loadTransformedModel(context, entity, def)
+    }
+
+    private fun ModelDefinition.resetAnim() {
         animOffsetX = 0
         animOffsetY = 0
         animOffsetZ = 0
 
-        val entity = context.entityHandler.entity?: return
-        val def = entity.model.definition
-        def.resetAnim()
-
-        for (transformation in transformations) {
-            if (transformation is ReferenceNode) {
-                context.nodeRenderer.addNode(transformation, def)
-            }
-            transformation.apply(def)
-        }
-
-        // Load transformed model
-        context.modelParser.cleanUp()
-        entity.model = context.modelParser.parse(def, context.framebuffer.shadingType == ShadingType.FLAT)
+        origVX?.let { System.arraycopy(it, 0, this.vertexPositionsX, 0, it.size) }
+        origVY?.let { System.arraycopy(it, 0, this.vertexPositionsY, 0, it.size) }
+        origVZ?.let { System.arraycopy(it, 0, this.vertexPositionsZ, 0, it.size) }
     }
 
-    private fun ModelDefinition.resetAnim() {
-        if (origVX != null) {
-            System.arraycopy(origVX!!, 0, this.vertexPositionsX, 0, origVX!!.size)
-            System.arraycopy(origVY!!, 0, this.vertexPositionsY, 0, origVY!!.size)
-            System.arraycopy(origVZ!!, 0, this.vertexPositionsZ, 0, origVZ!!.size)
-        }
+    private fun loadTransformedModel(context: RenderContext, entity: Entity, def: ModelDefinition) {
+        context.modelParser.cleanUp()
+        val useFlatShading = context.framebuffer.shadingType == ShadingType.FLAT
+        entity.model = context.modelParser.parse(def, useFlatShading)
     }
 }

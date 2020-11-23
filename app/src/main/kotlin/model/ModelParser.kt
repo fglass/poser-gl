@@ -37,8 +37,7 @@ class ModelParser {
             for (point in points) {
                 setVertex(positions, vIndex, vertexX[point], vertexY[point], vertexZ[point], alpha or faceColour)
 
-                val normal = if (flatShading) getFaceNormal(points, vertexX, vertexY, vertexZ)
-                             else vertexNormals[point]
+                val normal = if (flatShading) getFaceNormal(points, vertexX, vertexY, vertexZ) else vertexNormals[point]
                 setNormal(normals, nIndex, normal.x.toInt(), normal.y.toInt(), normal.z.toInt())
 
                 vIndex += nPosition

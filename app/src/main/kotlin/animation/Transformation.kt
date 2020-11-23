@@ -24,9 +24,11 @@ open class Transformation(override var id: Int, override val type: Transformatio
             this.origVY = this.vertexPositionsY.copyOf(this.vertexPositionsY.size)
             this.origVZ = this.vertexPositionsZ.copyOf(this.vertexPositionsZ.size)
         }
-        val verticesX: IntArray = this.vertexPositionsX
-        val verticesY: IntArray = this.vertexPositionsY
-        val verticesZ: IntArray = this.vertexPositionsZ
+
+        val verticesX = this.vertexPositionsX
+        val verticesY = this.vertexPositionsY
+        val verticesZ = this.vertexPositionsZ
+
         val var6 = frameMap.size
         var var7: Int
         var var8: Int
@@ -41,7 +43,7 @@ open class Transformation(override var id: Int, override val type: Transformatio
             while (var8 < var6) {
                 val var9 = frameMap[var8]
                 if (var9 < this.vertexGroups.size) {
-                    val var10: IntArray = this.vertexGroups.get(var9)
+                    val var10: IntArray = this.vertexGroups[var9]
                     var11 = 0
                     while (var11 < var10.size) {
                         var12 = var10[var11]
@@ -71,7 +73,7 @@ open class Transformation(override var id: Int, override val type: Transformatio
                 while (var7 < var6) {
                     var8 = frameMap[var7]
                     if (var8 < this.vertexGroups.size) {
-                        var18 = this.vertexGroups.get(var8)
+                        var18 = this.vertexGroups[var8]
                         var19 = 0
                         while (var19 < var18.size) {
                             var11 = var18[var19]
@@ -88,7 +90,7 @@ open class Transformation(override var id: Int, override val type: Transformatio
                 while (var7 < var6) {
                     var8 = frameMap[var7]
                     if (var8 < this.vertexGroups.size) {
-                        var18 = this.vertexGroups.get(var8)
+                        var18 = this.vertexGroups[var8]
                         var19 = 0
                         while (var19 < var18.size) {
                             var11 = var18[var19]
@@ -138,7 +140,7 @@ open class Transformation(override var id: Int, override val type: Transformatio
                 while (var7 < var6) {
                     var8 = frameMap[var7]
                     if (var8 < this.vertexGroups.size) {
-                        var18 = this.vertexGroups.get(var8)
+                        var18 = this.vertexGroups[var8]
                         var19 = 0
                         while (var19 < var18.size) {
                             var11 = var18[var19]

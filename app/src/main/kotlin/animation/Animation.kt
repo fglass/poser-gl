@@ -64,13 +64,13 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             try {
                 frame = frameArchive.first { f -> f.id == frameFileId }
             } catch (e: NoSuchElementException) {
-                logger.warn { "Failed to load frame $frameFileId in archive $archiveId" }
+                logger.warn("Failed to load frame $frameFileId in archive $archiveId")
                 continue
             }
 
             val frameIndices = if (context.settingsManager.advancedMode) {
                 // Use all possible indices
-                val maxId = frame.indices.max() ?: continue
+                val maxId = frame.indices.maxOrNull() ?: continue
                 (0..maxId).toList()
             } else {
                 // Accumulate reference indices across animation

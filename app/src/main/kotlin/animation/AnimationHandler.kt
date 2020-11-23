@@ -54,11 +54,12 @@ class AnimationHandler(private val context: RenderContext) {
         }
 
         val keyframe = animation.keyframes[animation.getFrameIndex(frameCount)]
-        keyframe.apply(context)
+        keyframe.apply(context) // TODO: not when paused but keep rendering nodes
 
         if (keyframe.id != previousFrame.id) {
             onNewFrame(keyframe)
         }
+
         context.gui.animationPanel.tickCursor(timer, animation.length)
     }
 
