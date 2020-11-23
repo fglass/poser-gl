@@ -26,6 +26,7 @@ import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFWImage
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
@@ -86,6 +87,7 @@ class RenderContext {
             throw RuntimeException("Failed to create GLFW window")
         }
 
+        window.setIcon()
         glfwSetWindowSizeLimits(window, WIDTH, HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE)
         glfwShowWindow(window)
         glfwMakeContextCurrent(window)
@@ -195,6 +197,19 @@ class RenderContext {
         guiRenderer.destroy()
         glfwDestroyWindow(window)
         glfwTerminate()
+    }
+
+    private fun Long.setIcon() {
+        val icon = ResourceMap["icon"]
+        val image = GLFWImage.malloc()
+        image.set(icon.width, icon.height, icon.imageData)
+
+        val images = GLFWImage.malloc(1)
+        images.put(0, image)
+        glfwSetWindowIcon(this, images)
+
+        image.free()
+        images.free()
     }
 
     private fun isRetinaDisplay(contextSize: Vector2i, frameSize: Vector2f): Boolean {

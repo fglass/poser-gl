@@ -48,6 +48,7 @@ object ResourceMap {
         put("open", hovered = true)
         put("load", hovered = true)
         put("title")
+        put("icon")
 
         put("home", hovered = true)
         put("pack", hovered = true)
@@ -65,5 +66,5 @@ object ResourceMap {
         }
     }
 
-    operator fun get(key: String) = iconMap[key] ?: error("Resource not found")
+    operator fun get(key: String) = iconMap[key] ?: error("$key resource not found")
 }
