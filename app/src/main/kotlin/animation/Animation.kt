@@ -25,6 +25,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
         }
 
         sequence.frameIds = animation.sequence.frameIds
+        sequence.frameLengths = animation.sequence.frameLengths
         sequence.leftHandItem = animation.sequence.leftHandItem
         sequence.rightHandItem = animation.sequence.rightHandItem
         sequence.loopOffset = animation.sequence.loopOffset
@@ -38,7 +39,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
     var length = 0
 
     fun load() {
-        if (keyframes.isEmpty()) { // Animation already loaded
+        if (keyframes.isEmpty()) {
             parseSequence()
             length = calculateLength()
         }
@@ -52,7 +53,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
     private fun parseSequence() {
         val frames = LinkedHashMap<Int, FrameDefinition>() // Preserve insertion order
-        val indices = TreeSet<Int>() // Sorted by values
+        val transformationIndices = TreeSet<Int>() // Sorted by values
 
         // Pre-process sequence frames
         for ((index, frameId) in sequence.frameIds.withIndex()) {
@@ -68,16 +69,14 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
                 continue
             }
 
-            val frameIndices = if (context.settingsManager.advancedMode) {
-                // Use all possible indices
+            val indices = if (context.settingsManager.advancedMode) {
                 val maxId = frame.indices.maxOrNull() ?: continue
-                (0..maxId).toList()
+                0..maxId // Use all possible indices
             } else {
-                // Accumulate reference indices across animation
-                frame.indices.filter { frame.frameMap.types[it] == TransformationType.REFERENCE.id }
+                frame.indices.toSet()
             }
 
-            indices.addAll(frameIndices)
+            transformationIndices.addAll(indices)
             frames[index] = frame // Preserve index in case frame fails to load
         }
 
@@ -87,7 +86,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
                 frameIndex, sequence.frameIds[frameIndex], sequence.frameLengths[frameIndex], frameMap
             )
 
-            for (index in indices) {
+            for (index in transformationIndices) {
                 val type = TransformationType.fromId(frameDefinition.frameMap.types[index]) ?: continue
 
                 if (type == TransformationType.REFERENCE) {
@@ -152,6 +151,8 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
                 reference.trySetParent(other)
             }
         }
+
+        // TODO: find root nodes of sections, if section size > 1 then set parent to root of largest section
     }
 
     fun setRootNode() {

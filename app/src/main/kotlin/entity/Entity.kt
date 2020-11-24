@@ -10,8 +10,13 @@ val ENTITY_POS = Vector3f()
 val ENTITY_ROT = Vector3f()
 const val HIGHER_REV_SCALE = 4f
 
-class Entity(val name: String, val size: Int, val scale: Float, var model: Model,
-             val composition: HashSet<EntityComponent>) {
+class Entity(
+    val name: String,
+    val size: Int,
+    val scale: Float,
+    var model: Model,
+    val composition: HashSet<EntityComponent>
+) {
 
     val position = ENTITY_POS
     val rotation = ENTITY_ROT

@@ -39,7 +39,7 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
 
         node.setPosition(def)
-        val blacklist = node.id == 44 && context.entityHandler.entity?.name == "Player" // Hardcoded
+        val blacklist = node.id == 44 && context.entityHandler.entity?.name == "Player" // Hardcoded TODO: remove?
 
         if (node.position != Vector3f(-0f, 0f, 0f) && !blacklist) { // Ignore origin
             node.highlighted = false
