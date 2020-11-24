@@ -39,9 +39,12 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
 
         node.setPosition(def)
-        val blacklist = node.id == 44 && context.entityHandler.entity?.name == "Player" // Hardcoded TODO: try remove
 
-        if (node.position != Vector3f(-0f, 0f, 0f) && !blacklist) { // Ignore origin
+        val canDisplay = node.getRotation() != null || context.settingsManager.advancedMode
+        val isOrigin = node.position == Vector3f(-0f, 0f, 0f)
+        val ignored = node.id == 44 && context.entityHandler.entity?.name == "Player" // TODO: try remove hardcode
+
+        if (canDisplay && !isOrigin && !ignored) {
             node.highlighted = false
             nodes.add(node) // TODO: nodes can appear on top of each other
         }
