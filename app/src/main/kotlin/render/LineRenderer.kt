@@ -92,6 +92,7 @@ class LineRenderer(private val context: RenderContext) {
         glEnableVertexAttribArray(0)
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
         if (depth) {
             glDisable(GL_DEPTH_TEST)
         }

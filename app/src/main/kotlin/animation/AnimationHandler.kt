@@ -54,6 +54,7 @@ class AnimationHandler(private val context: RenderContext) {
         }
 
         val keyframe = animation.keyframes[animation.getFrameIndex(frameCount)]
+        context.nodeRenderer.rootNode = keyframe.rootNode
         keyframe.apply(context) // TODO: not when paused but keep rendering nodes
 
         if (keyframe.id != previousFrame.id) {
@@ -81,7 +82,6 @@ class AnimationHandler(private val context: RenderContext) {
         val maxId = context.cacheService.animations.keys.maxOrNull() ?: error("No animations")
         val copied = Animation(maxId + 1, current)
         addAnimation(copied)
-        copied.setRootNode()
         return copied
     }
 

@@ -63,7 +63,6 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
 
         if (newHash != hash || idChanged) {
             context.animationHandler.addAnimation(newAnimation)
-            newAnimation.setRootNode()
         }
     }
 

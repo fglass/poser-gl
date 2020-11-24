@@ -74,11 +74,11 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
     }
 
     fun trySetParent(node: ReferenceNode) {
-        if (id == node.id || getRotation() == null) {
+        if (id == node.id || id == node.parent?.id || getRotation() == null) {
             return
         }
 
-        // Parent only if its rotation frame map is a superset TODO: better heuristic?
+        // Parent only if its rotation frame map is a superset
         val rotation = node.getRotation() ?: return
         if (!rotation.frameMap.toSet().containsAll(frameMap.toSet())) {
             return
@@ -89,14 +89,5 @@ class ReferenceNode(transformation: Transformation): Transformation(transformati
         if (parentRotation == null || rotation.frameMap.size < parentRotation.frameMap.size) {
             parent = node
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        other as ReferenceNode
-        return position == other.position
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hashCode(position)
     }
 }

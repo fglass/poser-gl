@@ -43,7 +43,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             parseSequence()
             length = calculateLength()
         }
-        setRootNode()
     }
 
     fun reload() {
@@ -71,7 +70,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
             val indices = if (context.settingsManager.advancedMode) {
                 val maxId = frame.indices.maxOrNull() ?: continue
-                0..maxId // Use all possible indices
+                0..maxId // Use entire range
             } else {
                 frame.indices.toSet()
             }
@@ -89,23 +88,25 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
             for (index in transformationIndices) {
                 val type = TransformationType.fromId(frameDefinition.frameMap.types[index]) ?: continue
 
-                if (type == TransformationType.REFERENCE) {
-                    val reference = ReferenceNode(
-                        Transformation(index, type, frameMap.maps[index], getDelta(frameDefinition, index, type))
-                    )
+                if (type != TransformationType.REFERENCE) {
+                    continue
+                }
 
-                    reference.findChildren(index, frameDefinition)
+                val reference = ReferenceNode(
+                    Transformation(index, type, frameMap.maps[index], getDelta(frameDefinition, index, type))
+                )
 
-                    if (reference.children.size > 0) { // Ignore lone references
-                        keyframe.transformations.add(reference)
-                        reference.children.forEach {
-                            keyframe.transformations.add(it.value)
-                        }
+                reference.findChildren(index, frameDefinition)
+
+                if (reference.children.size > 0) { // Ignore lone references
+                    keyframe.transformations.add(reference)
+                    reference.children.forEach {
+                        keyframe.transformations.add(it.value)
                     }
                 }
             }
 
-            constructSkeleton(keyframe.transformations)
+            keyframe.buildSkeleton()
             keyframes.add(keyframe)
         }
     }
@@ -142,28 +143,6 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
                 break
             }
         }
-    }
-
-    private fun constructSkeleton(transformations: ArrayList<Transformation>) { // TODO: tree structure
-        val references = transformations.filterIsInstance<ReferenceNode>()
-        for (reference in references) {
-            for (other in references) {
-                reference.trySetParent(other)
-            }
-        }
-
-        // TODO: find root nodes of sections, if section size > 1 then set parent to root of largest section
-    }
-
-    fun setRootNode() {
-        var root: ReferenceNode? = null
-        for (reference in keyframes.first().transformations.filterIsInstance<ReferenceNode>()) { // TODO: each keyframe
-            val rotation = reference.getRotation() ?: continue
-            if (root == null || rotation.frameMap.size > root.getRotation()!!.frameMap.size) {
-                root = reference
-            }
-        }
-        context.nodeRenderer.rootNode = root
     }
 
     fun calculateLength(): Int {

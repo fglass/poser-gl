@@ -39,11 +39,11 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         }
 
         node.setPosition(def)
-        val blacklist = node.id == 44 && context.entityHandler.entity?.name == "Player" // Hardcoded TODO: remove?
+        val blacklist = node.id == 44 && context.entityHandler.entity?.name == "Player" // Hardcoded TODO: try remove
 
         if (node.position != Vector3f(-0f, 0f, 0f) && !blacklist) { // Ignore origin
             node.highlighted = false
-            nodes.add(node)
+            nodes.add(node) // TODO: nodes can appear on top of each other
         }
     }
 
@@ -60,8 +60,8 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
         lmb.clicked = false
 
         for (node in nodes) {
-            // Render selected node later to display on top of gizmo
-            if (node.id == selectedNode?.id) {
+
+            if (node.id == selectedNode?.id) { // Render later to display on top of gizmo
                 selectedNode = node
                 continue
             }
@@ -71,6 +71,7 @@ class NodeRenderer(private val context: RenderContext, private val lmb: MouseBut
             loadMatrices(node, viewMatrix)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, quad.vertexCount)
         }
+
         finish()
     }
 

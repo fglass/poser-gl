@@ -20,6 +20,7 @@ class Keyframe(
     // Copy constructor
     constructor(newId: Int, keyframe: Keyframe): this(newId, keyframe.frameId, keyframe.length, keyframe.frameMap) {
         modified = keyframe.modified
+        rootNode = keyframe.rootNode
         keyframe.transformations.forEach {
             if (it is ReferenceNode) {
                 val newReference = ReferenceNode(it)
@@ -31,6 +32,66 @@ class Keyframe(
 
     override var modified = false
     override val transformations = ArrayList<Transformation>()
+    var rootNode: ReferenceNode? = null
+
+    fun buildSkeleton() {
+        val references = transformations.filterIsInstance<ReferenceNode>()
+
+        for (reference in references) {
+
+            trySetRootNode(reference)
+
+            for (other in references) {
+                reference.trySetParent(other)
+            }
+        }
+
+        tryConnectSections(references)
+    }
+
+    private fun trySetRootNode(reference: ReferenceNode) {
+        val rotation = reference.getRotation() ?: return
+
+        if (rootNode == null) {
+            rootNode = reference
+            return
+        }
+
+        val rootRotation = rootNode?.getRotation() ?: return
+
+        if (rotation.frameMap.size > rootRotation.frameMap.size) {
+            rootNode = reference
+        }
+    }
+
+    private fun tryConnectSections(references: List<ReferenceNode>) {
+        if (rootNode == null) {
+            return
+        }
+
+        val maxId = references.maxOfOrNull(ReferenceNode::id) ?: return
+        val sectionChildren = IntArray(maxId + 1) { 0 }
+        val sectionRoots = mutableListOf<ReferenceNode>()
+
+        for (reference in references) {
+
+            val parentId = reference.parent?.id ?: continue
+
+            sectionChildren[parentId] += 1
+
+            if (parentId == rootNode?.id) {
+                sectionRoots.add(reference)
+            }
+        }
+
+        val mainSectionRoot = sectionRoots.maxByOrNull { sectionChildren[it.id] } ?: return
+
+        for (root in sectionRoots) {
+            if (root.id != mainSectionRoot.id && sectionChildren[root.id] > 0) {
+                root.parent = mainSectionRoot
+            }
+        }
+    }
 
     fun apply(context: RenderContext) {
         context.nodeRenderer.nodes.clear()
