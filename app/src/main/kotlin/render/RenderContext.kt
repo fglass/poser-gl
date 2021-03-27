@@ -80,6 +80,8 @@ class RenderContext {
 
     fun run() {
         var running = true
+        LOGGER.info { "Running v$VERSION" }
+
         System.setProperty("joml.nounsafe", TRUE.toString())
         System.setProperty("java.awt.headless", TRUE.toString())
 

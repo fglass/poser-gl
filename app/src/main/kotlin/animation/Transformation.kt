@@ -6,8 +6,12 @@ import api.definition.ModelDefinition
 import net.runelite.cache.models.CircularAngle
 import org.joml.Vector3i
 
-open class Transformation(override var id: Int, override val type: TransformationType,
-                          var frameMap: IntArray, override var delta: Vector3i) : ITransformation {
+open class Transformation(
+    override var id: Int,
+    override val type: TransformationType,
+    var frameMap: IntArray,
+    override var delta: Vector3i
+) : ITransformation {
 
     constructor(transformation: Transformation): this(
         transformation.id, transformation.type,
@@ -29,134 +33,139 @@ open class Transformation(override var id: Int, override val type: Transformatio
         val verticesY = this.vertexPositionsY
         val verticesZ = this.vertexPositionsZ
 
-        val var6 = frameMap.size
-        var var7: Int
-        var var8: Int
-        var var11: Int
+        val frameMapSize = frameMap.size
+        var count: Int
+        var vGroupIndex: Int
+        var vIndex: Int
         var var12: Int
-        if (type == 0) {
-            var7 = 0
+
+        if (type == TransformationType.REFERENCE.id) {
             ModelDefinition.animOffsetX = 0
             ModelDefinition.animOffsetY = 0
             ModelDefinition.animOffsetZ = 0
-            var8 = 0
-            while (var8 < var6) {
-                val var9 = frameMap[var8]
+            vGroupIndex = 0
+            count = 0
+
+            while (vGroupIndex < frameMapSize) {
+                val var9 = frameMap[vGroupIndex]
                 if (var9 < this.vertexGroups.size) {
-                    val var10: IntArray = this.vertexGroups[var9]
-                    var11 = 0
-                    while (var11 < var10.size) {
-                        var12 = var10[var11]
+                    val vertexGroup = this.vertexGroups[var9]
+                    vIndex = 0
+                    while (vIndex < vertexGroup.size) {
+                        var12 = vertexGroup[vIndex]
                         ModelDefinition.animOffsetX += verticesX[var12]
                         ModelDefinition.animOffsetY += verticesY[var12]
                         ModelDefinition.animOffsetZ += verticesZ[var12]
-                        ++var7
-                        ++var11
+                        ++count
+                        ++vIndex
                     }
                 }
-                ++var8
+                ++vGroupIndex
             }
-            if (var7 > 0) {
-                ModelDefinition.animOffsetX = dx + ModelDefinition.animOffsetX / var7
-                ModelDefinition.animOffsetY = dy + ModelDefinition.animOffsetY / var7
-                ModelDefinition.animOffsetZ = dz + ModelDefinition.animOffsetZ / var7
+            if (count > 0) {
+                ModelDefinition.animOffsetX = dx + ModelDefinition.animOffsetX / count
+                ModelDefinition.animOffsetY = dy + ModelDefinition.animOffsetY / count
+                ModelDefinition.animOffsetZ = dz + ModelDefinition.animOffsetZ / count
             } else {
                 ModelDefinition.animOffsetX = dx
                 ModelDefinition.animOffsetY = dy
                 ModelDefinition.animOffsetZ = dz
             }
         } else {
-            var var18: IntArray
+            var vertexGroup: IntArray
             var var19: Int
-            if (type == 1) {
-                var7 = 0
-                while (var7 < var6) {
-                    var8 = frameMap[var7]
-                    if (var8 < this.vertexGroups.size) {
-                        var18 = this.vertexGroups[var8]
+            if (type == TransformationType.TRANSLATION.id) {
+                count = 0
+                while (count < frameMapSize) {
+                    vGroupIndex = frameMap[count]
+                    if (vGroupIndex < this.vertexGroups.size) {
+                        vertexGroup = this.vertexGroups[vGroupIndex]
                         var19 = 0
-                        while (var19 < var18.size) {
-                            var11 = var18[var19]
-                            verticesX[var11] += dx
-                            verticesY[var11] += dy
-                            verticesZ[var11] += dz
+                        while (var19 < vertexGroup.size) {
+                            vIndex = vertexGroup[var19]
+                            verticesX[vIndex] += dx
+                            verticesY[vIndex] += dy
+                            verticesZ[vIndex] += dz
                             ++var19
                         }
                     }
-                    ++var7
+                    ++count
                 }
-            } else if (type == 2) {
-                var7 = 0
-                while (var7 < var6) {
-                    var8 = frameMap[var7]
-                    if (var8 < this.vertexGroups.size) {
-                        var18 = this.vertexGroups[var8]
+            } else if (type == TransformationType.ROTATION.id) {
+                count = 0
+                while (count < frameMapSize) {
+                    vGroupIndex = frameMap[count]
+                    if (vGroupIndex < this.vertexGroups.size) {
+                        vertexGroup = this.vertexGroups[vGroupIndex]
                         var19 = 0
-                        while (var19 < var18.size) {
-                            var11 = var18[var19]
-                            verticesX[var11] -= ModelDefinition.animOffsetX
-                            verticesY[var11] -= ModelDefinition.animOffsetY
-                            verticesZ[var11] -= ModelDefinition.animOffsetZ
+                        while (var19 < vertexGroup.size) {
+                            vIndex = vertexGroup[var19]
+                            verticesX[vIndex] -= ModelDefinition.animOffsetX
+                            verticesY[vIndex] -= ModelDefinition.animOffsetY
+                            verticesZ[vIndex] -= ModelDefinition.animOffsetZ
+
                             var12 = (dx and 255) * 8
-                            val var13 = (dy and 255) * 8
-                            val var14 = (dz and 255) * 8
-                            var var15: Int
-                            var var16: Int
-                            var var17: Int
-                            if (var14 != 0) {
-                                var15 = CircularAngle.SINE[var14]
-                                var16 = CircularAngle.COSINE[var14]
-                                var17 = var15 * verticesY[var11] + var16 * verticesX[var11] shr 16
-                                verticesY[var11] =
-                                    var16 * verticesY[var11] - var15 * verticesX[var11] shr 16
-                                verticesX[var11] = var17
+                            val yAngle = (dy and 255) * 8
+                            val zAngle = (dz and 255) * 8
+
+                            var sin: Int
+                            var cos: Int
+                            var temp: Int
+
+                            if (zAngle != 0) {
+                                sin = CircularAngle.SINE[zAngle]
+                                cos = CircularAngle.COSINE[zAngle]
+                                temp = sin * verticesY[vIndex] + cos * verticesX[vIndex] shr 16
+                                verticesY[vIndex] = cos * verticesY[vIndex] - sin * verticesX[vIndex] shr 16
+                                verticesX[vIndex] = temp
                             }
                             if (var12 != 0) {
-                                var15 = CircularAngle.SINE[var12]
-                                var16 = CircularAngle.COSINE[var12]
-                                var17 = var16 * verticesY[var11] - var15 * verticesZ[var11] shr 16
-                                verticesZ[var11] =
-                                    var15 * verticesY[var11] + var16 * verticesZ[var11] shr 16
-                                verticesY[var11] = var17
+                                sin = CircularAngle.SINE[var12]
+                                cos = CircularAngle.COSINE[var12]
+                                temp = cos * verticesY[vIndex] - sin * verticesZ[vIndex] shr 16
+                                verticesZ[vIndex] = sin * verticesY[vIndex] + cos * verticesZ[vIndex] shr 16
+                                verticesY[vIndex] = temp
                             }
-                            if (var13 != 0) {
-                                var15 = CircularAngle.SINE[var13]
-                                var16 = CircularAngle.COSINE[var13]
-                                var17 = var15 * verticesZ[var11] + var16 * verticesX[var11] shr 16
-                                verticesZ[var11] =
-                                    var16 * verticesZ[var11] - var15 * verticesX[var11] shr 16
-                                verticesX[var11] = var17
+                            if (yAngle != 0) {
+                                sin = CircularAngle.SINE[yAngle]
+                                cos = CircularAngle.COSINE[yAngle]
+                                temp = sin * verticesZ[vIndex] + cos * verticesX[vIndex] shr 16
+                                verticesZ[vIndex] = cos * verticesZ[vIndex] - sin * verticesX[vIndex] shr 16
+                                verticesX[vIndex] = temp
                             }
-                            verticesX[var11] += ModelDefinition.animOffsetX
-                            verticesY[var11] += ModelDefinition.animOffsetY
-                            verticesZ[var11] += ModelDefinition.animOffsetZ
+
+                            verticesX[vIndex] += ModelDefinition.animOffsetX
+                            verticesY[vIndex] += ModelDefinition.animOffsetY
+                            verticesZ[vIndex] += ModelDefinition.animOffsetZ
                             ++var19
                         }
                     }
-                    ++var7
+                    ++count
                 }
-            } else if (type == 3) {
-                var7 = 0
-                while (var7 < var6) {
-                    var8 = frameMap[var7]
-                    if (var8 < this.vertexGroups.size) {
-                        var18 = this.vertexGroups[var8]
+            } else if (type == TransformationType.SCALE.id) {
+                count = 0
+                while (count < frameMapSize) {
+                    vGroupIndex = frameMap[count]
+                    if (vGroupIndex < this.vertexGroups.size) {
+                        vertexGroup = this.vertexGroups[vGroupIndex]
                         var19 = 0
-                        while (var19 < var18.size) {
-                            var11 = var18[var19]
-                            verticesX[var11] -= ModelDefinition.animOffsetX
-                            verticesY[var11] -= ModelDefinition.animOffsetY
-                            verticesZ[var11] -= ModelDefinition.animOffsetZ
-                            verticesX[var11] = dx * verticesX[var11] / 128
-                            verticesY[var11] = dy * verticesY[var11] / 128
-                            verticesZ[var11] = dz * verticesZ[var11] / 128
-                            verticesX[var11] += ModelDefinition.animOffsetX
-                            verticesY[var11] += ModelDefinition.animOffsetY
-                            verticesZ[var11] += ModelDefinition.animOffsetZ
+                        while (var19 < vertexGroup.size) {
+                            vIndex = vertexGroup[var19]
+                            verticesX[vIndex] -= ModelDefinition.animOffsetX
+                            verticesY[vIndex] -= ModelDefinition.animOffsetY
+                            verticesZ[vIndex] -= ModelDefinition.animOffsetZ
+
+                            verticesX[vIndex] = dx * verticesX[vIndex] / 128
+                            verticesY[vIndex] = dy * verticesY[vIndex] / 128
+                            verticesZ[vIndex] = dz * verticesZ[vIndex] / 128
+
+                            verticesX[vIndex] += ModelDefinition.animOffsetX
+                            verticesY[vIndex] += ModelDefinition.animOffsetY
+                            verticesZ[vIndex] += ModelDefinition.animOffsetZ
                             ++var19
                         }
                     }
-                    ++var7
+                    ++count
                 }
             }
         }

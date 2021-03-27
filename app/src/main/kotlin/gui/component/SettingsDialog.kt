@@ -30,7 +30,7 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         addZoomSensitivitySlider()
         addCameraSensitivitySlider()
         addGridToggle()
-        addJointsToggle()
+        addBonesToggle()
         addAdvancedToggle()
     }
 
@@ -101,11 +101,11 @@ class SettingsDialog(private val context: RenderContext): Dialog("Settings", "",
         addToggle("Grid", context.settingsManager.gridActive, listener)
     }
 
-    private fun addJointsToggle() {
+    private fun addBonesToggle() {
         val listener = EventListener<CheckBoxChangeValueEvent<CheckBox>> {
-            context.settingsManager.jointsActive = it.targetComponent.isChecked
+            context.settingsManager.bonesActive = it.targetComponent.isChecked
         }
-        addToggle("Joints", context.settingsManager.jointsActive, listener)
+        addToggle("Bones", context.settingsManager.bonesActive, listener)
     }
 
     private fun addAdvancedToggle() {

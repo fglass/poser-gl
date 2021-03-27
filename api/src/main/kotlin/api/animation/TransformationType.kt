@@ -2,12 +2,13 @@ package api.animation
 
 import org.joml.Vector3i
 
-enum class TransformationType(val id: Int) { // Alpha transformations (5) currently unsupported
+enum class TransformationType(val id: Int) {
 
     REFERENCE(0),
     TRANSLATION(1),
     ROTATION(2),
     SCALE(3);
+    // Alpha transformations (5) currently unsupported
 
     companion object {
         private val map = values().associateBy { it.id }

@@ -17,8 +17,8 @@ object PluginLoader {
         val urls = jars.map { it.toURI().toURL() }
         val classLoader = URLClassLoader.newInstance(urls.toTypedArray(), Thread.currentThread().contextClassLoader)
 
-        val loaders = ServiceLoader.load(ICacheLoader::class.java, classLoader).asSequence().toList()
-        val packers = ServiceLoader.load(ICachePacker::class.java, classLoader).asSequence().toList()
+        val loaders = ServiceLoader.load(ICacheLoader::class.java, classLoader).toList()
+        val packers = ServiceLoader.load(ICachePacker::class.java, classLoader).toList()
         classLoader.close()
         return loaders.sortedBy { it.toString() } to packers
     }

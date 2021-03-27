@@ -18,7 +18,7 @@ class SettingsManager(private val context: RenderContext) {
     var cameraSensitivityMultiplier = 1f
     var zoomSensitivityMultiplier = 1f
     var gridActive = true
-    var jointsActive = true
+    var bonesActive = true
     var advancedMode = false
 
     fun save() {
@@ -29,7 +29,7 @@ class SettingsManager(private val context: RenderContext) {
         properties["cameraSensitivity"] = cameraSensitivityMultiplier.toString()
         properties["zoomSensitivity"] = zoomSensitivityMultiplier.toString()
         properties["grid"] = gridActive.toString()
-        properties["joints"] = jointsActive.toString()
+        properties["bones"] = bonesActive.toString()
         properties["advanced"] = advancedMode.toString()
 
         val fileWriter = FileWriter(SETTINGS_FILE)
@@ -57,8 +57,8 @@ class SettingsManager(private val context: RenderContext) {
             properties.getProperty("grid")?.let {
                 gridActive = it.toBoolean()
             }
-            properties.getProperty("joints")?.let {
-                jointsActive = it.toBoolean()
+            properties.getProperty("bones")?.let {
+                bonesActive = it.toBoolean()
             }
             properties.getProperty("advanced")?.let {
                 advancedMode = it.toBoolean()

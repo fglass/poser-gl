@@ -70,7 +70,7 @@ class Keyframe(
         }
 
         val maxId = references.maxOfOrNull(ReferenceNode::id) ?: return
-        val sectionChildren = IntArray(maxId + 1) { 0 }
+        val sectionChildren = IntArray(maxId + 1)
         val sectionRoots = mutableListOf<ReferenceNode>()
 
         for (reference in references) {

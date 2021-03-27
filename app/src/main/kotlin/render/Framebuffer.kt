@@ -12,8 +12,11 @@ import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import util.MatrixCreator
 
-class Framebuffer(private val context: RenderContext, private val scaleFactor: Int,
-                  private val buttons: Array<MouseButtonHandler>): ImageView() {
+class Framebuffer(
+    private val context: RenderContext,
+    private val scaleFactor: Int,
+    private val buttons: Array<MouseButtonHandler>
+): ImageView() {
 
     private var id: Int = 0
     private var textureId: Int = 0

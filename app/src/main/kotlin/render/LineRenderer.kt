@@ -58,7 +58,7 @@ class LineRenderer(private val context: RenderContext) {
     fun renderSkeleton(nodes: Set<ReferenceNode>, root: ReferenceNode?, viewMatrix: Matrix4f) {
         skeletonLoader.cleanUp()
 
-        if (!context.settingsManager.jointsActive) {
+        if (!context.settingsManager.bonesActive) {
             return
         }
 
