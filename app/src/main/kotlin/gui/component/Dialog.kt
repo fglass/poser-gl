@@ -3,11 +3,11 @@ package gui.component
 import render.RenderContext
 import render.Framebuffer
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Dialog
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.WindowSizeEvent
-import org.liquidengine.legui.style.color.ColorConstants
+import com.spinyowl.legui.component.Dialog
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.WindowSizeEvent
+import com.spinyowl.legui.style.color.ColorConstants
 
 open class Dialog(title: String, text: String, private val context: RenderContext, width: Float, height: Float) :
            Dialog(title, width, height) {
@@ -15,10 +15,10 @@ open class Dialog(title: String, text: String, private val context: RenderContex
     val message = Label(text, 0f, 15f, size.x, 15f)
 
     init {
-        message.textState.horizontalAlign = HorizontalAlign.CENTER
+        message.style.horizontalAlign = HorizontalAlign.CENTER
         titleContainer.style.background.color = ColorConstants.darkGray()
         closeButton.style.focusedStrokeColor = null
-        container.add(message)
+        //add(message)
         container.isFocusable = false
         isFocusable = false
         isResizable = false

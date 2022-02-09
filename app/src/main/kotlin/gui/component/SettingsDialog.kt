@@ -1,12 +1,12 @@
 package gui.component
 
-import org.liquidengine.legui.component.*
-import org.liquidengine.legui.component.event.checkbox.CheckBoxChangeValueEvent
-import org.liquidengine.legui.component.event.slider.SliderChangeValueEvent
-import org.liquidengine.legui.listener.EventListener
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.*
+import com.spinyowl.legui.component.event.checkbox.CheckBoxChangeValueEvent
+import com.spinyowl.legui.component.event.slider.SliderChangeValueEvent
+import com.spinyowl.legui.listener.EventListener
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.flex.FlexStyle
 import render.RenderContext
 import util.Colour
 import util.setSizeLimits

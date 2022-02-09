@@ -6,15 +6,15 @@ import gui.component.AnimationMenu
 import gui.component.AnimationTimeline
 import gui.component.ImageButton
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.CursorEnterEvent
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.BufferedImage
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.CursorEnterEvent
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.image.LoadableImage
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.flex.FlexStyle
 import util.Colour
 import util.ResourceMap
 import util.setHeightLimit
@@ -109,7 +109,7 @@ class AnimationPanel(private val context: RenderContext): Panel() {
         val xOffset = 12f
         val x = i * unitX
         val time = Label(i.toString(), x + xOffset, 0f, 1f, 15f)
-        time.textState.horizontalAlign = HorizontalAlign.CENTER
+        time.style.horizontalAlign = HorizontalAlign.CENTER
         times.add(time)
 
         if (i != 0) {
@@ -167,7 +167,7 @@ class AnimationPanel(private val context: RenderContext): Panel() {
         }
     }
 
-    private fun getCursorColour(colour: Colour): BufferedImage {
+    private fun getCursorColour(colour: Colour): LoadableImage {
         return when (colour) {
             Colour.RED -> redLine
             Colour.BLUE -> blueLine

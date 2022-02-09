@@ -1,8 +1,8 @@
 package util
 
 import org.joml.Vector2f
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.input.Mouse
 
 class MouseButtonHandler(val button: Mouse.MouseButton) {
 

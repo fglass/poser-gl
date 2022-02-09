@@ -2,7 +2,7 @@ package gizmo
 
 import model.Model
 import org.joml.*
-import org.liquidengine.legui.style.color.ColorUtil
+import com.spinyowl.legui.style.color.ColorUtil
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 import org.lwjgl.opengl.GL11.glDrawArrays
 import render.Loader

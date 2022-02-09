@@ -3,9 +3,10 @@ package gui.component
 import render.RenderContext
 import animation.Animation
 import com.displee.cache.CacheLibrary
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.ScrollablePanel
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.ScrollablePanel
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.style.font.TextDirection
 import util.Colour
 
 class DatDialog(private val context: RenderContext, private val animation: Animation):
@@ -20,7 +21,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
 
     private fun addFrames() {
         val archiveLabel = Label("Archive:", 10f, 7f, 45f, 15f)
-        archiveLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        archiveLabel.style.horizontalAlign = HorizontalAlign.RIGHT
         container.add(archiveLabel)
 
         val archiveId = if (animation.modified) {
@@ -37,7 +38,7 @@ class DatDialog(private val context: RenderContext, private val animation: Anima
         container.add(archiveSlider)
 
         val frameLabel = Label("Frames:", 10f, 27f, 45f, 15f)
-        frameLabel.textState.horizontalAlign = HorizontalAlign.RIGHT
+        frameLabel.style.horizontalAlign = HorizontalAlign.RIGHT
         container.add(frameLabel)
 
         framePanel = ScrollablePanel(66f, 27f, 177f, 26f)

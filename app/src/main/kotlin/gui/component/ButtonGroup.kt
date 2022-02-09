@@ -1,8 +1,8 @@
 package gui.component
 
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.image.Image
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.image.Image
 import util.setSizeLimits
 
 open class ButtonGroup(position: Vector2f, private val iconSize: Vector2f, images: Array<Image> = emptyArray(),

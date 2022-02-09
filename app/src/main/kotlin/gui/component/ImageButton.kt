@@ -4,14 +4,14 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joml.Vector2f
-import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.component.Tooltip
-import org.liquidengine.legui.event.CursorEnterEvent
-import org.liquidengine.legui.image.Image
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.border.SimpleLineBorder
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
+import com.spinyowl.legui.component.ImageView
+import com.spinyowl.legui.component.Tooltip
+import com.spinyowl.legui.event.CursorEnterEvent
+import com.spinyowl.legui.image.Image
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.border.SimpleLineBorder
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.color.ColorUtil
 
 open class ImageButton(position: Vector2f, private var icon: Image, action: String = ""): ImageView(icon) {
 
@@ -43,7 +43,7 @@ open class ImageButton(position: Vector2f, private var icon: Image, action: Stri
         tooltip.style.setBorderRadius(0f)
         tooltip.style.border = SimpleLineBorder(ColorUtil.fromInt(35, 35, 35, 1f), 1f)
         tooltip.style.background.color = ColorConstants.darkGray()
-        tooltip.textState.textColor = ColorConstants.white()
+        tooltip.style.textColor = ColorConstants.white()
         tooltip.style.shadow = null
 
         val y = 15f

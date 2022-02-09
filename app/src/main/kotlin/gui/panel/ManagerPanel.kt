@@ -4,17 +4,17 @@ import render.RenderContext
 import entity.Entity
 import gui.component.ConfigGroup
 import org.joml.Vector2f
-import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.ScrollablePanel
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.ImageView
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.component.ScrollablePanel
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.color.ColorUtil
+import com.spinyowl.legui.style.flex.FlexStyle
 import render.PolygonMode
 import shader.ShadingType
 import util.Colour
@@ -45,12 +45,12 @@ class ManagerPanel(private val context: RenderContext): Panel() {
         val title = Label("Entity Manager")
         title.setSizeLimits(maxWidth, 15f)
         title.style.background.color = Colour.GRAY.rgba
-        title.textState.horizontalAlign = HorizontalAlign.CENTER
+        title.style.horizontalAlign = HorizontalAlign.CENTER
         add(title)
 
         selectedEntity.setSizeLimits(maxWidth, 15f)
         selectedEntity.style.setMarginTop(20f)
-        selectedEntity.textState.horizontalAlign = HorizontalAlign.CENTER
+        selectedEntity.style.horizontalAlign = HorizontalAlign.CENTER
         add(selectedEntity)
 
         addPolygonModes()

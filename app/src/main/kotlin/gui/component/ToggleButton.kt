@@ -1,10 +1,10 @@
 package gui.component
 
 import org.joml.Vector2f
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.image.Image
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.style.color.ColorConstants
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.image.Image
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.style.color.ColorConstants
 
 class ToggleButton(image: Image, action: String, toggled: Boolean):
       ImageButton(Vector2f(), image, action) {

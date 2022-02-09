@@ -1,7 +1,7 @@
 package gui.component
 
 import render.RenderContext
-import org.liquidengine.legui.component.ProgressBar
+import com.spinyowl.legui.component.ProgressBar
 
 class ProgressDialog(
     title: String,

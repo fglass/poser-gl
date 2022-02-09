@@ -2,11 +2,11 @@ package gui.component
 
 import render.RenderContext
 import util.FileDialog
-import org.liquidengine.legui.component.Button
-import org.liquidengine.legui.component.RadioButton
-import org.liquidengine.legui.component.RadioButtonGroup
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.MouseClickEvent
+import com.spinyowl.legui.component.Button
+import com.spinyowl.legui.component.RadioButton
+import com.spinyowl.legui.component.RadioButtonGroup
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.MouseClickEvent
 import transfer.ExportFormat
 
 class ExportDialog(private val context: RenderContext): Dialog("Export Manager", "", context, 230f, 80f) {
@@ -22,7 +22,7 @@ class ExportDialog(private val context: RenderContext): Dialog("Export Manager",
         val buttons = arrayOf(pgl, dat)
         buttons.forEach {
             it.style.focusedStrokeColor = null
-            it.textState.horizontalAlign = HorizontalAlign.RIGHT
+            it.style.horizontalAlign = HorizontalAlign.RIGHT
             it.radioButtonGroup = group
             it.isChecked = it == pgl
             container.add(it)

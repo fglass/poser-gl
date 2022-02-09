@@ -13,19 +13,24 @@ import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
-import org.liquidengine.legui.animation.AnimatorProvider
-import org.liquidengine.legui.component.Frame
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.listener.processor.EventProcessor
-import org.liquidengine.legui.style.color.ColorUtil
-import org.liquidengine.legui.system.context.CallbackKeeper
-import org.liquidengine.legui.system.context.Context
-import org.liquidengine.legui.system.context.DefaultCallbackKeeper
-import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
-import org.liquidengine.legui.system.layout.LayoutManager
-import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
-import org.liquidengine.legui.theme.Themes
-import org.liquidengine.legui.theme.colored.FlatColoredTheme
+import com.spinyowl.legui.animation.AnimatorProvider
+import com.spinyowl.legui.component.Frame
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.listener.processor.EventProcessorProvider
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.color.ColorUtil
+import com.spinyowl.legui.style.length.Length
+import com.spinyowl.legui.style.length.LengthType
+import com.spinyowl.legui.system.context.CallbackKeeper
+import com.spinyowl.legui.system.context.Context
+import com.spinyowl.legui.system.context.DefaultCallbackKeeper
+import com.spinyowl.legui.system.handler.processor.SystemEventProcessor
+import com.spinyowl.legui.system.handler.processor.SystemEventProcessorImpl
+import com.spinyowl.legui.system.layout.LayoutManager
+import com.spinyowl.legui.system.renderer.nvg.NvgRenderer
+import com.spinyowl.legui.theme.Themes
+import com.spinyowl.legui.theme.colored.FlatColoredTheme
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWImage
 import org.lwjgl.opengl.EXTGeometryShader4.GL_PROGRAM_POINT_SIZE_EXT
@@ -39,7 +44,7 @@ import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.3.4"
+const val VERSION = "1.4.0"
 const val WIDTH = 800
 const val HEIGHT = 600
 
@@ -51,7 +56,8 @@ private val DEFAULT_THEME = FlatColoredTheme(
     ColorUtil.fromInt(2, 119, 189, 1f),
     ColorUtil.fromInt(27, 94, 32, 1f),
     ColorUtil.fromInt(183, 28, 28, 1f),
-    null
+    null,
+    ColorUtil.fromInt(255, 255, 255, 1f)
 )
 
 class RenderContext {
@@ -117,8 +123,8 @@ class RenderContext {
         keeper.chainWindowCloseCallback.add { running = false }
         keeper.chainKeyCallback.add(KeyCallback(this, context))
 
-        val systemEventProcessor = SystemEventProcessor()
-        systemEventProcessor.addDefaultCallbacks(keeper)
+        val systemEventProcessor = SystemEventProcessorImpl()
+        SystemEventProcessor.addDefaultCallbacks(keeper, systemEventProcessor)
 
         val guiRenderer = NvgRenderer()
         guiRenderer.initialize()
@@ -186,7 +192,7 @@ class RenderContext {
 
             // Process system events
             systemEventProcessor.processEvents(frame, context)
-            EventProcessor.getInstance().processEvents()
+            EventProcessorProvider.getInstance().processEvents()
 
             // Relayout components
             try {

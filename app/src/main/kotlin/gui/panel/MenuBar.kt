@@ -2,11 +2,11 @@ package gui.panel
 
 import gui.component.ImageButton
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.flex.FlexStyle
 import render.RenderContext
 import util.ResourceMap
 import util.setHeightLimit

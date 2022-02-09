@@ -3,11 +3,11 @@ package render
 import entity.Camera
 import gui.component.Dialog
 import util.MouseButtonHandler
-import org.liquidengine.legui.component.ImageView
-import org.liquidengine.legui.event.*
-import org.liquidengine.legui.image.FBOImage
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.style.Style
+import com.spinyowl.legui.component.ImageView
+import com.spinyowl.legui.event.*
+import com.spinyowl.legui.image.FBOImage
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.style.Style
 import org.lwjgl.opengl.GL32.*
 import shader.ShadingType
 import util.MatrixCreator

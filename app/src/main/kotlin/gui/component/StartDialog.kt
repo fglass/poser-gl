@@ -3,11 +3,11 @@ package gui.component
 import api.cache.ICacheLoader
 import render.VERSION
 import org.joml.Vector2f
-import org.liquidengine.legui.component.*
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
+import com.spinyowl.legui.component.*
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.color.ColorUtil
 import render.RenderContext
 import util.FileDialog
 import util.ResourceMap
@@ -40,24 +40,24 @@ class StartDialog(
         logo.size = Vector2f(220f, 82f)
         logo.style.border.isEnabled = false
         logo.style.background.color = ColorConstants.transparent()
-        container.add(logo)
+        add(logo)
 
         val version = Label("v$VERSION")
         version.position = Vector2f(208f, 66f)
-        container.add(version)
+        add(version)
     }
 
     private fun addPath() {
         val cacheLabel = Label("Cache:", 14f, 122f, 50f, 15f)
-        container.add(cacheLabel)
+        add(cacheLabel)
 
         val box = Panel(172f, 122f, 16f, 15f)
         box.style.focusedStrokeColor = null
-        container.add(box)
+        add(box)
 
         cache = TextInput(76f, 122f, 97f, 15f)
         cache.style.focusedStrokeColor = null
-        container.add(cache)
+        add(cache)
 
         val open = ImageButton(Vector2f(175f, 122f), ResourceMap["open"])
         open.hoveredIcon = ResourceMap["open-hovered"]
@@ -69,12 +69,12 @@ class StartDialog(
                 cache.textState.text = FileDialog.openFile(folder = true)
             }
         }
-        container.add(open)
+        add(open)
     }
 
     private fun addPlugins() {
         val pluginLabel = Label("Plugin:", 14f, 150f, 50f, 15f)
-        container.add(pluginLabel)
+        add(pluginLabel)
 
         plugins = SelectBox(76f, 150f, 112f, 15f)
         context.loaders.forEach {
@@ -83,7 +83,7 @@ class StartDialog(
         plugins.expandButton.style.border.isEnabled = false
         plugins.childComponents.forEach { it.style.focusedStrokeColor = null }
         plugins.visibleCount = 4
-        container.add(plugins)
+        add(plugins)
     }
 
     private fun addLoadButton() {
@@ -97,7 +97,7 @@ class StartDialog(
                 tryStartApplication()
             }
         }
-        container.add(load)
+        add(load)
     }
 
     private fun tryStartApplication() {
@@ -107,7 +107,7 @@ class StartDialog(
             close()
         } else {
             message.textState.text = "Unable to load a valid cache"
-            message.textState.textColor = ColorConstants.lightRed()
+            message.style.textColor = ColorConstants.lightRed()
         }
     }
 }

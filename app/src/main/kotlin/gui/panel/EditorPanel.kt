@@ -10,15 +10,15 @@ import gui.component.ButtonGroup
 import gui.component.ConfigGroup
 import gui.component.TextSlider
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.color.ColorUtil
+import com.spinyowl.legui.style.flex.FlexStyle
 import render.RenderContext
 import util.Colour
 import util.ResourceMap
@@ -59,11 +59,11 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
         val frameTitle = Label("Keyframe Editor", 0f, 0f, sizeX, 16f)
         frameTitle.style.background.color = Colour.GRAY.rgba
-        frameTitle.textState.horizontalAlign = HorizontalAlign.CENTER
+        frameTitle.style.horizontalAlign = HorizontalAlign.CENTER
         framePanel.add(frameTitle)
 
         selectedFrame = Label("Selected: N/A", 0f, 20f, sizeX, 15f)
-        selectedFrame.textState.horizontalAlign = HorizontalAlign.CENTER
+        selectedFrame.style.horizontalAlign = HorizontalAlign.CENTER
         framePanel.add(selectedFrame)
 
         val length = Label("Length:", 35f, 40f, 50f, 15f)
@@ -102,11 +102,11 @@ class EditorPanel(private val context: RenderContext): Panel() {
 
         val nodeTitle = Label("Node Transformer", 0f, 0f, sizeX, 16f)
         nodeTitle.style.background.color = Colour.GRAY.rgba
-        nodeTitle.textState.horizontalAlign = HorizontalAlign.CENTER
+        nodeTitle.style.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(nodeTitle)
 
         selectedNode = Label("Selected: N/A", 0f, 20f, sizeX, 15f)
-        selectedNode.textState.horizontalAlign = HorizontalAlign.CENTER
+        selectedNode.style.horizontalAlign = HorizontalAlign.CENTER
         nodePanel.add(selectedNode)
 
         transformations = ConfigGroup(

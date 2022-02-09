@@ -2,7 +2,7 @@ package entity
 
 import org.joml.*
 import util.MouseButtonHandler
-import org.liquidengine.legui.input.Mouse
+import com.spinyowl.legui.input.Mouse
 import render.RenderContext
 import util.SettingsManager
 import java.lang.Math

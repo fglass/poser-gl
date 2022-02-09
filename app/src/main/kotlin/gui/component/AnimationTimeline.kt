@@ -1,9 +1,9 @@
 package gui.component
 
 import gui.panel.AnimationPanel
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.style.Style
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.style.Style
 import util.Colour
 import util.setHeightLimit
 

@@ -1,7 +1,7 @@
 package util
 
-import org.liquidengine.legui.component.TextInput
-import org.liquidengine.legui.system.context.Context
+import com.spinyowl.legui.component.TextInput
+import com.spinyowl.legui.system.context.Context
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWKeyCallbackI
 import render.RenderContext

@@ -2,7 +2,7 @@ package gui.component
 
 import render.RenderContext
 import animation.Animation
-import org.liquidengine.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.color.ColorConstants
 
 class AnimationList(private val context: RenderContext): ElementList() {
 
@@ -69,7 +69,8 @@ class AnimationList(private val context: RenderContext): ElementList() {
             }
 
             textState.text = animation.sequence.id.toString()
-            textState.textColor = when {
+
+            style.textColor = when {
                 animation.modified -> ColorConstants.lightRed()
                 else -> ColorConstants.white()
             }

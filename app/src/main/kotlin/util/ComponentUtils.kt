@@ -1,6 +1,6 @@
 package util
 
-import org.liquidengine.legui.component.Component
+import com.spinyowl.legui.component.Component
 
 fun Component.setSizeLimits(width: Float, height: Float) {
     style.setMinimumSize(width, height)

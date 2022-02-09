@@ -1,23 +1,22 @@
 package gui
 
+import com.spinyowl.legui.component.Layer
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.flex.FlexStyle
+import com.spinyowl.legui.style.length.LengthType
 import gui.panel.*
-import org.joml.Vector4f
-import org.liquidengine.legui.component.LayerContainer
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.color.ColorUtil
-import org.liquidengine.legui.style.flex.FlexStyle
 import render.RenderContext
 
 class GuiManager(context: RenderContext) {
-
-    val container: LayerContainer = context.frame.componentLayer.container
-    private val menuBar = MenuBar(context)
+    val container: Layer = context.frame.componentLayer
     val listPanel = ListPanel(context)
     val managerPanel = ManagerPanel(context)
     val editorPanel = EditorPanel(context)
     val animationPanel = AnimationPanel(context)
+    private val menuBar = MenuBar(context)
 
     init {
         container.clearChildComponents() // Clear start screen
@@ -52,6 +51,9 @@ class GuiManager(context: RenderContext) {
         rightPanel.add(managerPanel)
         rightPanel.add(editorPanel)
         mainPanel.add(rightPanel)
+
+        mainPanel.style.position = Style.PositionType.RELATIVE;
+        animationPanel.style.position = Style.PositionType.RELATIVE;
 
         container.add(menuBar)
         container.add(mainPanel)

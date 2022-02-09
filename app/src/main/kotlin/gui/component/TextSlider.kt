@@ -1,14 +1,14 @@
 package gui.component
 
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.TextInput
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.CursorEnterEvent
-import org.liquidengine.legui.event.FocusEvent
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.listener.CursorEnterEventListener
-import org.liquidengine.legui.listener.MouseClickEventListener
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.component.TextInput
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.CursorEnterEvent
+import com.spinyowl.legui.event.FocusEvent
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.listener.CursorEnterEventListener
+import com.spinyowl.legui.listener.MouseClickEventListener
 import util.ResourceMap
 
 class TextSlider(private val onChange: (Int) -> Unit, private val limits: Pair<Int, Int>,
@@ -22,7 +22,7 @@ class TextSlider(private val onChange: (Int) -> Unit, private val limits: Pair<I
 
     init {
         isFocusable = false
-        value.textState.horizontalAlign = HorizontalAlign.CENTER
+        value.style.horizontalAlign = HorizontalAlign.CENTER
         value.style.setBorderRadius(0f)
         value.style.focusedStrokeColor = null
 

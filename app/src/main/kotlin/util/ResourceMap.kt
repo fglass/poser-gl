@@ -1,11 +1,13 @@
 package util
 
-import org.liquidengine.legui.image.BufferedImage
+import com.spinyowl.legui.image.LoadableImage
+import com.spinyowl.legui.image.StbBackedLoadableImage
+import com.spinyowl.legui.image.loader.DefaultImageLoader
 
 object ResourceMap {
 
     private const val SPRITE_PATH = "sprite/"
-    private val iconMap = mutableMapOf<String, BufferedImage>()
+    private val iconMap = mutableMapOf<String, LoadableImage>()
 
     init {
         put("add", hovered = true)
@@ -60,7 +62,7 @@ object ResourceMap {
     }
 
     private fun put(key: String, hovered: Boolean = false) {
-        iconMap[key] = BufferedImage("${SPRITE_PATH}$key.png")
+        iconMap[key] = DefaultImageLoader.loadImage("${SPRITE_PATH}$key.png")
         if (hovered) {
             put("$key-hovered")
         }

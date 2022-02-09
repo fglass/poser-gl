@@ -1,10 +1,10 @@
 package shader
 
+import com.spinyowl.legui.util.IOUtil
 import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.joml.Vector4f
-import org.liquidengine.leutil.io.IOUtil
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20

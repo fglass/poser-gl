@@ -1,7 +1,7 @@
 package gizmo
 
 import org.joml.*
-import org.liquidengine.legui.style.color.ColorUtil
+import com.spinyowl.legui.style.color.ColorUtil
 import render.Loader
 import render.RenderContext
 import shader.GizmoShader

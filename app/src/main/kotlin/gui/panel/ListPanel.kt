@@ -4,17 +4,17 @@ import render.RenderContext
 import gui.component.AnimationList
 import gui.component.EntityList
 import gui.component.ItemList
-import org.liquidengine.legui.component.Button
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.component.TextInput
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
-import org.liquidengine.legui.event.FocusEvent
-import org.liquidengine.legui.event.KeyEvent
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.Button
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.component.TextInput
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.event.FocusEvent
+import com.spinyowl.legui.event.KeyEvent
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.flex.FlexStyle
 import org.lwjgl.glfw.GLFW
 import util.setSizeLimits
 
@@ -66,12 +66,12 @@ class ListPanel(context: RenderContext): Panel() {
 
     private fun setSearchPlaceholder() {
         search.textState.text = "Search"
-        search.textState.textColor = ColorConstants.gray()
+        search.style.textColor = ColorConstants.gray()
     }
 
     private fun resetSearchPlaceholder() {
         search.textState.text = ""
-        search.textState.textColor = ColorConstants.white()
+        search.style.textColor = ColorConstants.white()
     }
 
     private fun addTabs() {
@@ -97,7 +97,7 @@ class ListPanel(context: RenderContext): Panel() {
             val label = Label(name) // For more flexible aligning
             label.setSizeLimits(30f, 15f)
             label.style.setMargin(26f, 0f, 0f, 12f + i * offset)
-            label.textState.horizontalAlign = HorizontalAlign.CENTER
+            label.style.horizontalAlign = HorizontalAlign.CENTER
             label.isFocusable = false
             add(label)
         }
@@ -121,7 +121,7 @@ class ListPanel(context: RenderContext): Panel() {
     }
 
     private fun setSearchText(text: String) {
-        search.textState.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
+        search.style.textColor = if (text == "Search") ColorConstants.gray() else ColorConstants.white()
         search.textState.text = text
     }
 }

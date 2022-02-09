@@ -1,10 +1,10 @@
 package gui.component
 
-import org.liquidengine.legui.component.Button
-import org.liquidengine.legui.component.ScrollablePanel
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
+import com.spinyowl.legui.component.Button
+import com.spinyowl.legui.component.ScrollablePanel
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
 import util.Colour
 
 abstract class ElementList: ScrollablePanel() { // TODO: refactor

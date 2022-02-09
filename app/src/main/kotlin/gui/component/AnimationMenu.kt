@@ -2,12 +2,12 @@ package gui.component
 
 import render.RenderContext
 import org.joml.Vector2f
-import org.liquidengine.legui.component.Panel
-import org.liquidengine.legui.event.MouseClickEvent
-import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.style.Style
-import org.liquidengine.legui.style.color.ColorConstants
-import org.liquidengine.legui.style.flex.FlexStyle
+import com.spinyowl.legui.component.Panel
+import com.spinyowl.legui.event.MouseClickEvent
+import com.spinyowl.legui.input.Mouse
+import com.spinyowl.legui.style.Style
+import com.spinyowl.legui.style.color.ColorConstants
+import com.spinyowl.legui.style.flex.FlexStyle
 import util.ResourceMap
 import util.setSizeLimits
 

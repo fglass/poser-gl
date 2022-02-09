@@ -3,10 +3,10 @@ package gui.component
 import render.RenderContext
 import animation.Animation
 import animation.ITEM_OFFSET
-import org.liquidengine.legui.component.Label
-import org.liquidengine.legui.component.TextInput
-import org.liquidengine.legui.component.event.widget.WidgetCloseEvent
-import org.liquidengine.legui.component.optional.align.HorizontalAlign
+import com.spinyowl.legui.component.Label
+import com.spinyowl.legui.component.TextInput
+import com.spinyowl.legui.component.event.widget.WidgetCloseEvent
+import com.spinyowl.legui.component.optional.align.HorizontalAlign
 import kotlin.math.max
 
 class SequenceDialog(private val context: RenderContext, private val animation: Animation):
@@ -30,7 +30,7 @@ class SequenceDialog(private val context: RenderContext, private val animation: 
 
     private fun addAttribute(name: String, value: Int, y: Float): TextInput {
         val label = Label("$name:", 24f, y, 45f, 15f)
-        label.textState.horizontalAlign = HorizontalAlign.RIGHT
+        label.style.horizontalAlign = HorizontalAlign.RIGHT
         label.style.focusedStrokeColor = null
         container.add(label)
 
