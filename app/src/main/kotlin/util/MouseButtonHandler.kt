@@ -5,7 +5,6 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 
 class MouseButtonHandler(val button: Mouse.MouseButton) {
-
     var pressed = false
     var clicked = true
     var delta = Vector2f()

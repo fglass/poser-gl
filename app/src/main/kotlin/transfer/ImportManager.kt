@@ -27,7 +27,7 @@ class ImportManager(private val context: RenderContext) {
 
     private fun decodePgl(data: ByteArray): Animation {
         val stream = InputStream(data)
-        val newId = context.cacheService.animations.keys.max()!! + 1
+        val newId = context.cacheService.animations.keys.maxOrNull()!! + 1
         val sequence = SequenceDefinition(newId)
 
         val animation = Animation(context, sequence)

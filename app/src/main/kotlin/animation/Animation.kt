@@ -146,7 +146,7 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
     }
 
     fun calculateLength(): Int {
-        return min(keyframes.sumBy { it.length }, MAX_LENGTH)
+        return min(keyframes.sumOf { it.length }, MAX_LENGTH)
     }
 
     fun toggleItems(equip: Boolean) {

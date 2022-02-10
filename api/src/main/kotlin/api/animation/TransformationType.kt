@@ -1,6 +1,7 @@
 package api.animation
 
 import org.joml.Vector3i
+import java.util.*
 
 enum class TransformationType(val id: Int) {
 
@@ -21,6 +22,8 @@ enum class TransformationType(val id: Int) {
     }
 
     override fun toString(): String {
-        return super.toString().toLowerCase().capitalize()
+        return super.toString()
+            .lowercase(Locale.getDefault())
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
 }

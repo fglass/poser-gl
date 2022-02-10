@@ -10,11 +10,11 @@
 
     <properties>
         <lwjgl.version>3.2.3</lwjgl.version>
-        <legui.version>2.0.0-71</legui.version>
-        <kotlin.version>1.4.10</kotlin.version>
+        <legui.version>2.1.0</legui.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <log4j.version>2.9.1</log4j.version>
         <junit.version>5.5.2</junit.version>
-        <displee.version>6.4</displee.version>
+        <displee.version>6.8</displee.version>
     </properties>
 
     <profiles>
@@ -123,10 +123,6 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>LiquidEngine</id>
-            <url>https://raw.github.com/LiquidEngine/repo/develop</url>
-        </repository>
         <repository>
             <id>LiquidEngine</id>
             <url>https://raw.github.com/LiquidEngine/repo/releases</url>

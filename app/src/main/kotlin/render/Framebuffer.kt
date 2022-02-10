@@ -4,6 +4,7 @@ import entity.Camera
 import gui.component.Dialog
 import util.MouseButtonHandler
 import org.liquidengine.legui.component.ImageView
+import org.liquidengine.legui.component.event.component.ChangeSizeEvent
 import org.liquidengine.legui.event.*
 import org.liquidengine.legui.image.FBOImage
 import org.liquidengine.legui.input.Mouse
@@ -15,7 +16,7 @@ import util.MatrixCreator
 class Framebuffer(
     private val context: RenderContext,
     private val scaleFactor: Int,
-    private val buttons: Array<MouseButtonHandler>
+    private val mouseButtons: Array<MouseButtonHandler>
 ): ImageView() {
 
     private var id: Int = 0
@@ -23,7 +24,7 @@ class Framebuffer(
     private var textureWidth = 0
     private var textureHeight = 0
     
-    private val camera = Camera(context.settingsManager, lmb=buttons[0], mmb=buttons[1], rmb=buttons[2])
+    private val camera = Camera(context.settingsManager, lmb=mouseButtons[0], mmb=mouseButtons[1], rmb=mouseButtons[2])
     var polygonMode = PolygonMode.FILL
     var shadingType = ShadingType.SMOOTH
     var activeDialog: Dialog? = null
@@ -34,22 +35,30 @@ class Framebuffer(
         style.flexStyle.flexGrow = 1
         style.focusedStrokeColor = null
 
-        listenerMap.addListener(MouseClickEvent::class.java) { event ->
-            buttons.forEach { it.handleClick(event.button, event.action) }
+        listenerMap.addListener(ChangeSizeEvent::class.java) { event ->
+            resize(event.newSize.x().toInt(), event.newSize.y().toInt())
         }
+
+        listenerMap.addListener(MouseClickEvent::class.java) { event ->
+            mouseButtons.forEach { it.handleClick(event.button, event.action) }
+        }
+
         listenerMap.addListener(MouseDragEvent::class.java) { event ->
-            buttons.forEach {
-                // Prevent camera pan when transforming gizmo
-                if (it.button != Mouse.MouseButton.MOUSE_BUTTON_LEFT || context.gizmoRenderer.gizmo?.selectedAxis == null) {
+            mouseButtons.forEach {
+                val isLmbDown = it.button == Mouse.MouseButton.MOUSE_BUTTON_LEFT
+                val isUsingGizmo = isLmbDown && context.gizmoRenderer.gizmo?.selectedAxis != null
+                if (!isUsingGizmo) {
                     it.handleDrag(event.delta)
                 }
             }
         }
+
         listenerMap.addListener(ScrollEvent::class.java) { event ->
             camera.handleScroll(event.yoffset)
         }
+
         listenerMap.addListener(CursorEnterEvent::class.java) { event ->
-            buttons.forEach { it.handleCursorEvent(event.isEntered) }
+            mouseButtons.forEach { it.handleCursorEvent(event.isEntered) }
         }
     }
 
@@ -120,14 +129,6 @@ class Framebuffer(
             glPolygonMode(GL_FRONT_AND_BACK, GL_POINT)
         } else if (polygonMode == PolygonMode.LINE) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-        }
-    }
-
-    override fun setSize(width: Float, height: Float) {
-        val previous = size.x
-        super.setSize(width, height)
-        if (previous != width) {
-            resize(width.toInt(), height.toInt())
         }
     }
 

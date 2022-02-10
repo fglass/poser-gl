@@ -43,10 +43,10 @@ class SettingsManager(private val context: RenderContext) {
             properties.load(reader)
 
             properties.getProperty("background")?.let {
-                background = Colour.valueOf(it.toUpperCase())
+                background = Colour.valueOf(it.uppercase(Locale.getDefault()))
             }
             properties.getProperty("cursorColour")?.let {
-                cursorColour = Colour.valueOf(it.toUpperCase())
+                cursorColour = Colour.valueOf(it.uppercase(Locale.getDefault()))
             }
             properties.getProperty("cameraSensitivity")?.let {
                 cameraSensitivityMultiplier = it.toFloat()

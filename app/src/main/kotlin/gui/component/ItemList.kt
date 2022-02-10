@@ -2,6 +2,8 @@ package gui.component
 
 import api.definition.ItemDefinition
 import render.RenderContext
+import java.util.*
+import kotlin.collections.HashMap
 
 class ItemList(context: RenderContext): ElementList() {
 
@@ -22,7 +24,7 @@ class ItemList(context: RenderContext): ElementList() {
     override fun getFiltered(input: String): List<Int> {
         return elements.keys.filter {
             val item = items[it]
-            item != null && item.name.toLowerCase().contains(input)
+            item != null && item.name.lowercase(Locale.getDefault()).contains(input)
         }
     }
 

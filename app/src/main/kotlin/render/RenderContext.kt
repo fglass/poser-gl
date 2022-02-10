@@ -13,17 +13,17 @@ import mu.KotlinLogging
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
+import org.liquidengine.legui.DefaultInitializer
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.listener.processor.EventProcessor
+import org.liquidengine.legui.listener.processor.EventProcessorProvider
 import org.liquidengine.legui.style.color.ColorUtil
 import org.liquidengine.legui.system.context.CallbackKeeper
-import org.liquidengine.legui.system.context.Context
 import org.liquidengine.legui.system.context.DefaultCallbackKeeper
 import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
+import org.liquidengine.legui.system.handler.processor.SystemEventProcessorImpl
 import org.liquidengine.legui.system.layout.LayoutManager
-import org.liquidengine.legui.system.renderer.nvg.NvgRenderer
 import org.liquidengine.legui.theme.Themes
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
 import org.lwjgl.glfw.GLFW.*
@@ -37,6 +37,7 @@ import transfer.ImportManager
 import util.*
 import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
+
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.3.5"
@@ -105,22 +106,19 @@ class RenderContext {
         glfwMakeContextCurrent(window)
         GL.createCapabilities()
 
-        val context = Context(window)
-        context.updateGlfwWindow()
-
         Themes.setDefaultTheme(DEFAULT_THEME)
         DEFAULT_THEME.applyAll(frame)
 
-        val keeper = DefaultCallbackKeeper()
-        CallbackKeeper.registerCallbacks(window, keeper)
+        val initializer = DefaultInitializer(window, frame)
+        val context = initializer.context
+        context.updateGlfwWindow()
 
+        val keeper = initializer.callbackKeeper
         keeper.chainWindowCloseCallback.add { running = false }
         keeper.chainKeyCallback.add(KeyCallback(this, context))
 
-        val systemEventProcessor = SystemEventProcessor()
-        systemEventProcessor.addDefaultCallbacks(keeper)
-
-        val guiRenderer = NvgRenderer()
+        val animator = AnimatorProvider.getAnimator()
+        val guiRenderer = initializer.renderer
         guiRenderer.initialize()
 
         val vSync = VSyncTimer()
@@ -157,8 +155,9 @@ class RenderContext {
             StartDialog(this).show(frame)
         }
 
-        // Render loop
         while (running) {
+            framebuffer.render()
+
             context.updateGlfwWindow()
 
             val colour = Colour.GRAY.rgba
@@ -170,44 +169,34 @@ class RenderContext {
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-            // Render gui
             try {
                 guiRenderer.render(frame, context)
             } catch (e: NullPointerException) {
                 LOGGER.error(e) { "Render error" }
             }
 
-            // Render fbo
-            framebuffer.render()
-
             // Poll events to callbacks
             glfwPollEvents()
             glfwSwapBuffers(window)
 
+            // Run GUI animations
+            animator.runAnimations()
+
             // Process system events
-            systemEventProcessor.processEvents(frame, context)
-            EventProcessor.getInstance().processEvents()
+            initializer.systemEventProcessor.processEvents(frame, context)
+            initializer.guiEventProcessor.processEvents()
 
             // Relayout components
             try {
-                LayoutManager.getInstance().layout(frame)
+                LayoutManager.getInstance().layout(frame, context)
             } catch (e: NullPointerException) {
                 LOGGER.error(e) { "Layout error" }
             }
 
-            // Run gui animations
-            AnimatorProvider.getAnimator().runAnimations()
-
-            // Control fps
             vSync.waitIfNecessary()
         }
 
-        modelParser.cleanUp()
-        entityRenderer.cleanUp()
-        gizmoRenderer.cleanUp()
-        nodeRenderer.cleanUp()
-        lineRenderer.cleanUp()
-
+        cleanUp()
         guiRenderer.destroy()
         glfwDestroyWindow(window)
         glfwTerminate()
@@ -250,5 +239,13 @@ class RenderContext {
             gui.container.clearChildComponents()
             StartDialog(this).show(frame)
         }.show(frame)
+    }
+
+    fun cleanUp() {
+        modelParser.cleanUp()
+        entityRenderer.cleanUp()
+        gizmoRenderer.cleanUp()
+        nodeRenderer.cleanUp()
+        lineRenderer.cleanUp()
     }
 }

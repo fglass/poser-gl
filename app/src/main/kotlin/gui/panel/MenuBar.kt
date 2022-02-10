@@ -11,6 +11,7 @@ import render.RenderContext
 import util.ResourceMap
 import util.setHeightLimit
 import util.setSizeLimits
+import java.util.*
 
 class MenuBar(context: RenderContext) : Panel() {
     
@@ -34,7 +35,11 @@ class MenuBar(context: RenderContext) : Panel() {
     }
 
     private fun addMenuButton(name: String, action: () -> Unit) {
-        val button = ImageButton(Vector2f(), ResourceMap[name], name.capitalize())
+        val button = ImageButton(
+            Vector2f(),
+            ResourceMap[name],
+            name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        )
         button.hoveredIcon = ResourceMap["$name-hovered"]
         button.listenerMap.addListener(MouseClickEvent::class.java) { event ->
             if (event.action == MouseClickEvent.MouseClickAction.CLICK) {

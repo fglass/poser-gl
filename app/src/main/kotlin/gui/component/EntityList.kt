@@ -2,6 +2,8 @@ package gui.component
 
 import api.definition.NpcDefinition
 import render.RenderContext
+import java.util.*
+import kotlin.collections.HashMap
 
 class EntityList(context: RenderContext): ElementList() {
 
@@ -22,7 +24,7 @@ class EntityList(context: RenderContext): ElementList() {
     override fun getFiltered(input: String): List<Int> {
         return elements.keys.filter {
             val entity = entities[it]
-            entity != null && entity.name.toLowerCase().contains(input)
+            entity != null && entity.name.lowercase(Locale.getDefault()).contains(input)
         }
     }
 

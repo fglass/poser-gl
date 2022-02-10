@@ -4,6 +4,7 @@ import animation.command.*
 import animation.command.impl.*
 import render.RenderContext
 import util.ResourceMap
+import java.util.*
 import kotlin.reflect.KFunction1
 
 enum class KeyframeAction(private val reference: KFunction1<RenderContext, Command>, key: String) {
@@ -22,5 +23,6 @@ enum class KeyframeAction(private val reference: KFunction1<RenderContext, Comma
         context.animationHandler.executeCommand(command)
     }
 
-    override fun toString() = name.toLowerCase().capitalize()
+    override fun toString() = name.lowercase(Locale.getDefault())
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }
