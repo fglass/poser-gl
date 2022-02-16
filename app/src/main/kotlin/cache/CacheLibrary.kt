@@ -11,7 +11,7 @@ import com.displee.cache.ProgressListener as DispleeProgressListener
 
 class CacheLibrary(path: String) : ICacheLibrary {
 
-    private val library = DispleeCacheLibrary(path)
+    private val library = DispleeCacheLibrary.create(path)
 
     override val is317 = library.is317()
 
