@@ -34,8 +34,9 @@ data/saves/
 *.iws
 
 ## Plugin-specific files:
-/repository/
-/release/
+repository/
+release/
+plugin/
 *.log
 *.settings
 
