@@ -17,12 +17,7 @@ import org.liquidengine.legui.DefaultInitializer
 import org.liquidengine.legui.animation.AnimatorProvider
 import org.liquidengine.legui.component.Frame
 import org.liquidengine.legui.input.Mouse
-import org.liquidengine.legui.listener.processor.EventProcessorProvider
 import org.liquidengine.legui.style.color.ColorUtil
-import org.liquidengine.legui.system.context.CallbackKeeper
-import org.liquidengine.legui.system.context.DefaultCallbackKeeper
-import org.liquidengine.legui.system.handler.processor.SystemEventProcessor
-import org.liquidengine.legui.system.handler.processor.SystemEventProcessorImpl
 import org.liquidengine.legui.system.layout.LayoutManager
 import org.liquidengine.legui.theme.Themes
 import org.liquidengine.legui.theme.colored.FlatColoredTheme
@@ -37,7 +32,6 @@ import transfer.ImportManager
 import util.*
 import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
-
 
 const val TITLE = "PoserGL"
 const val VERSION = "1.3.5"
@@ -114,7 +108,11 @@ class RenderContext {
         context.updateGlfwWindow()
 
         val keeper = initializer.callbackKeeper
-        keeper.chainWindowCloseCallback.add { running = false }
+        keeper.chainWindowCloseCallback.add {
+            ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Exit", true) {
+                running = false
+            }.show(frame)
+        }
         keeper.chainKeyCallback.add(KeyCallback(this, context))
 
         val animator = AnimatorProvider.getAnimator()
@@ -139,20 +137,12 @@ class RenderContext {
 
         if (loaders.isEmpty() || packers.isEmpty()) {
             LOGGER.error("No plugins found")
-            exitProcess(1)
+            ConfirmDialog(this, "Error", "No plugins found", "Exit", false) {
+                exitProcess(1)
+            }.show(frame)
         } else {
             LOGGER.info("Loaded ${loaders.size} plugins")
-        }
-
-        val devMode = System.getenv("DEV_MODE")
-
-        if (devMode.toBoolean()) {
-            LOGGER.info("Running in development mode")
-            val cachePath = System.getenv("DEV_CACHE")
-            val plugin = loaders.first { it.toString() == System.getenv("DEV_PLUGIN") }
-            loadCache(cachePath, plugin)
-        } else {
-            StartDialog(this).show(frame)
+            openApplication()
         }
 
         while (running) {
@@ -219,6 +209,19 @@ class RenderContext {
         return contextSize.x == frameSize.x.toInt() * 2 && contextSize.y == frameSize.y.toInt() * 2
     }
 
+    private fun openApplication() {
+        val devMode = System.getenv("DEV_MODE")
+        if (devMode.toBoolean()) {
+            LOGGER.info("Running in development mode")
+            val cachePath = System.getenv("DEV_CACHE")
+            val devPlugin = System.getenv("DEV_PLUGIN")
+            val plugin = loaders.first { it.toString() == devPlugin }
+            loadCache(cachePath, plugin)
+        } else {
+            StartDialog(this).show(frame)
+        }
+    }
+
     fun loadCache(cachePath: String, plugin: ICacheLoader) {
         cacheService.init(cachePath, plugin)
 
@@ -233,7 +236,7 @@ class RenderContext {
     }
 
     fun reset() {
-        ConfirmDialog(this, "Warning", "Any unsaved changes will be lost", "Continue") {
+        ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Continue", true) {
             nodeRenderer.enabled = false
             entityHandler.clear()
             gui.container.clearChildComponents()

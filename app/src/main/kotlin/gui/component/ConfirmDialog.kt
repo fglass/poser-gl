@@ -5,8 +5,14 @@ import org.liquidengine.legui.event.MouseClickEvent
 import org.liquidengine.legui.input.Mouse
 import render.RenderContext
 
-class ConfirmDialog(context: RenderContext, title: String, message: String, button: String,
-                    private val action: () -> Unit) : Dialog(title, message, context, 260f, 95f) {
+class ConfirmDialog(
+    context: RenderContext,
+    title: String,
+    message: String,
+    button: String,
+    closeable: Boolean,
+    private val action: () -> Unit,
+) : Dialog(title, message, context, 260f, 95f) {
 
     init {
         val width = 60f
@@ -19,6 +25,7 @@ class ConfirmDialog(context: RenderContext, title: String, message: String, butt
                 action.invoke()
             }
         }
+        isCloseable = closeable
         container.add(confirm)
     }
 }
