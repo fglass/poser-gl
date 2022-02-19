@@ -5,6 +5,7 @@ import api.animation.TransformationType
 import api.definition.FrameDefinition
 import api.definition.FrameMapDefinition
 import api.definition.SequenceDefinition
+import gui.component.Dialog
 import render.RenderContext
 import mu.KotlinLogging
 import org.joml.Vector3i
@@ -14,6 +15,7 @@ import kotlin.collections.LinkedHashMap
 import kotlin.math.min
 
 private val logger = KotlinLogging.logger {}
+const val MAX_LENGTH = 9999
 const val ITEM_OFFSET = 512
 
 class Animation(private val context: RenderContext, var sequence: SequenceDefinition): IAnimation {
@@ -172,10 +174,16 @@ class Animation(private val context: RenderContext, var sequence: SequenceDefini
 
     fun getFrameIndex(index: Int) = Math.floorMod(index, keyframes.size)
 
-    fun insertKeyframe(keyframe: Keyframe, index: Int) {
+    fun insertKeyframe(keyframe: Keyframe, index: Int): Boolean {
+        if (calculateLength() + keyframe.length > MAX_LENGTH) {
+            Dialog("Invalid Operation", "Max animation length reached", context, 200f, 70f).display()
+            return false
+        }
+
         keyframes.add(index, keyframe)
         context.animationHandler.setCurrentFrame(index)
         updateKeyframes()
+        return true
     }
 
     fun removeKeyframe(keyframe: Keyframe) {

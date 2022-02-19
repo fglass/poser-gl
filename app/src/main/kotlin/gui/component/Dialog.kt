@@ -22,6 +22,7 @@ open class Dialog(title: String, text: String, private val context: RenderContex
         container.isFocusable = false
         isFocusable = false
         isResizable = false
+        isDraggable = false
 
         listenerMap.addListener(WindowSizeEvent::class.java) { event ->
             if (this is StartDialog) { // Center on overall frame instead

@@ -4,8 +4,6 @@ import animation.command.Command
 import animation.command.CommandHistory
 import render.RenderContext
 
-const val MAX_LENGTH = 999
-
 class AnimationHandler(private val context: RenderContext) {
 
     var currentAnimation: Animation? = null

@@ -40,9 +40,8 @@ class LerpKeyframeCommand(private val context: RenderContext) : Command {
         }
 
         insertedIndex = index + 1
-        context.animationHandler.getAnimationOrCopy()?.insertKeyframe(newKeyframe, insertedIndex)
 
-        return true
+        return context.animationHandler.getAnimationOrCopy()?.insertKeyframe(newKeyframe, insertedIndex) ?: false
     }
 
     private fun displayError(message: String) {

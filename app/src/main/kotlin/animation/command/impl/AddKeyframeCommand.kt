@@ -17,8 +17,8 @@ class AddKeyframeCommand(private val context: RenderContext) : Command {
         }
 
         val keyframe = Keyframe(animation.keyframes.size, animation.keyframes[insertedIndex - 1]) // Copy of previous
-        animation.insertKeyframe(keyframe, insertedIndex)
-        return true
+
+        return animation.insertKeyframe(keyframe, insertedIndex)
     }
 
     override fun unexecute() {
