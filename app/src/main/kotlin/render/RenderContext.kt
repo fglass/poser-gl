@@ -108,12 +108,17 @@ class RenderContext {
         context.updateGlfwWindow()
 
         val keeper = initializer.callbackKeeper
-        keeper.chainWindowCloseCallback.add {
-            ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Exit", true) {
-                running = false
-            }.show(frame)
-        }
+
         keeper.chainKeyCallback.add(KeyCallback(this, context))
+        keeper.chainWindowCloseCallback.add {
+            if (cacheService.loaded) {
+                ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Exit", true) {
+                    running = false
+                }.show(frame)
+            } else {
+                running = false
+            }
+        }
 
         val animator = AnimatorProvider.getAnimator()
         val guiRenderer = initializer.renderer
@@ -237,6 +242,7 @@ class RenderContext {
 
     fun reset() {
         ConfirmDialog(this, "Warning", "Unsaved changes will be lost", "Continue", true) {
+            cacheService.loaded = false
             nodeRenderer.enabled = false
             entityHandler.clear()
             gui.container.clearChildComponents()
