@@ -1,5 +1,5 @@
 # poser-gl
-![release](https://img.shields.io/github/v/release/fglass/poser-gl) ![Discord](https://img.shields.io/discord/596116782742241291)
+![release](https://img.shields.io/github/v/release/fglass/poser-gl) [![Discord](https://img.shields.io/discord/596116782742241291)](https://discord.gg/QAHRAs4)
 
 An OpenGL animation editor for [RuneScape](https://www.runescape.com/)
 
