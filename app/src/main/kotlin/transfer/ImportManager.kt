@@ -3,9 +3,9 @@ package transfer
 import render.RenderContext
 import animation.*
 import api.animation.TransformationType
+import api.cache.stream.InputStream
 import api.definition.FrameMapDefinition
 import api.definition.SequenceDefinition
-import net.runelite.cache.io.InputStream
 import org.joml.Vector3i
 import util.FileDialog
 import java.io.File
@@ -73,14 +73,14 @@ class ImportManager(private val context: RenderContext) {
     }
 
     private fun Keyframe.decode(stream: InputStream) {
-        frameMap.id = stream.readShort().toInt() // TODO: different between revisions
+        frameMap.id = stream.readShort() // TODO: different between revisions
         val n = stream.readUnsignedByte()
 
         repeat(n) {
-            val id = stream.readShort().toInt()
-            val x = stream.readShort().toInt()
-            val y = stream.readShort().toInt()
-            val z = stream.readShort().toInt()
+            val id = stream.readShort()
+            val x = stream.readShort()
+            val y = stream.readShort()
+            val z = stream.readShort()
 
             val tf = Transformation(id, TransformationType.REFERENCE, frameMap.maps[id], Vector3i(x, y, z))
             val reference = ReferenceNode(tf)
@@ -88,11 +88,11 @@ class ImportManager(private val context: RenderContext) {
 
             val children = stream.readUnsignedByte()
             for (i in 0 until children) {
-                val childId = stream.readShort().toInt()
+                val childId = stream.readShort()
                 val childType = stream.readUnsignedByte()
-                val childX = stream.readShort().toInt()
-                val childY = stream.readShort().toInt()
-                val childZ = stream.readShort().toInt()
+                val childX = stream.readShort()
+                val childY = stream.readShort()
+                val childZ = stream.readShort()
 
                 val type = TransformationType.fromId(childType)?: continue
                 val child = Transformation(childId, type, frameMap.maps[childId], Vector3i(childX, childY, childZ))

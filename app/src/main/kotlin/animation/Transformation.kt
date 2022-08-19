@@ -3,8 +3,9 @@ package animation
 import api.animation.ITransformation
 import api.animation.TransformationType
 import api.definition.ModelDefinition
-import net.runelite.cache.models.CircularAngle
 import org.joml.Vector3i
+import kotlin.math.cos
+import kotlin.math.sin
 
 open class Transformation(
     override var id: Int,
@@ -168,6 +169,19 @@ open class Transformation(
                     ++count
                 }
             }
+        }
+    }
+}
+
+object CircularAngle {
+    private const val UNIT = 0.0030679615757712823
+    val SINE = IntArray(2048)
+    val COSINE = IntArray(2048)
+
+    init {
+        for (i in 0..2047) {
+            SINE[i] = (65536.0 * sin(i.toDouble() * 0.0030679615757712823)).toInt()
+            COSINE[i] = (65536.0 * cos(i.toDouble() * 0.0030679615757712823)).toInt()
         }
     }
 }

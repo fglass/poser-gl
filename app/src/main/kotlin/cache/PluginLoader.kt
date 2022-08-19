@@ -20,6 +20,7 @@ object PluginLoader {
         val loaders = ServiceLoader.load(ICacheLoader::class.java, classLoader).toList()
         val packers = ServiceLoader.load(ICachePacker::class.java, classLoader).toList()
         classLoader.close()
+
         return loaders.sortedBy { it.toString() } to packers
     }
 

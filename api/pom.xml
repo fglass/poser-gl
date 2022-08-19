@@ -11,7 +11,6 @@
     <properties>
         <kotlin.version>1.6.10</kotlin.version>
         <joml.version>1.9.18</joml.version>
-        <rl.version>1.5.25-SNAPSHOT</rl.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -56,11 +55,6 @@
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
             <version>${joml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.runelite</groupId>
-            <artifactId>cache</artifactId>
-            <version>${rl.version}</version>
         </dependency>
     </dependencies>
 

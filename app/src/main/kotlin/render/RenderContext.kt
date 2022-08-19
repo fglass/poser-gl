@@ -34,7 +34,7 @@ import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.3.5"
+const val VERSION = "1.4"
 const val WIDTH = 800
 const val HEIGHT = 600
 
