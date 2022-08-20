@@ -3,7 +3,7 @@ package api.cache
 import api.definition.*
 
 interface ICacheLoader {
-
+    val apiVersion: String
     val frameIndex: Int
 
     fun loadSequences(library: ICacheLibrary): List<SequenceDefinition>

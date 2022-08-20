@@ -57,6 +57,7 @@ object ResourceMap {
         put("undo", hovered = true)
         put("redo", hovered = true)
         put("settings", hovered = true)
+        put("about", hovered = true)
     }
 
     private fun put(key: String, hovered: Boolean = false) {

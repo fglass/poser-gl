@@ -6,6 +6,7 @@ import cache.CacheService
 import cache.PluginLoader
 import entity.EntityHandler
 import gui.GuiManager
+import gui.component.AboutDialog
 import gui.component.ConfirmDialog
 import gui.component.StartDialog
 import model.ModelParser
@@ -34,7 +35,7 @@ import java.lang.Boolean.TRUE
 import kotlin.system.exitProcess
 
 const val TITLE = "PoserGL"
-const val VERSION = "1.4"
+const val APP_VERSION = "1.4.0"
 const val WIDTH = 800
 const val HEIGHT = 600
 
@@ -75,7 +76,7 @@ class RenderContext {
 
     fun run() {
         var running = true
-        LOGGER.info { "Running v$VERSION" }
+        LOGGER.info("Running v$APP_VERSION")
 
         System.setProperty("joml.nounsafe", TRUE.toString())
         System.setProperty("java.awt.headless", TRUE.toString())
@@ -141,8 +142,8 @@ class RenderContext {
         settingsManager.load()
 
         if (loaders.isEmpty() || packers.isEmpty()) {
-            LOGGER.error("No plugins found")
-            ConfirmDialog(this, "Error", "No plugins found", "Exit", false) {
+            LOGGER.error("No compatible plugins found")
+            ConfirmDialog(this, "Error", "No compatible plugins found", "Exit", false) {
                 exitProcess(1)
             }.show(frame)
         } else {
@@ -238,6 +239,10 @@ class RenderContext {
     private fun startApplication() {
         gui = GuiManager(this)
         entityHandler.loadPlayer()
+    }
+
+    fun openAboutDialog() {
+        AboutDialog(this).display()
     }
 
     fun reset() {

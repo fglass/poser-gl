@@ -28,7 +28,9 @@ class CacheService(private val context: RenderContext) {
     fun init(path: String, loader: ICacheLoader) {
         this.path = path
         this.loader = loader
-        packManager = PackManager(context, context.packers.first { it.toString() == loader.toString() }) // TODO: couple better
+
+        val packer = context.packers.first { it.toString() == loader.toString() } // TODO: couple better
+        packManager = PackManager(context, packer)
 
         try {
             val library = CacheLibrary(path)

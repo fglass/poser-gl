@@ -32,6 +32,7 @@ class MenuBar(context: RenderContext) : Panel() {
         addMenuButton("undo", context.animationHandler.history::undo)
         addMenuButton("redo", context.animationHandler.history::redo)
         addMenuButton("settings", context.settingsManager::openDialog)
+        addMenuButton("about", context::openAboutDialog)
     }
 
     private fun addMenuButton(name: String, action: () -> Unit) {

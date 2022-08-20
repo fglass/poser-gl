@@ -1,7 +1,7 @@
 package gui.component
 
 import api.cache.ICacheLoader
-import render.VERSION
+import render.APP_VERSION
 import org.joml.Vector2f
 import org.liquidengine.legui.component.*
 import org.liquidengine.legui.event.MouseClickEvent
@@ -42,9 +42,9 @@ class StartDialog(
         logo.style.background.color = ColorConstants.transparent()
         container.add(logo)
 
-        val version = Label("v$VERSION")
-        version.position = Vector2f(208f, 66f)
-        container.add(version)
+        val appVersion = Label("v$APP_VERSION")
+        appVersion.position = Vector2f(208f, 66f)
+        container.add(appVersion)
     }
 
     private fun addPath() {
